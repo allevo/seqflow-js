@@ -1,0 +1,16 @@
+
+.topHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    h1 {
+        flex-grow: 1;
+    }
+
+    .logoWrapper {
+        .logo {
+            border-radius: 50%;
+        }
+    }
+}

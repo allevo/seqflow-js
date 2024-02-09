@@ -1,0 +1,24 @@
+{
+  "name": "e-commerce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "vite -c vite.config.js",
+    "build": "vite build -c vite.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/css-modules": "^1.0.5",
+    "chokidar": "^3.6.0",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.6.4",
+    "vite-plugin-full-reload": "^1.1.0",
+    "vite-plugin-live-reload": "^3.0.3"
+  },
+  "dependencies": {
+    "seqflow-js": "link:../../packages/seqflow-js"
+  }
+}

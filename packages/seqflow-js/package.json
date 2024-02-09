@@ -1,0 +1,25 @@
+{
+  "name": "seqflow-js",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "vitest --run",
+    "build": "vite build -c vite.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "devDependencies": {
+    "@testing-library/dom": "^9.3.4",
+    "@types/css-modules": "^1.0.5",
+    "@types/jsdom": "^21.1.6",
+    "@vitest/coverage-v8": "^1.2.2",
+    "jsdom": "^24.0.0",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.6.4",
+    "vitest": "^1.2.2"
+  },
+  "license": "MIT"
+}
