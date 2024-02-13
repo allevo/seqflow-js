@@ -7,7 +7,7 @@ function getProfileUrl(user: { username: string }, size: number) {
   return `https://placehold.co/${size}?text=${user.username[0].toUpperCase()}`
 }
 
-export async function UserProfileBadge({ navigate, render, domEvent, waitEvent, businessEvent, querySelector }: ComponentParam) {
+export async function UserProfileBadge({ event, dom }: ComponentParam) {
   const user = await userDomain.getUser() || {
     username: 'Guest'
   }
@@ -15,7 +15,7 @@ export async function UserProfileBadge({ navigate, render, domEvent, waitEvent, 
   const profileHeaderMenuId = classes['profile-header-menu']
 
   const size = 40
-  render(`
+  dom.render(`
 <div>
   <a class="${classes.logoWrapper}" href="/profile">
     <img
@@ -36,31 +36,31 @@ export async function UserProfileBadge({ navigate, render, domEvent, waitEvent, 
   </div>
 </div>`)
 
-  const imgEl = querySelector<HTMLImageElement>('img')
-  const profileHeaderMenu = querySelector<HTMLElement>(`#${profileHeaderMenuId}`)
+  const imgEl = dom.querySelector<HTMLImageElement>('img')
+  const profileHeaderMenu = dom.querySelector<HTMLElement>(`#${profileHeaderMenuId}`)
 
-  const events = waitEvent(
-    businessEvent(UserLoggedEvent),
-    businessEvent(UserLoggedOutEvent),
-    domEvent('click'),
-    domEvent('mouseover'),
-    domEvent('mouseout'),
+  const events = event.waitEvent(
+    event.domainEvent(UserLoggedEvent),
+    event.domainEvent(UserLoggedOutEvent),
+    event.domEvent('click'),
+    event.domEvent('mouseover'),
+    event.domEvent('mouseout'),
   )
-  for await (const event of events) {
-    if (event instanceof UserLoggedEvent || event instanceof UserLoggedOutEvent) {
+  for await (const ev of events) {
+    if (ev instanceof UserLoggedEvent || ev instanceof UserLoggedOutEvent) {
       let user = await userDomain.getUser() || {
         username: 'Guest'
       }
       imgEl.src = getProfileUrl(user, size)
-    } else if (event.type === 'click') {
-      if (event.target instanceof HTMLAnchorElement) {
-        navigate(event.target.href)
-      } else if (event.target instanceof HTMLImageElement) {
-        navigate('/profile')
+    } else if (ev.type === 'click') {
+      if (ev.target instanceof HTMLAnchorElement) {
+        event.navigate(ev.target.href)
+      } else if (ev.target instanceof HTMLImageElement) {
+        event.navigate('/profile')
       }
-    } else if (event.type === 'mouseover') {
+    } else if (ev.type === 'mouseover') {
       profileHeaderMenu.classList.add(classes.show)
-    } else if (event.type === 'mouseout') {
+    } else if (ev.type === 'mouseout') {
       profileHeaderMenu.classList.remove(classes.show)
     }
   }

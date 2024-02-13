@@ -1,5 +1,5 @@
 import { ComponentParam } from "seqflow-js";
 
-export async function Cart({ render, querySelector, child, signal }: ComponentParam) {
-  render(`Cart page`)
+export async function Cart({ dom }: ComponentParam) {
+  dom.render(`Cart page`)
 }

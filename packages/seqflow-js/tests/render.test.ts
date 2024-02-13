@@ -7,7 +7,7 @@ import {
 import { start, ComponentParam } from '../src/index'
 
 test('render self', () => {
-  async function app({ render }: ComponentParam) {
+  async function app({ dom: { render } }: ComponentParam) {
     render('<div>hello</div>')
   }
 
@@ -22,14 +22,14 @@ test('render self', () => {
 
 
 test('render child', async () => {
-  async function Header({ render }: ComponentParam) {
+  async function Header({ dom: { render } }: ComponentParam) {
     render('<div>header</div>')
   }
-  async function Main({ render }: ComponentParam) {
+  async function Main({ dom: { render } }: ComponentParam) {
     render('<div>main</div>')
   }
 
-  async function app({ render, child }: ComponentParam) {
+  async function app({ dom: { render, child } }: ComponentParam) {
     render('<div id="header"></div><main id="main"></main>')
     child('header', Header)
     child('main', Main)
@@ -48,7 +48,7 @@ test('render child', async () => {
 })
 
 test('render child throw error on wrong argument', async () => {
-  async function app({ render, child }: ComponentParam) {
+  async function app({ dom: { render, child } }: ComponentParam) {
     render('<div id="header"></div><main id="main"></main>')
     ;(child as any)()
   }

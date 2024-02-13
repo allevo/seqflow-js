@@ -2,13 +2,13 @@ import { expect, test } from 'vitest'
 import { start, ComponentParam } from '../src/index'
 
 test('test 1', async () => {
-  async function app({ render, querySelector, waitEvent, domEvent }: ComponentParam) {
-    render('<button type="button">increment</button><p id="result"></p>')
+  async function app({ dom, event }: ComponentParam) {
+    dom.render('<button type="button">increment</button><p id="result"></p>')
 
-    const result = querySelector<HTMLParagraphElement>('#result')
+    const result = dom.querySelector<HTMLParagraphElement>('#result')
 
     let i = 0
-    const events = waitEvent(domEvent('click'))
+    const events = event.waitEvent(event.domEvent('click'))
     for await (const event of events) {
       result.textContent = `${++i}`
     }
@@ -47,19 +47,19 @@ test('test 1', async () => {
   expect(result.innerHTML).toBe('4')
 
 
-  async function app2({ render, querySelector, waitEvent, domEvent }: ComponentParam) {
-    render(`
+  async function app2({ dom, event }: ComponentParam) {
+    dom.render(`
 <button type="button" id="increment">increment</button>
 <button type="button" id="decrement">decrement</button>
 <p id="result"></p>
 `)
 
-    const result = querySelector<HTMLParagraphElement>('#result')
-    const increment = querySelector<HTMLButtonElement>('#increment')
-    const decrement = querySelector<HTMLButtonElement>('#decrement')
+    const result = dom.querySelector<HTMLParagraphElement>('#result')
+    const increment = dom.querySelector<HTMLButtonElement>('#increment')
+    const decrement = dom.querySelector<HTMLButtonElement>('#decrement')
 
     let i = 0
-    const events = waitEvent(domEvent('click'))
+    const events = event.waitEvent(event.domEvent('click'))
     for await (const event of events) {
       if (event.target === increment) {
         result.textContent = `${++i}`

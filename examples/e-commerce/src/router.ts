@@ -8,7 +8,7 @@ import { UserLoggedOutEvent } from "./domains/user/events"
 import { Logout } from "./pages/logout"
 import { Cart } from "./pages/cart"
 
-async function NotFound({ render }: ComponentParam) {
+async function NotFound({ dom: { render } }: ComponentParam) {
   render(`<div>
   <h1>404</h1>
   <p>Not found</p>
@@ -33,29 +33,24 @@ function getComponent(path: string) {
   }
 }
 
-export async function Router({ render, waitEvent, child, navigationEvent, businessEvent }: ComponentParam) {
-  render(`<div id='header'></div><main id='main'></main>`)
-
-  child('header', Header)
+export async function Router({ dom, event }: ComponentParam) {
+  dom.render(`<div id='header'></div><main id='main'></main>`)
+  dom.child('header', Header)
 
   // Default route
-  child('main', getComponent(window.location.pathname))
+  dom.child('main', getComponent(window.location.pathname))
 
-  const events = waitEvent(
-    navigationEvent(),
-    businessEvent(UserLoggedOutEvent),
+  const events = event.waitEvent(
+    event.navigationEvent(),
+    event.domainEvent(UserLoggedOutEvent),
   )
   for await (const ev of events) {
     console.log('Router event', ev)
 
     if (ev instanceof NavigationEvent) {
-      const user = await userDomain.restoreUser()
-      console.log('URL', ev.path)
-
-      child('main', getComponent(ev.path))
+      dom.child('main', getComponent(ev.path))
     } else if (ev instanceof UserLoggedOutEvent) {
-      console.log('UserLoggedOutEvent', ev)
-      child('main', Login)
+      dom.child('main', Login)
     } else {
       console.error('Unknown event', ev)
     }

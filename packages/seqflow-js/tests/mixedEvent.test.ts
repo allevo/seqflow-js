@@ -4,31 +4,31 @@ import { start, ComponentParam, createBusinessEventBus, createDomainEventClass }
 test('dom & business event', async () => {
   const CounterChanged = createDomainEventClass<{ delta: number }>('counter', 'changed')
 
-  async function ChangeButton({ render, waitEvent, domEvent, data, dispatchDomainEvent }: ComponentParam<{ delta: number }>) {
-    render('<button>Change</button>')
-    const events = waitEvent(domEvent('click'))
+  async function ChangeButton({ dom, event, data }: ComponentParam<{ delta: number }>) {
+    dom.render('<button>Change</button>')
+    const events = event.waitEvent(event.domEvent('click'))
     for await (const _ of events) {
-      dispatchDomainEvent(new CounterChanged({ delta: data.delta }))
+      event.dispatchDomainEvent(new CounterChanged({ delta: data.delta }))
     }
   }
-  async function app({ render, querySelector, waitEvent, domEvent, businessEvent, child }: ComponentParam) {
+  async function app({ dom, event }: ComponentParam) {
     let i = 0
 
-    render(`
+    dom.render(`
 <div id="increment"></div>
 <div id="decrement"></div>
 <button id="reset">Reset</button>
 <p id="result">${i}</p>
 `)
-    child('increment', ChangeButton, { data: { delta: 1 } })
-    child('decrement', ChangeButton, { data: { delta: -1 } })
+    dom.child('increment', ChangeButton, { data: { delta: 1 } })
+    dom.child('decrement', ChangeButton, { data: { delta: -1 } })
 
-    const result = querySelector<HTMLParagraphElement>('#result')
-    const reset = querySelector<HTMLButtonElement>('#reset')
+    const result = dom.querySelector<HTMLParagraphElement>('#result')
+    const reset = dom.querySelector<HTMLButtonElement>('#reset')
 
-    const events = waitEvent(
-      domEvent('click'),
-      businessEvent(CounterChanged)
+    const events = event.waitEvent(
+      event.domEvent('click'),
+      event.domainEvent(CounterChanged)
     )
     for await (const event of events) {
       if (event instanceof CounterChanged) {

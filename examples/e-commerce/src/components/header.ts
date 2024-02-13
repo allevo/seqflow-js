@@ -5,10 +5,10 @@ import { CartBadge } from "../domains/cart/components/CartBadge";
 import { UserLoggedEvent, UserLoggedOutEvent } from "../domains/user/events";
 import { UserProfileBadge } from "../domains/user/components/UserBadge";
 
-export async function Header({ navigate, render, waitEvent, domEvent, child, businessEvent, querySelector }: ComponentParam) {
+export async function Header({ dom, event }: ComponentParam) {
   let user = await userDomain.getUser()
 
-  render(`
+  dom.render(`
   <header>
     <div class="${classes.topHeader}">
       <h1 id="${classes.storeLogo}"><a href="/">My Store</a></h1>
@@ -22,13 +22,13 @@ export async function Header({ navigate, render, waitEvent, domEvent, child, bus
     </div>
   </header>
 `)
-  child('userProfileBadge', UserProfileBadge)
-  child('cartBadge', CartBadge)
+  dom.child('userProfileBadge', UserProfileBadge)
+  dom.child('cartBadge', CartBadge)
 
 
   console.log('USER', user)
 
-  const header = querySelector<HTMLHeadElement>('header')
+  const header = dom.querySelector<HTMLHeadElement>('header')
   let className: string
   if (user) {
     className = classes.logged
@@ -37,26 +37,26 @@ export async function Header({ navigate, render, waitEvent, domEvent, child, bus
   }
   header.classList.add(className)
 
-  const loginButton = querySelector<HTMLButtonElement>('#login-button')
-  const storeLogo = querySelector<HTMLAnchorElement>(`#${classes.storeLogo}`)
-  const storeLogoInner = querySelector<HTMLAnchorElement>(`#${classes.storeLogo} *`)
-  const events = waitEvent(
-    businessEvent(UserLoggedEvent),
-    businessEvent(UserLoggedOutEvent),
-    domEvent('click')
+  const loginButton = dom.querySelector<HTMLButtonElement>('#login-button')
+  const storeLogo = dom.querySelector<HTMLAnchorElement>(`#${classes.storeLogo}`)
+  const storeLogoInner = dom.querySelector<HTMLAnchorElement>(`#${classes.storeLogo} *`)
+  const events = event.waitEvent(
+    event.domainEvent(UserLoggedEvent),
+    event.domainEvent(UserLoggedOutEvent),
+    event.domEvent('click')
   )
 
-  for await (const event of events) {
-    if (event instanceof UserLoggedEvent) {
+  for await (const ev of events) {
+    if (ev instanceof UserLoggedEvent) {
       header.classList.add(classes.logged)
-    } else if (event instanceof UserLoggedOutEvent) {
+    } else if (ev instanceof UserLoggedOutEvent) {
       header.classList.remove(classes.logged)
-    } else if (event.target === loginButton) {
-      navigate('/login')
-    } else if (event.target === storeLogo || event.target === storeLogoInner) {
-      navigate('/')
+    } else if (ev.target === loginButton) {
+      event.navigate('/login')
+    } else if (ev.target === storeLogo || ev.target === storeLogoInner) {
+      event.navigate('/')
     } else {
-      console.error('Unknown event', event)
+      console.error('Unknown event', ev)
     }
   }
 }

@@ -1,3 +1,4 @@
+import './types.d'
 
 export interface ProductType {
   id: number

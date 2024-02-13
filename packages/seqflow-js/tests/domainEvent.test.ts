@@ -4,22 +4,22 @@ import { start, ComponentParam, createBusinessEventBus, createDomainEventClass }
 test('domain even', async () => {
   const CounterChanged = createDomainEventClass<null>('counter', 'changed')
 
-  async function Button({ render, waitEvent, domEvent, dispatchDomainEvent: dispatchBusinessEvent }: ComponentParam) {
-    render('<button type="button">increment</button>')
+  async function Button({ dom, event }: ComponentParam) {
+    dom.render('<button type="button">increment</button>')
 
-    const events = waitEvent(domEvent('click'))
+    const events = event.waitEvent(event.domEvent('click'))
     for await (const _ of events) {
-      dispatchBusinessEvent(new CounterChanged(null))
+      event.dispatchDomainEvent(new CounterChanged(null))
     }
   }
-  async function app({ render, child, querySelector, waitEvent, businessEvent }: ComponentParam) {
+  async function app({ dom, event }: ComponentParam) {
     let i = 0
-    render(`<div><div id="button"></div><p id="result">${i}</p></div>`)
-    child('button', Button)
+    dom.render(`<div><div id="button"></div><p id="result">${i}</p></div>`)
+    dom.child('button', Button)
 
-    const result = querySelector<HTMLParagraphElement>('#result')
+    const result = dom.querySelector<HTMLParagraphElement>('#result')
 
-    const events = waitEvent(businessEvent(CounterChanged))
+    const events = event.waitEvent(event.domainEvent(CounterChanged))
     for await (const _ of events) {
       i++
       result.textContent = `${i}`

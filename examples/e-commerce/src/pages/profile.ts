@@ -1,13 +1,13 @@
 import { ComponentParam } from "seqflow-js";
 import { UserType, userDomain } from "../domains/user/User";
 
-export async function Profile({ render, navigate }: ComponentParam) {
+export async function Profile({ dom, event }: ComponentParam) {
   const user = await userDomain.getUser()
   if (!user) {
-    navigate('/login')
+    event.navigate('/login')
     return
   }
-  render(`<div>
+  dom.render(`<div>
   <h1>Profile</h1>
   <dl>
     <dt>Username</dt>

@@ -2,23 +2,23 @@ import { expect, test } from 'vitest'
 import { start, ComponentParam, NavigationEvent } from '../src/index'
 
 test('navigation even', async () => {
-  async function Button({ render, waitEvent, domEvent, querySelector, navigate }: ComponentParam) {
-    render('<input name="path"><button type="button">increment</button>')
+  async function Button({ dom, event }: ComponentParam) {
+    dom.render('<input name="path"><button type="button">increment</button>')
 
-    const input = querySelector<HTMLInputElement>('input')
+    const input = dom.querySelector<HTMLInputElement>('input')
 
-    const events = waitEvent(domEvent('click'))
+    const events = event.waitEvent(event.domEvent('click'))
     for await (const _ of events) {
-      navigate(input.value)
+      event.navigate(input.value)
     }
   }
-  async function app({ render, child, querySelector, waitEvent, navigationEvent }: ComponentParam) {
-    render('<div><div id="button"></div><p id="result"></p></div>')
-    child('button', Button)
+  async function app({ dom, event }: ComponentParam) {
+    dom.render('<div><div id="button"></div><p id="result"></p></div>')
+    dom.child('button', Button)
 
-    const result = querySelector<HTMLParagraphElement>('#result')
+    const result = dom.querySelector<HTMLParagraphElement>('#result')
 
-    const events = waitEvent(navigationEvent())
+    const events = event.waitEvent(event.navigationEvent())
     for await (const event of events) {
       result.textContent = (event as NavigationEvent).path
     }

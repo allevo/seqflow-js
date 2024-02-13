@@ -2,15 +2,15 @@ import { ComponentParam } from "seqflow-js"
 import { AddToCartEvent } from "../events"
 import { ProductType } from "../../../types"
 
-export async function AddToCart({ render, data, querySelector, waitEvent, dispatchDomainEvent, domEvent }: ComponentParam<{ product: ProductType }>) {
-  render(`
+export async function AddToCart({ dom, event, data }: ComponentParam<{ product: ProductType }>) {
+  dom.render(`
 <div>
     <button type="button">Add to cart</button>
 </div>`)
 
-  const button = querySelector('button')!
-  const events = waitEvent(domEvent('click', e => e.target === button))
+  const button = dom.querySelector('button')!
+  const events = event.waitEvent(event.domEvent('click'))
   for await (const _ of events) {
-    dispatchDomainEvent(new AddToCartEvent({ product: data.product }))
+    event.dispatchDomainEvent(new AddToCartEvent({ product: data.product }))
   }
 }

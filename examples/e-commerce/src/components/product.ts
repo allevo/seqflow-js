@@ -3,10 +3,10 @@ import { ProductType } from "../types"
 import classes from './product.module.css'
 import { AddToCart } from "../domains/cart/components/AddToChart"
 
-export async function Product({ render, data, child }: ComponentParam<{ product: ProductType }>) {
+export async function Product({ dom, data }: ComponentParam<{ product: ProductType }>) {
   const buttonId = `add-to-cart-${data.product.id}`
 
-  render(`
+  dom.render(`
 <div class="${classes.product}">
   <div class="${classes.imageWrapper}" />
     <img 
@@ -24,7 +24,7 @@ export async function Product({ render, data, child }: ComponentParam<{ product:
   <div id="${buttonId}"></div>
 </div>`)
 
-  child(buttonId, AddToCart, {
+  dom.child(buttonId, AddToCart, {
     data: {
       product: data.product
     }

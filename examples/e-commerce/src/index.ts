@@ -2,11 +2,11 @@ import { ComponentParam, start, createBusinessEventBus } from 'seqflow-js'
 import { userDomain } from './domains/user/User'
 import { Router } from './router'
 
-async function main({ render, child }: ComponentParam) {
+async function main({ dom }: ComponentParam) {
   await userDomain.restoreUser()
 
-  render(`<div id='router'></div>`)
-  child('router', Router)
+  dom.render(`<div id='router'></div>`)
+  dom.child('router', Router)
 }
 
 start(document.getElementById('root')!, main, {
