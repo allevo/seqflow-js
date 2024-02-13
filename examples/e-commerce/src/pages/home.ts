@@ -9,8 +9,6 @@ async function Loading({ render }: ComponentParam) {
 
 export async function Home({ render, querySelector, child, signal }: ComponentParam) {
   render(`<div>
-  <h1>Home</h1>
-  <p>Welcome to my store</p>
   <div id='loading'></div>
   <div id='products'></div>
 </div>`)

@@ -9,7 +9,7 @@ export async function Login({ render, querySelector, dispatchDomainEvent, domEve
     <label for="username">Username</label>
     <input type="text" name="username" value="johnd" />
     <p class="error"></p>
-    <button type="submit">Submit</button>
+    <button type="submit">Login</button>
   </form>
 </div>`)
 

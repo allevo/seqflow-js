@@ -4,13 +4,23 @@
     align-items: center;
     gap: 10px;
 
-    h1 {
+    #storeLogo {
         flex-grow: 1;
     }
-
-    .logoWrapper {
-        .logo {
-            border-radius: 50%;
-        }
+}
+.displayOnLogged {
+    display: none;
+}
+.logged {
+    .displayOnLogged {
+        display: block;
+    }
+}
+.displayOnUnlogged {
+    display: block;
+}
+.logged {
+    .displayOnUnlogged {
+        display: none;
     }
 }

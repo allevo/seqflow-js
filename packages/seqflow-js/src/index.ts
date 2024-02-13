@@ -1,4 +1,4 @@
-import { iterOnEvents } from "./event-utils";
+import { iterOnEvents } from "./event-utils"
 
 const CHILD_OPTION_ERROR = 'This component has no input data' as const
 type ChildOption<T = unknown> = unknown extends T ? typeof CHILD_OPTION_ERROR : {
@@ -270,7 +270,13 @@ function Component<T = unknown>(
           path,
         }
       })
+      if (path.startsWith('http')) {
+        const url = new URL(path)
+        path = url.pathname + url.search
+      }
+
       _config.navigationEventBus.dispatchEvent(new NavigationEvent(path))
+      window.history.pushState({}, '', path)
     },
     dispatchEvent(event: Event) {
       _config.log?.({

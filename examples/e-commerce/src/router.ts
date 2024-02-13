@@ -6,6 +6,7 @@ import { Login } from "./pages/login"
 import { Profile } from "./pages/profile"
 import { UserLoggedOutEvent } from "./domains/user/events"
 import { Logout } from "./pages/logout"
+import { Cart } from "./pages/cart"
 
 async function NotFound({ render }: ComponentParam) {
   render(`<div>
@@ -14,19 +15,31 @@ async function NotFound({ render }: ComponentParam) {
 </div>`)
 }
 
+function getComponent(path: string) {
+  console.log('AAAA', path)
+  switch (path) {
+    case '/':
+      return Home
+    case '/profile':
+      return Profile
+    case '/cart':
+      return Cart
+    case '/logout':
+      return Logout
+    case '/login':
+      return Login
+    default:
+      return NotFound
+  }
+}
+
 export async function Router({ render, waitEvent, child, navigationEvent, businessEvent }: ComponentParam) {
   render(`<div id='header'></div><main id='main'></main>`)
 
-
   child('header', Header)
 
-  const user = await userDomain.restoreUser()
-  if (user) {
-    // Default route
-    child('main', Home)
-  } else {
-    child('main', Login)
-  }
+  // Default route
+  child('main', getComponent(window.location.pathname))
 
   const events = waitEvent(
     navigationEvent(),
@@ -39,20 +52,9 @@ export async function Router({ render, waitEvent, child, navigationEvent, busine
       const user = await userDomain.restoreUser()
       console.log('URL', ev.path)
 
-      if (ev.path === '/') {
-        child('main', Home)
-      } else if (ev.path === '/profile') {
-        child('main', Profile, {
-          data: {
-            user: user!,
-          }
-        })
-      } else if (ev.path === '/logout') {
-        child('main', Logout)
-      } else {
-        child('main', NotFound)
-      }
+      child('main', getComponent(ev.path))
     } else if (ev instanceof UserLoggedOutEvent) {
+      console.log('UserLoggedOutEvent', ev)
       child('main', Login)
     } else {
       console.error('Unknown event', ev)

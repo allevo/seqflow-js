@@ -1,0 +1,22 @@
+
+
+.logo {
+    border-radius: 50%;
+}
+
+.logoWrapper {
+    display: block;
+    height: 100%;
+}
+
+#profile-header-menu {
+    display: none;
+
+    background-color: white;
+    width: 150px;
+}
+#profile-header-menu.show {
+    position: absolute;
+    display: unset;
+    left: -40px;
+}
