@@ -1,7 +1,6 @@
 import { ComponentParam } from "seqflow-js";
-import { Products } from "../components/product-list";
-import { ProductType } from "../types";
-
+import { productDomain } from "../domains/product/ProductDomain";
+import { ProductCategoryList } from "../domains/product/components/ProductCategoryList";
 
 async function Loading({ dom: { render } }: ComponentParam) {
   render(`<div>Loading...</div>`)
@@ -10,15 +9,15 @@ async function Loading({ dom: { render } }: ComponentParam) {
 export async function Home({ dom, signal }: ComponentParam) {
   dom.render(`<div>
   <div id='loading'></div>
-  <div id='products'></div>
+  <div id='categories'></div>
 </div>`)
   dom.child('loading', Loading)
 
   const loadingElement = dom.querySelector('#loading')
 
-  const res = await fetch('https://fakestoreapi.com/products', { signal })
-  const products = await res.json() as ProductType[]
+  const categories = await productDomain.fetchProductsCategories(signal)
+
   loadingElement.remove()
 
-  dom.child('products', Products, { data: { products } })
+  dom.child('categories', ProductCategoryList, { data: { categories } })
 }

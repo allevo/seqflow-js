@@ -1,5 +1,5 @@
 import { ComponentParam } from "seqflow-js"
-import { userDomain } from "../User"
+import { userDomain } from "../UserDomain"
 import { UserLoggedEvent, UserLoggedOutEvent } from "../events"
 import classes from './user-badge.module.css'
 

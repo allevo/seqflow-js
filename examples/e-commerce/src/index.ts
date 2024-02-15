@@ -1,6 +1,7 @@
 import { ComponentParam, start, createBusinessEventBus } from 'seqflow-js'
-import { userDomain } from './domains/user/User'
+import { userDomain } from './domains/user/UserDomain'
 import { Router } from './router'
+import './index.css'
 
 async function main({ dom }: ComponentParam) {
   await userDomain.restoreUser()

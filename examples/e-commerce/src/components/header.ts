@@ -1,9 +1,10 @@
 import { ComponentParam } from "seqflow-js";
-import { userDomain } from "../domains/user/User";
-import classes from './header.module.css'
+import { userDomain } from "../domains/user/UserDomain";
+import classes from './Header.module.css'
 import { CartBadge } from "../domains/cart/components/CartBadge";
 import { UserLoggedEvent, UserLoggedOutEvent } from "../domains/user/events";
 import { UserProfileBadge } from "../domains/user/components/UserBadge";
+import icon from './icon.png'
 
 export async function Header({ dom, event }: ComponentParam) {
   let user = await userDomain.getUser()
@@ -11,7 +12,8 @@ export async function Header({ dom, event }: ComponentParam) {
   dom.render(`
   <header>
     <div class="${classes.topHeader}">
-      <h1 id="${classes.storeLogo}"><a href="/">My Store</a></h1>
+      <a href="/"><img src="${icon}" alt="icon" class="${classes.icon}"></a>
+      <div class="${classes.emptySpace}"></div>
       <div id="userProfileBadge" class="${classes.displayOnLogged}">
       </div>
       <div id="login" class="${classes.displayOnUnlogged}">
@@ -38,8 +40,7 @@ export async function Header({ dom, event }: ComponentParam) {
   header.classList.add(className)
 
   const loginButton = dom.querySelector<HTMLButtonElement>('#login-button')
-  const storeLogo = dom.querySelector<HTMLAnchorElement>(`#${classes.storeLogo}`)
-  const storeLogoInner = dom.querySelector<HTMLAnchorElement>(`#${classes.storeLogo} *`)
+  const storeLogo = dom.querySelector<HTMLImageElement>(`.${classes.icon}`)
   const events = event.waitEvent(
     event.domainEvent(UserLoggedEvent),
     event.domainEvent(UserLoggedOutEvent),
@@ -53,9 +54,10 @@ export async function Header({ dom, event }: ComponentParam) {
       header.classList.remove(classes.logged)
     } else if (ev.target === loginButton) {
       event.navigate('/login')
-    } else if (ev.target === storeLogo || ev.target === storeLogoInner) {
+    } else if (ev.target === storeLogo) {
       event.navigate('/')
     } else {
+      console.log(ev)
       console.error('Unknown event', ev)
     }
   }

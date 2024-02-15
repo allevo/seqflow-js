@@ -1,0 +1,14 @@
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 5px;
+    list-style: none;
+
+    .element {
+        border: 1px solid #b4b5b5;
+        background: #e1e1e1;
+        border-radius: 5px;
+        text-align: center;
+        width: 100%;
+    }
+}

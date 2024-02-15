@@ -35,6 +35,10 @@ class UserDomain {
     return this.user
   }
 
+  isLoggedIn() {
+    return this.user !== undefined
+  }
+
   async login({ username }: { username: string }): Promise<UserType | undefined> {
     const r = await fetch(`https://fakestoreapi.com/users`)
     const users = await r.json() as UserType[]

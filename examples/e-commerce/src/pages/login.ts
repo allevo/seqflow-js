@@ -1,5 +1,5 @@
 import { ComponentParam } from "seqflow-js"
-import { UserType, userDomain } from "../domains/user/User"
+import { UserType, userDomain } from "../domains/user/UserDomain"
 import { UserLoggedEvent } from "../domains/user/events"
 
 
@@ -32,6 +32,8 @@ export async function Login({ dom, event }: ComponentParam) {
     break
   }
 
+  console.log('QUIQUIQUI')
   event.dispatchDomainEvent(new UserLoggedEvent(user!))
+  console.log('QUAQUAQUA')
   event.navigate('/')
 }

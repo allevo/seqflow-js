@@ -1,5 +1,5 @@
 import { createDomainEventClass } from "seqflow-js"
-import { ProductType } from "../../types"
+import { Product } from "../product/ProductDomain"
 
-export const AddToCartEvent = createDomainEventClass<{ product: ProductType }>('cart', 'addToCart')
-export type AddToCartEventT = InstanceType<typeof AddToCartEvent>
+export const ChangeCartEvent = createDomainEventClass<{ product: Product, action: 'add' | 'remove' | 'remove-all' }>('cart', 'change-cart')
+export const CheckoutEndedCartEvent = createDomainEventClass('cart', 'checkout-end')

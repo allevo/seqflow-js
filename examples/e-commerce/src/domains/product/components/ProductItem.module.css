@@ -1,0 +1,35 @@
+.wrapper {
+  padding: 5px;
+  position: relative;
+}
+
+.productImage {
+  height: 100px;
+  aspect-ratio: auto;
+}
+
+.price {
+  margin: 0px;
+}
+
+.tooltipWrapper {
+  opacity: 0;
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 5px;
+  z-index: 1;
+  top: 100%;
+  left: -7.5px;
+  width: calc(100% + 20px);
+  max-width: 200px;
+  text-align: center;
+  transition: opacity 0.3s;
+  box-sizing: border-box;
+}
+.tooltipWrapper.show {
+  opacity: 1;
+  display: block;
+}

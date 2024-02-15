@@ -25,14 +25,16 @@ test('render child', async () => {
   async function Header({ dom: { render } }: ComponentParam) {
     render('<div>header</div>')
   }
-  async function Main({ dom: { render } }: ComponentParam) {
-    render('<div>main</div>')
+  async function Main({ dom: { render }, data }: ComponentParam<{ text: string }>) {
+    render(`<div>${data.text}</div>`)
   }
 
   async function app({ dom: { render, child } }: ComponentParam) {
     render('<div id="header"></div><main id="main"></main>')
     child('header', Header)
-    child('main', Main)
+    child('main', Main, {
+      data: { text: 'main' }
+    })
   }
 
   start(document.body!, app, {

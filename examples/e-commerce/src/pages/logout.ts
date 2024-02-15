@@ -1,5 +1,5 @@
 import { ComponentParam } from "seqflow-js"
-import { userDomain } from "../domains/user/User"
+import { userDomain } from "../domains/user/UserDomain"
 import { UserLoggedOutEvent } from "../domains/user/events"
 
 export async function Logout({ dom, event }: ComponentParam) {

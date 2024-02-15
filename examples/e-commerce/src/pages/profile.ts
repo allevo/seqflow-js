@@ -1,5 +1,5 @@
 import { ComponentParam } from "seqflow-js";
-import { UserType, userDomain } from "../domains/user/User";
+import { UserType, userDomain } from "../domains/user/UserDomain";
 
 export async function Profile({ dom, event }: ComponentParam) {
   const user = await userDomain.getUser()

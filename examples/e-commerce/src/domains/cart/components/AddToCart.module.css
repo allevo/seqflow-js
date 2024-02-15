@@ -1,0 +1,19 @@
+
+
+.firstAddToCart {
+  display: none;
+}
+.firstAddToCart.show {
+  display: unset;
+}
+
+.otherAddToCartWrapper {
+  display: none;
+  
+}
+.otherAddToCartWrapper.show {
+  display: flex;
+  justify-content: center;
+}
+
+.secondAddFromCart {}

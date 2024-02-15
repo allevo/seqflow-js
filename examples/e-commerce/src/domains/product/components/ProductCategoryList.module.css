@@ -1,0 +1,14 @@
+
+.categoryAnchor {
+    display: inline-block;
+    padding: 5px;
+    text-decoration: none;
+    color: #242424;
+    text-transform: capitalize;
+}
+
+.categoryImage {
+    border-radius: 3px 4px 0px 0px;
+    max-width: 100%;
+    height: auto;
+}

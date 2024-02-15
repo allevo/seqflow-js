@@ -1,7 +1,7 @@
 import { iterOnEvents } from "./event-utils"
 
 const CHILD_OPTION_ERROR = 'This component has no input data' as const
-type ChildOption<T = unknown> = unknown extends T ? typeof CHILD_OPTION_ERROR : {
+export type ChildOption<T = unknown> = unknown extends T ? typeof CHILD_OPTION_ERROR : {
   data: T,
 }
 
