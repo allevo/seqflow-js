@@ -5,6 +5,9 @@
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "vitest --run",
     "build": "vite build -c vite.config.js"
