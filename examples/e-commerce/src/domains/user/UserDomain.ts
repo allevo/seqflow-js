@@ -1,3 +1,4 @@
+import { UserLoggedEvent, UserLoggedOutEvent } from "./events"
 
 const LOCALSTORAGE_USER_KEY = 'user'
 
@@ -23,8 +24,10 @@ export interface UserType {
   }
 }
 
-class UserDomain {
-  private user: UserType | undefined
+export class UserDomain {
+  private user?: UserType
+
+  constructor(private eventTarget: EventTarget) {}
 
   async restoreUser(): Promise<UserType | undefined> {
     const str = localStorage.getItem(LOCALSTORAGE_USER_KEY)
@@ -45,13 +48,17 @@ class UserDomain {
     this.user = users.find(u => u.username === username)
     if (this.user) {
       localStorage.setItem(LOCALSTORAGE_USER_KEY, JSON.stringify(this.user))
+      this.eventTarget.dispatchEvent(new UserLoggedEvent(this.user))
     }
+
     return this.user
   }
 
   async logout() {
     this.user = undefined
     localStorage.removeItem(LOCALSTORAGE_USER_KEY)
+
+    this.eventTarget.dispatchEvent(new UserLoggedOutEvent(null))
   }
 
   async getUser(): Promise<UserType | undefined> {
@@ -59,4 +66,3 @@ class UserDomain {
   }
 }
 
-export const userDomain = new UserDomain()

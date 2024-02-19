@@ -1,10 +1,7 @@
 import { ComponentParam } from "seqflow-js";
-import { cartDomain } from '../domains/cart/CartDomain'
-import { CheckoutEndedCartEvent } from "../domains/cart/events";
 
-export async function Checkout({ dom, event }: ComponentParam) {
-  cartDomain.checkout()
-  event.dispatchDomainEvent(new CheckoutEndedCartEvent(null))
+export async function Checkout({ dom, event, domains }: ComponentParam) {
+  domains.cart.checkout()
 
   dom.render(`
 <p>Well done!</p>

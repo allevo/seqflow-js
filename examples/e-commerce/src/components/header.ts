@@ -1,14 +1,12 @@
 import { ComponentParam } from "seqflow-js";
-import { userDomain } from "../domains/user/UserDomain";
 import classes from './Header.module.css'
 import { CartBadge } from "../domains/cart/components/CartBadge";
 import { UserLoggedEvent, UserLoggedOutEvent } from "../domains/user/events";
-import { UserProfileBadge } from "../domains/user/components/UserBadge";
+import { UserProfileBadge } from "../domains/user/components/UserProfileBadge";
 import icon from './icon.png'
+import { UserType } from "../domains/user";
 
-export async function Header({ dom, event }: ComponentParam) {
-  let user = await userDomain.getUser()
-
+export async function Header({ dom, event, data }: ComponentParam<{ user?: UserType }>) {
   dom.render(`
   <header>
     <div class="${classes.topHeader}">
@@ -27,8 +25,7 @@ export async function Header({ dom, event }: ComponentParam) {
   dom.child('userProfileBadge', UserProfileBadge)
   dom.child('cartBadge', CartBadge)
 
-
-  console.log('USER', user)
+  const user: UserType | undefined = data.user
 
   const header = dom.querySelector<HTMLHeadElement>('header')
   let className: string

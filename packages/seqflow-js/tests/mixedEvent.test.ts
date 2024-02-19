@@ -1,17 +1,32 @@
 import { expect, test } from 'vitest'
-import { start, ComponentParam, createBusinessEventBus, createDomainEventClass } from '../src/index'
+import { start, ComponentParam, createDomainEventClass } from '../src/index'
+
+const CounterChanged = createDomainEventClass<{ delta: number, counter: number }>('counter', 'changed')
+const CounterReset = createDomainEventClass('counter', 'reset-changed')
+class CounterDomain {
+  constructor(private eventTarget: EventTarget, private counter: number = 0) {}
+
+  applyDelta(delta: number) {
+    this.counter += delta
+    this.eventTarget.dispatchEvent(new CounterChanged({ delta, counter: this.counter }))
+  }
+
+  reset() {
+    this.counter = 0
+    this.eventTarget.dispatchEvent(new CounterReset(null))
+    return 0
+  }
+}
 
 test('dom & business event', async () => {
-  const CounterChanged = createDomainEventClass<{ delta: number }>('counter', 'changed')
-
-  async function ChangeButton({ dom, event, data }: ComponentParam<{ delta: number }>) {
+  async function ChangeButton({ dom, event, data, domains }: ComponentParam<{ delta: number }>) {
     dom.render('<button>Change</button>')
     const events = event.waitEvent(event.domEvent('click'))
     for await (const _ of events) {
-      event.dispatchDomainEvent(new CounterChanged({ delta: data.delta }))
+      domains.counter.applyDelta(data.delta)
     }
   }
-  async function app({ dom, event }: ComponentParam) {
+  async function app({ dom, event, domains }: ComponentParam) {
     let i = 0
 
     dom.render(`
@@ -32,21 +47,21 @@ test('dom & business event', async () => {
     )
     for await (const event of events) {
       if (event instanceof CounterChanged) {
-        i += event.detail.delta
+        i = event.detail.counter
       } else if (event.target === reset) {
-        i = 0
+        i = domains.counter.reset()
       }
       result.textContent = `${i}`
     }
   }
 
   const c = start(document.body, app, {
-    businessEventBus: {
-      'counter': createBusinessEventBus()
+    domains: {
+      'counter': (eventTarget) => {
+        return new CounterDomain(eventTarget)
+      }
     },
-    navigationEventBus: new EventTarget()
   })
-
 
   const increment = document.querySelector('#increment button') as HTMLButtonElement
   const decrement = document.querySelector('#decrement button') as HTMLButtonElement
@@ -90,3 +105,10 @@ test('dom & business event', async () => {
   c.abort('test')
   await new Promise(resolve => setTimeout(resolve, 10))
 })
+
+
+declare module '../src/index' {
+  interface Domains {
+    counter: CounterDomain
+  }
+}

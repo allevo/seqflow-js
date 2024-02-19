@@ -1,9 +1,7 @@
 import { ComponentParam } from "seqflow-js"
-import { UserType, userDomain } from "../domains/user/UserDomain"
-import { UserLoggedEvent } from "../domains/user/events"
+import { UserType } from "../domains/user"
 
-
-export async function Login({ dom, event }: ComponentParam) {
+export async function Login({ dom, event, domains }: ComponentParam) {
   dom.render(`<div>
   <form>
     <label for="username">Username</label>
@@ -23,7 +21,7 @@ export async function Login({ dom, event }: ComponentParam) {
     button.disabled = true
     const username = el.value
 
-    user = await userDomain.login({ username })
+    user = await domains.user.login({ username })
     if (!user) {
       p.textContent = 'User not found. Try "johnd"'
       button.disabled = false
@@ -32,8 +30,5 @@ export async function Login({ dom, event }: ComponentParam) {
     break
   }
 
-  console.log('QUIQUIQUI')
-  event.dispatchDomainEvent(new UserLoggedEvent(user!))
-  console.log('QUAQUAQUA')
   event.navigate('/')
 }

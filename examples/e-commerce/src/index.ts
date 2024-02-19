@@ -1,10 +1,12 @@
-import { ComponentParam, start, createBusinessEventBus } from 'seqflow-js'
-import { userDomain } from './domains/user/UserDomain'
+import { ComponentParam, start } from 'seqflow-js'
 import { Router } from './router'
 import './index.css'
+import { UserDomain } from './domains/user'
+import { CartDomain } from './domains/cart'
+import { ProductDomain } from './domains/product'
 
-async function main({ dom }: ComponentParam) {
-  await userDomain.restoreUser()
+async function main({ dom, domains }: ComponentParam) {
+  await domains.user.restoreUser()
 
   dom.render(`<div id='router'></div>`)
   dom.child('router', Router)
@@ -14,16 +16,23 @@ start(document.getElementById('root')!, main, {
   log(log) {
     console.log(log)
   },
-  businessEventBus: {
-    user: createBusinessEventBus(),
-    cart: createBusinessEventBus(),
+  domains: {
+    user: (eventTarget) => {
+      return new UserDomain(eventTarget)
+    },
+    cart: (eventTarget) => {
+      return new CartDomain(eventTarget)
+    },
+    product: (eventTarget) => {
+      return new ProductDomain(eventTarget)
+    }
   },
-  navigationEventBus: new EventTarget(),
 })
 
 declare module 'seqflow-js' {
-  interface BusinessEventBus {
-    user: ReturnType<typeof createBusinessEventBus>
-    cart: ReturnType<typeof createBusinessEventBus>
+  interface Domains {
+    user: UserDomain
+    cart: CartDomain
+    product: ProductDomain
   }
 }

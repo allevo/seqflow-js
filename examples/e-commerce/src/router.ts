@@ -3,13 +3,13 @@ import { Header } from "./components/Header"
 import { Home } from "./pages/home"
 import { Login } from "./pages/login"
 import { Profile } from "./pages/profile"
-import { UserLoggedOutEvent } from "./domains/user/events"
 import { Logout } from "./pages/logout"
 import { Cart } from "./pages/cart"
 import classes from './router.module.css'
 import { Category } from "./pages/category"
-import { CartTooltip } from "./domains/cart/components/CartTooltip"
+import { components } from "./domains/cart"
 import { Checkout } from "./pages/checkout"
+import { UserType } from "./domains/user"
 
 async function NotFound({ dom: { render } }: ComponentParam) {
   render(`<div>
@@ -19,7 +19,6 @@ async function NotFound({ dom: { render } }: ComponentParam) {
 }
 
 function getComponent(path: string) {
-  console.log('AAAA', path)
   switch (true) {
     case path === '/':
       return Home
@@ -40,26 +39,26 @@ function getComponent(path: string) {
   }
 }
 
-export async function Router({ dom, event }: ComponentParam) {
+export async function Router({ dom, event, domains }: ComponentParam) {
   dom.render(`
 <div id="${classes.app}">
   <div id='header'></div>
   <main id="${classes.main}"></main>
   <div id='checkout-tooltip'></div>
 </div>`)
-  dom.child('header', Header)
-  dom.child('checkout-tooltip', CartTooltip)
+  const user: UserType | undefined = await domains.user.getUser()
+  dom.child('header', Header, {
+    data: { user }
+  })
+  dom.child('checkout-tooltip', components.CartTooltip)
 
   // Default route
   dom.child(classes.main, getComponent(window.location.pathname))
 
   const events = event.waitEvent(
     event.navigationEvent(),
-    event.domainEvent(UserLoggedOutEvent),
   )
   for await (const ev of events) {
-    console.log('Router event', ev)
-
     if (ev instanceof NavigationEvent) {
       dom.child(classes.main, getComponent(ev.path))
     } else {

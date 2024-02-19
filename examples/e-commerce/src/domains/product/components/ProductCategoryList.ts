@@ -12,7 +12,7 @@ async function CategoryItem({ dom, data, event }: ComponentParam<ProductCategory
   )
 
   const events = event.waitEvent(event.domEvent('click'))
-  for await (const e of events) {
+  for await (const _ of events) {
     event.navigate(`/category/${data.name}`)
   }
 }

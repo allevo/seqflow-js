@@ -1,11 +1,8 @@
 import { ComponentParam } from "seqflow-js"
-import { userDomain } from "../domains/user/UserDomain"
-import { UserLoggedOutEvent } from "../domains/user/events"
 
-export async function Logout({ dom, event }: ComponentParam) {
+export async function Logout({ dom, event, domains }: ComponentParam) {
   // blank
   dom.render('')
-  await userDomain.logout()
-  event.dispatchDomainEvent(new UserLoggedOutEvent(null))
+  await domains.user.logout()
   event.navigate('/')
 }

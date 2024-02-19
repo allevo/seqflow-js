@@ -1,11 +1,10 @@
 import { ComponentParam } from "seqflow-js"
 import { ChangeCartEvent } from "../events"
 import { Product } from "../../product/ProductDomain"
-import { cartDomain } from "../CartDomain"
 import classes from './AddToCart.module.css'
 
-export async function AddToCart({ dom, event, data }: ComponentParam<{ product: Product }>) {
-  const initCount = cartDomain.getProductCount(data.product.id)
+export async function AddToCart({ dom, event, data, domains }: ComponentParam<{ product: Product }>) {
+  const initCount = domains.cart.getProductCount(data.product.id)
 
   dom.render(`
 <div>
@@ -33,17 +32,15 @@ export async function AddToCart({ dom, event, data }: ComponentParam<{ product: 
   for await (const ev of events) {
     switch (true) {
       case ev.target === firstAddToCart: {
-        const c = cartDomain.addToCart({ product: data.product })
+        const c = domains.cart.addToCart({ product: data.product })
         count.textContent = `${c}`
-        event.dispatchDomainEvent(new ChangeCartEvent({ product: data.product, action: 'add' }))
         otherAddToCartWrapper.classList.add(classes.show)
         firstAddToCart.classList.remove(classes.show)
         break
       }
       case ev.target === removeFromCart: {
-        const remain = cartDomain.removeFromCart({ product: data.product })
+        const remain = domains.cart.removeFromCart({ product: data.product })
         count.textContent = `${remain}`
-        event.dispatchDomainEvent(new ChangeCartEvent({ product: data.product, action: 'remove' }))
         if (remain === 0) {
           otherAddToCartWrapper.classList.remove(classes.show)
           firstAddToCart.classList.add(classes.show)
@@ -51,9 +48,8 @@ export async function AddToCart({ dom, event, data }: ComponentParam<{ product: 
         break
       }
       case ev.target === secondAddFromCart: {
-        const c = cartDomain.addToCart({ product: data.product })
+        const c = domains.cart.addToCart({ product: data.product })
         count.textContent = `${c}`
-        event.dispatchDomainEvent(new ChangeCartEvent({ product: data.product, action: 'add' }))
         break
       }
     }

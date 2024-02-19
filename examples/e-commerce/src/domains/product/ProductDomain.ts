@@ -1,9 +1,6 @@
 
-
-class ProductDomain {
-  constructor() {
-
-  }
+export class ProductDomain {
+  constructor(private _eventTarget: EventTarget) {}
 
   async fetchProductsCategories(signal: AbortSignal): Promise<ProductCategory[]> {
     const res = await fetch('https://fakestoreapi.com/products/categories', { signal })
@@ -20,8 +17,6 @@ class ProductDomain {
     return await res.json() as Product[]
   }
 }
-
-export const productDomain = new ProductDomain()
 
 export interface ProductCategory {
   id: number

@@ -1,9 +1,10 @@
 import { Product } from "../product/ProductDomain";
+import { ChangeCartEvent, CheckoutEndedCartEvent } from "./events";
 
-class CartDomain {
+export class CartDomain {
   private products: Map<number, [Product, number]>
 
-  constructor() {
+  constructor(private eventTarget: EventTarget) {
     this.products = loadLocalStorage()
   }
 
@@ -33,6 +34,11 @@ class CartDomain {
 
     updateLocalStorage(this.products)
 
+    this.eventTarget.dispatchEvent(new ChangeCartEvent({
+      product,
+      action: 'add'
+    }))
+
     return value[1]
   }
 
@@ -51,6 +57,12 @@ class CartDomain {
     }
 
     updateLocalStorage(this.products)
+
+    this.eventTarget.dispatchEvent(new ChangeCartEvent({
+      product,
+      action: 'remove'
+    }))
+
 
     return value[1]
   }
@@ -82,6 +94,8 @@ class CartDomain {
   checkout() {
     this.products.clear()
     updateLocalStorage(this.products)
+
+    this.eventTarget.dispatchEvent(new CheckoutEndedCartEvent(null))
   }
 }
 
@@ -96,8 +110,6 @@ function loadLocalStorage() {
   }
   return new Map(JSON.parse(cart))
 }
-
-export const cartDomain = new CartDomain()
 
 export interface Cart {
   products: {

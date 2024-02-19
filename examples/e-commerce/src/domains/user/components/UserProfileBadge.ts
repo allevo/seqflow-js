@@ -1,14 +1,13 @@
 import { ComponentParam } from "seqflow-js"
-import { userDomain } from "../UserDomain"
 import { UserLoggedEvent, UserLoggedOutEvent } from "../events"
-import classes from './user-badge.module.css'
+import classes from './user-profile-badge.module.css'
 
 function getProfileUrl(user: { username: string }, size: number) {
   return `https://placehold.co/${size}?text=${user.username[0].toUpperCase()}`
 }
 
-export async function UserProfileBadge({ event, dom }: ComponentParam) {
-  const user = await userDomain.getUser() || {
+export async function UserProfileBadge({ event, dom, domains }: ComponentParam) {
+  const user = await domains.user.getUser() || {
     username: 'Guest'
   }
 
@@ -48,7 +47,7 @@ export async function UserProfileBadge({ event, dom }: ComponentParam) {
   )
   for await (const ev of events) {
     if (ev instanceof UserLoggedEvent || ev instanceof UserLoggedOutEvent) {
-      let user = await userDomain.getUser() || {
+      let user = await domains.user.getUser() || {
         username: 'Guest'
       }
       imgEl.src = getProfileUrl(user, size)

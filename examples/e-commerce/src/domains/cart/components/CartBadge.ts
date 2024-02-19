@@ -1,10 +1,9 @@
 import { ComponentParam } from "seqflow-js";
 import { ChangeCartEvent, CheckoutEndedCartEvent } from "../events";
-import { cartDomain } from '../CartDomain'
 import classes from './cart-badge.module.css'
 
-export async function CartBadge({ event, dom }: ComponentParam) {
-  let count = cartDomain.getProductCount()
+export async function CartBadge({ event, dom, domains }: ComponentParam) {
+  let count = domains.cart.getProductCount()
   dom.render(`
 <a href="/cart" class="${classes.numberOfProductsInCart}">
   <i class="fa-solid fa-cart-shopping ${classes.icon}"></i>
@@ -20,7 +19,7 @@ export async function CartBadge({ event, dom }: ComponentParam) {
   )
   for await (const ev of events) {
     if (ev instanceof ChangeCartEvent || ev instanceof CheckoutEndedCartEvent) {
-      numberOfProductsInCart.textContent = `${cartDomain.getProductCount()}`
+      numberOfProductsInCart.textContent = `${domains.cart.getProductCount()}`
     } else {
       // click event
       event.navigate('/cart')

@@ -1,14 +1,13 @@
 import { ComponentParam } from "seqflow-js"
-import { productDomain } from "../domains/product/ProductDomain"
 import { CardList } from "../components/CardList"
-import { ProductItem } from "../domains/product/components/ProductItem"
+import { components } from "../domains/product"
 
 
 async function Loading({ dom: { render } }: ComponentParam) {
   render(`<div>Loading...</div>`)
 }
 
-export async function Category({ dom, signal }: ComponentParam) {
+export async function Category({ dom, signal, domains }: ComponentParam) {
   dom.render(`<div>
   <div id='loading'></div>
   <div id="banner"></div>
@@ -23,7 +22,7 @@ export async function Category({ dom, signal }: ComponentParam) {
   const loadingElement = dom.querySelector('#loading')
   const { 1: categoryId } = p
 
-  const products = await productDomain.fetchProductsByCategory({ categoryId }, signal)
+  const products = await domains.product.fetchProductsByCategory({ categoryId }, signal)
 
   loadingElement.remove()
 
@@ -31,7 +30,7 @@ export async function Category({ dom, signal }: ComponentParam) {
     data: {
       prefix: 'category',
       items: products,
-      component: ProductItem
+      component: components.ProductItem
     }
   })
 }

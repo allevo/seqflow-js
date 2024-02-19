@@ -1,7 +1,6 @@
 import { iterOnEvents } from "./event-utils"
 
-const CHILD_OPTION_ERROR = 'This component has no input data' as const
-export type ChildOption<T = unknown> = unknown extends T ? typeof CHILD_OPTION_ERROR : {
+export type ChildOption<T = unknown> = {
   data: T,
 }
 
@@ -14,7 +13,7 @@ function generateAbortController() {
 }
 
 export class DomainEvent<T> extends Event implements CustomEvent<T> {
-  static domainName: string
+  static domainName: keyof Domains
   static t: string
   detail: T;
 
@@ -31,7 +30,7 @@ export class DomainEvent<T> extends Event implements CustomEvent<T> {
 export type GetDataType<T> = T extends DomainEvent<infer R> ? R : never
 export type GetArrayOf<T> = () => T[]
 
-export function createDomainEventClass<T>(domainName: string, type: string) {
+export function createDomainEventClass<T>(domainName: keyof Domains, type: string) {
   class CustomBusinessEvent extends DomainEvent<T> {
     static readonly domainName = domainName
     static readonly t = type
@@ -44,7 +43,8 @@ export function createDomainEventClass<T>(domainName: string, type: string) {
 }
 
 export interface ComponentParam<T = unknown> {
-  data: unknown extends T ? 'This component don\'t defined the data type' : T
+  data: T
+  domains: Domains
   signal: AbortSignal
   _controller: AbortController
   dom: {
@@ -76,21 +76,18 @@ interface ComponentFn<T = unknown> {
   (param: ComponentParam<T>): Promise<void>;
 }
 
-let _config: GlobalConfiguration = {
-  businessEventBus: {},
-  navigationEventBus: new EventTarget()
-}
 function Component<T = unknown>(
   el: HTMLElement,
   fn: (p: ComponentParam<T>) => Promise<void>,
-  option?: ChildOption<T>
+  option: ChildOption<T>,
+  configuration: GlobalConfiguration,
 ) {
   let controller = generateAbortController()
   let children = {} as Record<string, ReturnType<typeof Component>>
 
   controller.signal.addEventListener('abort', () => {
     for (const mountPoint in children) {
-      _config.log?.({
+      configuration.log({
         msg: 'Aborting child component',
         data: {
           parent: fn.name,
@@ -101,7 +98,7 @@ function Component<T = unknown>(
     }
   })
 
-  _config.log?.({
+  configuration.log({
     msg: 'Component Mounted',
     data: {
       name: fn.name,
@@ -111,9 +108,10 @@ function Component<T = unknown>(
 
   let isFirstRender = true
   const b: Omit<ComponentParam<T>, 'data'> = {
+    domains: configuration.domains,
     dom: {
       render(html: string) {
-        _config.log?.({
+        configuration.log({
           msg: 'Rendering component',
           data: {
             name: fn.name,
@@ -125,7 +123,7 @@ function Component<T = unknown>(
           controller.abort('Rerendering the component')
 
           for (const mountPoint in children) {
-            _config.log?.({
+            configuration.log({
               msg: 'Aborting child component',
               data: {
                 parent: fn.name,
@@ -143,7 +141,7 @@ function Component<T = unknown>(
 
         el.innerHTML = html;
 
-        _config.log?.({
+        configuration.log({
           msg: 'Component rendered',
           data: {
             name: fn.name,
@@ -168,7 +166,7 @@ function Component<T = unknown>(
           throw new Error('Invalid number of arguments')
         }
 
-        _config.log?.({
+        configuration.log({
           msg: 'Mounting child component',
           data: {
             parent: fn.name,
@@ -178,12 +176,12 @@ function Component<T = unknown>(
         })
 
         const el2 = el.querySelector(`#${id}`)! as HTMLElement;
-        children[id] = Component(el2, childFn, option)
+        children[id] = Component(el2, childFn, option, configuration)
       },
     },
     event: {
       navigationEvent() {
-        return iterOnEvents<NavigationEvent>(_config.navigationEventBus, 'navigate', {
+        return iterOnEvents<NavigationEvent>(configuration.navigationEventBus, 'navigate', {
           preventDefault: true,
           stopPropagation: true,
           stopImmediatePropagation: false,
@@ -193,8 +191,8 @@ function Component<T = unknown>(
       domainEvent<BEE extends typeof DomainEvent<any>>(b: BEE): (b: AbortController) => AsyncGenerator<InstanceType<BEE>> {
         const domainKey = b.domainName
         const type = b.t
-  
-        _config.log?.({
+
+        configuration.log({
           msg: 'Waiting for Business event',
           data: {
             name: fn.name,
@@ -203,15 +201,15 @@ function Component<T = unknown>(
             type,
           }
         })
-  
-        return iterOnEvents<InstanceType<BEE>>(_config.businessEventBus[domainKey], type, {
+
+        return iterOnEvents<InstanceType<BEE>>(configuration.domainEventBuses[domainKey], type, {
           preventDefault: false,
           stopPropagation: false,
           stopImmediatePropagation: false,
         })
       },
       domEvent<K extends keyof HTMLElementEventMap>(type: K, filter?: (el: HTMLElementEventMap[K]) => boolean) {
-        _config.log?.({
+        configuration.log({
           msg: 'Waiting for DOM event ' + type,
           data: {
             name: fn.name,
@@ -228,7 +226,7 @@ function Component<T = unknown>(
       waitEvent<T extends Event[]>(...fns: {
         [I in keyof T]: (controller: AbortController) => AsyncGenerator<T[I]>
       }): AsyncGenerator<T[number]> {
-        _config.log?.({
+        configuration.log({
           msg: 'Waiting for event',
           data: {
             name: fn.name,
@@ -295,7 +293,7 @@ function Component<T = unknown>(
         })()
       },
       navigate(path: string) {
-        _config.log?.({
+        configuration.log({
           msg: 'Navigating',
           data: {
             name: fn.name,
@@ -307,11 +305,11 @@ function Component<T = unknown>(
           path = url.pathname + url.search
         }
   
-        _config.navigationEventBus.dispatchEvent(new NavigationEvent(path))
+        configuration.navigationEventBus.dispatchEvent(new NavigationEvent(path))
         window.history.pushState({}, '', path)
       },
       dispatchEvent(event: Event) {
-        _config.log?.({
+        configuration.log({
           msg: 'Dispatching event',
           data: {
             name: fn.name,
@@ -322,7 +320,7 @@ function Component<T = unknown>(
       },
       dispatchDomainEvent<D, BE extends DomainEvent<D> = DomainEvent<D>>(event: BE) {
         const domainName = (event.constructor as typeof DomainEvent<D>).domainName
-        _config.log?.({
+        configuration.log({
           msg: 'Dispatching business event',
           data: {
             name: fn.name,
@@ -330,20 +328,20 @@ function Component<T = unknown>(
             eventType: event.type,
           }
         })
-        _config.businessEventBus[domainName].dispatchEvent(event);
+        ;(configuration.domainEventBuses[domainName] as EventTarget).dispatchEvent(event);
       },
     },
     _controller: controller,
     signal: controller.signal,
   };
 
-  if (option && option !== CHILD_OPTION_ERROR) {
+  if (option && option.data) {
     ;(b as ComponentParam<{}>).data = option.data as {};
   }
 
   fn(b as ComponentParam<T>).then(
     () => {
-      _config.log?.({
+      configuration.log({
         msg: 'ENDED!',
         data: {
           name: fn.name,
@@ -353,8 +351,8 @@ function Component<T = unknown>(
     },
     (e) => {
       /* v8 ignore next 9 */
-      _config.log?.({
-        msg: 'ENDED!',
+      configuration.log({
+        msg: 'ENDED WITH ERROR!',
         data: {
           name: fn.name,
           id: (controller as any).id,
@@ -367,43 +365,110 @@ function Component<T = unknown>(
   return b as ComponentParam<T>
 }
 
-interface GlobalConfiguration {
-  log?: (log: {
+interface DomainCreator<Domain> {
+  (domainEventBus: EventTarget, allDomainEventBus: Record<string, EventTarget>): Domain
+}
+
+type StartParameters = {
+  log: (log: {
     msg: string
   } & any) => void
-  businessEventBus: BusinessEventBus
+  domains: { [K in keyof Domains]: DomainCreator<Domains[K]> }
+  navigationEventBus: EventTarget
+}
+interface GlobalConfiguration {
+  log: (log: {
+    msg: string
+  } & any) => void
+  domains: Domains,
+  domainEventBuses: { [K in keyof Domains]: EventTarget },
   navigationEventBus: EventTarget
 }
 
-export function start(el: HTMLElement, fn: ComponentFn, config?: GlobalConfiguration) {
-  _config = config || {
-    businessEventBus: {},
-    navigationEventBus: new EventTarget()
+function startSeqFlow<T>(el: HTMLElement, fn: ComponentFn<T>): AbortController;
+function startSeqFlow<T>(el: HTMLElement, fn: ComponentFn<T>, config: Partial<StartParameters>): AbortController;
+function startSeqFlow<T>(el: HTMLElement, fn: ComponentFn<T>, option?: ChildOption<T>, config?: Partial<StartParameters>): AbortController;
+
+function startSeqFlow<T>() {
+  let el: HTMLElement
+  let fn: ComponentFn<T>
+  let config: Partial<StartParameters> | undefined
+  let option: ChildOption<T>
+
+  if (arguments.length === 2) {
+    el = arguments[0]
+    fn = arguments[1]
+    option = {} as ChildOption<T>
+  } else if (arguments.length === 3) {
+    el = arguments[0]
+    fn = arguments[1]
+    config = arguments[2]
+    option = {} as ChildOption<T>
+  } else if (arguments.length === 4) {
+    el = arguments[0]
+    fn = arguments[1]
+    option = arguments[2]
+    config = arguments[3]
+  } else {
+    throw new Error('Invalid parameters count')
   }
-  const a = Component(el, fn);
+
+
+  const params = applyDefault(config)
+  const configuration = createConfiguration(params)
+  const a = Component(el, fn, option, configuration);
 
   a._controller.signal.addEventListener('abort', () => {
-    _config.log?.({
+    configuration.log({
       msg: 'Component aborted',
       data: {
         name: fn.name,
       }
     })
-
-    _config = {
-      businessEventBus: {},
-      navigationEventBus: new EventTarget()
-    }
   })
 
   return a._controller
 }
 
-export function createBusinessEventBus(): EventTarget {
-  return new EventTarget()
+export const start = startSeqFlow
+
+function createConfiguration(params): GlobalConfiguration {
+  const domainEventBuses = {}
+  for (const domainName in params.domains) {
+    domainEventBuses[domainName] = new EventTarget()
+  }
+
+  const domains = {}
+  for (const domainName in params.domains) {
+    domains[domainName] = params.domains[domainName](domainEventBuses[domainName])
+  }
+
+  const config: GlobalConfiguration = {
+    log: params.log,
+    navigationEventBus: params.navigationEventBus,
+    domains: domains as Domains,
+    domainEventBuses: domainEventBuses as GlobalConfiguration['domainEventBuses'],
+  }
+  return config
 }
-export interface BusinessEventBus {
-  [key: string]: EventTarget
+
+function noop() {}
+function applyDefault(config?: Partial<StartParameters>) {
+  const c: Partial<StartParameters> = config || {}
+  if (!c.log) {
+    c.log = noop
+  }
+  if (!c.domains) {
+    c.domains = {} as StartParameters['domains']
+  }
+  if (!c.navigationEventBus) {
+    c.navigationEventBus = new EventTarget()
+  }
+
+  return c as StartParameters
+}
+
+export interface Domains {
 }
 
 export class NavigationEvent extends Event {
@@ -411,5 +476,3 @@ export class NavigationEvent extends Event {
     super('navigate', { bubbles: false })
   }
 }
-
-// 76-81,196-197,239-240,264,298-315,331-336,340-348,351-356,371-372,375-381,397-402,405-413

@@ -1,12 +1,10 @@
 import { ComponentParam } from "seqflow-js";
 import { Cart } from "../CartDomain";
-import { userDomain } from "../../user/UserDomain"
-import { cartDomain } from "../CartDomain";
 import { Product } from "../../product/ProductDomain";
 import classes from './CartProductList.module.css'
 import { ChangeCartEvent } from "../events";
 
-export async function CartProduct({ dom, data, event }: ComponentParam<{ product: Product, count: number, subTotal: number }>) {
+export async function CartProduct({ dom, data, event, domains }: ComponentParam<{ product: Product, count: number, subTotal: number }>) {
   dom.render(`
 <div class="${classes.product}" id="cart-product-${data.product.id}">
   <div class="${classes.left}">
@@ -30,14 +28,14 @@ export async function CartProduct({ dom, data, event }: ComponentParam<{ product
   )
   for await (const ev of events) {
     if (button.contains(ev.target as Node)) {
-      cartDomain.removeAllFromCart({ product: data.product })
+      domains.cart.removeAllFromCart({ product: data.product })
       event.dispatchDomainEvent(new ChangeCartEvent({ product: data.product, action: 'remove-all' }))
     }
   }
 
 }
 
-export async function CartProductList({ dom, data, event }: ComponentParam<{ cart: Cart }>) {
+export async function CartProductList({ dom, data, event, domains }: ComponentParam<{ cart: Cart }>) {
   dom.render(`
 <div id="cart-product-list">
   <ul class="${classes.cartProducts}" id="cart-products">
@@ -65,7 +63,7 @@ export async function CartProductList({ dom, data, event }: ComponentParam<{ car
   const cartTotal = dom.querySelector('#cart-total')!
   const cartProducts = dom.querySelector('#cart-products')!
 
-  const isLogged = userDomain.isLoggedIn()
+  const isLogged = domains.user.isLoggedIn()
   if (isLogged) {
     cartLoginWrapper.remove()
   } else {
@@ -84,7 +82,7 @@ export async function CartProductList({ dom, data, event }: ComponentParam<{ car
       event.navigate('/checkout')
     }
     if (ev instanceof ChangeCartEvent) {
-      const cart = cartDomain.getCart()
+      const cart = domains.cart.getCart()
       cartProducts.innerHTML = cart.products.map(({ product: { id } }) => `<li id="cart-item-${id}"></li>`).join('')
       for (const { product, count, subTotal } of cart.products) {
         dom.child(`cart-item-${product.id}`, CartProduct, { data: { product, count, subTotal } })
