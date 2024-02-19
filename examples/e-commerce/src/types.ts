@@ -1,1 +1,1 @@
-import './types.d'
+import "./types.d";

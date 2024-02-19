@@ -1,11 +1,11 @@
-import { ProductCategoryList } from './components/ProductCategoryList'
-import { ProductItem } from './components/ProductItem'
+import { ProductCategoryList } from "./components/ProductCategoryList";
+import { ProductItem } from "./components/ProductItem";
 
-export * from './ProductDomain'
+export * from "./ProductDomain";
 
 const components = {
-  ProductCategoryList,
-  ProductItem,
-}
+	ProductCategoryList,
+	ProductItem,
+};
 
-export { components }
+export { components };

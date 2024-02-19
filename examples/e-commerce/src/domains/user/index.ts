@@ -1,8 +1,7 @@
+export * from "./UserDomain";
+export * from "./events";
+import { UserProfileBadge } from "./components/UserProfileBadge";
 
-export * from './UserDomain'
-export * from './events'
-import { UserProfileBadge } from './components/UserProfileBadge'
+const components = { UserProfileBadge };
 
-const components = { UserProfileBadge }
-
-export { components }
+export { components };
