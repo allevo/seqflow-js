@@ -44,6 +44,7 @@ export async function CartProductList({
 	data,
 	event,
 	domains,
+	router,
 }: ComponentParam<{ cart: Cart }>) {
 	dom.render(`
 <div id="cart-product-list">
@@ -89,10 +90,10 @@ export async function CartProductList({
 	);
 	for await (const ev of events) {
 		if (ev.target === cartLoginLink) {
-			event.navigate("/login");
+			router.navigate("/login");
 		}
 		if (ev.target === checkoutButton && isLogged) {
-			event.navigate("/checkout");
+			router.navigate("/checkout");
 		}
 		if (ev instanceof ChangeCartEvent) {
 			const cart = domains.cart.getCart();

@@ -1,9 +1,9 @@
 import { ComponentParam } from "seqflow-js";
 
-export async function Profile({ dom, event, domains }: ComponentParam) {
+export async function Profile({ dom, router, domains }: ComponentParam) {
 	const user = await domains.user.getUser();
 	if (!user) {
-		event.navigate("/login");
+		router.navigate("/login");
 		return;
 	}
 	dom.render(`

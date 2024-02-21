@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "biome:check": "turbo run biome:check"
   },
   "keywords": [],
   "author": "",

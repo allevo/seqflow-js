@@ -10,6 +10,7 @@ export async function Header({
 	dom,
 	event,
 	data,
+	router,
 }: ComponentParam<{ user?: UserType }>) {
 	dom.render(`
 <header>
@@ -52,9 +53,9 @@ export async function Header({
 		} else if (ev instanceof UserLoggedOutEvent) {
 			header.classList.remove(classes.logged);
 		} else if (ev.target === loginButton) {
-			event.navigate("/login");
+			router.navigate("/login");
 		} else if (ev.target === storeLogo) {
-			event.navigate("/");
+			router.navigate("/");
 		} else {
 			console.log(ev);
 			console.error("Unknown event", ev);

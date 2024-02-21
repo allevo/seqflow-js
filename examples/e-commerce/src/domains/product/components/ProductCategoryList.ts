@@ -7,6 +7,7 @@ async function CategoryItem({
 	dom,
 	data,
 	event,
+	router,
 }: ComponentParam<ProductCategory>) {
 	dom.render(`
 <a class="${classes.categoryAnchor}" href="/category/${data.name}">
@@ -16,7 +17,7 @@ async function CategoryItem({
 
 	const events = event.waitEvent(event.domEvent("click"));
 	for await (const _ of events) {
-		event.navigate(`/category/${data.name}`);
+		router.navigate(`/category/${data.name}`);
 	}
 }
 

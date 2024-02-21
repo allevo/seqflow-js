@@ -2,7 +2,12 @@ import { ComponentParam } from "seqflow-js";
 import { ChangeCartEvent, CheckoutEndedCartEvent } from "../events";
 import classes from "./cart-badge.module.css";
 
-export async function CartBadge({ event, dom, domains }: ComponentParam) {
+export async function CartBadge({
+	event,
+	dom,
+	domains,
+	router,
+}: ComponentParam) {
 	const count = domains.cart.getProductCount();
 	dom.render(`
 <a href="/cart" class="${classes.numberOfProductsInCart}">
@@ -24,7 +29,7 @@ export async function CartBadge({ event, dom, domains }: ComponentParam) {
 			numberOfProductsInCart.textContent = `${domains.cart.getProductCount()}`;
 		} else {
 			// click event
-			event.navigate("/cart");
+			router.navigate("/cart");
 		}
 	}
 }

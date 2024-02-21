@@ -52,6 +52,11 @@ export interface ComponentParam<T = unknown> {
 	domains: Domains;
 	signal: AbortSignal;
 	_controller: AbortController;
+	router: {
+		navigate(path: string);
+		segments: string[];
+		query: Map<string, string>;
+	};
 	dom: {
 		render(html: string): void;
 		querySelector<E = HTMLElement>(selector: string): E;
@@ -71,7 +76,6 @@ export interface ComponentParam<T = unknown> {
 			b: BEE,
 		): (b: AbortController) => AsyncGenerator<InstanceType<BEE>>;
 		navigationEvent(): (controller: AbortController) => AsyncGenerator<Event>;
-		navigate(path: string);
 		waitEvent<T extends Event[]>(
 			...fns: {
 				[I in keyof T]: (controller: AbortController) => AsyncGenerator<T[I]>;
@@ -116,6 +120,37 @@ function Component<T = unknown>(
 	let isFirstRender = true;
 	const b: Omit<ComponentParam<T>, "data"> = {
 		domains: configuration.domains,
+		router: {
+			navigate(path: string) {
+				configuration.log({
+					msg: "Navigating",
+					data: {
+						name: fn.name,
+						path,
+					},
+				});
+				let navigationPath = path;
+				if (navigationPath.startsWith("http")) {
+					const url = new URL(path);
+					navigationPath = url.pathname + url.search;
+				}
+
+				configuration.navigationEventBus.dispatchEvent(
+					new NavigationEvent(navigationPath),
+				);
+				window.history.pushState({}, "", navigationPath);
+			},
+			get segments() {
+				const segments = window.location.pathname.split("/");
+				// first element is always empty
+				segments.shift();
+				return segments;
+			},
+			get query() {
+				const url = new URL(window.location.href);
+				return new Map<string, string>(url.searchParams);
+			},
+		},
 		dom: {
 			render(html: string) {
 				configuration.log({
@@ -323,25 +358,6 @@ function Component<T = unknown>(
 						}
 					}
 				})();
-			},
-			navigate(path: string) {
-				configuration.log({
-					msg: "Navigating",
-					data: {
-						name: fn.name,
-						path,
-					},
-				});
-				let navigationPath = path;
-				if (navigationPath.startsWith("http")) {
-					const url = new URL(path);
-					navigationPath = url.pathname + url.search;
-				}
-
-				configuration.navigationEventBus.dispatchEvent(
-					new NavigationEvent(navigationPath),
-				);
-				window.history.pushState({}, "", navigationPath);
 			},
 			dispatchEvent(event: Event) {
 				configuration.log({

@@ -1,6 +1,11 @@
 import { ComponentParam } from "seqflow-js";
 
-export async function Checkout({ dom, event, domains }: ComponentParam) {
+export async function Checkout({
+	dom,
+	event,
+	domains,
+	router,
+}: ComponentParam) {
 	domains.cart.checkout();
 
 	dom.render(`
@@ -12,7 +17,7 @@ export async function Checkout({ dom, event, domains }: ComponentParam) {
 	const events = event.waitEvent(event.domEvent("click"));
 	for await (const ev of events) {
 		if (ev.target === goHomeAfterCheckout) {
-			event.navigate("/");
+			router.navigate("/");
 		}
 	}
 }

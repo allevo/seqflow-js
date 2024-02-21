@@ -10,6 +10,7 @@ export async function UserProfileBadge({
 	event,
 	dom,
 	domains,
+	router,
 }: ComponentParam) {
 	const user = (await domains.user.getUser()) || {
 		username: "Guest",
@@ -59,9 +60,9 @@ export async function UserProfileBadge({
 			imgEl.src = getProfileUrl(user, size);
 		} else if (ev.type === "click") {
 			if (ev.target instanceof HTMLAnchorElement) {
-				event.navigate(ev.target.href);
+				router.navigate(ev.target.href);
 			} else if (ev.target instanceof HTMLImageElement) {
-				event.navigate("/profile");
+				router.navigate("/profile");
 			}
 		} else if (ev.type === "mouseover") {
 			profileHeaderMenu.classList.add(classes.show);

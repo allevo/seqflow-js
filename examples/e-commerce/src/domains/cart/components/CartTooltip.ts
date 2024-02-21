@@ -2,7 +2,12 @@ import { ComponentParam } from "seqflow-js";
 import { ChangeCartEvent, CheckoutEndedCartEvent } from "../events";
 import classes from "./CartTooltip.module.css";
 
-export async function CartTooltip({ event, dom, domains }: ComponentParam) {
+export async function CartTooltip({
+	event,
+	dom,
+	domains,
+	router,
+}: ComponentParam) {
 	const hasProduct = domains.cart.getProductCount() !== 0;
 	dom.render(`
 <div class="${classes.wrapper}" style="display: ${
@@ -36,7 +41,7 @@ export async function CartTooltip({ event, dom, domains }: ComponentParam) {
 				break;
 			}
 			case ev.type === "click" && ev.target === cartTooltipLink: {
-				event.navigate("/cart");
+				router.navigate("/cart");
 				break;
 			}
 		}

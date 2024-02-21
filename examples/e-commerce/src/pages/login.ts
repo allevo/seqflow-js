@@ -1,7 +1,7 @@
 import { ComponentParam } from "seqflow-js";
 import { UserType } from "../domains/user";
 
-export async function Login({ dom, event, domains }: ComponentParam) {
+export async function Login({ dom, event, domains, router }: ComponentParam) {
 	dom.render(`<div>
 <form>
 	<label for="username">Username</label>
@@ -30,5 +30,5 @@ export async function Login({ dom, event, domains }: ComponentParam) {
 		break;
 	}
 
-	event.navigate("/");
+	router.navigate("/");
 }
