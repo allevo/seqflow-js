@@ -27,11 +27,7 @@ export class CartDomain {
 		}
 
 		const value = this.products.get(productId);
-
-		console.log(productId, value);
-
 		value[1] += 1;
-
 		updateLocalStorage(this.products);
 
 		this.eventTarget.dispatchEvent(

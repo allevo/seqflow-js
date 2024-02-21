@@ -3,8 +3,14 @@
   "version": "0.0.1-beta.1",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test"
+  },
   "keywords": [],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "turbo": "^1.12.4"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "counter",
+  "name": "counter-domains",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
@@ -29,6 +29,6 @@
     "vitest": "^1.2.2"
   },
   "dependencies": {
-    "seqflow-js": "link:../../packages/seqflow-js"
+    "seqflow-js": "workspace:*"
   }
 }

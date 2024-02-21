@@ -1,5 +1,4 @@
 import { ComponentParam, NavigationEvent } from "seqflow-js";
-import { Header } from "./components/Header";
 import { components } from "./domains/cart";
 import { UserType } from "./domains/user";
 import { Cart } from "./pages/cart";
@@ -10,6 +9,7 @@ import { Login } from "./pages/login";
 import { Logout } from "./pages/logout";
 import { Profile } from "./pages/profile";
 import classes from "./router.module.css";
+import { Header } from "./components/header";
 
 async function NotFound({ dom: { render } }: ComponentParam) {
 	render(`
