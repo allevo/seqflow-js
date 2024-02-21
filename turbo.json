@@ -9,6 +9,9 @@
     },
     "test": {
       "dependsOn": ["build"]
+    },
+    "biome:check": {
+      "dependsOn": ["^biome:check"]
     }
   }
 }
