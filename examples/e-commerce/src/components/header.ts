@@ -3,7 +3,7 @@ import { CartBadge } from "../domains/cart/components/CartBadge";
 import { UserType } from "../domains/user";
 import { UserProfileBadge } from "../domains/user/components/UserProfileBadge";
 import { UserLoggedEvent, UserLoggedOutEvent } from "../domains/user/events";
-import classes from "./Header.module.css";
+import classes from "./header.module.css";
 import icon from "./icon.png";
 
 export async function Header({
