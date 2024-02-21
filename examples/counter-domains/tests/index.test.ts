@@ -1,6 +1,6 @@
-import { expect, test } from "vitest";
-import { waitFor, screen } from "@testing-library/dom";
+import { screen, waitFor } from "@testing-library/dom";
 import { start } from "seqflow-js";
+import { expect, test } from "vitest";
 import { Main } from "../src/Main";
 import { CounterDomain } from "../src/domains/counter";
 
