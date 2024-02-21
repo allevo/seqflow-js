@@ -35,9 +35,3 @@ export class CounterDomain {
 		return this.counter;
 	}
 }
-
-declare module "seqflow-js" {
-	interface Domains {
-		counter: CounterDomain;
-	}
-}

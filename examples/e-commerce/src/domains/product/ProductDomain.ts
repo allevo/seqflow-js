@@ -4,7 +4,7 @@ export class ProductDomain {
 	async fetchProductsCategories(
 		signal: AbortSignal,
 	): Promise<ProductCategory[]> {
-		const res = await fetch("https://fakestoreapi.com/products/categories", {
+		const res = await fetch("/products/categories", {
 			signal,
 		});
 		const categories = (await res.json()) as string[];
@@ -19,10 +19,7 @@ export class ProductDomain {
 		{ categoryId }: { categoryId: string },
 		signal: AbortSignal,
 	): Promise<Product[]> {
-		const res = await fetch(
-			`https://fakestoreapi.com/products/category/${categoryId}`,
-			{ signal },
-		);
+		const res = await fetch(`/products/category/${categoryId}`, { signal });
 		return (await res.json()) as Product[];
 	}
 }

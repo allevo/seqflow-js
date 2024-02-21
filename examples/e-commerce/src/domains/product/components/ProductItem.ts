@@ -1,7 +1,7 @@
 import { ComponentParam } from "seqflow-js";
+import { AddToCart } from "../../cart/components/AddToCart";
 import { Product } from "../ProductDomain";
 import classes from "./ProductItem.module.css";
-import { AddToCart } from "../../cart/components/AddToCart";
 
 export async function ProductItem({
 	dom,

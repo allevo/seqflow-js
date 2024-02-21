@@ -1,8 +1,8 @@
 import { ComponentParam } from "seqflow-js";
-import { Cart } from "../CartDomain";
 import { Product } from "../../product/ProductDomain";
-import classes from "./CartProductList.module.css";
+import { Cart } from "../CartDomain";
 import { ChangeCartEvent } from "../events";
+import classes from "./CartProductList.module.css";
 
 export async function CartProduct({
 	dom,

@@ -409,6 +409,7 @@ interface DomainCreator<Domain> {
 	(
 		domainEventBus: EventTarget,
 		allDomainEventBus: Record<string, EventTarget>,
+		config: ApplicationConfig,
 	): Domain;
 }
 
@@ -420,12 +421,14 @@ type StartParameters = {
 	log: (log: Log) => void;
 	domains: { [K in keyof Domains]: DomainCreator<Domains[K]> };
 	navigationEventBus: EventTarget;
+	config: ApplicationConfig;
 };
 interface GlobalConfiguration {
 	log: (log: Log) => void;
 	domains: Domains;
 	domainEventBuses: { [K in keyof Domains]: EventTarget };
 	navigationEventBus: EventTarget;
+	config: ApplicationConfig;
 }
 
 function startSeqFlow<T>(el: HTMLElement, fn: ComponentFn<T>): AbortController;
@@ -483,7 +486,7 @@ function startSeqFlow<T>(...args: unknown[]) {
 
 export const start = startSeqFlow;
 
-function createConfiguration(params): GlobalConfiguration {
+function createConfiguration(params: StartParameters): GlobalConfiguration {
 	const domainEventBuses = {};
 	for (const domainName in params.domains) {
 		domainEventBuses[domainName] = new EventTarget();
@@ -493,6 +496,8 @@ function createConfiguration(params): GlobalConfiguration {
 	for (const domainName in params.domains) {
 		domains[domainName] = params.domains[domainName](
 			domainEventBuses[domainName],
+			domainEventBuses,
+			params.config,
 		);
 	}
 
@@ -502,6 +507,7 @@ function createConfiguration(params): GlobalConfiguration {
 		domains: domains as Domains,
 		domainEventBuses:
 			domainEventBuses as GlobalConfiguration["domainEventBuses"],
+		config: params.config,
 	};
 	return config;
 }
@@ -518,12 +524,17 @@ function applyDefault(config?: Partial<StartParameters>) {
 	if (!c.navigationEventBus) {
 		c.navigationEventBus = new EventTarget();
 	}
+	if (!c.config) {
+		c.config = {} as StartParameters["config"];
+	}
 
 	return c as StartParameters;
 }
 
-// biome-ignore lint/complexity/noBannedTypes: This type is fulfilled by the user
-export type Domains = {};
+// biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
+export interface Domains {}
+// biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
+export interface ApplicationConfig {}
 
 export class NavigationEvent extends Event {
 	constructor(public readonly path: string) {

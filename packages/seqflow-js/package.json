@@ -12,6 +12,7 @@
     "test": "npm-run-all biome unit build",
     "unit": "vitest --run",
     "biome": "biome ci ./src",
+    "biome:check": "biome check --apply src tests",
     "build": "vite build -c vite.config.js"
   },
   "keywords": [],

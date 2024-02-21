@@ -45,7 +45,7 @@ export class UserDomain {
 	async login({
 		username,
 	}: { username: string }): Promise<UserType | undefined> {
-		const r = await fetch("https://fakestoreapi.com/users");
+		const r = await fetch("/users");
 		const users = (await r.json()) as UserType[];
 		this.user = users.find((u) => u.username === username);
 		if (this.user) {

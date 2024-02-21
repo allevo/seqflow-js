@@ -1,15 +1,15 @@
 import { ComponentParam, NavigationEvent } from "seqflow-js";
 import { Header } from "./components/Header";
+import { components } from "./domains/cart";
+import { UserType } from "./domains/user";
+import { Cart } from "./pages/cart";
+import { Category } from "./pages/category";
+import { Checkout } from "./pages/checkout";
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
-import { Profile } from "./pages/profile";
 import { Logout } from "./pages/logout";
-import { Cart } from "./pages/cart";
+import { Profile } from "./pages/profile";
 import classes from "./router.module.css";
-import { Category } from "./pages/category";
-import { components } from "./domains/cart";
-import { Checkout } from "./pages/checkout";
-import { UserType } from "./domains/user";
 
 async function NotFound({ dom: { render } }: ComponentParam) {
 	render(`

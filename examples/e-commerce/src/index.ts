@@ -1,18 +1,11 @@
-import { ComponentParam, start } from "seqflow-js";
-import { Router } from "./router";
-import "./index.css";
-import { UserDomain } from "./domains/user";
+import { start } from "seqflow-js";
+import { Main } from "./Main";
 import { CartDomain } from "./domains/cart";
 import { ProductDomain } from "./domains/product";
+import { UserDomain } from "./domains/user";
+import "./index.css";
 
-async function main({ dom, domains }: ComponentParam) {
-	await domains.user.restoreUser();
-
-	dom.render(`<div id='router'></div>`);
-	dom.child("router", Router);
-}
-
-start(document.getElementById("root"), main, {
+start(document.getElementById("root"), Main, {
 	log(log) {
 		console.log(log);
 	},
@@ -27,12 +20,9 @@ start(document.getElementById("root"), main, {
 			return new ProductDomain(eventTarget);
 		},
 	},
+	config: {
+		api: {
+			baseUrl: "https://fakestoreapi.com",
+		},
+	},
 });
-
-declare module "seqflow-js" {
-	interface Domains {
-		user: UserDomain;
-		cart: CartDomain;
-		product: ProductDomain;
-	}
-}

@@ -3,17 +3,16 @@ import { ChangeCartEvent, CheckoutEndedCartEvent } from "../events";
 import classes from "./CartTooltip.module.css";
 
 export async function CartTooltip({ event, dom, domains }: ComponentParam) {
+	const hasProduct = domains.cart.getProductCount() !== 0;
 	dom.render(`
-<div class="${classes.wrapper}">
-  <a class="${classes.cartTooltipLink}" id="cart-tooltip-link" href="/cart">Go to checkout</a>
+<div class="${classes.wrapper}" style="display: ${
+		hasProduct ? "inline" : "none"
+	}">
+	<a class="${classes.cartTooltipLink}" id="cart-tooltip-link" href="/cart">Go to checkout</a>
 </div>`);
 
 	const wrapper = dom.querySelector(`.${classes.wrapper}`);
 	const cartTooltipLink = dom.querySelector("#cart-tooltip-link");
-
-	if (domains.cart.getProductCount() !== 0) {
-		wrapper.classList.add(classes.show);
-	}
 
 	const events = event.waitEvent(
 		event.domainEvent(ChangeCartEvent),
@@ -25,15 +24,15 @@ export async function CartTooltip({ event, dom, domains }: ComponentParam) {
 			case ev instanceof ChangeCartEvent: {
 				const count = domains.cart.getProductCount();
 				if (count === 0) {
-					wrapper.classList.remove(classes.show);
+					wrapper.style.display = "none";
 				}
 				if (ev.detail.action === "add" && count === 1) {
-					wrapper.classList.add(classes.show);
+					wrapper.style.display = "inline";
 				}
 				break;
 			}
 			case ev instanceof CheckoutEndedCartEvent: {
-				wrapper.classList.remove(classes.show);
+				wrapper.style.display = "none";
 				break;
 			}
 			case ev.type === "click" && ev.target === cartTooltipLink: {

@@ -1,7 +1,7 @@
 import { ComponentParam } from "seqflow-js";
+import { CardList } from "../../../components/CardList";
 import { ProductCategory } from "../ProductDomain";
 import classes from "./ProductCategoryList.module.css";
-import { CardList } from "../../../components/CardList";
 
 async function CategoryItem({
 	dom,
