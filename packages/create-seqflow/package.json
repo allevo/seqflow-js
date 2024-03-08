@@ -1,0 +1,47 @@
+{
+  "name": "create-seqflow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "create-seqflow": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "npm-run-all biome build",
+    "biome": "biome ci ./src",
+    "biome:check": "biome check --apply src",
+    "start": "vite -c vite.config.js",
+    "build": "vite build --emptyOutDir -c vite.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@biomejs/biome": "1.5.3",
+    "@testing-library/dom": "^9.3.4",
+    "@types/css-modules": "^1.0.5",
+    "@types/jsdom": "^21.1.6",
+    "@types/node": "^20.11.24",
+    "@types/tar": "^6.1.11",
+    "chokidar": "^3.6.0",
+    "jsdom": "^24.0.0",
+    "npm-run-all": "^4.1.5",
+    "tsx": "^4.7.1",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.6.4",
+    "vite-plugin-full-reload": "^1.1.0",
+    "vite-plugin-live-reload": "^3.0.3",
+    "vitest": "^1.2.2"
+  },
+  "dependencies": {
+    "@types/prompts": "^2.4.9",
+    "bootstrap": "5.3.3",
+    "prompts": "^2.4.2",
+    "seqflow-js": "workspace:*",
+    "tar": "^6.2.0"
+  }
+}

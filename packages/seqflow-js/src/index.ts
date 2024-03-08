@@ -60,6 +60,7 @@ export interface ComponentParam<T = unknown> {
 	dom: {
 		render(html: string): void;
 		querySelector<E = HTMLElement>(selector: string): E;
+		querySelectorAll<E extends Node = Node>(selector): NodeListOf<E>;
 		child(id: string, fn: ComponentFn<unknown>);
 		child<E>(id: string, fn: ComponentFn<E>, option: ChildOption<E>);
 	};
@@ -192,6 +193,9 @@ function Component<T = unknown>(
 			},
 			querySelector<T = HTMLElement>(selector): T {
 				return el.querySelector(selector);
+			},
+			querySelectorAll<T extends Node = Node>(selector): NodeListOf<T> {
+				return el.querySelectorAll(selector);
 			},
 			child(...args: unknown[]) {
 				let id: string;

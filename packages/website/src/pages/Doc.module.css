@@ -1,0 +1,41 @@
+
+
+.top {
+	display: grid;
+    grid-template-areas: 'main';
+    gap: 1.5rem;
+
+    aside {
+        display: none;
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                a {
+                    margin-left: 10px;
+                    display: inline-block;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: 992px) {
+	.top {
+		grid-template-areas: 'sidebar main';
+		grid-template-columns: 1fr 5fr;
+
+		aside {
+			grid-area: sidebar;
+			position: sticky;
+			top: 0rem;
+			display: block !important;
+			height: calc(100vh - 6rem);
+			overflow-y: auto;
+		}
+	}
+}
