@@ -47,8 +47,11 @@ for (const page of pages) {
         url: `${baseUrl}${page.path}`,
     });
     await new Promise((resolve) => setTimeout(resolve, 1_000))
+
     const resultHtml = dom.serialize()
-    const resultHTMWithoutScripts = resultHtml.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '')
+    const resultHTMWithoutScripts = resultHtml
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '')
+        .replace('<link rel="custom">', '<script type="module" defer src="/assets/bootstrap.bundle.min.js"></script>')
 
     const result = minify(resultHTMWithoutScripts, {
         html5: true,
@@ -65,12 +68,20 @@ for (const page of pages) {
 server.close()
 
 await fs.mkdir('printed/assets', { recursive: true })
+await fs.mkdir('printed/images', { recursive: true })
 const assets = await fs.readdir('dist/assets')
 for (const asset of assets) {
     if (asset === '.' || asset === '..') {
         continue
     }
     await fs.copyFile(`dist/assets/${asset}`, `printed/assets/${asset}`)
+}
+const images = await fs.readdir('dist/images')
+for (const image of images) {
+    if (image === '.' || image === '..') {
+        continue
+    }
+    await fs.copyFile(`dist/images/${image}`, `printed/images/${image}`)
 }
 
 for (const page of output) {

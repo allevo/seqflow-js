@@ -19,7 +19,7 @@ export async function Doc({ dom, event, router }: ComponentParam) {
 	<aside style="">
 		${tocHTML}
 	</aside>
-	<div style="grid-area: main; order: 1 !important; overflow-x: hidden;">
+	<div style="grid-area: main; order: 1 !important; overflow-x: hidden; padding-bottom: 30px;">
 		${html}
 	</div>
 </div>
