@@ -49,7 +49,7 @@ const str = `
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/why" id="why">Why</a>
+          <a class="nav-link" aria-current="page" href="/why" id="why">Why</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/doc" id="doc">Doc</a>
@@ -66,12 +66,24 @@ export async function Header({ dom, event, router }: ComponentParam) {
 	const whyAncor = dom.querySelector("#why");
 	const docAnchor = dom.querySelector("#doc");
 	const elements = [seqflowAnchor, whyAncor, docAnchor];
+  const anchors = Array.from(dom.querySelectorAll("a")) as HTMLAnchorElement[];
+
+  const currentPath = new RegExp(router.segments.shift(), "i");
+  const currentAnchor = anchors.find(el => currentPath.test(el.href));
+  if (currentAnchor) {
+    currentAnchor.classList.add("active");
+  }
 
 	const events = event.waitEvent(event.domEvent("click"));
 	for await (const e of events) {
     const anchor = elements.find((el) => el.contains(e.target as Node))
 		if (anchor instanceof HTMLAnchorElement) {
 			router.navigate(anchor.href);
+
+      for (const anchor of anchors) {
+        anchor.classList.remove("active");
+      }
+      anchor.classList.add("active");
 		}
 	}
 }
