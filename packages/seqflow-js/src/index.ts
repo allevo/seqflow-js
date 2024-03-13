@@ -53,30 +53,86 @@ export interface ComponentParam<T = unknown> {
 	signal: AbortSignal;
 	_controller: AbortController;
 	router: {
+		/**
+		 * Navigate to a new path
+		 *
+		 * @param path new path
+		 */
 		navigate(path: string);
+		/**
+		 * Current path segments
+		 */
 		segments: string[];
+		/**
+		 * Current query parameters
+		 */
 		query: Map<string, string>;
 	};
 	dom: {
+		/**
+		 * Render HTML to the component
+		 *
+		 * @param html innerHTML to render
+		 */
 		render(html: string): void;
+		/**
+		 * Query a single element inside the current component
+		 *
+		 * @param selector query selector
+		 */
 		querySelector<E = HTMLElement>(selector: string): E;
+		/**
+		 * Query all elements inside the current component
+		 *
+		 * @param selector query selector
+		 */
 		querySelectorAll<E extends Node = Node>(selector): NodeListOf<E>;
+		/**
+		 * Mount a child component
+		 *
+		 * @param id mount point element id
+		 * @param fn child component function
+		 * @param option child component option
+		 */
 		child(id: string, fn: ComponentFn<unknown>);
 		child<E>(id: string, fn: ComponentFn<E>, option: ChildOption<E>);
 	};
 	event: {
+		/**
+		 * Dispatch a domain event
+		 *
+		 * @param event domain event
+		 */
 		dispatchDomainEvent<D, BE extends DomainEvent<D> = DomainEvent<D>>(
 			event: BE,
 		);
 		dispatchEvent(event: Event): void;
+		/**
+		 * Async generator for DOM event.
+		 *
+		 * @param type event type
+		 */
 		domEvent<K extends keyof HTMLElementEventMap>(
 			type: K,
-			filter?: (el: HTMLElementEventMap[K]) => boolean,
+			option?: Partial<{
+				element: HTMLElement;
+				preventDefault: boolean;
+				stopPropagation: boolean;
+				stopImmediatePropagation: boolean;
+			}>,
 		): (controller: AbortController) => AsyncGenerator<Event>;
 		domainEvent<BEE extends typeof DomainEvent<unknown>>(
 			b: BEE,
 		): (b: AbortController) => AsyncGenerator<InstanceType<BEE>>;
+		/**
+		 * Async generator for navigation event
+		 */
 		navigationEvent(): (controller: AbortController) => AsyncGenerator<Event>;
+		/**
+		 * Combine multiple event generators into one
+		 *
+		 * @param fns event generators
+		 */
 		waitEvent<T extends Event[]>(
 			...fns: {
 				[I in keyof T]: (controller: AbortController) => AsyncGenerator<T[I]>;
@@ -241,7 +297,7 @@ function Component<T = unknown>(
 					"navigate",
 					{
 						preventDefault: true,
-						stopPropagation: true,
+						stopPropagation: false,
 						stopImmediatePropagation: false,
 					},
 				);
@@ -275,7 +331,12 @@ function Component<T = unknown>(
 			},
 			domEvent<K extends keyof HTMLElementEventMap>(
 				type: K,
-				filter?: (el: HTMLElementEventMap[K]) => boolean,
+				option?: Partial<{
+					element: HTMLElement;
+					preventDefault: boolean;
+					stopPropagation: boolean;
+					stopImmediatePropagation: boolean;
+				}>,
 			) {
 				configuration.log({
 					msg: `Waiting for DOM event ${type}`,
@@ -285,10 +346,12 @@ function Component<T = unknown>(
 					},
 				});
 
-				return iterOnEvents<HTMLElementEventMap[K]>(el, type, {
-					preventDefault: true,
-					stopPropagation: true,
-					stopImmediatePropagation: false,
+				const element = option?.element || el;
+
+				return iterOnEvents<HTMLElementEventMap[K]>(element, type, {
+					preventDefault: option?.preventDefault || false,
+					stopPropagation: option?.stopPropagation || false,
+					stopImmediatePropagation: option?.stopImmediatePropagation || false,
 				});
 			},
 			waitEvent<T extends Event[]>(
@@ -433,11 +496,11 @@ interface DomainCreator<Domain> {
 	): Domain;
 }
 
-type Log = {
+export type Log = {
 	msg: string;
 	data: unknown;
 };
-type StartParameters = {
+export type StartParameters = {
 	log: (log: Log) => void;
 	domains: { [K in keyof Domains]: DomainCreator<Domains[K]> };
 	navigationEventBus: EventTarget;
