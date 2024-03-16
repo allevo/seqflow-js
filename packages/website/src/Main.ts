@@ -3,6 +3,7 @@ import { Header } from "./components/Header";
 import { Doc } from "./pages/Doc";
 import { Home } from "./pages/Home";
 import { Why } from "./pages/Why";
+import { ApiReference } from "./pages/ApiReference";
 
 export async function Main({ dom, event, router }: ComponentParam) {
 	dom.render(`
@@ -20,6 +21,9 @@ export async function Main({ dom, event, router }: ComponentParam) {
 				break;
 			case "why":
 				dom.child("main", Why);
+				break;
+			case "api-reference":
+				dom.child("main", ApiReference);
 				break;
 			case "home":
 			case "":

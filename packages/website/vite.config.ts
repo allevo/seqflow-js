@@ -7,18 +7,54 @@ export default defineConfig({
 	plugins: [
 		pluginPurgeCss(),
 		loadMarkdownPlugin({
-		components: [
-			{
-				tag: 'card',
-				open: '<div class="card text-bg-light"><div class="card-body">',
-				close: '</div></div>'
-			}
-		]
-	})],
+			components: [
+				{
+					tag: 'card',
+					open: '<div class="card text-bg-light"><div class="card-body">',
+					close: '</div></div>'
+				}
+			]
+		}),
+		// loadTSDPlugin(),
+	],
 	build: {
 		outDir: "../dist",
 	},
 });
+
+function loadTSDPlugin() {
+	return {
+		name: 'seqflow-tsd',
+		enforce: 'pre' as const,
+
+		async transform (code, id) {
+			// If it's not a .ts file, we can just skip this
+			console.log('id', id)
+			if (!/seqflow-js\/dist\/index.d.ts/.test(id)) {
+				return null
+			}
+
+			console.log('AAAAAAAAAA', id, code)
+
+			const app = await td.Application.bootstrapWithPlugins({}, [
+				new td.TypeDocReader(),
+			]);
+			const project = await app.convert();
+			console.log(project)
+			if (!project) throw new Error('Project not found')
+			app.validate(project);
+			console.log('validated')
+
+			const ser = this.serializer.projectToObject(project, process.cwd());
+
+
+
+			return {
+				code: code.replace(/export default /, 'export default function ')
+			}
+		},
+	}
+}
 
 function loadMarkdownPlugin({ components }: { components: { tag: string, open: string, close: string }[] }) {
 	return  {

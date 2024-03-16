@@ -49,10 +49,13 @@ const str = `
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/why" id="why">Why</a>
+          <a class="nav-link" aria-current="page" href="/why" id="why-link">Why</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/doc" id="doc">Doc</a>
+          <a class="nav-link" href="/doc" id="doc-link">Doc</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/api-reference" id="api-reference-link">Api Reference</a>
         </li>
       </ul>
     </div>
@@ -63,9 +66,10 @@ export async function Header({ dom, event, router }: ComponentParam) {
 	dom.render(str);
 
 	const seqflowAnchor = dom.querySelector("#seqflow-anchor");
-	const whyAncor = dom.querySelector("#why");
-	const docAnchor = dom.querySelector("#doc");
-	const elements = [seqflowAnchor, whyAncor, docAnchor];
+	const whyAncor = dom.querySelector("#why-link");
+	const docAnchor = dom.querySelector("#doc-link");
+  const apiReferenceAnchor = dom.querySelector("#api-reference-link");
+	const elements = [seqflowAnchor, whyAncor, docAnchor, apiReferenceAnchor];
   const anchors = Array.from(dom.querySelectorAll("a")) as HTMLAnchorElement[];
 
   const currentPath = new RegExp(router.segments.shift(), "i");
