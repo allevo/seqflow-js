@@ -18,7 +18,8 @@ export async function ContentWithToc({
 
 	const tocHTML = `<ul class="list-group">${toc
 		.map(
-			(t) => `<li class="list-group-item"><a class="" href="#${t.slug}">${t.title}</a></li>`,
+			(t) =>
+				`<li class="list-group-item"><a class="" href="#${t.slug}">${t.title}</a></li>`,
 		)
 		.join("")}</ul>`;
 
