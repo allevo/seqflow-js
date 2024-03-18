@@ -2,7 +2,7 @@
     "cleanUrls": true,
     "headers": [
         {
-            "source": "/.*",
+            "source": "/(.*)",
             "headers": [
                 {
                     "key": "Cache-Control",
