@@ -16,9 +16,9 @@ export async function ContentWithToc({
 }: ComponentParam<{ toc: Toc[]; html: string; title: string }>) {
 	const { toc, html } = data;
 
-	const tocHTML = `<ul>${toc
+	const tocHTML = `<ul class="list-group">${toc
 		.map(
-			(t) => `<li><a class="p-1 rounded" href="#${t.slug}">${t.title}</a></li>`,
+			(t) => `<li class="list-group-item"><a class="" href="#${t.slug}">${t.title}</a></li>`,
 		)
 		.join("")}</ul>`;
 

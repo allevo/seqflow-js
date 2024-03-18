@@ -7,6 +7,7 @@
 
     aside {
         display: none;
+        padding-left: calc(1.5rem * .5);
 
         ul {
             list-style: none;
@@ -14,10 +15,18 @@
             margin: 0;
 
             li {
+                padding: 0px;
+
                 a {
-                    margin-left: 10px;
                     display: inline-block;
                     width: 100%;
+                    padding: 8px;
+                    text-decoration: none;
+                }
+
+                a:hover {
+                    color: var(--color-primary);
+                    background-color: var(--bs-secondary-bg);
                 }
             }
         }
