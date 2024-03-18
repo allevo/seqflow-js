@@ -36,6 +36,10 @@ const pages = [
     {
         path: '/why',
         filename: 'why.html'
+    },
+    {
+        path: '/api-reference',
+        filename: 'api-reference.html'
     }
 ]
 
