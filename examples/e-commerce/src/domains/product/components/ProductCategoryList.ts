@@ -16,7 +16,8 @@ async function CategoryItem({
 </a>`);
 
 	const events = event.waitEvent(event.domEvent("click"));
-	for await (const _ of events) {
+	for await (const ev of events) {
+		ev.preventDefault();
 		router.navigate(`/category/${data.name}`);
 	}
 }

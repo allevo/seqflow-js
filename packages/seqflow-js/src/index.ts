@@ -53,7 +53,9 @@ export interface DomEventOption {
 	stopPropagation: boolean;
 	stopImmediatePropagation: boolean;
 }
-export type AbortableAsyncGenerator<T> = (controller: AbortController) => AsyncGenerator<T>
+export type AbortableAsyncGenerator<T> = (
+	controller: AbortController,
+) => AsyncGenerator<T>;
 
 export interface ComponentParam<T = unknown> {
 	data: T;
@@ -146,14 +148,16 @@ export interface ComponentParam<T = unknown> {
 
 /**
  * Component function
- * 
+ *
  * @typeParam T - The type of the data passed to the component
- * 
+ *
  * @param param The component parameter
- * 
+ *
  * @returns A promise without a value
  */
-export type ComponentFn<T = unknown> = (param: ComponentParam<T>) => Promise<void>;
+export type ComponentFn<T = unknown> = (
+	param: ComponentParam<T>,
+) => Promise<void>;
 
 function Component<T = unknown>(
 	el: HTMLElement,
@@ -507,7 +511,7 @@ interface DomainCreator<Domain> {
 	): Domain;
 }
 
-type DomainCreators = { [K in keyof Domains]: DomainCreator<Domains[K]> }
+type DomainCreators = { [K in keyof Domains]: DomainCreator<Domains[K]> };
 
 export type Log = {
 	msg: string;
@@ -529,9 +533,9 @@ interface GlobalConfiguration {
 
 /**
  * Start a new SeqFlow application
- * 
+ *
  * @typeParam T - The type of the data passed to the component
- * 
+ *
  * @param el The element to mount the component
  * @param fn The component function
  * @param option The component option
@@ -561,7 +565,6 @@ export function start<T>(
 
 	return a._controller;
 }
-
 
 function createConfiguration(params: StartParameters): GlobalConfiguration {
 	const domainEventBuses = {};

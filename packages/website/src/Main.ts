@@ -1,9 +1,9 @@
 import { ComponentParam } from "seqflow-js";
 import { Header } from "./components/Header";
+import { ApiReference } from "./pages/ApiReference";
 import { Doc } from "./pages/Doc";
 import { Home } from "./pages/Home";
 import { Why } from "./pages/Why";
-import { ApiReference } from "./pages/ApiReference";
 
 export async function Main({ dom, event, router }: ComponentParam) {
 	dom.render(`

@@ -23,7 +23,7 @@ test("domain even", async () => {
 		}
 	}
 
-	start(document.body, app, {
+	start(document.body, app, undefined, {
 		log(l) {},
 		domains: {
 			counter: (eventTarget) => {

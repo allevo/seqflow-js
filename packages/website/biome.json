@@ -6,5 +6,8 @@
 				"noNonNullAssertion": "off"
 			}
 		}
+	},
+	"files": {
+		"ignore": ["src/public"]
 	}
 }

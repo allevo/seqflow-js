@@ -68,26 +68,26 @@ export async function Header({ dom, event, router }: ComponentParam) {
 	const seqflowAnchor = dom.querySelector("#seqflow-anchor");
 	const whyAncor = dom.querySelector("#why-link");
 	const docAnchor = dom.querySelector("#doc-link");
-  const apiReferenceAnchor = dom.querySelector("#api-reference-link");
+	const apiReferenceAnchor = dom.querySelector("#api-reference-link");
 	const elements = [seqflowAnchor, whyAncor, docAnchor, apiReferenceAnchor];
-  const anchors = Array.from(dom.querySelectorAll("a")) as HTMLAnchorElement[];
+	const anchors = Array.from(dom.querySelectorAll("a")) as HTMLAnchorElement[];
 
-  const currentPath = new RegExp(router.segments.shift(), "i");
-  const currentAnchor = anchors.find(el => currentPath.test(el.href));
-  if (currentAnchor) {
-    currentAnchor.classList.add("active");
-  }
+	const currentPath = new RegExp(router.segments.shift(), "i");
+	const currentAnchor = anchors.find((el) => currentPath.test(el.href));
+	if (currentAnchor) {
+		currentAnchor.classList.add("active");
+	}
 
 	const events = event.waitEvent(event.domEvent("click"));
 	for await (const e of events) {
-    const anchor = elements.find((el) => el.contains(e.target as Node))
+		const anchor = elements.find((el) => el.contains(e.target as Node));
 		if (anchor instanceof HTMLAnchorElement) {
 			router.navigate(anchor.href);
 
-      for (const anchor of anchors) {
-        anchor.classList.remove("active");
-      }
-      anchor.classList.add("active");
+			for (const anchor of anchors) {
+				anchor.classList.remove("active");
+			}
+			anchor.classList.add("active");
 		}
 	}
 }

@@ -137,7 +137,7 @@ async function createApp(config: Configuration) {
 	const packageJsonPath = path.join(config.absolutePath, "package.json");
 	const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
 	packageJson.name = config.projectName;
-	packageJson.dependencies['seqflow-js'] = '*';
+	packageJson.dependencies["seqflow-js"] = "*";
 	fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
 

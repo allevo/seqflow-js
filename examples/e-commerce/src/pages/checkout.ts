@@ -17,6 +17,7 @@ export async function Checkout({
 	const events = event.waitEvent(event.domEvent("click"));
 	for await (const ev of events) {
 		if (ev.target === goHomeAfterCheckout) {
+			ev.preventDefault();
 			router.navigate("/");
 		}
 	}

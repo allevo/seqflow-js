@@ -5,12 +5,15 @@ import { ComponentParam } from "seqflow-js";
 import classes from "./ContentWithToc.module.css";
 
 export interface Toc {
-	title: string
-	slug: string
-	type: 'h2' | 'h3'
+	title: string;
+	slug: string;
+	type: "h2" | "h3";
 }
 
-export async function ContentWithToc({ dom, data }: ComponentParam<{ toc: Toc[]; html: string, title: string }>) {
+export async function ContentWithToc({
+	dom,
+	data,
+}: ComponentParam<{ toc: Toc[]; html: string; title: string }>) {
 	const { toc, html } = data;
 
 	const tocHTML = `<ul>${toc

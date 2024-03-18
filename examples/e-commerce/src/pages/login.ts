@@ -17,7 +17,8 @@ export async function Login({ dom, event, domains, router }: ComponentParam) {
 
 	const events = event.waitEvent(event.domEvent("submit"));
 	let user: UserType | undefined;
-	for await (const _ of events) {
+	for await (const ev of events) {
+		ev.preventDefault();
 		button.disabled = true;
 		const username = el.value;
 

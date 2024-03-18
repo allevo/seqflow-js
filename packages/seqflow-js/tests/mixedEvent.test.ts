@@ -68,7 +68,7 @@ test("dom & business event", async () => {
 		}
 	}
 
-	const c = start(document.body, app, {
+	const c = start(document.body, app, undefined, {
 		domains: {
 			counter: (eventTarget) => {
 				return new CounterDomain(eventTarget);

@@ -1,5 +1,5 @@
 import { ComponentParam } from "seqflow-js";
-import classes from './Home.module.css'
+import classes from "./Home.module.css";
 
 export async function Home({ dom }: ComponentParam) {
 	dom.render(`
