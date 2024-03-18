@@ -47,45 +47,117 @@ export function createDomainEventClass<T>(
 	return CustomBusinessEvent;
 }
 
+export interface DomEventOption {
+	element: HTMLElement;
+	preventDefault: boolean;
+	stopPropagation: boolean;
+	stopImmediatePropagation: boolean;
+}
+export type AbortableAsyncGenerator<T> = (
+	controller: AbortController,
+) => AsyncGenerator<T>;
+
 export interface ComponentParam<T = unknown> {
 	data: T;
 	domains: Domains;
 	signal: AbortSignal;
 	_controller: AbortController;
 	router: {
+		/**
+		 * Navigate to a new path
+		 *
+		 * @param path new path
+		 */
 		navigate(path: string);
+		/**
+		 * Current path segments
+		 */
 		segments: string[];
+		/**
+		 * Current query parameters
+		 */
 		query: Map<string, string>;
 	};
 	dom: {
+		/**
+		 * Render HTML to the component
+		 *
+		 * @param html innerHTML to render
+		 */
 		render(html: string): void;
+		/**
+		 * Query a single element inside the current component
+		 *
+		 * @param selector query selector
+		 */
 		querySelector<E = HTMLElement>(selector: string): E;
-		child(id: string, fn: ComponentFn<unknown>);
-		child<E>(id: string, fn: ComponentFn<E>, option: ChildOption<E>);
+		/**
+		 * Query all elements inside the current component
+		 *
+		 * @param selector query selector
+		 */
+		querySelectorAll<E extends Node = Node>(selector): NodeListOf<E>;
+		/**
+		 * Mount a child component
+		 *
+		 * @param id mount point element id
+		 * @param fn child component function
+		 * @param option child component option
+		 */
+		child(id: string, fn: ComponentFn<unknown>): void;
+		child<E>(id: string, fn: ComponentFn<E>, option: ChildOption<E>): void;
 	};
 	event: {
+		/**
+		 * Dispatch a domain event
+		 *
+		 * @param event domain event
+		 */
 		dispatchDomainEvent<D, BE extends DomainEvent<D> = DomainEvent<D>>(
 			event: BE,
 		);
 		dispatchEvent(event: Event): void;
+		/**
+		 * Async generator for DOM event.
+		 *
+		 * @param type event type
+		 */
 		domEvent<K extends keyof HTMLElementEventMap>(
 			type: K,
-			filter?: (el: HTMLElementEventMap[K]) => boolean,
-		): (controller: AbortController) => AsyncGenerator<Event>;
+			option?: Partial<DomEventOption>,
+		): AbortableAsyncGenerator<Event>;
 		domainEvent<BEE extends typeof DomainEvent<unknown>>(
 			b: BEE,
-		): (b: AbortController) => AsyncGenerator<InstanceType<BEE>>;
-		navigationEvent(): (controller: AbortController) => AsyncGenerator<Event>;
+		): AbortableAsyncGenerator<InstanceType<BEE>>;
+		/**
+		 * Async generator for navigation event
+		 */
+		navigationEvent(): AbortableAsyncGenerator<Event>;
+		/**
+		 * Combine multiple event generators into one
+		 *
+		 * @param fns event generators
+		 */
 		waitEvent<T extends Event[]>(
 			...fns: {
-				[I in keyof T]: (controller: AbortController) => AsyncGenerator<T[I]>;
+				[I in keyof T]: AbortableAsyncGenerator<T[I]>;
 			}
 		): AsyncGenerator<T[number]>;
 	};
 }
-interface ComponentFn<T = unknown> {
-	(param: ComponentParam<T>): Promise<void>;
-}
+
+/**
+ * Component function
+ *
+ * @typeParam T - The type of the data passed to the component
+ *
+ * @param param The component parameter
+ *
+ * @returns A promise without a value
+ */
+export type ComponentFn<T = unknown> = (
+	param: ComponentParam<T>,
+) => Promise<void>;
 
 function Component<T = unknown>(
 	el: HTMLElement,
@@ -193,6 +265,9 @@ function Component<T = unknown>(
 			querySelector<T = HTMLElement>(selector): T {
 				return el.querySelector(selector);
 			},
+			querySelectorAll<T extends Node = Node>(selector): NodeListOf<T> {
+				return el.querySelectorAll(selector);
+			},
 			child(...args: unknown[]) {
 				let id: string;
 				let childFn: ComponentFn<T>;
@@ -237,7 +312,7 @@ function Component<T = unknown>(
 					"navigate",
 					{
 						preventDefault: true,
-						stopPropagation: true,
+						stopPropagation: false,
 						stopImmediatePropagation: false,
 					},
 				);
@@ -271,7 +346,12 @@ function Component<T = unknown>(
 			},
 			domEvent<K extends keyof HTMLElementEventMap>(
 				type: K,
-				filter?: (el: HTMLElementEventMap[K]) => boolean,
+				option?: Partial<{
+					element: HTMLElement;
+					preventDefault: boolean;
+					stopPropagation: boolean;
+					stopImmediatePropagation: boolean;
+				}>,
 			) {
 				configuration.log({
 					msg: `Waiting for DOM event ${type}`,
@@ -281,10 +361,12 @@ function Component<T = unknown>(
 					},
 				});
 
-				return iterOnEvents<HTMLElementEventMap[K]>(el, type, {
-					preventDefault: true,
-					stopPropagation: true,
-					stopImmediatePropagation: false,
+				const element = option?.element || el;
+
+				return iterOnEvents<HTMLElementEventMap[K]>(element, type, {
+					preventDefault: option?.preventDefault || false,
+					stopPropagation: option?.stopPropagation || false,
+					stopImmediatePropagation: option?.stopImmediatePropagation || false,
 				});
 			},
 			waitEvent<T extends Event[]>(
@@ -429,13 +511,15 @@ interface DomainCreator<Domain> {
 	): Domain;
 }
 
-type Log = {
+type DomainCreators = { [K in keyof Domains]: DomainCreator<Domains[K]> };
+
+export type Log = {
 	msg: string;
 	data: unknown;
 };
-type StartParameters = {
+export type StartParameters = {
 	log: (log: Log) => void;
-	domains: { [K in keyof Domains]: DomainCreator<Domains[K]> };
+	domains: DomainCreators;
 	navigationEventBus: EventTarget;
 	config: ApplicationConfig;
 };
@@ -447,46 +531,28 @@ interface GlobalConfiguration {
 	config: ApplicationConfig;
 }
 
-function startSeqFlow<T>(el: HTMLElement, fn: ComponentFn<T>): AbortController;
-function startSeqFlow<T>(
-	el: HTMLElement,
-	fn: ComponentFn<T>,
-	config: Partial<StartParameters>,
-): AbortController;
-function startSeqFlow<T>(
+/**
+ * Start a new SeqFlow application
+ *
+ * @typeParam T - The type of the data passed to the component
+ *
+ * @param el The element to mount the component
+ * @param fn The component function
+ * @param option The component option
+ * @param config The application configuration
+ * @return The controller to abort the component
+ */
+export function start<T>(
 	el: HTMLElement,
 	fn: ComponentFn<T>,
 	option?: ChildOption<T>,
 	config?: Partial<StartParameters>,
-): AbortController;
-
-function startSeqFlow<T>(...args: unknown[]) {
-	let el: HTMLElement;
-	let fn: ComponentFn<T>;
-	let config: Partial<StartParameters> | undefined;
-	let option: ChildOption<T>;
-
-	if (args.length === 2) {
-		el = args[0] as HTMLElement;
-		fn = args[1] as ComponentFn<T>;
-		option = {} as ChildOption<T>;
-	} else if (args.length === 3) {
-		el = args[0] as HTMLElement;
-		fn = args[1] as ComponentFn<T>;
-		config = args[2] as Partial<StartParameters>;
-		option = {} as ChildOption<T>;
-	} else if (args.length === 4) {
-		el = args[0] as HTMLElement;
-		fn = args[1] as ComponentFn<T>;
-		option = args[2] as ChildOption<T>;
-		config = args[3] as Partial<StartParameters>;
-	} else {
-		throw new Error("Invalid parameters count");
-	}
+): AbortController {
+	const option2 = (option || {}) as ChildOption<T>;
 
 	const params = applyDefault(config);
 	const configuration = createConfiguration(params);
-	const a = Component(el, fn, option, configuration);
+	const a = Component(el, fn, option2, configuration);
 
 	a._controller.signal.addEventListener("abort", () => {
 		configuration.log({
@@ -499,8 +565,6 @@ function startSeqFlow<T>(...args: unknown[]) {
 
 	return a._controller;
 }
-
-export const start = startSeqFlow;
 
 function createConfiguration(params: StartParameters): GlobalConfiguration {
 	const domainEventBuses = {};

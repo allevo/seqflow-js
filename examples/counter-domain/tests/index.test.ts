@@ -5,7 +5,7 @@ import { Main } from "../src/Main";
 import { CounterDomain } from "../src/domains/counter";
 
 test("should increment and decrement the counter", async () => {
-	start(document.body, Main, {
+	start(document.body, Main, undefined, {
 		log() {},
 		domains: {
 			counter: (eventTarget) => {

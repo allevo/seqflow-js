@@ -25,7 +25,15 @@ export async function CartTooltip({
 		event.domEvent("click"),
 	);
 	for await (const ev of events) {
+		ev.preventDefault();
+		ev.stopPropagation();
+		ev.stopImmediatePropagation();
 		switch (true) {
+			case ev.type === "click" &&
+				cartTooltipLink.contains(ev.target as HTMLElement): {
+				router.navigate("/cart");
+				break;
+			}
 			case ev instanceof ChangeCartEvent: {
 				const count = domains.cart.getProductCount();
 				if (count === 0) {
@@ -38,10 +46,6 @@ export async function CartTooltip({
 			}
 			case ev instanceof CheckoutEndedCartEvent: {
 				wrapper.style.display = "none";
-				break;
-			}
-			case ev.type === "click" && ev.target === cartTooltipLink: {
-				router.navigate("/cart");
 				break;
 			}
 		}

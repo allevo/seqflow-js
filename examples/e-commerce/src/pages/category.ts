@@ -21,6 +21,7 @@ export async function Category({
 	dom.child("loading", Loading);
 
 	const loadingElement = dom.querySelector("#loading");
+	console.log(router.segments);
 	const categoryId = router.segments.pop();
 
 	const products = await domains.product.fetchProductsByCategory(

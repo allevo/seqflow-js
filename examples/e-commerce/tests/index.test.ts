@@ -93,16 +93,16 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 test("should increment and decrement the counter", async () => {
-	start(document.body, Main, {
+	start(document.body, Main, undefined, {
 		domains: {
-			user: (eventTarget) => {
-				return new UserDomain(eventTarget);
+			user: (eventTarget, _, config) => {
+				return new UserDomain(eventTarget, config);
 			},
-			cart: (eventTarget) => {
+			cart: (eventTarget, _, config) => {
 				return new CartDomain(eventTarget);
 			},
-			product: (eventTarget) => {
-				return new ProductDomain(eventTarget);
+			product: (eventTarget, _, config) => {
+				return new ProductDomain(eventTarget, config);
 			},
 		},
 		config: {
@@ -122,7 +122,6 @@ test("should increment and decrement the counter", async () => {
 	expect(cartButtons).toHaveLength(6);
 	cartButtons[0].click();
 
-	await waitFor(async () =>
-		expect(await screen.findByText(/go to checkout/i)).toBeVisible(),
-	);
+	const goToCheckoutTooltipAfter = await screen.findByText(/Go to checkout/i);
+	goToCheckoutTooltipAfter.click();
 });

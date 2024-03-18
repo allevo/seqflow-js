@@ -1,3 +1,4 @@
+import { ApplicationConfig } from "seqflow-js";
 import { UserLoggedEvent, UserLoggedOutEvent } from "./events";
 
 const LOCALSTORAGE_USER_KEY = "user";
@@ -27,7 +28,10 @@ export interface UserType {
 export class UserDomain {
 	private user?: UserType;
 
-	constructor(private eventTarget: EventTarget) {}
+	constructor(
+		private eventTarget: EventTarget,
+		private applicationConfig: ApplicationConfig,
+	) {}
 
 	async restoreUser(): Promise<UserType | undefined> {
 		const str = localStorage.getItem(LOCALSTORAGE_USER_KEY);
@@ -45,7 +49,7 @@ export class UserDomain {
 	async login({
 		username,
 	}: { username: string }): Promise<UserType | undefined> {
-		const r = await fetch("/users");
+		const r = await fetch(`${this.applicationConfig.api.baseUrl}/users`);
 		const users = (await r.json()) as UserType[];
 		this.user = users.find((u) => u.username === username);
 		if (this.user) {

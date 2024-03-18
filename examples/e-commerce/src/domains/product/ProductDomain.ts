@@ -1,12 +1,20 @@
+import { ApplicationConfig } from "seqflow-js";
+
 export class ProductDomain {
-	constructor(private _eventTarget: EventTarget) {}
+	constructor(
+		private _eventTarget: EventTarget,
+		private applicationConfig: ApplicationConfig,
+	) {}
 
 	async fetchProductsCategories(
 		signal: AbortSignal,
 	): Promise<ProductCategory[]> {
-		const res = await fetch("/products/categories", {
-			signal,
-		});
+		const res = await fetch(
+			`${this.applicationConfig.api.baseUrl}/products/categories`,
+			{
+				signal,
+			},
+		);
 		const categories = (await res.json()) as string[];
 
 		return categories.map((name, id) => {
@@ -19,7 +27,10 @@ export class ProductDomain {
 		{ categoryId }: { categoryId: string },
 		signal: AbortSignal,
 	): Promise<Product[]> {
-		const res = await fetch(`/products/category/${categoryId}`, { signal });
+		const res = await fetch(
+			`${this.applicationConfig.api.baseUrl}/products/category/${categoryId}`,
+			{ signal },
+		);
 		return (await res.json()) as Product[];
 	}
 }

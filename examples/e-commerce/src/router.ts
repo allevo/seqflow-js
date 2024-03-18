@@ -40,7 +40,7 @@ function getComponent(path: string) {
 	}
 }
 
-export async function Router({ dom, event, domains }: ComponentParam) {
+export async function Router({ dom, event, domains, router }: ComponentParam) {
 	dom.render(`
 <div id="${classes.app}">
 	<div id='header'></div>

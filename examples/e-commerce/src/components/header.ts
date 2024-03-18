@@ -48,6 +48,7 @@ export async function Header({
 	);
 
 	for await (const ev of events) {
+		ev.preventDefault();
 		if (ev instanceof UserLoggedEvent) {
 			header.classList.add(classes.logged);
 		} else if (ev instanceof UserLoggedOutEvent) {

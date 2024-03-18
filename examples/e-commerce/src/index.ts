@@ -5,19 +5,19 @@ import { ProductDomain } from "./domains/product";
 import { UserDomain } from "./domains/user";
 import "./index.css";
 
-start(document.getElementById("root"), Main, {
+start(document.getElementById("root"), Main, undefined, {
 	log(log) {
 		console.log(log);
 	},
 	domains: {
-		user: (eventTarget) => {
-			return new UserDomain(eventTarget);
+		user: (eventTarget, _, config) => {
+			return new UserDomain(eventTarget, config);
 		},
 		cart: (eventTarget) => {
 			return new CartDomain(eventTarget);
 		},
-		product: (eventTarget) => {
-			return new ProductDomain(eventTarget);
+		product: (eventTarget, _, config) => {
+			return new ProductDomain(eventTarget, config);
 		},
 	},
 	config: {

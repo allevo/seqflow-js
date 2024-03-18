@@ -1,0 +1,13 @@
+{
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"style": {
+				"noNonNullAssertion": "off"
+			}
+		}
+	},
+	"files": {
+		"ignore": ["src/public"]
+	}
+}
