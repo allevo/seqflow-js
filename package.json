@@ -1,8 +1,9 @@
 {
-  "name": "seqflow-js-repo",
+  "name": "seqflow-js-root",
   "version": "0.0.1-beta.1",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test",
@@ -13,5 +14,8 @@
   "license": "MIT",
   "dependencies": {
     "turbo": "^1.12.4"
+  },
+  "devDependencies": {
+    "execa": "^8.0.1"
   }
 }

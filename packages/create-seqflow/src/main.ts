@@ -69,10 +69,6 @@ function parseArguments(args: string[]): Partial<Configuration> {
 async function collectInformation({
 	type,
 }: Partial<Configuration>): Promise<Configuration> {
-	const initialTemplateIndex = templateChoices.findIndex(
-		(c) => c.value === type,
-	);
-
 	const questions: PromptObject[] = [
 		{
 			type: "text",

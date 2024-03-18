@@ -11,6 +11,10 @@ importers:
       turbo:
         specifier: ^1.12.4
         version: 1.12.4
+    devDependencies:
+      execa:
+        specifier: ^8.0.1
+        version: 8.0.1
 
   examples/counter:
     dependencies:
