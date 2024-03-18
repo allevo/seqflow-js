@@ -29,33 +29,37 @@ async function main(newVersion) {
     }
     newVersion = newVersion.replace(/^v/, '')
 
+    console.log('Bumping versions to', newVersion)
+
     const packagesToPublish = [
         'seqflow-js',
         'create-seqflow',
     ]
 
-    console.log('BEFORE', await execa('git', ['status']))
-
     for (const packageName of packagesToPublish) {
         await changeWorkspaceDependencies(packageName, newVersion)
     }
 
-    console.log('AFTER', await execa('git', ['status']))
+    console.log('Committing and tagging...', newVersion)
     await execa('git', ['commit', '-a', '-m', `"Bump to v${newVersion}"`])
     await execa('git', ['tag', `v${newVersion}`])
 
+    console.log('Publishing...')
     for (const packageName of packagesToPublish) {
         await execa('pnpm', ['publish', '--dry-run'], {
             cwd: `packages/${packageName}`,
             stdio: 'inherit'
         })
     }
+    console.log('Published!')
 
+    console.log('Change again to "workspace:*"...')
     for (const packageName of packagesToPublish) {
         await changeWorkspaceDependencies(packageName, 'workspace:*')
     }
-
     await execa('git', ['commit', '-a', '-m', `"After v${newVersion}"`])
+    console.log('Done!')
 }
 
-await main('0.0.1')
+const newVersion = process.argv[2]
+await main(newVersion)
