@@ -1,7 +1,7 @@
 ## Getting started
 Welcome to SeqFlow documentation!
 
-Here you can find the basic concept of the framework and how it can help your development. If you looking for a deep analysis about the reason, there's a dedicated page [here](/why)
+Here you can find the basic concept of the framework and how it can help your development. If you looking for a deep analysis about the reason, there's a dedicated page [here](/why "the reason of SeqFlow").
 
 :::card:::
 What you will learn:
@@ -83,7 +83,7 @@ Wait... let's start the application and see the result. Run the command `pnpm de
 Open your browser and go to [`http://localhost:5173`](http://localhost:5173 "localhost"). You should see the counter application running.
 
 Let's see what we have done:
-- We created a new component, `Main`, that is responsible for rendering the counter application. It is an `async` function that receives a `ComponentParam` object as a parameter. See the [API reference](/api-reference) for more information about the `ComponentParam` object.
+- We created a new component, `Main`, that is responsible for rendering the counter application. It is an `async` function that receives a `ComponentParam` object as a parameter. See the [API reference](/api-reference "Api Reference") for more information about the `ComponentParam` object.
 - We define a variable that holds the state of the application: the `counter` variable.
 - We use the `dom.render` method to render the html.
 - We also use the `dom.querySelector` method to get the button elements and the counter wrapper element.
@@ -192,7 +192,7 @@ export class CounterDomain {
 The `CounterDomain` class is a pure Javascript (Typescript) class that is responsible for managing the state of the counter application. It has a `counter` property that holds the state of the counter application. It also has a `applyDelta` method that is responsible for incrementing and decrementing the counter variable.<br />
 Because the UI part should be notified when the state changes, we create a `CounterChanged` event class for that reason: after the counter variable changes, the `CounterDomain` class dispatches a `CounterChanged` event with the new value of the counter variable.<br />
 
-NB: the `createDomainEventClass` function is a helper function that creates a new event class. It is a simple function that returns a new event class. See the [API reference](/api-reference) for more information about the `createDomainEventClass` function.
+NB: the `createDomainEventClass` function is a helper function that creates a new event class. It is a simple function that returns a new event class. See the [API reference](/api-reference "Api Reference") for more information about the `createDomainEventClass` function.
 
 After creating the `counter` domain, we should register it updating the `src/index.ts` file content as the following:
 
@@ -218,7 +218,7 @@ declare module "seqflow-js" {
 }
 
 ```
-This update is necessary to register the `counter` domain. See the [API reference](/api-reference) for more information about the `start` function.
+This update is necessary to register the `counter` domain. See the [API reference](/api-reference "Api Reference") for more information about the `start` function.
 
 Now, it is the time to move the `ChangeCounterButton` component to the `src/domains/counter` folder. Create the `src/domains/counter/ChangeCounterButton.ts` file with the following content:
 
