@@ -1,13 +1,13 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { execa } from 'execa'
 
-async function changeWorkspaceDependencies(packageName, newVersion) {
+async function changeWorkspaceDependencies(packageName, newVersion, packageVersion) {
     const packageJsonPath = `packages/${packageName}/package.json`
 
     console.log(`Updating "${packageName}"...`)
 
     const packageJSON = JSON.parse(await readFile(packageJsonPath, 'utf-8'))
-    packageJSON.version = newVersion
+    packageJSON.version = packageVersion
     if (packageJSON.dependencies?.['seqflow-js']) {
         packageJSON.dependencies['seqflow-js'] = newVersion
     }
@@ -21,6 +21,9 @@ async function main(newVersion) {
     if (!newVersion) {
         throw new Error('No version provided')
     }
+
+    const currentVersion = JSON.parse(await readFile('packages/seqflow-js/package.json', 'utf-8')).version
+
     newVersion = newVersion.replace(/^v/, '')
 
     console.log('Bumping versions to', newVersion)
@@ -31,7 +34,7 @@ async function main(newVersion) {
     ]
 
     for (const packageName of packagesToPublish) {
-        await changeWorkspaceDependencies(packageName, newVersion)
+        await changeWorkspaceDependencies(packageName, newVersion, newVersion)
     }
 
     console.log('Committing and tagging...', newVersion)
@@ -49,7 +52,7 @@ async function main(newVersion) {
 
     console.log('Change again to "workspace:*"...')
     for (const packageName of packagesToPublish) {
-        await changeWorkspaceDependencies(packageName, 'workspace:*')
+        await changeWorkspaceDependencies(packageName, 'workspace:*', currentVersion)
     }
     await execa('git', ['commit', '-a', '-m', `"After v${newVersion}"`])
     console.log('Done!')

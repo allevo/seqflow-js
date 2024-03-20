@@ -1,7 +1,7 @@
 {
   "name": "seqflow-js",
-  "version": "workspace:*",
-  "description": "",
+  "version": "0.0.1-beta.4",
+  "description": "A framework to write products efficiently",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -16,7 +16,7 @@
     "build": "vite build -c vite.config.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Tommaso Allevi <tomallevi@gmail.com>",
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
     "@testing-library/dom": "^9.3.4",
