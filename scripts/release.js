@@ -7,16 +7,10 @@ async function changeWorkspaceDependencies(packageName, newVersion) {
     console.log(`Updating "${packageName}"...`)
 
     const packageJSON = JSON.parse(await readFile(packageJsonPath, 'utf-8'))
-    if (!packageJSON.dependencies) {
-        console.log(`No dependencies in ${packageJsonPath}`)
-        return
+    packageJSON.version = newVersion
+    if (packageJSON.dependencies?.['seqflow-js']) {
+        packageJSON.dependencies['seqflow-js'] = newVersion
     }
-    if (!packageJSON.dependencies['seqflow-js']) {
-        console.log(`No "seqflow-js" dependency in ${packageJsonPath}`)
-        return
-    }
-
-    packageJSON.dependencies['seqflow-js'] = newVersion
 
     await writeFile(packageJsonPath, JSON.stringify(packageJSON, null, 2))
 
@@ -46,7 +40,7 @@ async function main(newVersion) {
 
     console.log('Publishing...')
     for (const packageName of packagesToPublish) {
-        await execa('pnpm', ['publish', '--dry-run'], {
+        await execa('pnpm', ['publish'], {
             cwd: `packages/${packageName}`,
             stdio: 'inherit'
         })
