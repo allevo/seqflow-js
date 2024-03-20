@@ -1,4 +1,3 @@
-## Getting started
 Welcome to SeqFlow documentation!
 
 Here you can find the basic concept of the framework and how it can help your development. If you looking for a deep analysis about the reason, there's a dedicated page [here](/why "the reason of SeqFlow").

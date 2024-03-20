@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import MarkdownIt from 'markdown-it'
 import pluginPurgeCss from "@mojojoejo/vite-plugin-purgecss";
+import fs from 'fs'
 
 export default defineConfig({
 	root: "src",
@@ -15,46 +16,36 @@ export default defineConfig({
 				}
 			]
 		}),
-		// loadTSDPlugin(),
+		loadSVG(),
 	],
 	build: {
 		outDir: "../dist",
 	},
 });
 
-function loadTSDPlugin() {
-	return {
-		name: 'seqflow-tsd',
-		enforce: 'pre' as const,
 
-		async transform (code, id) {
-			// If it's not a .ts file, we can just skip this
-			console.log('id', id)
-			if (!/seqflow-js\/dist\/index.d.ts/.test(id)) {
+function loadSVG() {
+	return  {
+		name: 'seqflow-svg',
+		enforce: 'pre' as const,
+		// enforce: 'pre' as const,
+		transform (code, id) {
+			// If it's not a .md file, we can just skip this
+			if (!id.endsWith('.svg')) {
 				return null
 			}
 
-			console.log('AAAAAAAAAA', id, code)
+			console.log('aaaaa', id)
 
-			const app = await td.Application.bootstrapWithPlugins({}, [
-				new td.TypeDocReader(),
-			]);
-			const project = await app.convert();
-			console.log(project)
-			if (!project) throw new Error('Project not found')
-			app.validate(project);
-			console.log('validated')
-
-			const ser = this.serializer.projectToObject(project, process.cwd());
-
-
+			const content = fs.readFileSync(id, 'utf-8')
 
 			return {
-				code: code.replace(/export default /, 'export default function ')
+				code: `export default function (width, height) { return \`${content}\` }`,
 			}
 		},
 	}
 }
+
 
 function loadMarkdownPlugin({ components }: { components: { tag: string, open: string, close: string }[] }) {
 	return  {

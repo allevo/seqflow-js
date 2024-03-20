@@ -1,7 +1,7 @@
 import { ComponentParam } from "seqflow-js";
 import { Header } from "./components/Header";
 import { ApiReference } from "./pages/ApiReference";
-import { Doc } from "./pages/Doc";
+import { GettingStarted } from "./pages/GettingStarted";
 import { Home } from "./pages/Home";
 import { Why } from "./pages/Why";
 
@@ -16,8 +16,9 @@ export async function Main({ dom, event, router }: ComponentParam) {
 	while (true) {
 		const path = router.segments.pop();
 		switch (path) {
-			case "doc":
-				dom.child("main", Doc);
+			case "getting-started":
+				console.log("PPPPPPP ---- ");
+				dom.child("main", GettingStarted);
 				break;
 			case "why":
 				dom.child("main", Why);

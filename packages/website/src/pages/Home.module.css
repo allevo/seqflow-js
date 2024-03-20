@@ -11,8 +11,9 @@
 }
 
 .container {
-    --height: 50px;
-    font-size: 25px;
+    --height: 40px;
+    font-size: 20px;
+    margin-bottom: 10px;
 
     overflow: hidden;
     height: var(--height);
