@@ -72,15 +72,18 @@ function loadMarkdownPlugin({ components }: { components: { tag: string, open: s
 
 			const toc: any[] = []
 			// add id to all h2 and h3
-			html = html.replace(/<h2>(.*)<\/h2>/g, (match, m) => {
-				const slug = m.toLowerCase().replace(/ /g, '-')
-				toc.push({ slug, title: m, type: 'h2' })
-				return match.replace(/<h2>/, `<h2 id="${slug}">`)
-			})
-			html = html.replace(/<h3>(.*)<\/h3>/g, (match, m) => {
-				const slug = m.toLowerCase().replace(/ /g, '-')
-				toc.push({ slug, title: m, type: 'h3' })
-				return match.replace(/<h3>/, `<h3 id="${slug}">`)
+			html = html.replace(/<h(\d)>/g, (match, m, index) => {
+				const aa = html.slice(index + 3).match(`</h${m}>`)
+				const title = html.slice(index + 4, aa.index + index + 3)
+
+				const last = toc[toc.length - 1]
+				let slug = title.toLowerCase().replace(/ /g, '-')
+				if (last && last.level < Number(m)) {
+					slug = last.slug + '-' + slug
+				}
+				
+				toc.push({ slug, title, type: 'h' + m, level: Number(m) })
+				return `<h${m} id="${slug}">`
 			})
 
 			return {

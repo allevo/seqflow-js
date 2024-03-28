@@ -9,6 +9,10 @@
         display: none;
         padding-left: calc(1.5rem * .5);
 
+        .level-3 {
+            padding-left: 1.5rem;
+        }
+
         ul {
             list-style: none;
             padding: 0;

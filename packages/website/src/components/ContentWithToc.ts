@@ -8,7 +8,10 @@ export interface Toc {
 	title: string;
 	slug: string;
 	type: "h2" | "h3";
+	level: number;
 }
+
+console.log(classes)
 
 export async function ContentWithToc({
 	dom,
@@ -19,7 +22,7 @@ export async function ContentWithToc({
 	const tocHTML = `<ul class="list-group">${toc
 		.map(
 			(t) =>
-				`<li class="list-group-item"><a class="" href="#${t.slug}">${t.title}</a></li>`,
+				`<li class="list-group-item ${classes['level-' + t.level]}"><a class="" href="#${t.slug}">${t.title}</a></li>`,
 		)
 		.join("")}</ul>`;
 
