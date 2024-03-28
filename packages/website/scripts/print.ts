@@ -30,16 +30,16 @@ const pages = [
         filename: 'index.html'
     },
     {
-        path: '/doc',
-        filename: 'doc.html'
-    },
-    {
         path: '/why',
         filename: 'why.html'
     },
     {
         path: '/getting-started',
         filename: 'getting-started.html'
+    },
+    {
+        path: '/api-reference',
+        filename: 'api-reference.html'
     }
 ]
 
