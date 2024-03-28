@@ -16,7 +16,7 @@ export async function Home({ dom }: ComponentParam) {
 				<li class="${classes.item}">Explicitness over Implicitiveness</li>
 			</ul>
 		</div>
-		<a href="/doc" class="btn btn-primary btn-lg" type="button">See documentation</a>
+		<a href="/getting-started" class="btn btn-primary btn-lg" type="button">See documentation</a>
 	</div>
 </div>`);
 }
