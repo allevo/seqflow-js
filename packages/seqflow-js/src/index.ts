@@ -297,6 +297,11 @@ function Component<T = unknown>(
 				if (!el2) {
 					throw new Error(`Mount point not found: ${id}`);
 				}
+
+				if (children[id]) {
+					children[id]._controller.abort("Parent controller aborted");
+				}
+
 				children[id] = Component(
 					el2 as HTMLElement,
 					childFn,
