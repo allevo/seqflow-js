@@ -1,5 +1,10 @@
 import { expect, test } from "vitest";
-import { ComponentParam, DomainEvent, createDomainEventClass, start } from "../src/index";
+import {
+	ComponentParam,
+	DomainEvent,
+	createDomainEventClass,
+	start,
+} from "../src/index";
 
 test("test 1", async () => {
 	async function app({ dom, event }: ComponentParam) {
@@ -86,16 +91,16 @@ test("test 1", async () => {
 });
 
 test("test 2", async () => {
-	const counterDomain = { counter: 0 }
-	const C = createDomainEventClass("foo", 'increment');
+	const counterDomain = { counter: 0 };
+	const C = createDomainEventClass("foo", "increment");
 
 	async function Button({ dom, event, domains }: ComponentParam) {
 		dom.render('<button type="button">increment</button>');
 		const events = event.waitEvent(event.domEvent("click"));
 		for await (const ev of events) {
-			ev.stopPropagation()
+			ev.stopPropagation();
 			domains.foo.counter++;
-			event.dispatchDomainEvent(new C(undefined))
+			event.dispatchDomainEvent(new C(undefined));
 		}
 	}
 	async function app({ dom, event }: ComponentParam) {
@@ -110,8 +115,8 @@ test("test 2", async () => {
 
 	start(document.body, app, undefined, {
 		domains: {
-			foo: () => counterDomain
-		}
+			foo: () => counterDomain,
+		},
 	});
 
 	expect(counterDomain.counter).toBe(0);
@@ -121,8 +126,7 @@ test("test 2", async () => {
 	document.body.querySelector<HTMLButtonElement>("button")?.click();
 	await new Promise((resolve) => setTimeout(resolve, 100));
 	expect(counterDomain.counter).toBe(2);
-})
-
+});
 
 declare module "../src/index" {
 	interface Domains {

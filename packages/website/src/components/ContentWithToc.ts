@@ -11,8 +11,6 @@ export interface Toc {
 	level: number;
 }
 
-console.log(classes)
-
 export async function ContentWithToc({
 	dom,
 	data,
@@ -22,7 +20,9 @@ export async function ContentWithToc({
 	const tocHTML = `<ul class="list-group">${toc
 		.map(
 			(t) =>
-				`<li class="list-group-item ${classes['level-' + t.level]}"><a class="" href="#${t.slug}">${t.title}</a></li>`,
+				`<li class="list-group-item ${
+					classes[`level-${t.level}`]
+				}"><a class="" href="#${t.slug}">${t.title}</a></li>`,
 		)
 		.join("")}</ul>`;
 
