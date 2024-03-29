@@ -49,13 +49,17 @@ for (const page of pages) {
         resources: "usable",
         runScripts: "dangerously",
         url: `${baseUrl}${page.path}`,
+        virtualConsole
     });
     await new Promise((resolve) => setTimeout(resolve, 1_000))
 
     const resultHtml = dom.serialize()
     const resultHTMWithoutScripts = resultHtml
         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '')
-        .replace('<link rel="custom">', '<script type="module" defer src="/assets/bootstrap.bundle.min.js"></script>')
+        .replace('<link rel="custom">', `
+<script type="module" defer src="/assets/bootstrap.bundle.min.js"></script>
+<script type="module" defer src="/_vercel/insights/script.js"></script>
+`)
 
     const result = minify(resultHTMWithoutScripts, {
         html5: true,
@@ -91,5 +95,3 @@ for (const image of images) {
 for (const page of output) {
     await fs.writeFile(`printed/${page.filename}`, page.html)
 }
-
-
