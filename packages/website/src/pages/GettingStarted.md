@@ -201,7 +201,7 @@ import { CounterDomain } from "./domains/counter/index.ts";
 
 import { Main } from "./Main";
 
-start(document.getElementById("root"), Main, {
+start(document.getElementById("root"), Main, undefined, {
 	domains: {
 		counter: (eventTarget) => {
 			return new CounterDomain(eventTarget);
@@ -247,10 +247,8 @@ Finally, we should update the `src/Main.ts` file content as the following:
 import { ComponentParam } from "seqflow-js";
 import {
 	CounterChanged,
-	CounterDomain,
-	CounterReset,
-	components,
 } from "./domains/counter";
+import { ChangeCounterButton } from "./domains/counter/ChangeCounterButton";
 
 export async function Main({ dom, event, domains }: ComponentParam) {
 	const counter = domains.counter.get();
@@ -260,10 +258,10 @@ export async function Main({ dom, event, domains }: ComponentParam) {
 	<div id="increment"></div>
 </div>
 <div id="counter">\${counter}</div>\`);
-	dom.child("decrement", components.ChangeCounterButton, {
+	dom.child("decrement", ChangeCounterButton, {
 		data: { delta: -1, text: "Decrement" },
 	});
-	dom.child("increment", components.ChangeCounterButton, {
+	dom.child("increment", ChangeCounterButton, {
 		data: { delta: 1, text: "Increment" },
 	});
 
@@ -299,7 +297,7 @@ import { Main } from "../src/Main";
 import { CounterDomain } from "../src/domains/counter/index.ts";
 
 test("should increment and decrement the counter", async () => {
-	start(document.body, Main, {
+	start(document.body, Main, undefined, {
 		log() {},
 		domains: {
 			counter: (eventTarget) => {
