@@ -59,6 +59,7 @@ for (const page of pages) {
         .replace('<link rel="custom">', `
 <script type="module" defer src="/assets/bootstrap.bundle.min.js"></script>
 <script type="module" defer src="/_vercel/insights/script.js"></script>
+<script type="module" defer src="/_vercel/speed-insights/script.js"></script>
 `)
 
     const result = minify(resultHTMWithoutScripts, {
