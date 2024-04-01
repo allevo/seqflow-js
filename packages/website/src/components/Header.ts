@@ -1,5 +1,6 @@
 import { ComponentParam } from "seqflow-js";
 import logo from "../public/images/logo.svg";
+import githuLogo from "../public/images/github.svg";
 
 const str = `
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -32,6 +33,9 @@ const str = `
         </li>
       </ul>
     </div>
+    <a aria-label="github" rel="noopener" target="_blank" href="https://github.com/allevo/seqflow-js" style="color: white; fill: currentColor;">
+      ${githuLogo(30, 30)}
+    </a>
   </div>
 </nav>`;
 
