@@ -8,7 +8,7 @@ import { Why } from "./pages/Why";
 export async function Main({ dom, event, router }: ComponentParam) {
 	dom.render(`
 <header id="nav"></header>
-<main id="main" class="flex-grow-1 overflow-y-auto"></main>
+<div id="main" class="flex-grow-1 overflow-y-auto"></div>
 `);
 	dom.child("nav", Header);
 

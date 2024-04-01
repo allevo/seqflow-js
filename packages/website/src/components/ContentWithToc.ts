@@ -31,10 +31,10 @@ export async function ContentWithToc({
 	<aside style="">
 		${tocHTML}
 	</aside>
-	<div style="grid-area: main; order: 1 !important; overflow-x: hidden; padding-bottom: 30px;">
+	<main style="grid-area: main; order: 1 !important; overflow-x: hidden; padding-bottom: 30px; padding-right: 15px;">
 		<h1>${data.title}</h1>
 		${html}
-	</div>
+	</main>
 </div>
 `);
 
