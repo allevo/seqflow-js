@@ -55,11 +55,13 @@ function parseArguments(args: string[]): Partial<Configuration> {
 		} else if (arg === "--name" || arg === "-n") {
 			configurationFromCMD.projectName = args[i + 1];
 			i += 2;
-		} else if (arg === "--type" || arg === "-t") {
+		} else if (arg === "--template" || arg === "-t") {
 			configurationFromCMD.type = args[i + 1] as TemplateType;
 			i += 2;
 		} else {
-			throw new Error(`Unknown option: ${arg}`);
+			throw new Error(
+				`Unknown option: ${arg}. Allowed options are: --path, --name, --template.`,
+			);
 		}
 	}
 
