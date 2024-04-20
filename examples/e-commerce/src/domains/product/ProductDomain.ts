@@ -1,10 +1,7 @@
-import { ApplicationConfig } from "seqflow-js";
+import { ApplicationConfiguration } from "seqflow-js";
 
 export class ProductDomain {
-	constructor(
-		private _eventTarget: EventTarget,
-		private applicationConfig: ApplicationConfig,
-	) {}
+	constructor(private applicationConfig: Readonly<ApplicationConfiguration>) {}
 
 	async fetchProductsCategories(
 		signal: AbortSignal,

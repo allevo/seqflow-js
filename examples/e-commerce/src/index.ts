@@ -1,4 +1,4 @@
-import { start } from "seqflow-js";
+import { InMemoryRouter, start } from "seqflow-js";
 import { Main } from "./Main";
 import { CartDomain } from "./domains/cart";
 import { ProductDomain } from "./domains/product";
@@ -17,7 +17,7 @@ start(document.getElementById("root"), Main, undefined, {
 			return new CartDomain(eventTarget);
 		},
 		product: (eventTarget, _, config) => {
-			return new ProductDomain(eventTarget, config);
+			return new ProductDomain(config);
 		},
 	},
 	config: {

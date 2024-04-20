@@ -33,7 +33,7 @@ export class CartDomain {
 		this.eventTarget.dispatchEvent(
 			new ChangeCartEvent({
 				product,
-				action: "add",
+				action: "add-product",
 			}),
 		);
 
@@ -59,7 +59,7 @@ export class CartDomain {
 		this.eventTarget.dispatchEvent(
 			new ChangeCartEvent({
 				product,
-				action: "remove",
+				action: "remove-element-product",
 			}),
 		);
 
@@ -69,6 +69,13 @@ export class CartDomain {
 	removeAllFromCart({ product }: { product: Product }) {
 		const productId = product.id;
 		this.products.delete(productId);
+
+		this.eventTarget.dispatchEvent(
+			new ChangeCartEvent({
+				product,
+				action: "remove-all-elements-of-a-product",
+			}),
+		);
 
 		updateLocalStorage(this.products);
 	}

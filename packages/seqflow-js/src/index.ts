@@ -1,628 +1,547 @@
-import { iterOnEvents } from "./event-utils";
+import * as DomainsPackage from "./domains";
+import { type EventAsyncGenerator, combineEvents } from "./events";
+import {
+	BrowserRouter,
+	InMemoryRouter,
+	NavigationEvent,
+	type Router,
+} from "./router";
+import { domEvent, domainEvent, navigationEvent } from "./typedEvents";
 
-export type ChildOption<T = unknown> = {
-	data: T;
-};
-
-type AbortControllerWithId = AbortController & { id: number };
-
-let _abortControllerId = 0;
-function generateAbortController() {
-	const controller = new AbortController();
-	(controller as AbortControllerWithId).id = _abortControllerId++;
-
-	return controller;
-}
-
-export class DomainEvent<T> extends Event implements CustomEvent<T> {
-	static domainName: keyof Domains;
-	static t: string;
-	detail: T;
-
-	constructor(detail: T, eventType = "") {
-		super(eventType, { bubbles: true });
-		this.detail = detail;
-	}
-
-	/* v8 ignore next 3 */
-	initCustomEvent(): void {
-		throw new Error("Method not implemented.");
-	}
-}
-export type GetDataType<T> = T extends DomainEvent<infer R> ? R : never;
-export type GetArrayOf<T> = () => T[];
-
-export function createDomainEventClass<T>(
-	domainName: keyof Domains,
-	type: string,
-) {
-	class CustomBusinessEvent extends DomainEvent<T> {
-		static readonly domainName = domainName;
-		static readonly t = type;
-
-		constructor(detail: T) {
-			super(detail, type);
-		}
-	}
-	return CustomBusinessEvent;
-}
-
-export interface DomEventOption {
-	element: HTMLElement;
-	preventDefault: boolean;
-	stopPropagation: boolean;
-	stopImmediatePropagation: boolean;
-}
-export type AbortableAsyncGenerator<T> = (
-	controller: AbortController,
-) => AsyncGenerator<T>;
-
-export interface ComponentParam<T = unknown> {
-	data: T;
-	domains: Domains;
-	signal: AbortSignal;
-	_controller: AbortController;
-	router: {
-		/**
-		 * Navigate to a new path
-		 *
-		 * @param path new path
-		 */
-		navigate(path: string);
-		/**
-		 * Current path segments
-		 */
-		segments: string[];
-		/**
-		 * Current query parameters
-		 */
-		query: Map<string, string>;
-	};
-	dom: {
-		/**
-		 * Render HTML to the component
-		 *
-		 * @param html innerHTML to render
-		 */
-		render(html: string): void;
-		/**
-		 * Query a single element inside the current component
-		 *
-		 * @param selector query selector
-		 */
-		querySelector<E = HTMLElement>(selector: string): E;
-		/**
-		 * Query all elements inside the current component
-		 *
-		 * @param selector query selector
-		 */
-		querySelectorAll<E extends Node = Node>(selector): NodeListOf<E>;
-		/**
-		 * Mount a child component
-		 *
-		 * @param id mount point element id
-		 * @param fn child component function
-		 * @param option child component option
-		 */
-		child(id: string, fn: ComponentFn<unknown>): void;
-		child<E>(id: string, fn: ComponentFn<E>, option: ChildOption<E>): void;
-	};
-	event: {
-		/**
-		 * Dispatch a domain event
-		 *
-		 * @param event domain event
-		 */
-		dispatchDomainEvent<D, BE extends DomainEvent<D> = DomainEvent<D>>(
-			event: BE,
-		);
-		dispatchEvent(event: Event): void;
-		/**
-		 * Async generator for DOM event.
-		 *
-		 * @param type event type
-		 */
-		domEvent<K extends keyof HTMLElementEventMap>(
-			type: K,
-			option?: Partial<DomEventOption>,
-		): AbortableAsyncGenerator<Event>;
-		domainEvent<BEE extends typeof DomainEvent<unknown>>(
-			b: BEE,
-		): AbortableAsyncGenerator<InstanceType<BEE>>;
-		/**
-		 * Async generator for navigation event
-		 */
-		navigationEvent(): AbortableAsyncGenerator<Event>;
-		/**
-		 * Combine multiple event generators into one
-		 *
-		 * @param fns event generators
-		 */
-		waitEvent<T extends Event[]>(
-			...fns: {
-				[I in keyof T]: AbortableAsyncGenerator<T[I]>;
-			}
-		): AsyncGenerator<T[number]>;
-	};
-}
-
-/**
- * Component function
- *
- * @typeParam T - The type of the data passed to the component
- *
- * @param param The component parameter
- *
- * @returns A promise without a value
- */
-export type ComponentFn<T = unknown> = (
-	param: ComponentParam<T>,
-) => Promise<void>;
-
-function Component<T = unknown>(
-	el: HTMLElement,
-	fn: (p: ComponentParam<T>) => Promise<void>,
-	option: ChildOption<T>,
-	configuration: GlobalConfiguration,
-) {
-	let controller = generateAbortController();
-	const children = {} as Record<string, ReturnType<typeof Component>>;
-
-	controller.signal.addEventListener("abort", () => {
-		for (const mountPoint in children) {
-			configuration.log({
-				msg: "Aborting child component",
-				data: {
-					parent: fn.name,
-					child: mountPoint,
-				},
-			});
-			children[mountPoint]._controller.abort("Parent controller aborted");
-		}
-	});
-
-	configuration.log({
-		msg: "Component Mounted",
-		data: {
-			name: fn.name,
-			id: (controller as AbortControllerWithId).id,
-		},
-	});
-
-	let isFirstRender = true;
-	const b: Omit<ComponentParam<T>, "data"> = {
-		domains: configuration.domains,
-		router: {
-			navigate(path: string) {
-				configuration.log({
-					msg: "Navigating",
-					data: {
-						name: fn.name,
-						path,
-					},
-				});
-				let navigationPath = path;
-				if (navigationPath.startsWith("http")) {
-					const url = new URL(path);
-					navigationPath = url.pathname + url.search;
-				}
-
-				configuration.navigationEventBus.dispatchEvent(
-					new NavigationEvent(navigationPath),
-				);
-				window.history.pushState({}, "", navigationPath);
-			},
-			get segments() {
-				const segments = window.location.pathname.split("/");
-				// first element is always empty
-				segments.shift();
-				return segments;
-			},
-			get query() {
-				const url = new URL(window.location.href);
-				return new Map<string, string>(url.searchParams);
-			},
-		},
-		dom: {
-			render(html: string) {
-				configuration.log({
-					msg: "Rendering component",
-					data: {
-						name: fn.name,
-						isFirstRender,
-					},
-				});
-
-				if (!isFirstRender) {
-					controller.abort("Rerendering the component");
-
-					for (const mountPoint in children) {
-						configuration.log({
-							msg: "Aborting child component",
-							data: {
-								parent: fn.name,
-								child: mountPoint,
-								isFirstRender,
-							},
-						});
-						children[mountPoint]._controller.abort("Rerendering the component");
-					}
-
-					isFirstRender = false;
-
-					controller = generateAbortController();
-				}
-
-				el.innerHTML = html;
-
-				configuration.log({
-					msg: "Component rendered",
-					data: {
-						name: fn.name,
-					},
-				});
-			},
-			querySelector<T = HTMLElement>(selector): T {
-				return el.querySelector(selector);
-			},
-			querySelectorAll<T extends Node = Node>(selector): NodeListOf<T> {
-				return el.querySelectorAll(selector);
-			},
-			child(...args: unknown[]) {
-				let id: string;
-				let childFn: ComponentFn<T>;
-				let option: ChildOption<T>;
-				if (args.length === 2) {
-					id = args[0] as string;
-					childFn = args[1] as ComponentFn<T>;
-					option = {} as ChildOption<T>;
-				} else if (args.length === 3) {
-					id = args[0] as string;
-					childFn = args[1] as ComponentFn<T>;
-					option = args[2] as ChildOption<T>;
-				} else {
-					throw new Error("Invalid number of arguments");
-				}
-
-				configuration.log({
-					msg: "Mounting child component",
-					data: {
-						parent: fn.name,
-						mountPoint: id,
-						child: childFn.name,
-					},
-				});
-
-				const el2 = el.querySelector(`#${id}`);
-				if (!el2) {
-					throw new Error(`Mount point not found: ${id}`);
-				}
-
-				if (children[id]) {
-					children[id]._controller.abort("Parent controller aborted");
-				}
-
-				children[id] = Component(
-					el2 as HTMLElement,
-					childFn,
-					option,
-					configuration,
-				);
-			},
-		},
-		event: {
-			navigationEvent() {
-				return iterOnEvents<NavigationEvent>(
-					configuration.navigationEventBus,
-					"navigate",
-					{
-						preventDefault: true,
-						stopPropagation: false,
-						stopImmediatePropagation: false,
-					},
-				);
-			},
-
-			domainEvent<BEE extends typeof DomainEvent<unknown>>(
-				b: BEE,
-			): (b: AbortController) => AsyncGenerator<InstanceType<BEE>> {
-				const domainKey = b.domainName;
-				const type = b.t;
-
-				configuration.log({
-					msg: "Waiting for Business event",
-					data: {
-						name: fn.name,
-						isFirstRender,
-						domainKey,
-						type,
-					},
-				});
-
-				return iterOnEvents<InstanceType<BEE>>(
-					configuration.domainEventBuses[domainKey],
-					type,
-					{
-						preventDefault: false,
-						stopPropagation: false,
-						stopImmediatePropagation: false,
-					},
-				);
-			},
-			domEvent<K extends keyof HTMLElementEventMap>(
-				type: K,
-				option?: Partial<{
-					element: HTMLElement;
-					preventDefault: boolean;
-					stopPropagation: boolean;
-					stopImmediatePropagation: boolean;
-				}>,
-			) {
-				configuration.log({
-					msg: `Waiting for DOM event ${type}`,
-					data: {
-						name: fn.name,
-						isFirstRender,
-					},
-				});
-
-				const element = option?.element || el;
-
-				return iterOnEvents<HTMLElementEventMap[K]>(element, type, {
-					preventDefault: option?.preventDefault || false,
-					stopPropagation: option?.stopPropagation || false,
-					stopImmediatePropagation: option?.stopImmediatePropagation || false,
-				});
-			},
-			waitEvent<T extends Event[]>(
-				...fns: {
-					[I in keyof T]: (controller: AbortController) => AsyncGenerator<T[I]>;
-				}
-			): AsyncGenerator<T[number]> {
-				configuration.log({
-					msg: "Waiting for event",
-					data: {
-						name: fn.name,
-						isFirstRender,
-					},
-				});
-
-				const _controller = generateAbortController();
-
-				controller.signal.addEventListener(
-					"abort",
-					() => {
-						_controller.abort("Parent controller aborted");
-					},
-					{
-						once: true,
-					},
-				);
-
-				if (fns.length === 0) {
-					throw new Error("waitEvent needs at least one argument");
-				}
-
-				if (fns.length === 1) {
-					return fns[0](_controller);
-				}
-
-				const queue: Event[] = [];
-
-				const controllers = [] as AbortController[];
-
-				Promise.all(
-					fns.map((fn) => {
-						const c = generateAbortController();
-						controllers.push(c);
-						const it = fn(c);
-						return (async () => {
-							let result = await it.next();
-							while (!result.done) {
-								queue.push(result.value);
-								_controller.signal.dispatchEvent(new Event("wakeup"));
-								result = await it.next();
-							}
-						})();
-					}),
-				).catch((e) => {
-					console.error("ERROR", e);
-				});
-
-				return (async function* () {
-					while (true) {
-						_controller.signal.throwIfAborted();
-
-						if (queue.length > 0) {
-							yield queue.shift() as T[number];
-						} else {
-							await new Promise<void>((resolve) => {
-								_controller.signal.addEventListener("wakeup", () => resolve(), {
-									once: true,
-									signal: _controller.signal,
-								});
-							});
-						}
-					}
-				})();
-			},
-			dispatchEvent(event: Event) {
-				configuration.log({
-					msg: "Dispatching event",
-					data: {
-						name: fn.name,
-						eventType: event.type,
-					},
-				});
-				el.dispatchEvent(event);
-			},
-			dispatchDomainEvent<D, BE extends DomainEvent<D> = DomainEvent<D>>(
-				event: BE,
-			) {
-				const domainName = (event.constructor as typeof DomainEvent<D>)
-					.domainName;
-				configuration.log({
-					msg: "Dispatching business event",
-					data: {
-						name: fn.name,
-						domainName,
-						eventType: event.type,
-					},
-				});
-				(
-					configuration.domainEventBuses[domainName] as EventTarget
-				).dispatchEvent(event);
-			},
-		},
-		_controller: controller,
-		signal: controller.signal,
-	};
-
-	if (option?.data) {
-		(b as ComponentParam<unknown>).data = option.data;
-	}
-
-	fn(b as ComponentParam<T>).then(
-		() => {
-			configuration.log({
-				msg: "ENDED!",
-				data: {
-					name: fn.name,
-					id: (controller as AbortControllerWithId).id,
-				},
-			});
-		},
-		(e) => {
-			/* v8 ignore next 9 */
-			configuration.log({
-				msg: "ENDED WITH ERROR!",
-				data: {
-					name: fn.name,
-					id: (controller as AbortControllerWithId).id,
-					error: e,
-				},
-			});
-		},
-	);
-
-	return b as ComponentParam<T>;
-}
-
-interface DomainCreator<Domain> {
-	(
-		domainEventBus: EventTarget,
-		allDomainEventBus: Record<string, EventTarget>,
-		config: ApplicationConfig,
-	): Domain;
-}
-
-type DomainCreators = { [K in keyof Domains]: DomainCreator<Domains[K]> };
-
-export type Log = {
-	msg: string;
-	data: unknown;
-};
-export type StartParameters = {
-	log: (log: Log) => void;
-	domains: DomainCreators;
-	navigationEventBus: EventTarget;
-	config: ApplicationConfig;
-};
-interface GlobalConfiguration {
-	log: (log: Log) => void;
-	domains: Domains;
-	domainEventBuses: { [K in keyof Domains]: EventTarget };
-	navigationEventBus: EventTarget;
-	config: ApplicationConfig;
-}
-
-/**
- * Start a new SeqFlow application
- *
- * @typeParam T - The type of the data passed to the component
- *
- * @param el The element to mount the component
- * @param fn The component function
- * @param option The component option
- * @param config The application configuration
- * @return The controller to abort the component
- */
-export function start<T>(
-	el: HTMLElement,
-	fn: ComponentFn<T>,
-	option?: ChildOption<T>,
-	config?: Partial<StartParameters>,
-): AbortController {
-	const option2 = (option || {}) as ChildOption<T>;
-
-	const params = applyDefault(config);
-	const configuration = createConfiguration(params);
-	const a = Component(el, fn, option2, configuration);
-
-	a._controller.signal.addEventListener("abort", () => {
-		configuration.log({
-			msg: "Component aborted",
-			data: {
-				name: fn.name,
-			},
-		});
-	});
-
-	return a._controller;
-}
-
-function createConfiguration(params: StartParameters): GlobalConfiguration {
-	const domainEventBuses = {};
-	for (const domainName in params.domains) {
-		domainEventBuses[domainName] = new EventTarget();
-	}
-
-	const domains = {};
-	for (const domainName in params.domains) {
-		domains[domainName] = params.domains[domainName](
-			domainEventBuses[domainName],
-			domainEventBuses,
-			params.config,
-		);
-	}
-
-	const config: GlobalConfiguration = {
-		log: params.log,
-		navigationEventBus: params.navigationEventBus,
-		domains: domains as Domains,
-		domainEventBuses:
-			domainEventBuses as GlobalConfiguration["domainEventBuses"],
-		config: params.config,
-	};
-	return config;
-}
-
-function noop() {}
-function applyDefault(config?: Partial<StartParameters>) {
-	const c: Partial<StartParameters> = config || {};
-	if (!c.log) {
-		c.log = noop;
-	}
-	if (!c.domains) {
-		c.domains = {} as StartParameters["domains"];
-	}
-	if (!c.navigationEventBus) {
-		c.navigationEventBus = new EventTarget();
-	}
-	if (!c.config) {
-		c.config = {} as StartParameters["config"];
-	}
-
-	return c as StartParameters;
-}
+export { BrowserRouter, type Router, NavigationEvent, InMemoryRouter };
 
 // biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
 export interface Domains {}
-// biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
-export interface ApplicationConfig {}
 
-export class NavigationEvent extends Event {
-	constructor(public readonly path: string) {
-		super("navigate", { bubbles: false });
+export type DomainEvent<T> = DomainsPackage.DomainEvent<T>;
+export const createDomainEventClass = DomainsPackage.createDomainEventClass;
+
+export interface Log {
+	type: "info" | "debug" | "error";
+	message: string;
+	data?: unknown;
+}
+export type LogFunction = (log: Log) => void;
+
+export interface SeqflowAppContext {
+	log: LogFunction;
+	domains: Domains;
+	domainEventTargets: { [K in keyof Domains]: EventTarget };
+	config: ApplicationConfiguration;
+	router: Router;
+}
+
+type GetYieldType<A extends EventAsyncGenerator<unknown>> = Exclude<
+	Awaited<ReturnType<ReturnType<A>["next"]>>,
+	IteratorReturnResult<unknown>
+>["value"];
+
+export interface SeqflowFunctionContext {
+	app: Readonly<SeqflowAppContext>;
+	abortController: AbortController;
+	createDOMElement(
+		tagName: string,
+		options?: { [key: string]: string },
+		...children: JSX.Element[]
+	): Node;
+	createDOMFragment({
+		children,
+	}: { children?: JSX.Element[] }): DocumentFragment;
+	renderSync: (html: string | JSX.Element) => void;
+	waitEvents: <Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[]>(
+		...fn: Fns
+	) => AsyncGenerator<GetYieldType<Fns[number]>>;
+	domEvent: <K extends keyof HTMLElementEventMap>(
+		eventType: K,
+		options: {
+			el: HTMLElement;
+			preventDefault?: boolean;
+		},
+	) => EventAsyncGenerator<HTMLElementEventMap[K]>;
+	domainEvent<BEE extends typeof DomainsPackage.DomainEvent<unknown>>(
+		b: BEE,
+	): EventAsyncGenerator<InstanceType<BEE>>;
+	navigationEvent(): EventAsyncGenerator<NavigationEvent>;
+	replaceChild: (
+		key: string,
+		newChild: () => JSX.Element | Promise<JSX.Element>,
+	) => void;
+	_el: HTMLElement;
+}
+export type SeqflowFunction<T extends JSX.IntrinsicAttributes> = (
+	this: SeqflowFunctionContext,
+	data: T,
+) => Promise<void>;
+
+// biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
+export interface ApplicationConfiguration {}
+
+export interface SeqflowConfiguration {
+	log: LogFunction;
+	config: ApplicationConfiguration;
+	domains: {
+		[K in keyof Domains]: (
+			eventTarget: EventTarget,
+			applicationDomainTargets: Readonly<{
+				[D in keyof Domains]: EventTarget;
+			}>,
+			config: Readonly<ApplicationConfiguration>,
+		) => Domains[K];
+	};
+	router: Router;
+}
+
+function startComponent<T extends JSX.IntrinsicAttributes>(
+	parentContext: SeqflowFunctionContext,
+	el: HTMLElement,
+	component: SeqflowFunction<T>,
+	componentOption: T | undefined,
+) {
+	const componentName = component.name;
+	parentContext.app.log({
+		type: "debug",
+		message: "startComponent",
+		data: { componentOption, componentName },
+	});
+
+	const childAbortController = new AbortController();
+
+	// When parent is unmouted, we have to abort the child as well
+	// Because the abort signal is fired only once, we have to use { once: true }
+	parentContext.abortController.signal.addEventListener(
+		"abort",
+		() => {
+			childAbortController.abort();
+		},
+		{ once: true },
+	);
+	// If this component has a key, probably it's a component that can be replaced in the future
+	// The parent, when `replaceChild` is called, will dispatch an event to abort this component
+	// And replace it with a new one
+	if (componentOption?.key) {
+		parentContext.abortController.signal.addEventListener(
+			`abort-component-${componentOption.key}`,
+			() => {
+				childAbortController.abort();
+			},
+			{ once: true },
+		);
+	}
+
+	// This array will contain all the children of this component
+	// that has the `key` attribute. Used to replace a child.
+	const componentChildren: { key: string; el: HTMLElement }[] = [];
+
+	// When we abort the current component,
+	// we have to erase the above array
+	// otherwise, it is a memory leak
+	childAbortController.signal.addEventListener(
+		"abort",
+		() => {
+			while (componentChildren.pop()) {}
+		},
+		{ once: true },
+	);
+
+	const childContext: SeqflowFunctionContext = {
+		app: parentContext.app,
+		abortController: childAbortController,
+		_el: el,
+		waitEvents: async function* <A>(
+			this: SeqflowFunctionContext,
+			...fns: EventAsyncGenerator<A>[]
+		): AsyncGenerator<A> {
+			for await (const ev of combineEvents(childAbortController, ...fns)) {
+				yield ev;
+			}
+		},
+		replaceChild(
+			this: SeqflowFunctionContext,
+			key: string,
+			newChild: () => JSX.Element | Promise<JSX.Element>,
+		) {
+			const oldChildIndex = componentChildren.findIndex((c) => c.key === key);
+			if (oldChildIndex < 0) {
+				this.app.log({
+					type: "error",
+					message: "replaceChild: wrapper not found",
+					data: { key, newChild },
+				});
+				throw new Error("replaceChild: wrapper not found");
+			}
+
+			// `this` is the parent component. WHen the user calls `replaceChild`,
+			// we have to abort the child component dispatching the below event
+			this.abortController.signal.dispatchEvent(
+				new Event(`abort-component-${key}`),
+			);
+
+			// Remove the old child from the array, and replace it with the new one
+			const [oldChild] = componentChildren.splice(oldChildIndex, 1);
+
+			const { el: wrapper } = oldChild;
+
+			const a = newChild();
+			if (a instanceof Promise) {
+				a.then((child) => {
+					wrapper.replaceWith(child);
+				});
+				return;
+			}
+
+			wrapper.replaceWith(a);
+		},
+		domEvent<K extends keyof HTMLElementEventMap>(
+			this: SeqflowFunctionContext,
+			eventType: K,
+			options: {
+				el: HTMLElement;
+				preventDefault?: boolean;
+			},
+		): EventAsyncGenerator<HTMLElementEventMap[K]> {
+			return domEvent(eventType, {
+				el: options.el,
+				preventDefault: options.preventDefault ?? false,
+			});
+		},
+		domainEvent<BEE extends typeof DomainsPackage.DomainEvent<unknown>>(
+			this: SeqflowFunctionContext,
+			b: BEE,
+		): EventAsyncGenerator<InstanceType<BEE>> {
+			const domainName = b.domainName;
+			const eventTarget = parentContext.app.domainEventTargets[domainName];
+			return domainEvent(b.t, eventTarget);
+		},
+		navigationEvent(): EventAsyncGenerator<NavigationEvent> {
+			this.app.log({
+				type: "debug",
+				message: "navigationEvent",
+				data: {
+					componentName,
+				},
+			});
+			const et = this.app.router.getEventTarget();
+			return async function* (controller: AbortController) {
+				const navigationEvents = navigationEvent(et);
+				for await (const ev of combineEvents(controller, navigationEvents)) {
+					yield ev;
+				}
+			};
+		},
+		createDOMFragment(
+			this: SeqflowFunctionContext,
+			{ children }: JSX.IntrinsicAttributes,
+		): DocumentFragment {
+			this.app.log({
+				type: "debug",
+				message: "createDOMFragment",
+				data: { children },
+			});
+			const fragment = new DocumentFragment();
+			if (!children) {
+				return fragment;
+			}
+			if (!Array.isArray(children)) {
+				children = [children];
+			}
+			const c = children.flat(Number.POSITIVE_INFINITY);
+			for (const child of c) {
+				if (typeof child === "string") {
+					fragment.appendChild(document.createTextNode(child));
+					continue;
+				}
+				if (typeof child === "number") {
+					fragment.appendChild(document.createTextNode(`${child}`));
+					continue;
+				}
+				// `Node` here means:
+				// - `HTMLElement`
+				// - `DocumentFragment`
+				if (child instanceof Node) {
+					fragment.appendChild(child);
+					continue;
+				}
+
+				this.app.log({
+					type: "error",
+					message: "Unsupported child type. Implement me",
+					data: { child, children },
+				});
+				throw new Error("Unsupported child type");
+			}
+
+			return fragment;
+		},
+		createDOMElement(
+			this: SeqflowFunctionContext,
+			tagName: string,
+			options?: { [key: string]: string },
+			...children: JSX.Element[]
+		): Node {
+			this.app.log({
+				type: "debug",
+				message: "createDOMElement",
+				data: { tagName, options, children },
+			});
+
+			if (typeof tagName === "string") {
+				const el = document.createElement(tagName);
+				for (const key in options) {
+					el.setAttribute(key, options[key]);
+				}
+
+				const c = children.flat(Number.POSITIVE_INFINITY);
+				for (const child of c) {
+					if (typeof child === "string") {
+						el.appendChild(document.createTextNode(child));
+						continue;
+					}
+					if (typeof child === "number") {
+						el.appendChild(document.createTextNode(`${child}`));
+						continue;
+					}
+					// `Node` here means:
+					// - `HTMLElement`
+					// - `DocumentFragment`
+					if (child instanceof Node) {
+						el.appendChild(child);
+						continue;
+					}
+
+					this.app.log({
+						type: "error",
+						message: "Unsupported child type. Implement me",
+						data: { child, children, tagName, options, el },
+					});
+					throw new Error("Unsupported child type");
+				}
+				return el;
+			}
+
+			if (tagName === this.createDOMFragment) {
+				return this.createDOMFragment({ children });
+			}
+
+			const wrapper = document.createElement("div");
+			if (options?.key) {
+				componentChildren.push({
+					key: options.key,
+					el: wrapper,
+				});
+			}
+			if (options?.wrapperClass) {
+				wrapper.classList.add(options.wrapperClass);
+			}
+
+			startComponent(childContext, wrapper, tagName, { ...options, children });
+			return wrapper;
+		},
+		renderSync(this: SeqflowFunctionContext, html: string | JSX.Element) {
+			if (typeof html === "string") {
+				this._el.innerHTML = html;
+				return;
+			}
+			this._el.innerHTML = "";
+			this._el.appendChild(html);
+		},
+	};
+
+	const v = component.call(childContext, componentOption || ({} as T));
+	if (v.then !== undefined) {
+		v.then(
+			() => {
+				parentContext.app.log({
+					type: "debug",
+					message: "Component rendering ended",
+					data: { componentOption, componentName },
+				});
+			},
+			(e) => {
+				parentContext.app.log({
+					type: "error",
+					message: "Component throws an error",
+					data: {
+						componentOption,
+						componentName,
+						errorMessage: e.message,
+						error: e,
+						stack: e.stack,
+					},
+				});
+			},
+		);
+	}
+}
+
+export function start<
+	Component extends SeqflowFunction<FirstComponentData>,
+	FirstComponentData extends JSX.IntrinsicAttributes,
+>(
+	root: HTMLElement,
+	firstComponent: Component,
+	componentOption: FirstComponentData | undefined,
+	seqflowConfiguration: Partial<SeqflowConfiguration>,
+): AbortController {
+	const seqflowConfig = applyDefaults(seqflowConfiguration);
+
+	const { domains, domainEventTargets } = createDomains(
+		seqflowConfig.domains,
+		seqflowConfig.config,
+	);
+
+	seqflowConfig.router.install();
+	const appContext: SeqflowAppContext = {
+		log: seqflowConfig.log,
+		domains,
+		domainEventTargets,
+		config: seqflowConfig.config,
+		router: seqflowConfig.router,
+	};
+	seqflowConfig.router.getEventTarget().addEventListener("navigation", (ev) => {
+		appContext.log({
+			type: "info",
+			message: "navigate",
+			data: { path: (ev as NavigationEvent).path, event: ev },
+		});
+	});
+
+	const mainAbortController = new AbortController();
+	const mainContext: SeqflowFunctionContext = {
+		app: appContext,
+		abortController: mainAbortController,
+		_el: root,
+		// biome-ignore lint/correctness/useYield: This is a generator function
+		waitEvents: async function* <A>(): AsyncGenerator<A> {
+			throw new Error("waitEvents is not supported in the main context");
+		},
+		replaceChild: () => {
+			throw new Error("replaceChild is not supported in the main context");
+		},
+		domEvent: <K extends keyof HTMLElementEventMap>(): EventAsyncGenerator<
+			HTMLElementEventMap[K]
+		> => {
+			throw new Error("domEvent is not supported in the main context");
+		},
+		domainEvent<
+			BEE extends typeof DomainsPackage.DomainEvent<unknown>,
+		>(): EventAsyncGenerator<InstanceType<BEE>> {
+			throw new Error("domainEvent is not supported in the main context");
+		},
+		navigationEvent(): EventAsyncGenerator<NavigationEvent> {
+			throw new Error("routerEvent is not supported in the main context");
+		},
+		createDOMFragment(): DocumentFragment {
+			throw new Error("createDOMFragment is not supported in the main context");
+		},
+		createDOMElement(
+			tagName: string,
+			options?: { [key: string]: string },
+			...children: JSX.Element[]
+		): Node {
+			const el = document.createElement(tagName);
+			for (const key in options) {
+				el.setAttribute(key, options[key]);
+			}
+			for (const child of children) {
+				if (typeof child === "string") {
+					el.appendChild(document.createTextNode(child));
+					continue;
+				}
+				throw new Error("Unsupported child type");
+			}
+			return el;
+		},
+		renderSync(html: string | JSX.Element) {
+			if (typeof html === "string") {
+				this._el.innerHTML = html;
+				return;
+			}
+			this._el.innerHTML = "";
+			this._el.appendChild(html);
+		},
+	};
+
+	startComponent(mainContext, root, firstComponent, componentOption);
+
+	return mainAbortController;
+}
+
+function applyDefaults(
+	seqflowConfiguration: Partial<SeqflowConfiguration>,
+): SeqflowConfiguration {
+	function noop() {}
+
+	if (seqflowConfiguration.router === undefined) {
+		seqflowConfiguration.router = new BrowserRouter(new EventTarget());
+	}
+
+	return Object.assign(
+		{},
+		{
+			log: noop,
+			config: {},
+			domains: {},
+		},
+		seqflowConfiguration,
+	) as SeqflowConfiguration;
+}
+
+function createDomains(
+	domainFunctions: SeqflowConfiguration["domains"],
+	applicationConfiguration: ApplicationConfiguration,
+): {
+	domains: Domains;
+	domainEventTargets: { [K in keyof Domains]: EventTarget };
+} {
+	const domainEventTargetsPartial: Record<string, EventTarget> = {};
+
+	const domainKeys = Object.keys(domainFunctions);
+	for (const domainKey of domainKeys) {
+		domainEventTargetsPartial[domainKey] = new EventTarget();
+	}
+
+	const domainEventTargets = domainEventTargetsPartial as {
+		[K in keyof Domains]: EventTarget;
+	};
+	const domains: Record<string, unknown> = {};
+	for (const domainKey of domainKeys as (keyof Domains)[]) {
+		// biome-ignore lint/complexity/noBannedTypes: Don't care about `Function` banned type
+		const c = domainFunctions[domainKey as keyof Domains] as Function;
+		domains[domainKey] = c(
+			domainEventTargets[domainKey],
+			domainEventTargets,
+			applicationConfiguration,
+		);
+	}
+
+	return {
+		domains: domains as unknown as Domains,
+		domainEventTargets: domainEventTargets as {
+			[K in keyof Domains]: EventTarget;
+		},
+	};
+}
+
+declare global {
+	namespace JSX {
+		// biome-ignore lint/complexity/noBannedTypes: Don't care about `Function` banned type
+		type ElementType = HTMLElement | Function | string | number;
+
+		interface Element extends HTMLElement {}
+
+		interface IntrinsicElements {
+			[key: string]: Partial<Omit<Element, "children">> & {
+				children?: ElementType | ElementType[];
+			};
+			button: Partial<Omit<HTMLButtonElement, "children">> & {
+				children?: ElementType | ElementType[];
+			};
+		}
+
+		interface IntrinsicAttributes {
+			key?: string;
+			wrapperClass?: string;
+			children?: ElementType | ElementType[];
+		}
 	}
 }

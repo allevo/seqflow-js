@@ -1,15 +1,46 @@
-import { screen, waitFor } from "@testing-library/dom";
+import {
+	screen,
+	waitFor,
+	waitForElementToBeRemoved,
+} from "@testing-library/dom";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
-import { start } from "seqflow-js";
+import { InMemoryRouter, start } from "seqflow-js";
 import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
+import { s } from "vitest/dist/reporters-MmQN-57K";
 import { Main } from "../src/Main";
 import { CartDomain } from "../src/domains/cart";
 import { ProductDomain } from "../src/domains/product";
 import { UserDomain } from "../src/domains/user";
 
 const server = setupServer(
+	http.get("/users", () => {
+		return HttpResponse.json([
+			{
+				address: {
+					geolocation: {
+						lat: "-37.3159",
+						long: "81.1496",
+					},
+					city: "kilcoole",
+					street: "new road",
+					number: 7682,
+					zipcode: "12926-3874",
+				},
+				id: 1,
+				email: "john@gmail.com",
+				username: "johnd",
+				password: "m38rmF$",
+				name: {
+					firstname: "john",
+					lastname: "doe",
+				},
+				phone: "1-570-236-7033",
+				__v: 0,
+			},
+		]);
+	}),
 	http.get("/products/categories", () => {
 		return HttpResponse.json([
 			"electronics",
@@ -92,7 +123,8 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-test("should increment and decrement the counter", async () => {
+test("The user should buy products", async () => {
+	const router = new InMemoryRouter(new EventTarget(), "/");
 	start(document.body, Main, undefined, {
 		domains: {
 			user: (eventTarget, _, config) => {
@@ -101,10 +133,11 @@ test("should increment and decrement the counter", async () => {
 			cart: (eventTarget, _, config) => {
 				return new CartDomain(eventTarget);
 			},
-			product: (eventTarget, _, config) => {
-				return new ProductDomain(eventTarget, config);
+			product: (_1, _, config) => {
+				return new ProductDomain(config);
 			},
 		},
+		router,
 		config: {
 			api: {
 				baseUrl: "",
@@ -118,10 +151,50 @@ test("should increment and decrement the counter", async () => {
 	const electronicsCategory = await screen.findByText(/electronics/i);
 	electronicsCategory.click();
 
+	// Wait for the products to be rendered
+	await screen.findByText(
+		/WD 2TB Elements Portable External Hard Drive - USB 3.0/i,
+	);
+
 	const cartButtons = await screen.findAllByText(/Add to cart/i);
 	expect(cartButtons).toHaveLength(6);
+	// Add 2 products to the cart
 	cartButtons[0].click();
+	cartButtons[2].click();
 
 	const goToCheckoutTooltipAfter = await screen.findByText(/Go to checkout/i);
 	goToCheckoutTooltipAfter.click();
+
+	// The user should see the total price
+	await screen.findByText(/total: 173 €/i);
+
+	const goToLoginButton = await screen.findByText(/Go to login/i);
+	expect(goToLoginButton).toBeVisible();
+	goToLoginButton.click();
+
+	await screen.findByText(/login/i);
+
+	const input: HTMLInputElement = await screen.findByLabelText(/username/i);
+	input.value = "johnd";
+	const loginButton = await screen.findByText(/login/i);
+	loginButton.click();
+
+	await screen.findByText(/electronics/i);
+
+	const cartImage = await screen.findByTitle(/go to cart/i);
+	cartImage.click();
+
+	// The user should see the total price
+	const total = await screen.findByText(/total: 173 €/i);
+	expect(total).toBeVisible();
+
+	const checkoutButton = await screen.findByRole("button", {
+		name: /checkout/i,
+	});
+	checkoutButton.click();
+
+	const goHomeLink = await screen.findByText(/Go home/i);
+	goHomeLink.click();
+
+	await screen.findByText(/electronics/i);
 });

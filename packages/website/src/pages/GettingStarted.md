@@ -23,70 +23,74 @@ This command will ask you some questions about the project, like where to place 
 
 For the purpose of this documentation, we will use the empty template, but you can choose another one running the previous command without `--template empty` argument.
 
-
 Opening the project folder, you may see some files and folders. The most important are:
 
-
-- `src/Main.ts`: the parent component
-- `src/index.ts`: the entrypoint file
-- `src/index.html`: the main HTML file
 - `src/index.css`: the main CSS file
-
+- `src/index.html`: the main HTML file
+- `src/index.ts`: the entrypoint file
+- `src/Main.tsx`: the parent component
 - `package.json`: the dependencies and devDependencies are fulfilled
 - `biome.json`: the project formatter configuration
 - `vite.config.js`: the Vite configuration file
 - `vitest.config.ts`: the Vitest configuration file. We will talk about it later
+- `tests/index.test.ts`: the test file. Test part is covered at the end of this page
 
-For now, we will focus only on `src/Main.ts` file. Our first application will be a simple counter. Let's start by creating the component.
+Before we start, let's install the dependencies. Run the command `pnpm install` to install the dependencies.
 
+For now, we will focus only on `src/Main.tsx` file. Our first application will be a simple counter. Let's start by creating the component.
 
 ## Counter application
 
 The counter application is a simple application that increments and decrements a number. We will create a unique component for this application that shows two buttons and a number: one button for incrementing the number and another for decrementing it.<br />So, our desiderata is to create 2 buttons and wait for a "click" event on each one: when the user clicks on a button, the number should be incremented or decremented accordingly.<br />It is simple.
 
-Change the `src/Main.ts` file content as the following:
+Change the `src/Main.tsx` file content as the following:
 
-```ts
-import { ComponentParam } from "seqflow-js";
+```tsx
+import { SeqflowFunctionContext } from "seqflow-js";
 
-export async function Main({ dom, event }: ComponentParam) {
+export async function Main(this: SeqflowFunctionContext) {
 	let counter = 0;
-	dom.render(\`
-<div>
-	<button id="decrement">Decrement</button>
-	<button id="increment">Increment</button>
-</div>
-<div id="counter">\${counter}</div>\`);
 
-	const incrementButton = dom.querySelector("#increment");
-	const decrementButton = dom.querySelector("#decrement");
-	const counterDiv = dom.querySelector("#counter");
+	const incrementButton = <button type="button">Increment</button>
+	const decrementButton = <button type="button">Decrement</button>
+	const counterSpan = <span>{counter}</span>
+	this.renderSync(
+		<>
+			<div>
+				{decrementButton}
+				{incrementButton}
+			</div>
+			{counterSpan}
+		</>
+	);
 
-	const events = event.waitEvent(
-		event.domEvent("click")
+	const events = this.waitEvents(
+		this.domEvent("click", { el: this._el })
 	);
 	for await (const ev of events) {
-		if (ev.target === incrementButton) {
+		if (!(ev.target instanceof HTMLElement)) {
+			continue;
+		}
+		if (incrementButton.contains(ev.target)) {
 			counter++;
-		} else if (ev.target === decrementButton) {
+		} else if (decrementButton.contains(ev.target)) {
 			counter--;
 		}
 
-		counterDiv.textContent = \`\${counter}\`;
+		counterSpan.textContent = \`\${counter}\`;
 	}
 }
-
 ```
 
-Wait... let's start the application and see the result. Run the command `pnpm dev`.<br />
+Wait... let's start the application and see the result. Run the command `pnpm start`.<br />
 Open your browser and go to [`http://localhost:5173`](http://localhost:5173 "localhost"). You should see the counter application running.
 
 Let's see what we have done:
-- We created a new component, `Main`, that is responsible for rendering the counter application. It is an `async` function that receives a `ComponentParam` object as a parameter. See the [API reference](/api-reference "Api Reference") for more information about the `ComponentParam` object.
+- We created a new component, `Main`, that is responsible for rendering the counter application. It is an `async` function binded to a own `SeqflowFunctionContext` instance. See the [API reference](/api-reference "Api Reference") for more information about the `SeqflowFunctionContext` object.
 - We define a variable that holds the state of the application: the `counter` variable.
-- We use the `dom.render` method to render the html.
-- We also use the `dom.querySelector` method to get the button elements and the counter wrapper element.
-- We use the `event.waitEvent` method to wait for a `"click"` event. Due to the event bubbling, we can attach a single event handler. `event.waitEvent` returns an async iterator that yields the events.
+- We create two buttons, `incrementButton` and `decrementButton`, and a span, `counterSpan`, that shows the value of the counter variable.
+- We use the `this.renderSync` method to render the html.
+- We use the `this.domEvent` with `this.waitEvents` method to wait for a `"click"` event. Due to the event bubbling, we can attach a single event handler to the component mounting element (`this._el`). `this.waitEvents` returns an async iterator that yields the events.
 - We use a `for await` loop to wait for the `"click"` event.
 - When the user clicks, we check which is the target of the event: if it is the increment button, we increment the counter variable; if it is the decrement button, we decrement the counter variable.
 - Finally, we update the counter wrapper element with the new value of the counter variable.
@@ -100,54 +104,59 @@ In SeqFlow, state is just a variable. You can use it as you want. You can use a 
 
 ## Create different components
 
-Even if the counter application is simple, it is not well-structured.
-We have the entire application in a single component. It is not a good practice. We should split the application into different components.
+Even if the counter application is simple, we want to learn how to structure a complex project. Now, we have the entire application in a single component. It is not a good practice. We should split the application into different components.
 
-Let's start by creating a component, `Counter`, that will be responsible for rendering the counter application. Change the `src/Main.ts` file content as the following:
+Let's start by creating a component, `Counter`, that will be responsible for rendering the counter application. Change the `src/Main.tsx` file content as the following:
 
-```ts
-import { ComponentParam } from "seqflow-js";
+```tsx
+import { SeqflowFunctionContext } from "seqflow-js";
 
-async function ChangeCounterButton({ dom, data }: ComponentParam<{ text: string }>) {
-	dom.render(\`<button>\${data.text}</button>\`);
+async function ChangeCounterButton(this: SeqflowFunctionContext, data: { text: string }) {
+	this.renderSync(<button type="button">{data.text}</button>);
 }
 
-export async function Main({ dom, event }: ComponentParam) {
+export async function Main(this: SeqflowFunctionContext) {
 	let counter = 0;
-	dom.render(\`
-<div>
-	<div id="decrement"></div>
-	<div id="increment"></div>
-</div>
-<div id="counter">\${counter}</div>
-\`);
-	dom.child("decrement", ChangeCounterButton, { data: { text: "Decrement" } });
-	dom.child("increment", ChangeCounterButton, { data: { text: "Increment" } });
 
-	const incrementButton = dom.querySelector("#increment");
-	const decrementButton = dom.querySelector("#decrement");
-	const counterDiv = dom.querySelector("#counter");
+	const incrementButton = <ChangeCounterButton text="increment" />
+	const decrementButton = <ChangeCounterButton text="decrement" />
+	const counterSpan = <span>{counter}</span>
+	this.renderSync(
+		<>
+			<div>
+				{decrementButton}
+				{incrementButton}
+			</div>
+			{counterSpan}
+		</>
+	);
 
-	const events = event.waitEvent(event.domEvent("click"));
+	const events = this.waitEvents(
+		this.domEvent("click", { el: this._el })
+	);
 	for await (const ev of events) {
+		if (!(ev.target instanceof HTMLElement)) {
+			continue;
+		}
 		if (incrementButton.contains(ev.target)) {
 			counter++;
 		} else if (decrementButton.contains(ev.target)) {
 			counter--;
 		}
 
-		counterDiv.textContent = \`\${counter}\`;
+		counterSpan.textContent = \`\${counter}\`;
 	}
 }
 ```
 
-We created a new component, `ChangeCounterButton`, that is responsible for rendering a button. We also used the `dom.child` method to render the `ChangeCounterButton` component inside the `Main` component.
+We created a new component, `ChangeCounterButton`, that is responsible for rendering a button. The `Main` component uses it to render the increment and decrement buttons.
 
-The `ChangeCounterButton` component receives a `ComponentParam` object as a parameter. We also used the `ComponentParam` generic type to define the type of the `data` property. We typed the `data` property as an object with a `text` property that is a string. So, inside the component, we can access the `text` property as a string.
-
-We also changed the `Main` component to use the `ChangeCounterButton` component. We used the `dom.child` method to render the `ChangeCounterButton` component inside the `Main` component. We passed the `text` property to the `ChangeCounterButton` component.
+The `ChangeCounterButton` component receives a `data` object as a parameter which contains `text` property, the text we want to render as button label.
+In `Main` component, we instantiate the `ChangeCounterButton` component twice: one for the increment button and another for the decrement button, passing the `text` property accordingly.
 
 Moreover, we changed the event handling to use the `contains` method to check if the target of the event is inside the button element.
+
+**NB**: even if SeqFlow uses JSX syntax, it is not React. Everytime SeqFlow mounts a child component, it creates a `div` element to wrap the child component. This is the reason we use the `contains` method to check if the target of the event is inside the button element.
 
 ## Structure your project into domains
 
@@ -155,9 +164,8 @@ The counter application is still not well-structured: we mixed the UI and the lo
 When the application grows, it will be hard to maintain and test it. We should split the application into different parts: the UI part and the logic part.
 
 Before we start, let's understood the concept of domain in SeqFlow. A domain is a part of the application that is responsible for a specific feature.<br />
-In this example, we will create a domain for the counter application: the counter domain will be responsible for managing the state of the counter application, incrementing and decrementing the counter variable.<br />
-We will also create a domain for the UI part of the counter application: the button that increments and decrements the counter variable.<br />
-We create the `counter` domain and put it in the `src/domains/counter` folder.
+Even if an application manages multiple domains at the same time, in this example, we will create only one domain for the counter application: the counter domain will be responsible for managing the state of the counter application, incrementing and decrementing the counter variable.<br />
+We want to create the `counter` domain and put all the files in the `src/domains/counter` folder.
 Lets start by creating the `counter` domain class. Create the `src/domains/counter/index.ts` file with the folling content:
 
 ```ts
@@ -191,17 +199,18 @@ export class CounterDomain {
 The `CounterDomain` class is a pure Javascript (Typescript) class that is responsible for managing the state of the counter application. It has a `counter` property that holds the state of the counter application. It also has a `applyDelta` method that is responsible for incrementing and decrementing the counter variable.<br />
 Because the UI part should be notified when the state changes, we create a `CounterChanged` event class for that reason: after the counter variable changes, the `CounterDomain` class dispatches a `CounterChanged` event with the new value of the counter variable.<br />
 
-NB: the `createDomainEventClass` function is a helper function that creates a new event class. It is a simple function that returns a new event class. See the [API reference](/api-reference "Api Reference") for more information about the `createDomainEventClass` function.
+NB: the `createDomainEventClass` function is a helper function that creates a new event class. See the [API reference](/api-reference "Api Reference") for more information about the `createDomainEventClass` function.
 
 After creating the `counter` domain, we should register it updating the `src/index.ts` file content as the following:
 
 ```ts
 import { start } from "seqflow-js";
-import { CounterDomain } from "./domains/counter/index.ts";
+import { CounterDomain } from "./domains/counter/index";
 
 import { Main } from "./Main";
 
 start(document.getElementById("root"), Main, undefined, {
+	log: (l) => console.log(l),
 	domains: {
 		counter: (eventTarget) => {
 			return new CounterDomain(eventTarget);
@@ -215,71 +224,69 @@ declare module "seqflow-js" {
 		counter: CounterDomain;
 	}
 }
-
 ```
 This update is necessary to register the `counter` domain. See the [API reference](/api-reference "Api Reference") for more information about the `start` function.
 
-Now, it is the time to move the `ChangeCounterButton` component to the `src/domains/counter` folder. Create the `src/domains/counter/ChangeCounterButton.ts` file with the following content:
+Now, it is the time to move the `ChangeCounterButton` component to the `src/domains/counter` folder. Create the `src/domains/counter/ChangeCounterButton.tsx` file with the following content:
 
-```ts
-import { ComponentParam } from "seqflow-js";
+```tsx
+import { SeqflowFunctionContext } from "seqflow-js";
 
-export async function ChangeCounterButton({
-	dom,
-	event,
-	domains,
-	data,
-}: ComponentParam<{ delta: number; text: string }>) {
-	dom.render(\`<button type="button">\${data.text}</button>\`);
-	const events = event.waitEvent(event.domEvent("click"));
+export async function ChangeCounterButton(this: SeqflowFunctionContext, data: { delta: number; text: string }) {
+	const button = (
+		<button type="button">{data.text}</button>
+	);
+	this.renderSync(button);
+	const events = this.waitEvents(this.domEvent("click", { el: button }));
 	for await (const _ of events) {
-		domains.counter.applyDelta(data.delta);
+		this.app.domains.counter.applyDelta(data.delta);
 	}
 }
 ```
 We didn't change the `ChangeCounterButton` component too much:
 - We added `delta` property to the `data` property. It is a number that represents the increment or decrement value.
-- We used the `domains` property to access the `counter` domain. We used the `applyDelta` method to increment or decrement the counter variable.
+- We created the `button` element separately and rendered it using the `this.renderSync` method. This allows us to access the button element later.
+- We rendered the button element. After we wait for the `"click"` event on the button element. In this case, we use the `button` element as the event target.
+- We used the `this.app.domains` property to access the `counter` domain. We used the `applyDelta` method to increment or decrement the counter variable.
 
-Finally, we should update the `src/Main.ts` file content as the following:
+Finally, we should update the `src/Main.tsx` file content as the following:
 
-```ts
-import { ComponentParam } from "seqflow-js";
-import {
-	CounterChanged,
-} from "./domains/counter";
+```tsx
+import { SeqflowFunctionContext } from "seqflow-js";
+import { CounterChanged } from "./domains/counter";
 import { ChangeCounterButton } from "./domains/counter/ChangeCounterButton";
 
-export async function Main({ dom, event, domains }: ComponentParam) {
-	const counter = domains.counter.get();
-	dom.render(\`
-<div>
-	<div id="decrement"></div>
-	<div id="increment"></div>
-</div>
-<div id="counter">\${counter}</div>\`);
-	dom.child("decrement", ChangeCounterButton, {
-		data: { delta: -1, text: "Decrement" },
-	});
-	dom.child("increment", ChangeCounterButton, {
-		data: { delta: 1, text: "Increment" },
-	});
+export async function Main(this: SeqflowFunctionContext) {
+	let counter = 0;
 
-	const counterDiv = dom.querySelector("#counter");
+	const incrementButton = <ChangeCounterButton delta={1} text="increment" />
+	const decrementButton = <ChangeCounterButton delta={-1} text="decrement" />
+	const counterSpan = <span>{counter}</span>
+	this.renderSync(
+		<>
+			<div>
+				{decrementButton}
+				{incrementButton}
+			</div>
+			{counterSpan}
+		</>
+	);
 
-	const events = event.waitEvent(
-		event.domainEvent(CounterChanged),
+
+	const events = this.waitEvents(
+		this.domainEvent(CounterChanged),
 	);
 	for await (const ev of events) {
-		counterDiv.textContent = \`\${domains.counter.get()}\`;
+		counterSpan.textContent = \`\${this.app.domains.counter.get()}\`;
 	}
 }
+
 ```
 
 In this update, we changed the `Main` component as the following:
 - the component uses the `counter` domain to get the initial value of the counter
-- the component renders the html and two `ChangeCounterButton`: one for decrementing the counter variable and another for incrementing it.
-- the component uses the `event.waitEvent` method to wait for the `CounterChanged` event.
+- the component renders the html with two `ChangeCounterButton` components: one for decrementing the counter variable and another for incrementing it.
+- the component uses the `this.waitEvents` method to wait for the `CounterChanged` event.
 - when the `CounterChanged` event is dispatched, the component updates the counter wrapper element with the new value of the counter variable.
 
 ## How to test your application
@@ -294,11 +301,10 @@ import { screen, waitFor } from "@testing-library/dom";
 import { start } from "seqflow-js";
 import { expect, test } from "vitest";
 import { Main } from "../src/Main";
-import { CounterDomain } from "../src/domains/counter/index.ts";
+import { CounterDomain } from "../src/domains/counter/index";
 
 test("should increment and decrement the counter", async () => {
 	start(document.body, Main, undefined, {
-		log() {},
 		domains: {
 			counter: (eventTarget) => {
 				return new CounterDomain(eventTarget);
@@ -307,9 +313,9 @@ test("should increment and decrement the counter", async () => {
 	});
 
 	const incrementButton =
-		await screen.findByText<HTMLButtonElement>("Increment");
+		await screen.findByText<HTMLButtonElement>(/Increment/i);
 	const decrementButton =
-		await screen.findByText<HTMLButtonElement>("Decrement");
+		await screen.findByText<HTMLButtonElement>(/Decrement/i);
 	const counterDiv = await screen.findByText<HTMLDivElement>("0");
 
 	expect(counterDiv.textContent).toBe("0");
@@ -324,6 +330,12 @@ test("should increment and decrement the counter", async () => {
 ```
 
 This test is simple: it starts the application and waits for the `Increment` and `Decrement` buttons to appear. Then, it clicks on the `Increment` button and waits for the counter variable to be incremented. It does the same for the `Decrement` button.
+
+## Improvements (at home)
+
+I want to leave you with two little homework:
+- implement a reset button that sets the counter to 0
+- persist the counter value in the local storage. If the user refreshes the page, the counter value should be the same as before. For this, try to not change the UI part.
 
 ## Conclusion
 

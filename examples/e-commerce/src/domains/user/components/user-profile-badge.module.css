@@ -9,11 +9,23 @@
     height: 100%;
 }
 
+.profile-header-menu-wrapper {
+    position: relative;
+    right: 50px;
+}
 #profile-header-menu {
     display: none;
-
     background-color: white;
     width: 150px;
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    ol {
+        list-style: none;
+        margin-block: 0;
+        padding-inline: 0;
+    }
 }
 #profile-header-menu.show {
     position: absolute;

@@ -5,13 +5,14 @@
     overflow: hidden;
     height: 100vh;
 
-    #main {
-        flex-grow: 1;
+    .main {
+        flex: 1;
+        display: flex;
         overflow: auto;
+        padding-bottom: 40px;
 
         > div {
-            width: 800px;
-            margin: auto;
+            width: 100%;
         }
     }
 }
