@@ -292,7 +292,10 @@ In this update, we changed the `Main` component as the following:
 ## How to test your application
 
 Testing is an important part of the development process. It is a way to ensure that the application works as expected. In SeqFlow, testing is simple and easy. We use the `vitest` library to test the application.<br />
-The project is already configured to use the `vitest` library. The configuration is in the `vitest.config.ts` file. You can run the tests using the `pnpm test` command.<br />
+
+SeqFlow integrates `biome` as formatter. Before running the tests, you should fix all the formatting errors running `pnpm run biome:check` command.
+
+The project is already configured to use the `vitest` library. The configuration is in the `vitest.config.ts` file. You can run the tests using the `pnpm test` command.
 
 Due to the simple nature of the application, we will create a unique test. Create the `src/tests/index.test.ts` file with the following content:
 
