@@ -26,6 +26,7 @@
   width: calc(100% + 20px);
   max-width: 200px;
   text-align: center;
+  left: 0px;
   transition: opacity 0.3s;
   box-sizing: border-box;
 }

@@ -4,6 +4,11 @@
     gap: 5px;
     list-style: none;
 
+    margin-block: 0px;
+    padding-inline: 0px;
+    margin-left: 20px;
+    margin-right: 20px;
+
     .element {
         border: 1px solid #b4b5b5;
         background: #e1e1e1;

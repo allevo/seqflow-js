@@ -3,24 +3,27 @@
 This function starts `SeqFlow` and renders the component into the DOM element.
 
 ```ts
-function start<T>(
-	el: HTMLElement,
-	fn: ComponentFn<T>,
-	option?: ChildOption<T>,
-	config?: Partial<StartParameters>,
-): AbortController;
+function start<
+	Component extends SeqflowFunction<FirstComponentData>,
+	FirstComponentData extends JSX.IntrinsicAttributes,
+>(
+	root: HTMLElement,
+	firstComponent: Component,
+	componentOption: FirstComponentData | undefined,
+	seqflowConfiguration: Partial<SeqflowConfiguration>,
+): AbortController
 ```
 
 ### Parameters
 
-- `el: HTMLElement` - The DOM element where the component will be rendered.
-- `fn: ComponentFn<T>` - The component function to be rendered.
-- `option?: ChildOption<T>` - The initial state of the component.
-- `config?: Partial<StartParameters>` - The configuration of the `SeqFlow` instance.
-  - `log: (l: Log) => void` - The log function to be used internally. No logs are printed if this function is not provided.
+- `root: HTMLElement` - The DOM element where the component will be rendered.
+- `firstComponent: Component` - The SeqFlow component function.
+- `componentOption: FirstComponentData | undefined` - The initial state of the component or undefined.
+- `seqflowConfiguration?: Partial<SeqflowConfiguration>` - The configuration of the `SeqFlow` instance.
+  - `log: (l: Log) => void` - The log function to be used internally. No logs are printed if this function is not provided. The application can use this function to log the messages too.
   - `domains` - The object that let you to create the custom domains. Empty object by default.
-  - `navigationEventBus` - The event bus for the navigation events. An `EventTarget` instance is used by default.
   - `config` - The application configuration object.
+  - `router` - The router object that contains the navigation methods. By default, the router object will be a `BrowserRouter` instance.
 
 ### Returns
 
@@ -31,33 +34,40 @@ function start<T>(
 The component function is an asynchronous function that renders the component into the DOM element.
 
 ```ts
-type ComponentFn<T = unknown> = (
-	param: ComponentParam<T>,
+type SeqflowFunction<T extends JSX.IntrinsicAttributes> = (
+	this: SeqflowFunctionContext,
+	data: T,
 ) => Promise<void>;
 ```
 
 ### Parameters
 
-- `param: ComponentParam<T>` - The component parameter object.
+- `this: SeqflowFunctionContext` - The context object that contains the methods to render the component.
+- `param: T` - The component data parameter object.
 
 
-## ComponentParam<T>
+## SeqflowFunctionContext
 
 This interface is the parameter object that is passed to the component function.
 
 ### Fields
 
-- `data: T` - The data object that is passed to the component. This is where application data is placed.
-- `domains: Domains` - The object that contains the custom domains you created using `start` function.
-- `signal: AbortSignal` - The `AbortSignal` instance that can be used to stop operation in the component. For instance you can use this signar in the `fetch` function to stop the request if in the meanwhile the component is unmounted.
-- `router: Router` - The router object that contains the navigation methods.
-- `dom: Dom` - The DOM object that contains the methods to render the component.
-- `event: Event` - The event object that contains the methods to handle the events.
+- `app: Readonly<SeqflowAppContext>` - The SeqFlow app instance. It contains the context of the application, such as the custom domains, the router object.
+- `abortController: AbortController` - The instance of the `AborteController` linked to the component.
+- `renderSync: (html: string | JSX.Element) => void` - This method renders the HTML string or JSX element into the component mounting DOM element.
+- `waitEvents: <Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[]>(...fns: Fns) => AsyncGenerator<GetYieldType<Fns[number]>>` - The method to wait for multiple events to be triggered.
+- `domEvent: <K extends keyof HTMLElementEventMap>(eventType: K, options) => EventAsyncGenerator<HTMLElementEventMap[K]>` - The method to create an async generator that waits for the DOM event to be triggered. The `options` object can be used to customize the event listener and to prevent the default behavior.
+- `domainEvent<BEE extends typeof DomainsPackage.DomainEvent<unknown>>(domainEventClass: BEE): EventAsyncGenerator<InstanceType<BEE>>` - The method to create an async generator that waits for the domain event to be triggered.
+- `navigationEvent(): EventAsyncGenerator<NavigationEvent>` - The method to create an async generator that waits for the navigation event to be triggered.
+- `replaceChild: (key: string, newChild: () => JSX.Element | Promise<JSX.Element>) => void` - The method to replace a child component with the same `key` with a new component. 
+- `_el: HTMLElement` - The DOM element where the component is mounted.
+- `createDOMElement` - The method to create a DOM element. Don't use this method directly.
+- `createDOMFragment` - The method to create a Fragment DOM element. Don't use this method directly.
 
 ## Domains
 
 This interface is the object that contains the custom domains you created using `start` function.
-This interface is empty by default and you can add your custom domains.
+This interface is empty by default and you can add your custom domains. See the <a target="_blank" href="https://github.com/allevo/seqflow-js/tree/main/examples/e-commerce">E-commerce example</a>
 
 ## Router
 
@@ -65,30 +75,8 @@ This interface is the object that contains the navigation methods.
 
 ### Properties
 
-- `navigate: (url: string) => void` - The method to navigate to the given URL.
-- `segments: string[]` - The array of the segments of the current URL.
-- `query: Map<string, string>` - A map that contains the parameters of the current URL.
-
-## Dom
-
-This interface is the object that contains the methods to render the component.
-
-### Properties
-
-- `render: (html: string) => void` - The method to render the HTML string into the DOM element.
-- `querySelector<E = HTMLElement>(selector: string): E` - The method to query the DOM element by the given selector. This method is a wrapper of the `querySelector` method of the DOM element.
-- `querySelectorAll<E extends Node = Node>(selector): NodeListOf<E>` - The method to query all the DOM elements by the given selector. This method is a wrapper of the `querySelectorAll` method of the DOM element.
-- `child(id: string, fn: ComponentFn<unknown>): void` - The method to render the child component into the DOM element. The `id` is the unique identifier of the child component.
-- `child<E>(id: string, fn: ComponentFn<E>, option: ChildOption<E>): void` - The method to render the child component into the DOM element with the initial state. The `id` is the unique identifier of the child component.
-
-## Event
-
-This interface is the object that contains the methods to handle the events.
-
-### Properties
-
-- `domainEvent<BEE extends typeof DomainEvent<unknown>>(b: BEE, ):AbortableAsyncGenerator<InstanceType<BEE>>` - The method to create an async generator that waits for the DOM event to be triggered.
-- `domEvent<K extends keyof HTMLElementEventMap>( type: K, option?: Partial<DomEventOption>, ): AbortableAsyncGenerator<Event>;` - The method to create an async generator that waits for the DOM event to be triggered. A custom option can be passed to the method to customize the event listener.
-- `navigationEvent():  AbortableAsyncGenerator<Event>;` - The method to create an async generator that waits for the navigation event to be triggered.
-- `waitEvent<T extends Event[]>(...fns: { [I in keyof T]: AbortableAsyncGenerator<T[I]> } ): AsyncGenerator<T[number]>;` - The method combines multiple async generators into one. The method generates the events from the first generator that is triggered.
-- `		dispatchDomainEvent<D, BE extends DomainEvent<D> = DomainEvent<D>>(event: BE);` - The method to dispatch the domain event to the event bus.
+- `navigate: (path: string) => void` - The method to navigate to the given path.
+- `segments: string[]` - The array of the segments of the current path.
+- `back(): void` - Perform the back action.
+- `install(): void` - This method is used internally to install the router.
+- `getEventTarget(): EventTarget` - This method is used internally to get the event target.

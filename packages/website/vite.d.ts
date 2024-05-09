@@ -5,3 +5,8 @@ declare module '*.md' {
 
 	export { toc, html };
 }
+
+declare module '*.svg' {
+	const content: (w: number, h: number) => string;
+	export default content;
+}

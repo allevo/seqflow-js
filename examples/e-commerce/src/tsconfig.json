@@ -1,6 +1,0 @@
-{
-    "compilerOptions": {
-        "lib": ["ES2023", "dom"],
-        "downlevelIteration": true
-    }
-}

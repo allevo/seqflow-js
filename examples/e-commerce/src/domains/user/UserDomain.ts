@@ -1,4 +1,4 @@
-import { ApplicationConfig } from "seqflow-js";
+import { ApplicationConfiguration } from "seqflow-js";
 import { UserLoggedEvent, UserLoggedOutEvent } from "./events";
 
 const LOCALSTORAGE_USER_KEY = "user";
@@ -30,7 +30,7 @@ export class UserDomain {
 
 	constructor(
 		private eventTarget: EventTarget,
-		private applicationConfig: ApplicationConfig,
+		private applicationConfig: Readonly<ApplicationConfiguration>,
 	) {}
 
 	async restoreUser(): Promise<UserType | undefined> {
