@@ -26,11 +26,11 @@ export async function Main(this: SeqflowFunctionContext) {
 			<div id="main" class="flex-grow-1 overflow-y-auto">
 				<InitalComponent key="main" />
 			</div>
-		</>
+		</>,
 	);
 
 	const events = this.waitEvents(this.navigationEvent());
-	for await (const _ of events) {		
+	for await (const _ of events) {
 		const Component = getComponent(this.app.router.segments.pop());
 		this.replaceChild("main", () => <Component key="main" />);
 	}

@@ -16,8 +16,10 @@ export async function Home(this: SeqflowFunctionContext) {
 						<li class="${classes.item}">Explicitness over Implicitiveness</li>
 					</ul>
 				</div>
-				<a href="/getting-started" class="btn btn-primary btn-lg" type="button">See documentation</a>
+				<a href="/getting-started" class="btn btn-primary btn-lg" type="button">
+					See documentation
+				</a>
 			</div>
-		</div>
+		</div>,
 	);
 }
