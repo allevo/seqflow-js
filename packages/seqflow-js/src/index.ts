@@ -37,20 +37,39 @@ type GetYieldType<A extends EventAsyncGenerator<unknown>> = Exclude<
 >["value"];
 
 export interface SeqflowFunctionContext {
+	/**
+	 * The application context
+	 */
 	app: Readonly<SeqflowAppContext>;
+	/**
+	 * The abort controller for this component
+	 */
 	abortController: AbortController;
-	createDOMElement(
-		tagName: string,
-		options?: { [key: string]: string },
-		...children: JSX.Element[]
-	): Node;
-	createDOMFragment({
-		children,
-	}: { children?: JSX.Element[] }): DocumentFragment;
+	/**
+	 * Render the HTML synchronously. It replaces the content of the component
+	 * 
+	 * @param html the HTML to render as a string or a JSX element
+	 * @returns 
+	 */
 	renderSync: (html: string | JSX.Element) => void;
+	/**
+	 * Wait for multiple events to happen
+	 * 
+	 * @param fns EventAsyncGenerator array
+	 * @returns an async generator that yields the events
+	 */
 	waitEvents: <Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[]>(
-		...fn: Fns
+		...fns: Fns
 	) => AsyncGenerator<GetYieldType<Fns[number]>>;
+	/**
+	 * Wait for a DOM event to happen
+	 * 
+	 * @param eventType the event type
+	 * @param options Options
+	 * @param options.el the element to listen to. This could be `this._el` or a child element
+	 * @param options.preventDefault if true, it calls `preventDefault` on the event. Default is false.
+	 * @returns 
+	 */
 	domEvent: <K extends keyof HTMLElementEventMap>(
 		eventType: K,
 		options: {
@@ -58,15 +77,47 @@ export interface SeqflowFunctionContext {
 			preventDefault?: boolean;
 		},
 	) => EventAsyncGenerator<HTMLElementEventMap[K]>;
+	/**
+	 * Wait for a domain event to happen
+	 * 
+	 * @param domainEventClass the domain event class
+	 */
 	domainEvent<BEE extends typeof DomainsPackage.DomainEvent<unknown>>(
-		b: BEE,
+		domainEventClass: BEE,
 	): EventAsyncGenerator<InstanceType<BEE>>;
+	/**
+	 * Wait for a navigation event to happen
+	 */
 	navigationEvent(): EventAsyncGenerator<NavigationEvent>;
+	/**
+	 * Replace a child component with a new one
+	 * 
+	 * @param key the key of the child to replace
+	 * @param newChild a function that returns a JSX element or a promise of a JSX element
+	 * @returns 
+	 */
 	replaceChild: (
 		key: string,
 		newChild: () => JSX.Element | Promise<JSX.Element>,
 	) => void;
+	/**
+	 * The DOM element where this component is mounted
+	 */
 	_el: HTMLElement;
+	/**
+	 * Create a DOM element. It is used internally by the framework.
+	 */
+	createDOMElement(
+		tagName: string,
+		options?: { [key: string]: string },
+		...children: JSX.Element[]
+	): Node;
+	/**
+	 * Create a DOM Fragment element. It is used internally by the framework.
+	 */
+	createDOMFragment({
+		children,
+	}: { children?: JSX.Element[] }): DocumentFragment;
 }
 export type SeqflowFunction<T extends JSX.IntrinsicAttributes> = (
 	this: SeqflowFunctionContext,

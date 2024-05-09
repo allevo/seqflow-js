@@ -5,12 +5,27 @@ export class NavigationEvent extends Event {
 }
 
 export interface Router {
+	/**
+	 * 
+	 * @param path The path to navigate to. It should be a domain relative path.
+	 */
 	navigate(path: string): void;
-	install(): void;
-	getEventTarget(): EventTarget;
-	navigate(path: string): void;
+	/**
+	 * Returns the segments of the current path.
+	 */
 	readonly segments: string[];
+	/**
+	 * Navigates back in the history.
+	 */
 	back(): void;
+	/**
+	 * Installs the router. It is used internally by the framework.
+	 */
+	install(): void;
+	/**
+	 * Get the event target. It is used internally by the framework.
+	 */
+	getEventTarget(): EventTarget;
 }
 
 export class BrowserRouter implements Router {

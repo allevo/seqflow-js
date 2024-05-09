@@ -19,9 +19,9 @@ I appreciate the innovation and diversity of the frontend world, which brings me
 
 From this point, I started thinking about what I liked and didn't like about the front-end world.
 The output of this thinking was the following list:
-- The component-based architecture allows the UI to split into small, reusable, and independent pieces. It enables the team to build a design system and reuse the components across the application (and applications).
-- The structure of the application logic follows the team logic without putting any constraint on it. So, the class, function, and enum usages are possible.
-- The async/await usage is a way to handle the asynchronous code. In the past, the front-end code used callbacks after promises, but now, all browsers can use the async/await language feature.
+- I like the component-based architecture which allows the UI to split into small, reusable, and independent pieces. It enables the team to build a design system and reuse the components across the application (or applications).
+- I prefer the project structure of the application logic follows the team logic without putting any constraint on it. So, the class, function, and enum usages are possible everywhere.
+- I love the async/await usage: it is a way to handle the asynchronous code. In the past, the front-end code used callbacks after promises, but now, all browsers can use the async/await language feature.
 - The Typescript support is a way to reduce errors and improve code quality. Even if only some people like it, it is an excellent tool to enhance the code quality and let other developers understand the code and contribute to it.
 - The simplicity of integrating into other frameworks and supporting multiple versions on the same page without strange tricks.
 
@@ -38,64 +38,36 @@ With this in mind, I started to write the `SeqFlow` framework. The following are
 ### Render component
 
 I started to think about a way to simplify the component rendering, and I thought about the following requirements:
-- The component should be a function, not a class. This is because the class introduces a lot of boilerplate code, and it is not always clear what the purpose of the class is.
+- The component should be a function, not a class. This is because the class introduces a lot of boilerplate code, and it is not always clear which methods are invoked when. Instead, the function exposes just one way to be invoked: the function invocation.
 - The component should easily process the asynchronous operations, like the data fetching, and the rendering should be updated when the data is available.
-- A developer reads the component from top to bottom without jumping from the bottom to the top. This implies there's no re-rendering of the whole component when the state changes: if something changes, the code explicitly updates the rendered HTML.
+- As developer, I read the component from top to bottom without jumping from the bottom to the top. This implies there's no re-rendering of the whole component when the state changes: if something changes, the code explicitly updates the component, the whole component, or a part of it.
 
 From this list, I structured the component as an asynchronous function, where the developer can use the async/await syntax to handle the asynchronous operations.
 
-```ts
-import { ComponentParam } from "seqflow-js";
+```tsx
+import { SeqflowFunctionContext } from "seqflow-js";
 
-export async function MyComponent({ dom }: ComponentParam) {
-    dom.render(\`<div>Loading...</div>\`);
+export async function MyComponent(this: SeqflowFunctionContext) {
+    this.renderSync(<div>Loading...</div>);
     const data = await fetchData(); // async function
-    dom.render(\`<pre><code>\${JSON.stringify(data), null, 2}</code></pre>\`);
+    this.renderSync(<pre><code>{JSON.stringify(data), null, 2}</code></pre>);
 }
 ```
-
-Initially, SeqFlow didn't support JSX, but PRs are welcomed!
-
-### No global injection
-
-`SeqFlow` instance isn't installed globally. This means it lives where it is used, and it is not shared with other instances nor other libraries. This is a way to reduce the complexity when the application has to be integrated with other libraries and frameworks, like web components.
-
-```ts
-import { start } from "seqflow-js";
-import { Main } from "./Main";
-import "./index.css";
-
-start(document.getElementById("root"), Main);
-```
-
-Moreover, the `SeqFlow` instance can be turned off using the `AbortController`:
-
-```ts
-import { start } from "seqflow-js";
-import { Main } from "./Main";
-import "./index.css";
-
-const abortController = start(document.getElementById("root"), Main);
-
-abortController.abort("test");
-```
-
-This allows the developer to stop the `SeqFlow` instance and free the resources when the application is not needed anymore.
 
 ### Event handlers
 
 For historical reasons, the event handlers are defined as callbacks, which requires a different mindset to handle the asynchronous operations. The callbacks are not always easy to read because the code runs in a different order than what is written.
 
-Moreover, callbacks are challenging to compose with other operations, such as data fetching. For this reason, `SeqFlow` introduces a new way to handle the event handlers using the async iterators.
+Moreover, callbacks are challenging to compose with other sync operation, such map and filter, and with async operations, such as data fetching. For this reason, `SeqFlow` converts the event handlers into async iterators, where the developer can use the async/await syntax to handle the events.
 
-```ts
-import { ComponentParam } from "seqflow-js";
+```tsx
+import { SeqflowFunctionContext } from "seqflow-js";
 
-export async function Counter({ dom, event }: ComponentParam) {
+export async function Counter(this: SeqflowFunctionContext) {
     let counter = 0;
-	dom.render(\`<button>Click Me</button>\`);
+	this.renderSync(<button>Click Me</button>);
 
-	const events = event.waitEvent(event.domEvent("click"));
+	const events = this.waitEvents(this.domEvent("click", { el: this._el }));
 	for await (const ev of events) {
 		counter++;
         window.alert(\`Clicked \${counter} times\`);
@@ -107,7 +79,7 @@ You can listen more events at the same time, see the [API reference](/api-refere
 
 ### Domains
 
-The more the features are added, the more the complexity is introduced. To reduce the noise, `SeqFlow` uses the concept of domains. A domain is, shortly, a way to split the applications into parts, segregated by logic boundaries. Inside a domain, the application logic classes/functions are stored, and the components that refer to it are stored there: in this way, the code is structured into folders that match the business domains.
+The more the features are added, the more the complexity is introduced. To reduce the noise, `SeqFlow` uses the concept of domains. A domain is, shortly, a way to split the applications into parts, segregated by logic boundaries. Inside a domain, the application logic classes/functions are stored, and the components that refer to it are stored there: in this way, the code is structured into folders that match the business domains. For instance, the `AddProductToCart` component is stored in the `Cart` domain, and the `UserBadge` component is stored in the `User` domain.
 
 This structure reduces the complexity and the cognitive stress because if a feature is needed, the team knows where to implement it and how it interacts with the other domains.
 
@@ -145,34 +117,29 @@ start(document.getElementById("root"), Main, undefined, {
 });
 ```
 And listen to the events of the domain:
-```ts
+```tsx
 
 function getBadge(user: User | undefined) {
     if (user) {
-        return \`<div>\${user.name}</div>\`;
+        return <div>{user.name}</div>;
     } else {
-        return \`<div>Guest</div>\`;
+        return <div>Guest</div>;
     }
 }
 
-export async function UserBadgeComponent({
-	event,
-	dom,
-	domains,
-	router,
-}: ComponentParam) {
-    const user: User | undefined = await domains.user.getLoggedUser();
-    dom.render(\`<div>\${getBadge(user)}</div>\`);
+export async function UserBadgeComponent(this: SeqflowFunctionContext) {
+    const user: User | undefined = await this.app.domains.user.getLoggedUser();
+    this.renderSync(<div>{getBadge(user)}</div>);
 
     // Listen to the UserLoggedEvent
-	const events = event.waitEvent(
-		event.domainEvent(UserLoggedEvent),
+	const events = this.waitEvents(
+		this.app.domainEvent(UserLoggedEvent),
 	);
     // Every time the event is emitted, the \`for\` loop is executed
     for await (const ev of events) {
-        const user: User | undefined = await domains.user.getUser()
+        const user: User | undefined = await this.app.domains.user.getUser()
         // Update the badge
-        dom.render(\`<div>\${getBadge(user)}</div>\`);
+        this.renderSync(<div>{getBadge(user)}</div>);
     }
 }
 ```
@@ -181,7 +148,33 @@ Now, the `UserBadgeComponent` is listening to the `UserLoggedEvent` event, and e
 
 The login form is in the `User` domain and emits the `UserLoggedEvent` event when the user logs in.
 
-See the <a title="E-Commerce example in seqflow-js repository" target="_blank" href="https://github.com/allevo/seqflow-js/tree/main/examples/e-commerce">E-Commerce example</a> for more information about it. Even if `SeqFlow` doesn't match the E-Commerce use case, we developed it as an example to show how the structure is organized.
+See the <a title="E-Commerce example in seqflow-js repository" target="_blank" href="https://github.com/allevo/seqflow-js/tree/main/examples/e-commerce">E-Commerce example</a> for more information about it. Even if `SeqFlow` doesn't match the E-Commerce use case due to the SEO optimization, we developed it as an example to show how the structure is organized.
+
+### No global injection
+
+`SeqFlow` instance isn't installed globally. This means it lives where it is used, and it is not shared with other instances nor other libraries. This is a way to reduce the complexity when the application has to be integrated with other libraries and frameworks, like web components.
+
+```ts
+import { start } from "seqflow-js";
+import { Main } from "./Main";
+import "./index.css";
+
+start(document.getElementById("root"), Main);
+```
+
+Moreover, the `SeqFlow` instance can be turned off using the `AbortController`:
+
+```ts
+import { start } from "seqflow-js";
+import { Main } from "./Main";
+import "./index.css";
+
+const abortController = start(document.getElementById("root"), Main);
+
+abortController.abort("The application is not needed anymore");
+```
+
+This allows the developer to stop the `SeqFlow` instance and free the resources when the application is not needed anymore.
 
 ## Conclusion
 
