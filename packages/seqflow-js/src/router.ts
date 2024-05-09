@@ -6,7 +6,7 @@ export class NavigationEvent extends Event {
 
 export interface Router {
 	/**
-	 * 
+	 *
 	 * @param path The path to navigate to. It should be a domain relative path.
 	 */
 	navigate(path: string): void;

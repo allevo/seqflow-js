@@ -17,8 +17,7 @@ test("should increment and decrement the counter", async () => {
 		await screen.findByText<HTMLButtonElement>("Increment");
 	const decrementButton =
 		await screen.findByText<HTMLButtonElement>("Decrement");
-	const resetButton =
-		await screen.findByText<HTMLButtonElement>("Reset");
+	const resetButton = await screen.findByText<HTMLButtonElement>("Reset");
 	const counterDiv = await screen.findByText<HTMLDivElement>("0");
 
 	expect(counterDiv.textContent).toBe("0");

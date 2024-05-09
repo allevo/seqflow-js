@@ -47,14 +47,14 @@ export interface SeqflowFunctionContext {
 	abortController: AbortController;
 	/**
 	 * Render the HTML synchronously. It replaces the content of the component
-	 * 
+	 *
 	 * @param html the HTML to render as a string or a JSX element
-	 * @returns 
+	 * @returns
 	 */
 	renderSync: (html: string | JSX.Element) => void;
 	/**
 	 * Wait for multiple events to happen
-	 * 
+	 *
 	 * @param fns EventAsyncGenerator array
 	 * @returns an async generator that yields the events
 	 */
@@ -63,12 +63,12 @@ export interface SeqflowFunctionContext {
 	) => AsyncGenerator<GetYieldType<Fns[number]>>;
 	/**
 	 * Wait for a DOM event to happen
-	 * 
+	 *
 	 * @param eventType the event type
 	 * @param options Options
 	 * @param options.el the element to listen to. This could be `this._el` or a child element
 	 * @param options.preventDefault if true, it calls `preventDefault` on the event. Default is false.
-	 * @returns 
+	 * @returns
 	 */
 	domEvent: <K extends keyof HTMLElementEventMap>(
 		eventType: K,
@@ -79,7 +79,7 @@ export interface SeqflowFunctionContext {
 	) => EventAsyncGenerator<HTMLElementEventMap[K]>;
 	/**
 	 * Wait for a domain event to happen
-	 * 
+	 *
 	 * @param domainEventClass the domain event class
 	 */
 	domainEvent<BEE extends typeof DomainsPackage.DomainEvent<unknown>>(
@@ -91,10 +91,10 @@ export interface SeqflowFunctionContext {
 	navigationEvent(): EventAsyncGenerator<NavigationEvent>;
 	/**
 	 * Replace a child component with a new one
-	 * 
+	 *
 	 * @param key the key of the child to replace
 	 * @param newChild a function that returns a JSX element or a promise of a JSX element
-	 * @returns 
+	 * @returns
 	 */
 	replaceChild: (
 		key: string,
