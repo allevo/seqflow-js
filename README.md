@@ -1,36 +1,40 @@
 # SeqFlow JS
 
 SeqFlowJS is a JavaScript library for creating and managing frontend workflows. The core ideas are:
+- Events over State Management
+- Simplicity over Complexity
 - Linearity over Complex Abstractions
 - Explicitness over Implicitiveness
 
 ## Installation
 
 ```bash
-npm install seqflow-js
+pnpm install seqflow-js
 ```
 
 ## Usage
 
-```ts
-import { start, ComponentParam } from 'seqflow-js'
+```tsx
+import { start, SeqflowFunctionContext } from 'seqflow-js'
 
-async function main({ dom, event }: ComponentParam) {
+async function Main(this: SeqflowFunctionContext) {
   let counter = 0
-  dom.render(`
-<div>
-  <button id="decrement">Decrement</button>
-  <button id="increment">Increment</button>
-</div>
-<div id="counter">${counter}</div>
-`)
 
-  const decrementButton = dom.querySelector('#decrement')!
-  const incrementButton = dom.querySelector('#increment')!
-  const counterDiv = dom.querySelector('#counter')!
+  const decrementButton = <button type="button">Decrement</button>
+  const incrementButton = <button type="button">Increment</button>
+  const counterDiv = <div>{counter}</div>
+  this.renderSync(
+    <>
+      <div>
+        {decrementButton}
+        {incrementButton}
+      </div>
+      {counterDiv}
+    </>
+  )
 
-  const events = event.waitEvent(
-    event.domEvent('click')
+  const events = this.waitEvents(
+    this.domEvent('click', { el: this._el })
   )
   for await (const ev of events) {
     if (ev.target === incrementButton) {
@@ -43,6 +47,6 @@ async function main({ dom, event }: ComponentParam) {
   }
 }
 
-start(document.getElementById('root')!, main)
+start(document.getElementById('root')!, Main)
 ```
 
