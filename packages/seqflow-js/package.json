@@ -1,6 +1,6 @@
 {
   "name": "seqflow-js",
-  "version": "0.0.1-beta.8",
+  "version": "1.0.0",
   "description": "",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
