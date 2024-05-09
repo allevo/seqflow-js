@@ -1,7 +1,7 @@
 {
   "name": "create-seqflow",
   "version": "1.0.0",
-  "description": "",
+  "description": "SeqFlow CLI",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
@@ -17,7 +17,7 @@
     "start": "vite -c vite.config.js",
     "build": "vite build --emptyOutDir -c vite.config.js"
   },
-  "keywords": [],
+  "keywords": ["seqflow", "cli"],
   "author": "",
   "license": "MIT",
   "devDependencies": {
