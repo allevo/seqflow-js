@@ -10,6 +10,7 @@ enum TemplateType {
 	Counter = "counter",
 	CounterDomain = "counter-domain",
 	ECommerce = "e-commerce",
+	CustomElement = "custom-element",
 }
 const templateChoices = [
 	{
@@ -31,6 +32,11 @@ const templateChoices = [
 		title: TemplateType.ECommerce,
 		description: "Complex example with multiple domains",
 		value: TemplateType.ECommerce,
+	},
+	{
+		title: TemplateType.CustomElement,
+		description: "Custom element example",
+		value: TemplateType.CustomElement,
 	},
 ];
 

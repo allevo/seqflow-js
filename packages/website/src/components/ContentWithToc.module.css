@@ -4,6 +4,7 @@
 	display: grid;
     grid-template-areas: 'main';
     gap: 1.5rem;
+    padding-top: 5px;
 
     aside {
         display: none;

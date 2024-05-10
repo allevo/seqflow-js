@@ -32,13 +32,11 @@ function loadSVG() {
 		name: 'seqflow-svg',
 		enforce: 'pre' as const,
 		// enforce: 'pre' as const,
-		transform (code, id) {
+		transform (_, id) {
 			// If it's not a .md file, we can just skip this
 			if (!id.endsWith('.svg')) {
 				return null
 			}
-
-			console.log('aaaaa', id)
 
 			const content = fs.readFileSync(id, 'utf-8')
 

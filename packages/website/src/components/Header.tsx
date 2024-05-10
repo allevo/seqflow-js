@@ -55,6 +55,34 @@ export async function Header(this: SeqflowFunctionContext) {
 								Api Reference
 							</a>
 						</li>
+						<li class="nav-item dropdown">
+							<button
+								type="button"
+								class="nav-link dropdown-toggle"
+								data-bs-toggle="dropdown"
+								id="exampleDropdownMenuLink"
+								data-toggle="dropdown"
+								aria-haspopup="true"
+								aria-expanded="false"
+							>
+								Examples
+							</button>
+							<div
+								class="dropdown-menu"
+								aria-labelledby="exampleDropdownMenuLink"
+							>
+								<a class="dropdown-item" href="/examples#counter">
+									Counter
+								</a>
+								<a class="dropdown-item" href="/examples#e-commerce">
+									E-Commerce
+								</a>
+								<div class="dropdown-divider" />
+								<a class="dropdown-item" href="/examples#web-component">
+									Custom Element with Shadow DOM
+								</a>
+							</div>
+						</li>
 					</ul>
 					<div class="navbar-nav">
 						<a
