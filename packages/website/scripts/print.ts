@@ -40,6 +40,10 @@ const pages = [
     {
         path: '/api-reference',
         filename: 'api-reference.html'
+    },
+    {
+        path: '/examples',
+        filename: 'examples.html'
     }
 ]
 
