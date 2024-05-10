@@ -1,1 +1,1 @@
-packages/website/src/public/assets/* linguist-vendored
+packages/website/src/** linguist-detectable=false
