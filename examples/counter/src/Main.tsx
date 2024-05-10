@@ -1,13 +1,9 @@
 import { type SeqflowFunctionContext } from "seqflow-js";
 
 export async function Main(this: SeqflowFunctionContext) {
-	const incrementButton: HTMLButtonElement = (
-		<button type="button">Increment</button>
-	);
-	const decrementButton: HTMLButtonElement = (
-		<button type="button">Decrement</button>
-	);
-	const counterDiv: HTMLDivElement = <div>0</div>;
+	const incrementButton = <button type="button">Increment</button>;
+	const decrementButton = <button type="button">Decrement</button>;
+	const counterDiv = <div>0</div>;
 
 	let counter = 0;
 	this.renderSync(

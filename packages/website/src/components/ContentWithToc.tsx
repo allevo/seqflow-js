@@ -16,7 +16,7 @@ export interface Toc {
 function getElementFromString(string: string) {
 	const template = document.createElement("div");
 	template.innerHTML = string;
-	return Array.from(template.children) as HTMLElement[];
+	return Array.from(template.children) as Element & HTMLElement[];
 }
 
 export async function ContentWithToc(
@@ -28,12 +28,12 @@ export async function ContentWithToc(
 	const { toc, html } = data;
 
 	this.renderSync(
-		<div class={classes.top}>
-			<aside style="">
-				<ul class="list-group">
+		<div className={classes.top}>
+			<aside>
+				<ul className="list-group">
 					{toc.map((t) => (
-						<li class={`list-group-item ${classes[`level-${t.level}`]}`}>
-							<a class="" href={`#${t.slug}`}>
+						<li className={`list-group-item ${classes[`level-${t.level}`]}`}>
+							<a className="" href={`#${t.slug}`}>
 								{t.title}
 							</a>
 						</li>

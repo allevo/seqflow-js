@@ -56,11 +56,8 @@ test("render - component in fragment", async () => {
 		this.renderSync(<button type="button">{data.text}</button>);
 	}
 	async function App(this: SeqflowFunctionContext) {
-		this.renderSync(
-			<>
-				<Button text="bnt" />
-			</>,
-		);
+		const a = <Button text="bnt" />;
+		this.renderSync(a);
 	}
 
 	start(document.body, App, undefined, {});
@@ -102,11 +99,8 @@ test("render a indirect nested component button with jsx", async () => {
 });
 
 test("render a component with children", async () => {
-	async function MyDiv(
-		this: SeqflowFunctionContext,
-		data: JSX.IntrinsicAttributes,
-	) {
-		this.renderSync(<div>{data.children}</div>);
+	async function MyDiv(this: SeqflowFunctionContext, { children }: JSX.ARG) {
+		this.renderSync(<div>{children}</div>);
 	}
 	async function App(this: SeqflowFunctionContext) {
 		this.renderSync(
@@ -242,4 +236,46 @@ test("replace a child - stop listen", async () => {
 	firstButton.click();
 	await new Promise((resolve) => setTimeout(resolve, 100));
 	await waitFor(() => expect(counter).toBe(1));
+});
+
+test("class & className", async () => {
+	async function App(this: SeqflowFunctionContext) {
+		this.renderSync(
+			<>
+				<div className="foo" />
+			</>,
+		);
+	}
+
+	start(document.body, App, undefined, {});
+
+	expect(document.body.innerHTML).toBe('<div class="foo"></div>');
+});
+
+test("style as string", async () => {
+	async function App(this: SeqflowFunctionContext) {
+		this.renderSync(
+			<>
+				<div style="display: none" />
+			</>,
+		);
+	}
+
+	start(document.body, App, undefined, {});
+
+	expect(document.body.innerHTML).toBe('<div style="display: none"></div>');
+});
+
+test("style as CSSStyleDeclaration", async () => {
+	async function App(this: SeqflowFunctionContext) {
+		this.renderSync(
+			<>
+				<div style={{ display: "none" }} />
+			</>,
+		);
+	}
+
+	start(document.body, App, undefined, {});
+
+	expect(document.body.innerHTML).toBe('<div style="display: none;"></div>');
 });

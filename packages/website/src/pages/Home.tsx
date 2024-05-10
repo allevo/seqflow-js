@@ -3,13 +3,15 @@ import classes from "./Home.module.css";
 
 export async function Home(this: SeqflowFunctionContext) {
 	this.renderSync(
-		<div class="p-5 h-100">
-			<div class="container-fluid" style="padding-top: 3vh;">
-				<h1 class={`display-5 fw-bold ${classes.brand}`}>SeqFlow</h1>
-				<p class="col-md-8 fs-4">A framework to write products efficiently</p>
+		<div className="p-5 h-100">
+			<div className="container-fluid" style="padding-top: 3vh;">
+				<h1 className={`display-5 fw-bold ${classes.brand}`}>SeqFlow</h1>
+				<p className="col-md-8 fs-4">
+					A framework to write products efficiently
+				</p>
 				<hr />
 				<div>
-					<ul class={classes.list}>
+					<ul className={classes.list}>
 						<li>Events over State Management</li>
 						<li>Simplicity over Complexity</li>
 						<li>Linearity over Complex Abstractions</li>
@@ -18,7 +20,7 @@ export async function Home(this: SeqflowFunctionContext) {
 				</div>
 				<a
 					href="/getting-started"
-					class="btn btn-primary btn-lg"
+					className="btn btn-primary btn-lg"
 					type="button"
 					role="button"
 				>

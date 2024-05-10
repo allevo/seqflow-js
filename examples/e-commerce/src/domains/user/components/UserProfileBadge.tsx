@@ -18,7 +18,7 @@ export async function UserProfileBadge(this: SeqflowFunctionContext) {
 		<img
 			width={size}
 			height={size}
-			class={classes.logo}
+			className={classes.logo}
 			src={getProfileUrl(user, size)}
 			alt="Profile Avatar"
 		/>
@@ -37,9 +37,9 @@ export async function UserProfileBadge(this: SeqflowFunctionContext) {
 	);
 
 	this.renderSync(
-		<button type="button" class={classes.logoWrapper} href="/profile">
+		<button type="button" className={classes.logoWrapper}>
 			{profilePicture}
-			<div class={classes["profile-header-menu-wrapper"]}>
+			<div className={classes["profile-header-menu-wrapper"]}>
 				{profileHeaderMenu}
 			</div>
 		</button>,

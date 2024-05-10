@@ -59,7 +59,7 @@ async function ChangeCounterButton(
 export async function Counter(this: SeqflowFunctionContext) {
 	const counterDiv = <div>{this.app.domains.counter.get()}</div>;
 	this.renderSync(
-		<div class={classes.counter}>
+		<div className={classes.counter}>
 			<ChangeCounterButton delta={-1} text="Decrement" />
 			{counterDiv}
 			<ChangeCounterButton delta={1} text="Increment" />

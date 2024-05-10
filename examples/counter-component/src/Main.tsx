@@ -23,6 +23,10 @@ export async function Main(this: SeqflowFunctionContext) {
 		this.domEvent("click", { el: this._el as HTMLElement }),
 	);
 	for await (const ev of events) {
+		if (!(ev.target instanceof HTMLElement)) {
+			continue;
+		}
+
 		if (incrementButton.contains(ev.target)) {
 			counter++;
 		} else if (decrementButton.contains(ev.target)) {

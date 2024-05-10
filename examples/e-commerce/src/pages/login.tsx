@@ -5,13 +5,13 @@ export async function Login(this: SeqflowFunctionContext) {
 	const el = (
 		<input id="username" type="text" name="username" value="johnd" />
 	) as HTMLInputElement;
-	const error = <p class="error" />;
+	const error = <p className="error" />;
 	const submit = (<button type="submit">Login</button>) as HTMLButtonElement;
 
 	this.renderSync(
 		<div>
 			<form>
-				<label for="username">Username</label>
+				<label htmlFor="username">Username</label>
 				{el}
 				{error}
 				{submit}

@@ -13,21 +13,21 @@ export async function CartProduct(
 	data: { product: Product; count: number; subTotal: number },
 ) {
 	const removeButton = (
-		<button type="button" class="remove-from-cart">
-			<i class="fa-solid fa-trash" />
+		<button type="button" className="remove-from-cart">
+			<i className="fa-solid fa-trash" />
 		</button>
 	);
 	this.renderSync(
-		<div class={classes.product} id={`cart-product-${data.product.id}`}>
-			<div class={classes.left}>
+		<div className={classes.product} id={`cart-product-${data.product.id}`}>
+			<div className={classes.left}>
 				<img
-					class={classes.productImage}
+					className={classes.productImage}
 					src={data.product.image}
 					alt={data.product.title}
 				/>
 				<div>{data.product.price} €</div>
 			</div>
-			<div class={classes.productTitle}>
+			<div className={classes.productTitle}>
 				<p>{data.product.title}</p>
 			</div>
 			<div>x {data.count}</div>
@@ -58,16 +58,16 @@ export async function CartProductList(
 	const checkoutButton = <button type="button">Checkout</button>;
 	const cartLogin = <a href="/login">Go to login</a>;
 	const cartTotal = (
-		<div class={classes.cartTotal} id="cart-total">
+		<div className={classes.cartTotal} id="cart-total">
 			total: {data.cart.total} €
 		</div>
 	);
 	this.renderSync(
 		<div>
-			<ul class={classes.cartProducts}>
+			<ul className={classes.cartProducts}>
 				{data.cart.products.map(({ product, count, subTotal }) => {
 					return (
-						<li key={`cart-item-${product.id}`}>
+						<li id={`cart-item-${product.id}`}>
 							<CartProduct
 								product={product}
 								count={count}
@@ -79,7 +79,7 @@ export async function CartProductList(
 			</ul>
 			<hr />
 			{cartTotal}
-			<div class={classes.cartCheckout}>{checkoutButton}</div>
+			<div className={classes.cartCheckout}>{checkoutButton}</div>
 			<div>{cartLogin}</div>
 		</div>,
 	);
@@ -115,7 +115,7 @@ export async function CartProductList(
 			switch (ev.detail.action) {
 				case "remove-all-elements-of-a-product":
 					this._el
-						.querySelector(`li[key=cart-item-${ev.detail.product.id}]`)
+						.querySelector(`li#cart-item-${ev.detail.product.id}`)
 						?.remove();
 					break;
 				default:

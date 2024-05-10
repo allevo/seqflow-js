@@ -11,14 +11,14 @@ export async function Header(
 	data: { user?: UserType },
 ) {
 	const loginButton = <button type="button">Sign in</button>;
-	const storeLogo = <img src={icon} alt="icon" class={classes.icon} />;
+	const storeLogo = <img src={icon} alt="icon" className={classes.icon} />;
 
 	this.renderSync(
-		<header class={classes.header}>
+		<header className={classes.header}>
 			<a href="/">{storeLogo}</a>
-			<div class={classes.emptySpace} />
+			<div className={classes.emptySpace} />
 			<UserProfileBadge wrapperClass={classes.displayOnLogged} />
-			<div id="login" class={classes.displayOnUnlogged}>
+			<div id="login" className={classes.displayOnUnlogged}>
 				{loginButton}
 			</div>
 			<CartBadge />

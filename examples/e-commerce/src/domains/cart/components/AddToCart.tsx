@@ -9,23 +9,23 @@ export async function AddToCart(
 	const initCount = this.app.domains.cart.getProductCount(data.product.id);
 
 	const firstAddToCart = (
-		<button type="button" class={classes.firstAddToCart}>
+		<button type="button" className={classes.firstAddToCart}>
 			Add to cart
 		</button>
 	);
 	const removeFromCart = (
-		<button type="button" class={classes.removeFromCart}>
+		<button type="button" className={classes.removeFromCart}>
 			-
 		</button>
 	);
 	const secondAddFromCart = (
-		<button type="button" class={classes.secondAddFromCart}>
+		<button type="button" className={classes.secondAddFromCart}>
 			+
 		</button>
 	);
-	const count = <span class="count">{initCount}</span>;
+	const count = <span className="count">{initCount}</span>;
 	const otherAddToCartWrapper = (
-		<div class={`${classes.otherAddToCartWrapper} ${classes.show}`}>
+		<div className={`${classes.otherAddToCartWrapper} ${classes.show}`}>
 			{removeFromCart}
 			{count}
 			{secondAddFromCart}

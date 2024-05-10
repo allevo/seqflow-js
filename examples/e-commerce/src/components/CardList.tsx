@@ -10,9 +10,9 @@ export async function CardList<T extends { id: string | number }>(
 	},
 ) {
 	this.renderSync(
-		<ol class={classes.wrapper}>
+		<ol className={classes.wrapper}>
 			{data.items.map((item) => (
-				<li class={classes.element} id={`${data.prefix}-${item.id}`}>
+				<li className={classes.element} id={`${data.prefix}-${item.id}`}>
 					<data.Component {...item} />
 				</li>
 			))}

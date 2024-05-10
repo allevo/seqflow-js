@@ -110,16 +110,16 @@ export interface SeqflowFunctionContext {
 	createDOMElement(
 		tagName: string,
 		options?: { [key: string]: string },
-		...children: JSX.Element[]
+		...children: ChildenType[]
 	): Node;
 	/**
 	 * Create a DOM Fragment element. It is used internally by the framework.
 	 */
 	createDOMFragment({
 		children,
-	}: { children?: JSX.Element[] }): DocumentFragment;
+	}: { children?: ChildenType[] }): DocumentFragment;
 }
-export type SeqflowFunction<T extends JSX.IntrinsicAttributes> = (
+export type SeqflowFunction<T> = (
 	this: SeqflowFunctionContext,
 	data: T,
 ) => Promise<void>;
@@ -142,7 +142,7 @@ export interface SeqflowConfiguration {
 	router: Router;
 }
 
-function startComponent<T extends JSX.IntrinsicAttributes>(
+function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 	parentContext: SeqflowFunctionContext,
 	el: HTMLElement,
 	component: SeqflowFunction<T>,
@@ -235,12 +235,12 @@ function startComponent<T extends JSX.IntrinsicAttributes>(
 			const a = newChild();
 			if (a instanceof Promise) {
 				a.then((child) => {
-					wrapper.replaceWith(child);
+					wrapper.replaceWith(child as Node);
 				});
 				return;
 			}
 
-			wrapper.replaceWith(a);
+			wrapper.replaceWith(a as Node);
 		},
 		domEvent<K extends keyof HTMLElementEventMap>(
 			this: SeqflowFunctionContext,
@@ -281,7 +281,7 @@ function startComponent<T extends JSX.IntrinsicAttributes>(
 		},
 		createDOMFragment(
 			this: SeqflowFunctionContext,
-			{ children }: JSX.IntrinsicAttributes,
+			{ children }: { children?: ChildenType[] },
 		): DocumentFragment {
 			this.app.log({
 				type: "debug",
@@ -327,7 +327,7 @@ function startComponent<T extends JSX.IntrinsicAttributes>(
 			this: SeqflowFunctionContext,
 			tagName: string,
 			options?: { [key: string]: string },
-			...children: JSX.Element[]
+			...children: ChildenType[]
 		): Node {
 			this.app.log({
 				type: "debug",
@@ -338,6 +338,28 @@ function startComponent<T extends JSX.IntrinsicAttributes>(
 			if (typeof tagName === "string") {
 				const el = document.createElement(tagName);
 				for (const key in options) {
+					if (key === "className") {
+						el.setAttribute("class", options[key]);
+						continue;
+					}
+					if (key === "htmlFor") {
+						el.setAttribute("for", options[key]);
+						continue;
+					}
+					if (key === "style") {
+						const style = options[key] as string | Partial<CSSStyleDeclaration>;
+						if (typeof style === "string") {
+							el.setAttribute("style", style);
+						} else {
+							for (const styleKey in style) {
+								const value = style[styleKey];
+								if (value) {
+									el.style[styleKey] = value;
+								}
+							}
+						}
+						continue;
+					}
 					el.setAttribute(key, options[key]);
 				}
 
@@ -393,7 +415,7 @@ function startComponent<T extends JSX.IntrinsicAttributes>(
 				return;
 			}
 			this._el.innerHTML = "";
-			this._el.appendChild(html);
+			this._el.appendChild(html as Node);
 		},
 	};
 
@@ -426,7 +448,8 @@ function startComponent<T extends JSX.IntrinsicAttributes>(
 
 export function start<
 	Component extends SeqflowFunction<FirstComponentData>,
-	FirstComponentData extends JSX.IntrinsicAttributes,
+	// biome-ignore lint/suspicious/noExplicitAny: We don't care about the component properties
+	FirstComponentData extends Record<string, any> & { children?: ChildenType[] },
 >(
 	root: HTMLElement,
 	firstComponent: Component,
@@ -487,7 +510,7 @@ export function start<
 		createDOMElement(
 			tagName: string,
 			options?: { [key: string]: string },
-			...children: JSX.Element[]
+			...children: ChildenType[]
 		): Node {
 			const el = document.createElement(tagName);
 			for (const key in options) {
@@ -508,7 +531,7 @@ export function start<
 				return;
 			}
 			this._el.innerHTML = "";
-			this._el.appendChild(html);
+			this._el.appendChild(html as Node);
 		},
 	};
 
@@ -573,26 +596,42 @@ function createDomains(
 	};
 }
 
+type ChildenType = Element | Element[];
+
 declare global {
 	namespace JSX {
-		// biome-ignore lint/complexity/noBannedTypes: Don't care about `Function` banned type
-		type ElementType = HTMLElement | Function | string | number;
+		// The return type of <button />
+		type Element = HTMLElement;
 
-		interface Element extends HTMLElement {}
+		export type ARG<T = object> = T & {
+			children?: ChildenType;
+		};
 
-		interface IntrinsicElements {
-			[key: string]: Partial<Omit<Element, "children">> & {
-				children?: ElementType | ElementType[];
-			};
-			button: Partial<Omit<HTMLButtonElement, "children">> & {
-				children?: ElementType | ElementType[];
-			};
-		}
+		// This is the type of the first parameter of the jsxFactory
+		type ElementType<T> =
+			| string
+			| ((
+					this: SeqflowFunctionContext,
+					// biome-ignore lint/suspicious/noExplicitAny: We don't care about the component properties
+					data?: Record<string, any>,
+			  ) => Promise<void>);
+
+		type Foo = {
+			[K in keyof HTMLElementTagNameMap]: Omit<
+				Partial<{
+					[V in keyof HTMLElementTagNameMap[K]]: HTMLElementTagNameMap[K][V];
+				}>,
+				"style"
+			> &
+				ARG<{
+					style?: Partial<CSSStyleDeclaration> | string;
+				}>;
+		};
+		interface IntrinsicElements extends Foo {}
 
 		interface IntrinsicAttributes {
 			key?: string;
 			wrapperClass?: string;
-			children?: ElementType | ElementType[];
 		}
 	}
 }

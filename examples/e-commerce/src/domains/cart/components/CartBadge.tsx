@@ -6,13 +6,17 @@ export async function CartBadge(this: SeqflowFunctionContext) {
 	const count = this.app.domains.cart.getProductCount();
 
 	const counter = (
-		<span arial-hidden={true} class={classes.cartProductCounter}>
+		<span arial-hidden={true} className={classes.cartProductCounter}>
 			{count}
 		</span>
 	);
 	this.renderSync(
-		<a href="/cart" title="go to cart" class={classes.numberOfProductsInCart}>
-			<i class={`fa-solid fa-cart-shopping ${classes.icon}`} />
+		<a
+			href="/cart"
+			title="go to cart"
+			className={classes.numberOfProductsInCart}
+		>
+			<i className={`fa-solid fa-cart-shopping ${classes.icon}`} />
 			{counter}
 		</a>,
 	);

@@ -1,4 +1,4 @@
-import { SeqflowAppContext, SeqflowFunctionContext } from "seqflow-js";
+import { SeqflowFunctionContext } from "seqflow-js";
 import { CardList } from "../../../components/CardList";
 import { ProductCategory } from "../ProductDomain";
 import classes from "./ProductCategoryList.module.css";
@@ -8,8 +8,12 @@ async function CategoryItem(
 	data: ProductCategory,
 ) {
 	const anchor = (
-		<a class={classes.categoryAnchor} href={`/category/${data.name}`}>
-			<img class={classes.categoryImage} src={data.image.url} alt={data.name} />
+		<a className={classes.categoryAnchor} href={`/category/${data.name}`}>
+			<img
+				className={classes.categoryImage}
+				src={data.image.url}
+				alt={data.name}
+			/>
 			<span>{data.name}</span>
 		</a>
 	);
@@ -31,7 +35,7 @@ export async function ProductCategoryList(
 	data: { categories: ProductCategory[] },
 ) {
 	this.renderSync(
-		<div class={classes.productList}>
+		<div className={classes.productList}>
 			<CardList
 				prefix="category"
 				items={data.categories}

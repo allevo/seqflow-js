@@ -14,17 +14,17 @@ export async function Header(this: SeqflowFunctionContext) {
 	const githubLogo = getSvg(githubLogoAsString(30, 30));
 
 	const anchor = (
-		<a class="navbar-brand" href="/" id="seqflow-anchor">
+		<a className="navbar-brand" href="/" id="seqflow-anchor">
 			{svg}
 			SeqFlow
 		</a>
 	);
 	this.renderSync(
-		<nav class="navbar navbar-expand-lg bg-body-tertiary">
-			<div class="container-fluid">
+		<nav className="navbar navbar-expand-lg bg-body-tertiary">
+			<div className="container-fluid">
 				{anchor}
 				<button
-					class="navbar-toggler"
+					className="navbar-toggler"
 					type="button"
 					data-bs-toggle="collapse"
 					data-bs-target="#navbarSupportedContent"
@@ -32,33 +32,42 @@ export async function Header(this: SeqflowFunctionContext) {
 					aria-expanded="false"
 					aria-label="Toggle navigation"
 				>
-					<span class="navbar-toggler-icon" />
+					<span className="navbar-toggler-icon" />
 				</button>
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-						<li class="nav-item">
+				<div className="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul className="navbar-nav me-auto mb-2 mb-lg-0">
+						<li className="nav-item">
 							<a
-								class="nav-link"
+								className="nav-link"
 								href="/getting-started"
 								id="getting-started-link"
 							>
 								Getting started
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" aria-current="page" href="/why" id="why-link">
+						<li className="nav-item">
+							<a
+								className="nav-link"
+								aria-current="page"
+								href="/why"
+								id="why-link"
+							>
 								Why
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="/api-reference" id="api-reference-link">
+						<li className="nav-item">
+							<a
+								className="nav-link"
+								href="/api-reference"
+								id="api-reference-link"
+							>
 								Api Reference
 							</a>
 						</li>
-						<li class="nav-item dropdown">
+						<li className="nav-item dropdown">
 							<button
 								type="button"
-								class="nav-link dropdown-toggle"
+								className="nav-link dropdown-toggle"
 								data-bs-toggle="dropdown"
 								id="exampleDropdownMenuLink"
 								data-toggle="dropdown"
@@ -68,34 +77,34 @@ export async function Header(this: SeqflowFunctionContext) {
 								Examples
 							</button>
 							<div
-								class="dropdown-menu"
+								className="dropdown-menu"
 								aria-labelledby="exampleDropdownMenuLink"
 							>
-								<a class="dropdown-item" href="/examples#counter">
+								<a className="dropdown-item" href="/examples#counter">
 									Counter
 								</a>
-								<a class="dropdown-item" href="/examples#e-commerce">
+								<a className="dropdown-item" href="/examples#e-commerce">
 									E-Commerce
 								</a>
-								<div class="dropdown-divider" />
-								<a class="dropdown-item" href="/examples#web-component">
+								<div className="dropdown-divider" />
+								<a className="dropdown-item" href="/examples#web-component">
 									Custom Element with Shadow DOM
 								</a>
 							</div>
 						</li>
 					</ul>
-					<div class="navbar-nav">
+					<div className="navbar-nav">
 						<a
 							aria-label="github"
 							rel="noreferrer"
 							target="_blank"
 							href="https://github.com/allevo/seqflow-js"
-							class="nav-link"
+							className="nav-link"
 						>
 							<span style="color: white; fill: currentColor;">
 								{githubLogo}
 							</span>
-							<span class="github-name" style="margin-left: 10px;">
+							<span className="github-name" style="margin-left: 10px;">
 								GitHub
 							</span>
 						</a>

@@ -5,13 +5,13 @@ import classes from "./ProductItem.module.css";
 
 export async function ProductItem(this: SeqflowFunctionContext, data: Product) {
 	const productImage = (
-		<img src={data.image} class={classes.productImage} alt={data.title} />
+		<img src={data.image} className={classes.productImage} alt={data.title} />
 	);
-	const tooltip = <div class={classes.tooltipWrapper}>{data.title}</div>;
+	const tooltip = <div className={classes.tooltipWrapper}>{data.title}</div>;
 	this.renderSync(
-		<div class={classes.wrapper}>
+		<div className={classes.wrapper}>
 			{productImage}
-			<p class={classes.price}>{data.price} €</p>
+			<p className={classes.price}>{data.price} €</p>
 			{tooltip}
 			<div id={`product-card-cart-${data.id}`}>
 				<AddToCart product={data} />

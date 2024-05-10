@@ -26,7 +26,7 @@ export async function Main(this: SeqflowFunctionContext) {
 	this.renderSync(
 		<>
 			<Header />
-			<div id="main" class="flex-grow-1 overflow-y-auto">
+			<div id="main" className="flex-grow-1 overflow-y-auto">
 				<InitalComponent key="main" />
 			</div>
 		</>,

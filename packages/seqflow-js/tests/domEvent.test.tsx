@@ -5,7 +5,7 @@ import { type SeqflowFunctionContext, start } from "../src/index";
 
 test("dom event - increment", async () => {
 	async function App(this: SeqflowFunctionContext) {
-		const button: HTMLButtonElement = <button type="button">increment</button>;
+		const button = <button type="button">increment</button>;
 		let counter = 0;
 		const counterSpan: HTMLSpanElement = <span>{counter}</span>;
 		this.renderSync(
@@ -44,12 +44,8 @@ test("dom event - increment", async () => {
 
 test("dom event - counter", async () => {
 	async function App(this: SeqflowFunctionContext) {
-		const incrementButton: HTMLButtonElement = (
-			<button type="button">increment</button>
-		);
-		const decrementButton: HTMLButtonElement = (
-			<button type="button">decrement</button>
-		);
+		const incrementButton = <button type="button">increment</button>;
+		const decrementButton = <button type="button">decrement</button>;
 		let counter = 0;
 		const counterSpan: HTMLSpanElement = <span>{counter}</span>;
 		this.renderSync(
@@ -87,12 +83,8 @@ test("dom event - counter", async () => {
 
 test("dom event - multiple", async () => {
 	async function App(this: SeqflowFunctionContext) {
-		const incrementButton: HTMLButtonElement = (
-			<button type="button">increment</button>
-		);
-		const decrementButton: HTMLButtonElement = (
-			<button type="button">decrement</button>
-		);
+		const incrementButton = <button type="button">increment</button>;
+		const decrementButton = <button type="button">decrement</button>;
 		let counter = 0;
 		const counterSpan: HTMLSpanElement = <span>{counter}</span>;
 		this.renderSync(
@@ -131,12 +123,8 @@ test("dom event - multiple", async () => {
 
 test("dom event - multiple - different event type", async () => {
 	async function App(this: SeqflowFunctionContext) {
-		const incrementButton: HTMLButtonElement = (
-			<button type="button">increment</button>
-		);
-		const decrementButton: HTMLButtonElement = (
-			<button type="button">decrement</button>
-		);
+		const incrementButton = <button type="button">increment</button>;
+		const decrementButton = <button type="button">decrement</button>;
 		let counter = 0;
 		const counterSpan: HTMLSpanElement = <span>{counter}</span>;
 		this.renderSync(
@@ -175,9 +163,7 @@ test("dom event - multiple - different event type", async () => {
 
 test("dom event - stop listen on unmount", async () => {
 	async function App(this: SeqflowFunctionContext) {
-		const next1Button: HTMLButtonElement = (
-			<button type="button">go to 1</button>
-		);
+		const next1Button = <button type="button">go to 1</button>;
 		this.renderSync(<div>{next1Button}</div>);
 		const events1 = this.waitEvents(
 			this.domEvent("click", { el: next1Button }),
@@ -187,9 +173,7 @@ test("dom event - stop listen on unmount", async () => {
 			break;
 		}
 
-		const next2Button: HTMLButtonElement = (
-			<button type="button">go to 2</button>
-		);
+		const next2Button = <button type="button">go to 2</button>;
 		this.renderSync(<div>{next2Button}</div>);
 		// This event async generator should end when the component is unmounted
 		for await (const _ of events1) {
@@ -241,6 +225,9 @@ test("child component can be used to listen", async () => {
 			this.domEvent("click", { el: this._el as HTMLElement }),
 		);
 		for await (const ev of events) {
+			if (!(ev.target instanceof HTMLElement)) {
+				continue;
+			}
 			if (incrementButton.contains(ev.target)) {
 				counter++;
 			} else if (decrementButton.contains(ev.target)) {

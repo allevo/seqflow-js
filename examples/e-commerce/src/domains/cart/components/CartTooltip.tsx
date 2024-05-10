@@ -12,7 +12,7 @@ export async function CartTooltip(this: SeqflowFunctionContext) {
 	}
 
 	const cartTooltipLink = (
-		<a class={classes.cartTooltipLink} id="cart-tooltip-link" href="/cart">
+		<a className={classes.cartTooltipLink} id="cart-tooltip-link" href="/cart">
 			Go to checkout
 		</a>
 	);

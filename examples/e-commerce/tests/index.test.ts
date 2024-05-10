@@ -1,14 +1,11 @@
 import {
 	screen,
-	waitFor,
-	waitForElementToBeRemoved,
 } from "@testing-library/dom";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
 import { InMemoryRouter, start } from "seqflow-js";
 import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
-import { s } from "vitest/dist/reporters-MmQN-57K";
 import { Main } from "../src/Main";
 import { CartDomain } from "../src/domains/cart";
 import { ProductDomain } from "../src/domains/product";
