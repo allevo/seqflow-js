@@ -38,6 +38,30 @@ const pages = [
         filename: 'getting-started.html'
     },
     {
+        path: '/getting-started/prerequisites',
+        filename: 'getting-started/prerequisites.html'
+    },
+    {
+        path: '/getting-started/fetch-data',
+        filename: 'getting-started/fetch-data.html'
+    },
+    {
+        path: '/getting-started/split-components',
+        filename: 'getting-started/split-components.html'
+    },
+    {
+        path: '/getting-started/refresh-quote',
+        filename: 'getting-started/refresh-quote.html'
+    },
+    {
+        path: '/getting-started/configuration',
+        filename: 'getting-started/configuration.html'
+    },
+    {
+        path: '/getting-started/test',
+        filename: 'getting-started/test.html'
+    },
+    {
         path: '/api-reference',
         filename: 'api-reference.html'
     },
@@ -64,6 +88,25 @@ for (const page of pages) {
 <script type="module" defer src="/assets/bootstrap.bundle.min.js"></script>
 <script type="module" defer src="/_vercel/insights/script.js"></script>
 <script type="module" defer src="/_vercel/speed-insights/script.js"></script>
+<script type="module">
+    window.addEventListener('load', () => {
+        const buttons = document.querySelectorAll('button.copy-to-clipboard-button')
+        for (const button of buttons) {
+            button.addEventListener('click', async () => {
+                const text = button.closest('.code-toolbar')?.querySelector('pre')?.innerText
+                if (!text) {
+                    console.log('No text to copy')
+                    return
+                }
+                await navigator.clipboard.writeText(text)
+                button.innerText = 'Copied!'
+                setTimeout(() => {
+                    button.innerText = 'Copy'
+                }, 1_000)
+            })
+        }
+    })
+</script>
 `)
 
     const result = minify(resultHTMWithoutScripts, {
@@ -82,6 +125,7 @@ server.close()
 
 await fs.mkdir('printed/assets', { recursive: true })
 await fs.mkdir('printed/images', { recursive: true })
+await fs.mkdir('printed/getting-started', { recursive: true })
 const assets = await fs.readdir('dist/assets')
 for (const asset of assets) {
     if (asset === '.' || asset === '..') {

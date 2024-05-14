@@ -13,6 +13,16 @@ export default defineConfig({
 					tag: 'card',
 					open: '<div class="card text-bg-light"><div class="card-body">',
 					close: '</div></div>'
+				},
+				{
+					tag: 'next-steps-url',
+					open: '<a href="',
+					close: '">Next Steps</a>'
+				},
+				{
+					tag: 'next-steps-text',
+					open: '<p class="text-center">',
+					close: '</p>'
 				}
 			]
 		}),

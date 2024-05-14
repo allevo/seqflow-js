@@ -15,38 +15,35 @@ pnpm install seqflow-js
 ## Usage
 
 ```tsx
-import { start, SeqflowFunctionContext } from 'seqflow-js'
+import { SeqflowFunctionContext } from "seqflow-js";
 
-async function Main(this: SeqflowFunctionContext) {
-  let counter = 0
-
-  const decrementButton = <button type="button">Decrement</button>
-  const incrementButton = <button type="button">Increment</button>
-  const counterDiv = <div>{counter}</div>
-  this.renderSync(
-    <>
-      <div>
-        {decrementButton}
-        {incrementButton}
-      </div>
-      {counterDiv}
-    </>
-  )
-
-  const events = this.waitEvents(
-    this.domEvent('click', { el: this._el })
-  )
-  for await (const ev of events) {
-    if (ev.target === incrementButton) {
-      counter++
-    } else if (ev.target === decrementButton) {
-      counter--
-    }
-
-    counterDiv.textContent = `${counter}`
-  }
+interface Quote {
+	author: string;
+	content: string;
 }
 
-start(document.getElementById('root')!, Main)
-```
+async function getRandomQuote(): Promise<Quote> {
+	const res = await fetch("https://api.quotable.io/random")
+	return await res.json();
+}
 
+export async function Main(this: SeqflowFunctionContext) {
+	// Render loading message
+	this.renderSync(
+		<p>Loading...</p>
+	);
+
+	// Async operation may fail
+	const quote = quote = await getRandomQuote();
+
+	// Replace loading message with quote
+	this.renderSync(
+		<div>
+			<div>{quote.content}</div>
+			<div>{quote.author}</div>
+		</div>
+	);
+}
+
+start(document.getElementById("root"), Main, undefined, {});
+```

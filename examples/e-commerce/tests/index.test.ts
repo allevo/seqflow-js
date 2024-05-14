@@ -1,6 +1,4 @@
-import {
-	screen,
-} from "@testing-library/dom";
+import { screen } from "@testing-library/dom";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
