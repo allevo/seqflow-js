@@ -6,6 +6,8 @@ SeqFlowJS is a JavaScript library for creating and managing frontend workflows. 
 - Linearity over Complex Abstractions
 - Explicitness over Implicitiveness
 
+See the [documentation](https://seqflow.dev) for more information.
+
 ## Installation
 
 ```bash
@@ -33,7 +35,7 @@ export async function Main(this: SeqflowFunctionContext) {
 		<p>Loading...</p>
 	);
 
-	// Async operation may fail
+	// Perform an async operation
 	const quote = quote = await getRandomQuote();
 
 	// Replace loading message with quote
