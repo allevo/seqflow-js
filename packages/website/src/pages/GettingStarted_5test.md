@@ -6,10 +6,15 @@ In this last part of the tutorial, we will cover how to test our SeqFlow applica
 SeqFlow suggests to use `biome` for formatting the code. The configuration file is `biome.json`. The configuration file is already created when the project is created. The configuration file is used to format the code using `biome` formatter. To format the code, run:
 
 ```bash
+pnpm run biome
+```
+
+We discover that the code is not formatted correctly. To fix it, run:
+
+```bash
 pnpm run biome:check
 ```
 
-The above command will check if the code is formatted correctly and will fix it if it is not.
 
 ## Unit testing
 

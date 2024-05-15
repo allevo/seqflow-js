@@ -72,7 +72,7 @@ async function Spot(this: SeqflowFunctionContext) {}
 
 export async function Main(this: SeqflowFunctionContext) {
 	const fetchAndRender = async () => {
-		this.replaceChild("quote", () => <Loading />);
+		this.replaceChild("quote", () => <Loading key="quote" />);
 
 		let quote: Quote;
 		try {

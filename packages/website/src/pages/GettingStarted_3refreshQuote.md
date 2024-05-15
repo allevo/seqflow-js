@@ -138,7 +138,7 @@ export async function Main(this: SeqflowFunctionContext) {
 	// This async arrow function fetches a new quote and renders
 	// It use the key \`quote\` to replace the child with the loader or the new quote
 	const fetchAndRender = async () => {
-		this.replaceChild("quote", () => <Loading />);
+		this.replaceChild("quote", () => <Loading key="quote" />);
 
 		let quote: Quote;
 		try {
@@ -214,7 +214,7 @@ async function Spot(this: SeqflowFunctionContext) {}
 
 export async function Main(this: SeqflowFunctionContext) {
 	const fetchAndRender = async () => {
-		this.replaceChild("quote", () => <Loading />);
+		this.replaceChild("quote", () => <Loading key="quote" />);
 
 		let quote: Quote;
 		try {
