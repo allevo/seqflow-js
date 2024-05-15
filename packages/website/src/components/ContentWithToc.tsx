@@ -2,12 +2,17 @@ import * as Prism from "prismjs";
 import "prismjs/components/prism-jsx";
 import "prismjs/components/prism-tsx";
 import "prismjs/components/prism-typescript";
-import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard";
-import "prismjs/plugins/toolbar/prism-toolbar";
 import "prismjs/plugins/toolbar/prism-toolbar.css";
 import "prismjs/themes/prism-twilight.css";
 import { SeqflowFunctionContext } from "seqflow-js";
 import classes from "./ContentWithToc.module.css";
+
+// The order of the following imports are important.
+// So, we need to keep the empty line between them.
+
+import "prismjs/plugins/toolbar/prism-toolbar";
+
+import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard";
 
 export interface Toc {
 	title: string;
