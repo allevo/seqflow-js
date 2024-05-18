@@ -36,7 +36,7 @@ export async function Main(this: SeqflowFunctionContext) {
 	);
 
 	// Perform an async operation
-	const quote = quote = await getRandomQuote();
+	const quote = await getRandomQuote();
 
 	// Replace loading message with quote
 	this.renderSync(
