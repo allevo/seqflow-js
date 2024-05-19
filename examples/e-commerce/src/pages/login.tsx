@@ -36,5 +36,10 @@ export async function Login(this: SeqflowFunctionContext) {
 		break;
 	}
 
+	this.app.log.info({
+		message: "User logged in",
+		data: { user },
+	});
+
 	this.app.router.navigate("/");
 }

@@ -20,10 +20,13 @@ function start<
 - `firstComponent: Component` - The SeqFlow component function.
 - `componentOption: FirstComponentData | undefined` - The initial state of the component or undefined.
 - `seqflowConfiguration?: Partial<SeqflowConfiguration>` - The configuration of the `SeqFlow` instance.
-     - `info: (l: Log) => void; error: (l: Log) => void; debug: (l: Log) => void;` - The log functions to be used internally. No logs are printed if these functions are not provided. The application can use these functions to log the messages too.
-     - `domains` - The object that let you to create the custom domains. Empty object by default.
-     - `config` - The application configuration object.
-     - `router` - The router object that contains the navigation methods. By default, the router object will be a `BrowserRouter` instance.
+- `log` - The object that contains the log functions.
+     - `info: (l: Log) => void`
+	 - `error: (l: Log) => void`
+	 - `debug: (l: Log) => void`
+- `domains` - The object that let you to create the custom domains. Empty object by default.
+- `config` - The application configuration object.
+- `router` - The router object that contains the navigation methods. By default, the router object will be a `BrowserRouter` instance.
 
 ### Returns
 

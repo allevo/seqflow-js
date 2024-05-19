@@ -55,9 +55,9 @@ afterAll(() => server.close());
 test("should render the quote and refresh it", async () => {
 	start(document.body, Main, undefined, {
 		// log: {
-		// 	info: (l: Log) => void;
-		// 	error: (l: Log) => void;
-		// 	debug: (l: Log) => void;
+		// 	info: (l: Log) => {};
+		// 	error: (l: Log) => {};
+		// 	debug: (l: Log) => {};
 		// },
 		config: {
 			api: {

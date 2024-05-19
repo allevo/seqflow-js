@@ -11,9 +11,9 @@ import "./index.css";
 
 start(document.getElementById("root"), Main, undefined, {
 	log: {
-		info: (l: Log) => void;
-  		error: (l: Log) => void;
-  		debug: (l: Log) => void;
+		info: (l: Log) => console.info(l),
+		error: (l: Log) => console.error(l),
+		debug: (l: Log) => console.debug(l),
 	},
 	// The configuration object
 	config: {
