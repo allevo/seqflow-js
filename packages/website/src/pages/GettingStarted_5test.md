@@ -37,15 +37,15 @@ import { start } from "seqflow-js";
 import { Main } from "../src/Main";
 
 const quotes = [
-        { content: "quote 1", author: "Author 1" },
-        { content: "quote 2", author: "Author 2" },
+	{ content: "quote 1", author: "Author 1" },
+	{ content: "quote 2", author: "Author 2" },
 ];
 
 let index = 0;
 const server = setupServer(
-        http.get("/random", () => {
-                return HttpResponse.json(quotes[index++ % quotes.length]);
-        })
+	http.get("/random", () => {
+		return HttpResponse.json(quotes[index++ % quotes.length]);
+	})
 );
 
 beforeAll(() => server.listen());
@@ -53,47 +53,47 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 test("should render the quote and refresh it", async () => {
-        start(document.body, Main, undefined, {
-                // log: {
-                // 	info: (l: Log) => void;
-                // 	error: (l: Log) => void;
-                // 	debug: (l: Log) => void;
-                // }
-                config: {
-                        api: {
-                                // Route to the mock server
-                                baseUrl: "",
-                        },
-                },
-        });
+	start(document.body, Main, undefined, {
+		// log: {
+		// 	info: (l: Log) => void;
+		// 	error: (l: Log) => void;
+		// 	debug: (l: Log) => void;
+		// },
+		config: {
+			api: {
+				// Route to the mock server
+				baseUrl: "",
+			},
+		},
+	});
 
-        // Wait for the loading text to be displayed
-        await screen.findByText(/loading/i);
+	// Wait for the loading text to be displayed
+	await screen.findByText(/loading/i);
 
-        // Wait for the quote content and author to be displayed
-        await screen.findByText(new RegExp(quotes[0].content, "i"));
-        await screen.findByText(new RegExp(quotes[0].author, "i"));
+	// Wait for the quote content and author to be displayed
+	await screen.findByText(new RegExp(quotes[0].content, "i"));
+	await screen.findByText(new RegExp(quotes[0].author, "i"));
 
-        // Click the button to refresh the quote
-        const button = await screen.findByRole("button");
-        button.click();
+	// Click the button to refresh the quote
+	const button = await screen.findByRole("button");
+	button.click();
 
-        // Wait for the loading text to be displayed
-        await screen.findByText(/loading/i);
+	// Wait for the loading text to be displayed
+	await screen.findByText(/loading/i);
 
-        // Wait for the new quote content and author to be displayed
-        await screen.findByText(new RegExp(quotes[1].content, "i"));
-        await screen.findByText(new RegExp(quotes[1].author, "i"));
+	// Wait for the new quote content and author to be displayed
+	await screen.findByText(new RegExp(quotes[1].content, "i"));
+	await screen.findByText(new RegExp(quotes[1].author, "i"));
 
-        // Click again the button to refresh the quote
-        button.click();
+	// Click again the button to refresh the quote
+	button.click();
 
-        // Wait for the loading text to be displayed
-        await screen.findByText(/loading/i);
+	// Wait for the loading text to be displayed
+	await screen.findByText(/loading/i);
 
-        // Wait for the new quote content and author to be displayed
-        await screen.findByText(new RegExp(quotes[0].content, "i"));
-        await screen.findByText(new RegExp(quotes[0].author, "i"));
+	// Wait for the new quote content and author to be displayed
+	await screen.findByText(new RegExp(quotes[0].content, "i"));
+	await screen.findByText(new RegExp(quotes[0].author, "i"));
 });
 ```
 

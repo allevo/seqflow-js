@@ -196,20 +196,20 @@ import { createDomainEventClass } from "seqflow-js";
 export const CounterChanged = createDomainEventClass("counter", "changed");
 
 export class CounterDomain {
-        private counter: number;
+	private counter: number;
 
-        constructor(private eventTarget: EventTarget, private init = 0) {
-                this.counter = init;
-        }
+	constructor(private eventTarget: EventTarget, private init = 0) {
+		this.counter = init;
+	}
 
-        applyDelta(delta: number) {
-                this.counter += delta;
-                this.eventTarget.dispatchEvent(new CounterChanged(null));
-        }
+	applyDelta(delta: number) {
+		this.counter += delta;
+		this.eventTarget.dispatchEvent(new CounterChanged(null));
+	}
 
-        get() {
-                return this.counter;
-        }
+	get() {
+		return this.counter;
+	}
 }
 ```
 
@@ -231,7 +231,7 @@ start(document.getElementById("root"), Main, undefined, {
 		error: (l) => console.error(l),
 		info: (l) => console.info(l),
 		debug: (l) => console.debug(l),
-  	}
+	},
 	domains: {
 		counter: (eventTarget) => {
 			return new CounterDomain(eventTarget);
@@ -255,15 +255,15 @@ Now, it is the time to move the `ChangeCounterButton` component to the `src/doma
 import { SeqflowFunctionContext } from "seqflow-js";
 
 export async function ChangeCounterButton(
-        this: SeqflowFunctionContext,
-        data: { delta: number; text: string }
+	this: SeqflowFunctionContext,
+	data: { delta: number; text: string }
 ) {
-        const button = <button type="button">{data.text}</button>;
-        this.renderSync(button);
-        const events = this.waitEvents(this.domEvent("click", { el: button }));
-        for await (const _ of events) {
-                this.app.domains.counter.applyDelta(data.delta);
-        }
+	const button = <button type="button">{data.text}</button>;
+	this.renderSync(button);
+	const events = this.waitEvents(this.domEvent("click", { el: button }));
+	for await (const _ of events) {
+		this.app.domains.counter.applyDelta(data.delta);
+	}
 }
 ```
 
@@ -333,30 +333,30 @@ import { Main } from "../src/Main";
 import { CounterDomain } from "../src/domains/counter/index";
 
 test("should increment and decrement the counter", async () => {
-        start(document.body, Main, undefined, {
-                domains: {
-                        counter: (eventTarget) => {
-                                return new CounterDomain(eventTarget);
-                        },
-                },
-        });
+	start(document.body, Main, undefined, {
+		domains: {
+			counter: (eventTarget) => {
+				return new CounterDomain(eventTarget);
+			},
+		},
+	});
 
-        const incrementButton = await screen.findByText<HTMLButtonElement>(
-                /Increment/i
-        );
-        const decrementButton = await screen.findByText<HTMLButtonElement>(
-                /Decrement/i
-        );
-        const counterDiv = await screen.findByText<HTMLDivElement>("0");
+	const incrementButton = await screen.findByText<HTMLButtonElement>(
+		/Increment/i
+	);
+	const decrementButton = await screen.findByText<HTMLButtonElement>(
+		/Decrement/i
+	);
+	const counterDiv = await screen.findByText<HTMLDivElement>("0");
 
-        expect(counterDiv.textContent).toBe("0");
+	expect(counterDiv.textContent).toBe("0");
 
-        incrementButton?.click();
-        await waitFor(() => expect(counterDiv?.textContent).toBe("1"));
-        incrementButton?.click();
-        await waitFor(() => expect(counterDiv?.textContent).toBe("2"));
-        decrementButton?.click();
-        await waitFor(() => expect(counterDiv?.textContent).toBe("1"));
+	incrementButton?.click();
+	await waitFor(() => expect(counterDiv?.textContent).toBe("1"));
+	incrementButton?.click();
+	await waitFor(() => expect(counterDiv?.textContent).toBe("2"));
+	decrementButton?.click();
+	await waitFor(() => expect(counterDiv?.textContent).toBe("1"));
 });
 ```
 

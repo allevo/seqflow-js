@@ -14,7 +14,7 @@ start(document.getElementById("root"), Main, undefined, {
 		info: (l: Log) => void;
   		error: (l: Log) => void;
   		debug: (l: Log) => void;
-	}
+	},
 	// The configuration object
 	config: {
 		api: {
