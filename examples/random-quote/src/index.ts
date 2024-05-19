@@ -3,18 +3,22 @@ import { Main } from "./Main";
 import "./index.css";
 
 start(document.getElementById("root"), Main, undefined, {
-	log: (l) => console.log(l),
-	config: {
-		api: {
-			baseUrl: "https://api.quotable.io",
-		},
-	},
+        log: {
+                error: (l) => console.error(l),
+                info: (l) => console.info(l),
+                debug: (l) => console.debug(l),
+        },
+        config: {
+                api: {
+                        baseUrl: "https://api.quotable.io",
+                },
+        },
 });
 
 declare module "seqflow-js" {
-	interface ApplicationConfiguration {
-		api: {
-			baseUrl: string;
-		};
-	}
+        interface ApplicationConfiguration {
+                api: {
+                        baseUrl: string;
+                };
+        }
 }
