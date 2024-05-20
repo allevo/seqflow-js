@@ -21,9 +21,9 @@ export interface Log {
 	data?: unknown;
 }
 export interface LogFunction {
-	info?: (l: Log) => void;
-	error?: (l: Log) => void;
-	debug?: (l: Log) => void;
+	info: (l: Log) => void;
+	error: (l: Log) => void;
+	debug: (l: Log) => void;
 }
 
 export interface SeqflowAppContext {
@@ -464,7 +464,9 @@ export function start<
 	root: HTMLElement,
 	firstComponent: Component,
 	componentOption: FirstComponentData | undefined,
-	seqflowConfiguration: Partial<SeqflowConfiguration>,
+	seqflowConfiguration: Partial<
+		Omit<SeqflowConfiguration, "log"> & { log?: Partial<LogFunction> }
+	>,
 ): AbortController {
 	const seqflowConfig = applyDefaults(seqflowConfiguration);
 
@@ -553,7 +555,9 @@ export function start<
 }
 
 function applyDefaults(
-	seqflowConfiguration: Partial<SeqflowConfiguration>,
+	seqflowConfiguration: Partial<
+		Omit<SeqflowConfiguration, "log"> & { log?: Partial<LogFunction> }
+	>,
 ): SeqflowConfiguration {
 	function noop() {}
 
@@ -561,10 +565,22 @@ function applyDefaults(
 		seqflowConfiguration.router = new BrowserRouter(new EventTarget());
 	}
 
+	if (seqflowConfiguration.log === undefined) {
+		seqflowConfiguration.log = {};
+	}
+	if (seqflowConfiguration.log.info === undefined) {
+		seqflowConfiguration.log.info = noop;
+	}
+	if (seqflowConfiguration.log.error === undefined) {
+		seqflowConfiguration.log.error = noop;
+	}
+	if (seqflowConfiguration.log.debug === undefined) {
+		seqflowConfiguration.log.debug = noop;
+	}
+
 	return Object.assign(
 		{},
 		{
-			log: noop,
 			config: {},
 			domains: {},
 		},

@@ -10,7 +10,7 @@ beforeEach(() => {
 
 test("app log", async () => {
 	async function App(this: SeqflowFunctionContext) {
-		this.app.log.info?.({ message: "render" });
+		this.app.log.info({ message: "render" });
 		this.renderSync("");
 	}
 
@@ -31,9 +31,28 @@ test("app log", async () => {
 	expect(consoleInfoSpy).toHaveBeenCalledWith({ message: "render" });
 });
 
+test("app log - partial", async () => {
+	async function App(this: SeqflowFunctionContext) {
+		this.app.log.error({ message: "render" });
+		this.app.log.info({ message: "render" });
+		this.app.log.debug({ message: "render" });
+		this.renderSync("1");
+	}
+
+	start(
+		document.body,
+		App,
+		{},
+		{
+			log: {},
+		},
+	);
+	expect(document.body.innerHTML).toBe("1");
+});
+
 test("app config", async () => {
 	async function App(this: SeqflowFunctionContext) {
-		this.app.log.info?.({ message: this.app.config.api });
+		this.app.log.info({ message: this.app.config.api });
 		this.renderSync("");
 	}
 
