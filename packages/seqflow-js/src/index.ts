@@ -17,11 +17,14 @@ export type DomainEvent<T> = DomainsPackage.DomainEvent<T>;
 export const createDomainEventClass = DomainsPackage.createDomainEventClass;
 
 export interface Log {
-	type: "info" | "debug" | "error";
 	message: string;
 	data?: unknown;
 }
-export type LogFunction = (log: Log) => void;
+export interface LogFunction {
+	info: (l: Log) => void;
+	error: (l: Log) => void;
+	debug: (l: Log) => void;
+}
 
 export interface SeqflowAppContext {
 	log: LogFunction;
@@ -117,7 +120,9 @@ export interface SeqflowFunctionContext {
 	 */
 	createDOMFragment({
 		children,
-	}: { children?: ChildenType[] }): DocumentFragment;
+	}: {
+		children?: ChildenType[];
+	}): DocumentFragment;
 }
 export type SeqflowFunction<T> = (
 	this: SeqflowFunctionContext,
@@ -149,8 +154,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 	componentOption: T | undefined,
 ) {
 	const componentName = component.name;
-	parentContext.app.log({
-		type: "debug",
+	parentContext.app.log.debug?.({
 		message: "startComponent",
 		data: { componentOption, componentName },
 	});
@@ -213,8 +217,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 		) {
 			const oldChildIndex = componentChildren.findIndex((c) => c.key === key);
 			if (oldChildIndex < 0) {
-				this.app.log({
-					type: "error",
+				this.app.log.error?.({
 					message: "replaceChild: wrapper not found",
 					data: { key, newChild },
 				});
@@ -264,8 +267,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			return domainEvent(b.t, eventTarget);
 		},
 		navigationEvent(): EventAsyncGenerator<NavigationEvent> {
-			this.app.log({
-				type: "debug",
+			this.app.log.debug?.({
 				message: "navigationEvent",
 				data: {
 					componentName,
@@ -283,8 +285,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			this: SeqflowFunctionContext,
 			{ children }: { children?: ChildenType[] },
 		): DocumentFragment {
-			this.app.log({
-				type: "debug",
+			this.app.log.debug?.({
 				message: "createDOMFragment",
 				data: { children },
 			});
@@ -313,8 +314,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 					continue;
 				}
 
-				this.app.log({
-					type: "error",
+				this.app.log.error?.({
 					message: "Unsupported child type. Implement me",
 					data: { child, children },
 				});
@@ -329,8 +329,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			options?: { [key: string]: string },
 			...children: ChildenType[]
 		): Node {
-			this.app.log({
-				type: "debug",
+			this.app.log.debug?.({
 				message: "createDOMElement",
 				data: { tagName, options, children },
 			});
@@ -381,10 +380,15 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 						continue;
 					}
 
-					this.app.log({
-						type: "error",
+					this.app.log.error?.({
 						message: "Unsupported child type. Implement me",
-						data: { child, children, tagName, options, el },
+						data: {
+							child,
+							children,
+							tagName,
+							options,
+							el,
+						},
 					});
 					throw new Error("Unsupported child type");
 				}
@@ -406,7 +410,10 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 				wrapper.classList.add(options.wrapperClass);
 			}
 
-			startComponent(childContext, wrapper, tagName, { ...options, children });
+			startComponent(childContext, wrapper, tagName, {
+				...options,
+				children,
+			});
 			return wrapper;
 		},
 		renderSync(this: SeqflowFunctionContext, html: string | JSX.Element) {
@@ -423,15 +430,16 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 	if (v.then !== undefined) {
 		v.then(
 			() => {
-				parentContext.app.log({
-					type: "debug",
+				parentContext.app.log.debug?.({
 					message: "Component rendering ended",
-					data: { componentOption, componentName },
+					data: {
+						componentOption,
+						componentName,
+					},
 				});
 			},
 			(e) => {
-				parentContext.app.log({
-					type: "error",
+				parentContext.app.log.error?.({
 					message: "Component throws an error",
 					data: {
 						componentOption,
@@ -449,12 +457,16 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 export function start<
 	Component extends SeqflowFunction<FirstComponentData>,
 	// biome-ignore lint/suspicious/noExplicitAny: We don't care about the component properties
-	FirstComponentData extends Record<string, any> & { children?: ChildenType[] },
+	FirstComponentData extends Record<string, any> & {
+		children?: ChildenType[];
+	},
 >(
 	root: HTMLElement,
 	firstComponent: Component,
 	componentOption: FirstComponentData | undefined,
-	seqflowConfiguration: Partial<SeqflowConfiguration>,
+	seqflowConfiguration: Partial<
+		Omit<SeqflowConfiguration, "log"> & { log?: Partial<LogFunction> }
+	>,
 ): AbortController {
 	const seqflowConfig = applyDefaults(seqflowConfiguration);
 
@@ -472,10 +484,12 @@ export function start<
 		router: seqflowConfig.router,
 	};
 	seqflowConfig.router.getEventTarget().addEventListener("navigation", (ev) => {
-		appContext.log({
-			type: "info",
+		appContext.log.info?.({
 			message: "navigate",
-			data: { path: (ev as NavigationEvent).path, event: ev },
+			data: {
+				path: (ev as NavigationEvent).path,
+				event: ev,
+			},
 		});
 	});
 
@@ -541,7 +555,9 @@ export function start<
 }
 
 function applyDefaults(
-	seqflowConfiguration: Partial<SeqflowConfiguration>,
+	seqflowConfiguration: Partial<
+		Omit<SeqflowConfiguration, "log"> & { log?: Partial<LogFunction> }
+	>,
 ): SeqflowConfiguration {
 	function noop() {}
 
@@ -549,10 +565,22 @@ function applyDefaults(
 		seqflowConfiguration.router = new BrowserRouter(new EventTarget());
 	}
 
+	if (seqflowConfiguration.log === undefined) {
+		seqflowConfiguration.log = {};
+	}
+	if (seqflowConfiguration.log.info === undefined) {
+		seqflowConfiguration.log.info = noop;
+	}
+	if (seqflowConfiguration.log.error === undefined) {
+		seqflowConfiguration.log.error = noop;
+	}
+	if (seqflowConfiguration.log.debug === undefined) {
+		seqflowConfiguration.log.debug = noop;
+	}
+
 	return Object.assign(
 		{},
 		{
-			log: noop,
 			config: {},
 			domains: {},
 		},

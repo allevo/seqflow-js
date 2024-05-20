@@ -18,7 +18,9 @@ class CounterElement extends HTMLElement {
 	connectedCallback() {
 		const div = document.createElement("div");
 		if (shadowDomMode) {
-			const shadow = this.attachShadow({ mode: shadowDomMode });
+			const shadow = this.attachShadow({
+				mode: shadowDomMode,
+			});
 			if (typeof injectCSS === "function") {
 				injectCSS(shadow);
 			}
@@ -34,7 +36,11 @@ class CounterElement extends HTMLElement {
 		// Even if `ShadowRoot` is not a `HTMLElement`, we can cast it to `HTMLElement` to make TypeScript happy.
 		// It works anyway.
 		this.abortController = start(div, Counter, undefined, {
-			log: (l) => console.log(l),
+			log: {
+				error: (l) => console.error(l),
+				info: (l) => console.info(l),
+				debug: (l) => console.debug(l),
+			},
 			domains: {
 				// Create the Counter domain with the initial value and the external event target
 				counter: (et) =>
@@ -53,7 +59,9 @@ class CounterElement extends HTMLElement {
 	// This method is called when the `value` attribute changes
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
 		this.externalEventTarget.dispatchEvent(
-			new ExternalChangeValue({ newValue: Number(newValue) }),
+			new ExternalChangeValue({
+				newValue: Number(newValue),
+			}),
 		);
 	}
 

@@ -5,5 +5,9 @@ import { Main } from "./Main";
 import "./index.css";
 
 start(document.getElementById("root"), Main, undefined, {
-	log: (l) => console.log(l),
+	log: {
+		error: (l) => console.error(l),
+		info: (l) => console.info(l),
+		debug: (l) => console.debug(l),
+	},
 });

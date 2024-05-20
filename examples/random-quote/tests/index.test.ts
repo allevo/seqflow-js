@@ -25,7 +25,11 @@ afterAll(() => server.close());
 
 test("should render the quote and refresh it", async () => {
 	start(document.body, Main, undefined, {
-		// log: (l) => console.log(l),
+		// log: {
+		// 	error: (l) => console.error(l),
+		// 	info: (l) => console.info(l),
+		// 	debug: (l) => console.debug(l),
+		// },
 		config: {
 			api: {
 				// Route to the mock server

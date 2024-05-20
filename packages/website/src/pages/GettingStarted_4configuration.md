@@ -1,4 +1,3 @@
-
 Our application fully works now. But we can improve it putting the hard-coded URL as configuration. Let's do that.
 
 ## Application configuration
@@ -11,7 +10,11 @@ import { Main } from "./Main";
 import "./index.css";
 
 start(document.getElementById("root"), Main, undefined, {
-	log: (l) => console.log(l),
+	log: {
+		info: (l: Log) => console.info(l),
+		error: (l: Log) => console.error(l),
+		debug: (l: Log) => console.debug(l),
+	},
 	// The configuration object
 	config: {
 		api: {

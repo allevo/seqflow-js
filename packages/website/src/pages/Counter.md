@@ -4,17 +4,20 @@ Here you can find the basic concept of the framework and how it can help your de
 
 :::card:::
 What you will learn:
+
 - How to create a new project
 - A simple application: the counter
 - Create different components
 - Structure your project into domains
 - How to test your application
-:::end-card:::
+  :::end-card:::
 
 Are you looking for more complex examples? Check the <a target="_blank" href="https://github.com/allevo/seqflow-js/tree/main/examples">examples</a> folder at GitHub.
 
 ## Project creation
+
 The first step to start a new project is to create it using the CLI. The command is:
+
 ```sh
 pnpm create seqflow@latest --template empty
 ```
@@ -98,14 +101,12 @@ Because a component is an async function, we can use the `await` keyword to perf
 
 The `this` parameter is a `SeqflowFunctionContext` object that holds the component context. See the [API reference](/api-reference "Api Reference") for more information about the `SeqflowFunctionContext` object.
 
-
 This component is structured in four parts:
+
 - **Component state**: the `counter` variable holds the state of the application.
 - **Interactive elements**: the `incrementButton`, `decrementButton`, and `counterSpan` variables hold the elements that will be rendered in the html.
 - **Render the html**: the `this.renderSync` method is responsible for rendering the html.
 - **Event handling**: the `this.waitEvents` method is responsible for waiting for the `"click"` event. The `for await` loop is responsible for handling the event.
-
-
 
 - We created a new component, `Main`, that is responsible for rendering the counter application. It is an `async` function binded to a own `SeqflowFunctionContext` instance. See the [API reference](/api-reference "Api Reference") for more information about the `SeqflowFunctionContext` object.
 - We define a variable that holds the state of the application: the `counter` variable.
@@ -197,18 +198,13 @@ export const CounterChanged = createDomainEventClass("counter", "changed");
 export class CounterDomain {
 	private counter: number;
 
-	constructor(
-		private eventTarget: EventTarget,
-		private init = 0,
-	) {
+	constructor(private eventTarget: EventTarget, private init = 0) {
 		this.counter = init;
 	}
 
 	applyDelta(delta: number) {
 		this.counter += delta;
-		this.eventTarget.dispatchEvent(
-			new CounterChanged(null),
-		);
+		this.eventTarget.dispatchEvent(new CounterChanged(null));
 	}
 
 	get() {
@@ -231,7 +227,11 @@ import { CounterDomain } from "./domains/counter/index";
 import { Main } from "./Main";
 
 start(document.getElementById("root"), Main, undefined, {
-	log: (l) => console.log(l),
+	log: {
+		error: (l) => console.error(l),
+		info: (l) => console.info(l),
+		debug: (l) => console.debug(l),
+	},
 	domains: {
 		counter: (eventTarget) => {
 			return new CounterDomain(eventTarget);
@@ -246,6 +246,7 @@ declare module "seqflow-js" {
 	}
 }
 ```
+
 This update is necessary to register the `counter` domain. See the [API reference](/api-reference "Api Reference") for more information about the `start` function.
 
 Now, it is the time to move the `ChangeCounterButton` component to the `src/domains/counter` folder. Create the `src/domains/counter/ChangeCounterButton.tsx` file with the following content:
@@ -253,10 +254,11 @@ Now, it is the time to move the `ChangeCounterButton` component to the `src/doma
 ```tsx
 import { SeqflowFunctionContext } from "seqflow-js";
 
-export async function ChangeCounterButton(this: SeqflowFunctionContext, data: { delta: number; text: string }) {
-	const button = (
-		<button type="button">{data.text}</button>
-	);
+export async function ChangeCounterButton(
+	this: SeqflowFunctionContext,
+	data: { delta: number; text: string }
+) {
+	const button = <button type="button">{data.text}</button>;
 	this.renderSync(button);
 	const events = this.waitEvents(this.domEvent("click", { el: button }));
 	for await (const _ of events) {
@@ -264,7 +266,9 @@ export async function ChangeCounterButton(this: SeqflowFunctionContext, data: { 
 	}
 }
 ```
+
 We didn't change the `ChangeCounterButton` component too much:
+
 - We added `delta` property to the `data` property. It is a number that represents the increment or decrement value.
 - We created the `button` element separately and rendered it using the `this.renderSync` method. This allows us to access the button element later.
 - We rendered the button element. After we wait for the `"click"` event on the button element. In this case, we use the `button` element as the event target.
@@ -305,6 +309,7 @@ export async function Main(this: SeqflowFunctionContext) {
 ```
 
 In this update, we changed the `Main` component as the following:
+
 - the component uses the `counter` domain to get the initial value of the counter
 - the component renders the html with two `ChangeCounterButton` components: one for decrementing the counter variable and another for incrementing it.
 - the component uses the `this.waitEvents` method to wait for the `CounterChanged` event.
@@ -336,10 +341,12 @@ test("should increment and decrement the counter", async () => {
 		},
 	});
 
-	const incrementButton =
-		await screen.findByText<HTMLButtonElement>(/Increment/i);
-	const decrementButton =
-		await screen.findByText<HTMLButtonElement>(/Decrement/i);
+	const incrementButton = await screen.findByText<HTMLButtonElement>(
+		/Increment/i
+	);
+	const decrementButton = await screen.findByText<HTMLButtonElement>(
+		/Decrement/i
+	);
 	const counterDiv = await screen.findByText<HTMLDivElement>("0");
 
 	expect(counterDiv.textContent).toBe("0");
@@ -358,6 +365,7 @@ This test is simple: it starts the application and waits for the `Increment` and
 ## Improvements (at home)
 
 I want to leave you with two little homework:
+
 - implement a reset button that sets the counter to 0
 - persist the counter value in the local storage. If the user refreshes the page, the counter value should be the same as before. For this, try to not change the UI part.
 

@@ -1,45 +1,70 @@
-import { screen, waitFor } from "@testing-library/dom";
-import { expect, test } from "vitest";
+import { beforeAll, beforeEach, expect, test, vi } from "vitest";
 
 import { type Log, type SeqflowFunctionContext, start } from "../src/index";
 
+const consoleInfoSpy = vi.spyOn(console, "info");
+
+beforeEach(() => {
+	vi.clearAllMocks();
+});
+
 test("app log", async () => {
 	async function App(this: SeqflowFunctionContext) {
-		this.app.log({ type: "info", message: "render" });
+		this.app.log.info({ message: "render" });
 		this.renderSync("");
 	}
 
-	const logs: Log[] = [];
 	start(
 		document.body,
 		App,
 		{},
 		{
-			log: (l: Log) => {
-				logs.push(l);
+			log: {
+				error: (l: Log) => console.error(l),
+				info: (l: Log) => console.info(l),
+				debug: (l: Log) => console.debug(l),
 			},
 		},
 	);
 	expect(document.body.innerHTML).toBe("");
-
-	const appLog = logs.find((l) => l.message === "render" && l.type === "info");
-	expect(appLog).toBeDefined();
+	expect(consoleInfoSpy).toHaveBeenCalledOnce();
+	expect(consoleInfoSpy).toHaveBeenCalledWith({ message: "render" });
 });
 
-test("app config", async () => {
+test("app log - partial", async () => {
 	async function App(this: SeqflowFunctionContext) {
-		this.app.log({ type: "info", message: this.app.config.api });
-		this.renderSync("");
+		this.app.log.error({ message: "render" });
+		this.app.log.info({ message: "render" });
+		this.app.log.debug({ message: "render" });
+		this.renderSync("1");
 	}
 
-	const logs: Log[] = [];
 	start(
 		document.body,
 		App,
 		{},
 		{
-			log: (l: Log) => {
-				logs.push(l);
+			log: {},
+		},
+	);
+	expect(document.body.innerHTML).toBe("1");
+});
+
+test("app config", async () => {
+	async function App(this: SeqflowFunctionContext) {
+		this.app.log.info({ message: this.app.config.api });
+		this.renderSync("");
+	}
+
+	start(
+		document.body,
+		App,
+		{},
+		{
+			log: {
+				error: (l: Log) => console.error(l),
+				info: (l: Log) => console.info(l),
+				debug: (l: Log) => console.debug(l),
 			},
 			config: {
 				api: "https://api.example.com",
@@ -47,11 +72,10 @@ test("app config", async () => {
 		},
 	);
 	expect(document.body.innerHTML).toBe("");
-
-	const appLog = logs.find(
-		(l) => l.message === "https://api.example.com" && l.type === "info",
-	);
-	expect(appLog).toBeDefined();
+	expect(consoleInfoSpy).toHaveBeenCalledOnce();
+	expect(consoleInfoSpy).toHaveBeenCalledWith({
+		message: "https://api.example.com",
+	});
 });
 
 declare module "../src/index" {
