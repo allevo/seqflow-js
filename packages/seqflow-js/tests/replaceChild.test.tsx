@@ -1,8 +1,10 @@
 import { screen, waitFor } from "@testing-library/dom";
 import { expect, test } from "vitest";
-import { type Log, type SeqflowFunctionContext, start } from "../src/index";
+import { type SeqflowFunctionContext, start } from "../src/index";
 
-/*
+// This test is to make sure the `replaceChild` function is working as expected
+// Every time the button is clicked, the HTMLButtonElement is replaced,
+// and the text is updated
 test("replace a child", async () => {
 	const texts = ["first", "second", "third"];
 	async function Button(this: SeqflowFunctionContext, data: { text: string }) {
@@ -15,7 +17,7 @@ test("replace a child", async () => {
 		}
 		this.renderSync(
 			<div id="1">
-				<Button key="aa" text={text} />
+				<Button key="button" text={text} />
 			</div>,
 		);
 
@@ -25,7 +27,7 @@ test("replace a child", async () => {
 			if (!nextText) {
 				break;
 			}
-			this.replaceChild("aa", async () => <Button key="aa" text={nextText} />);
+			await this.replaceChild("button", async () => <Button key="button" text={nextText} />);
 		}
 	}
 
@@ -44,6 +46,7 @@ test("replace a child", async () => {
 	);
 });
 
+// This test is to make sure the `replaceChild` function should abort the substitured component
 test("replace a child - stop listen", async () => {
 	let counter = 0;
 	async function Button1(this: SeqflowFunctionContext) {
@@ -59,13 +62,13 @@ test("replace a child - stop listen", async () => {
 	async function App(this: SeqflowFunctionContext) {
 		this.renderSync(
 			<div>
-				<Button1 key="aa" />
+				<Button1 key="button" />
 			</div>,
 		);
 
 		const events = this.waitEvents(this.domEvent("click", { el: this._el }));
 		for await (const _ of events) {
-			this.replaceChild("aa", async () => <Button2 key="aa" />);
+			await this.replaceChild("button", async () => <Button2 key="button" />);
 			break;
 		}
 	}
@@ -87,6 +90,9 @@ test("replace a child - stop listen", async () => {
 	await waitFor(() => expect(counter).toBe(1));
 });
 
+// This test is to make sure the `replaceChild` function is working as expected
+// Every time the button is clicked, the counter should be incremented,
+// replacing the div HTMLElement with a new one
 test("replace a child - html element", async () => {
 	async function Button(this: SeqflowFunctionContext, data: { text: string }) {
 		this.renderSync(<button type="button">{data.text}</button>);
@@ -102,7 +108,7 @@ test("replace a child - html element", async () => {
 
 		const events = this.waitEvents(this.domEvent("click", { el: this._el }));
 		for await (const _ of events) {
-			this.replaceChild("content", async () => (
+			await this.replaceChild("content", async () => (
 				<div key="content">{counter++}</div>
 			));
 		}
@@ -134,8 +140,9 @@ test("replace a child - html element", async () => {
 		),
 	);
 });
-*/
 
+// This test is to make sure the `replaceChild` function will stop all components
+// if a parent component is replaced
 test("replace a child - should unmount child components", async () => {
 	let counter = 0
 	async function Button(this: SeqflowFunctionContext, data: { text: string }) {
@@ -156,7 +163,8 @@ test("replace a child - should unmount child components", async () => {
 
 		const events = this.waitEvents(this.domEvent("click", { el: button }));
 		for await (const _ of events) {
-			this.replaceChild("content", async () => (
+			// We replace the button with a div
+			await this.replaceChild("content", async () => (
 				<div key="content">No button here</div>
 			));
 		}
