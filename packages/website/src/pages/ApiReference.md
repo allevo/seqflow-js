@@ -58,11 +58,15 @@ This interface is the parameter object that is passed to the component function.
 - `abortController: AbortController` - The instance of the `AborteController` linked to the component.
 - `renderSync: (html: string | JSX.Element) => void` - This method renders the HTML string or JSX element into the component mounting DOM element.
 - `waitEvents: <Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[]>(...fns: Fns) => AsyncGenerator<GetYieldType<Fns[number]>>` - The method to wait for multiple events to be triggered.
-- `domEvent: <K extends keyof HTMLElementEventMap>(eventType: K, options) => EventAsyncGenerator<HTMLElementEventMap[K]>` - The method to create an async generator that waits for the DOM event to be triggered. The `options` object can be used to customize the event listener and to prevent the default behavior.
+- `domEvent: <K extends keyof HTMLElementEventMap>(eventType: K, options) => EventAsyncGenerator<HTMLElementEventMap[K]>` - The method to create an async generator that waits for the DOM event to be triggered. The `options` can:
+  - a child key.
+  - be an object used to customize the event listener and to prevent the default behavior.
 - `domainEvent<BEE extends typeof DomainsPackage.DomainEvent<unknown>>(domainEventClass: BEE): EventAsyncGenerator<InstanceType<BEE>>` - The method to create an async generator that waits for the domain event to be triggered.
 - `navigationEvent(): EventAsyncGenerator<NavigationEvent>` - The method to create an async generator that waits for the navigation event to be triggered.
 - `replaceChild: (key: string, newChild: () => JSX.Element | Promise<JSX.Element>) => void | Promise<void>` - The method to replace a child component with the same `key` with a new component.
 - `_el: HTMLElement` - The DOM element where the component is mounted.
+- `findChild: (key: string) => HTMLElement | null` - The method to find a child component by the key. Returns `null` if the child component is not found.
+- `getChild: (key: string) => HTMLElement` - The method to get a child component by the key. Thows an error if the child component is not found.
 - `createDOMElement` - The method to create a DOM element. Don't use this method directly.
 - `createDOMFragment` - The method to create a Fragment DOM element. Don't use this method directly.
 

@@ -195,3 +195,27 @@ test("style as CSSStyleDeclaration", async () => {
 
 	expect(document.body.innerHTML).toBe('<div style="display: none;"></div>');
 });
+
+test("getChild", async () => {
+	async function App(this: SeqflowFunctionContext) {
+		this.renderSync(
+			<>
+				<div key="key1" />
+				<div key="key2">
+					<div key="key3" />
+				</div>
+			</>,
+		);
+
+		this.getChild("key1").innerHTML = "key1";
+		this.getChild("key3").appendChild(document.createTextNode("key4"));
+		this.getChild("key3").innerHTML = "key3";
+	}
+	start(document.body, App, undefined, {});
+
+	await new Promise((resolve) => setTimeout(resolve, 100));
+
+	expect(document.body.innerHTML).toBe(
+		'<div key="key1">key1</div><div key="key2"><div key="key3">key3</div></div>',
+	);
+});

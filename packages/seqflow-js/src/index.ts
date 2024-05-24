@@ -75,10 +75,12 @@ export interface SeqflowFunctionContext {
 	 */
 	domEvent: <K extends keyof HTMLElementEventMap>(
 		eventType: K,
-		options: {
-			el: HTMLElement;
-			preventDefault?: boolean;
-		},
+		options:
+			| {
+					el: HTMLElement;
+					preventDefault?: boolean;
+			  }
+			| string,
 	) => EventAsyncGenerator<HTMLElementEventMap[K]>;
 	/**
 	 * Wait for a domain event to happen
@@ -92,6 +94,20 @@ export interface SeqflowFunctionContext {
 	 * Wait for a navigation event to happen
 	 */
 	navigationEvent(): EventAsyncGenerator<NavigationEvent>;
+	/**
+	 * Get a child component by its key
+	 *
+	 * @param key the key of the child to get
+	 * @returns the child component
+	 */
+	getChild(key: string): HTMLElement;
+	/**
+	 * Get a child component by its key
+	 *
+	 * @param key the key of the child to get
+	 * @returns the child component or null if not found
+	 */
+	findChild(key: string): HTMLElement | null;
 	/**
 	 * Replace a child component with a new one
 	 *
@@ -210,6 +226,24 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 				yield ev;
 			}
 		},
+		getChild(this: SeqflowFunctionContext, key: string): HTMLElement {
+			const child = this.findChild(key);
+			if (!child) {
+				this.app.log.error({
+					message: "getChild: wrapper not found",
+					data: { key },
+				});
+				throw new Error("getChild: wrapper not found");
+			}
+			return child;
+		},
+		findChild(this: SeqflowFunctionContext, key: string): HTMLElement | null {
+			const child = componentChildren.find((c) => c.key === key);
+			if (child) {
+				return child.el;
+			}
+			return null;
+		},
 		replaceChild(
 			this: SeqflowFunctionContext,
 			key: string,
@@ -261,14 +295,24 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 		domEvent<K extends keyof HTMLElementEventMap>(
 			this: SeqflowFunctionContext,
 			eventType: K,
-			options: {
-				el: HTMLElement;
-				preventDefault?: boolean;
-			},
+			options:
+				| {
+						el: HTMLElement;
+						preventDefault?: boolean;
+				  }
+				| string,
 		): EventAsyncGenerator<HTMLElementEventMap[K]> {
+			let el: HTMLElement;
+			let preventDefault = false;
+			if (typeof options === "string") {
+				el = this.getChild(options);
+			} else {
+				el = options.el;
+				preventDefault = options.preventDefault ?? false;
+			}
 			return domEvent(eventType, {
-				el: options.el,
-				preventDefault: options.preventDefault ?? false,
+				el,
+				preventDefault,
 			});
 		},
 		domainEvent<BEE extends typeof DomainsPackage.DomainEvent<unknown>>(
@@ -526,6 +570,12 @@ export function start<
 		// biome-ignore lint/correctness/useYield: This is a generator function
 		waitEvents: async function* <A>(): AsyncGenerator<A> {
 			throw new Error("waitEvents is not supported in the main context");
+		},
+		getChild: () => {
+			throw new Error("getChild is not supported in the main context");
+		},
+		findChild: () => {
+			throw new Error("findChild is not supported in the main context");
 		},
 		replaceChild: () => {
 			throw new Error("replaceChild is not supported in the main context");
