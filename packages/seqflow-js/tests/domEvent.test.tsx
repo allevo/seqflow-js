@@ -246,3 +246,49 @@ test("child component can be used to listen", async () => {
 
 	await waitFor(() => expect(counter).toBe(3));
 });
+
+test("uses `key`", async () => {
+	let counter = 0;
+
+	async function Button(this: SeqflowFunctionContext, data: { text: string }) {
+		this.renderSync(<button type="button">{data.text}</button>);
+	}
+
+	async function App(this: SeqflowFunctionContext) {
+		const counterDiv = <div>{counter}</div>;
+		this.renderSync(
+			<>
+				<div>
+					<Button key="decrement-button" text="Decrement" />
+					<Button key="increment-button" text="Increment" />
+				</div>
+				{counterDiv}
+			</>,
+		);
+
+		const events = this.waitEvents(
+			this.domEvent("click", "decrement-button"),
+			this.domEvent("click", "increment-button"),
+		);
+		for await (const ev of events) {
+			if (!(ev.target instanceof HTMLElement)) {
+				continue;
+			}
+			if (this.getChild("increment-button").contains(ev.target)) {
+				counter++;
+			} else if (this.getChild("decrement-button").contains(ev.target)) {
+				counter--;
+			}
+
+			counterDiv.textContent = `${counter}`;
+		}
+	}
+
+	start(document.body, App, undefined, {});
+
+	(await screen.findByText(/increment/i)).click();
+	(await screen.findByText(/increment/i)).click();
+	(await screen.findByText(/increment/i)).click();
+
+	await waitFor(() => expect(counter).toBe(3));
+});

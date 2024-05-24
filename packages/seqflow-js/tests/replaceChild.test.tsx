@@ -27,7 +27,9 @@ test("replace a child", async () => {
 			if (!nextText) {
 				break;
 			}
-			await this.replaceChild("button", async () => <Button key="button" text={nextText} />);
+			await this.replaceChild("button", async () => (
+				<Button key="button" text={nextText} />
+			));
 		}
 	}
 
@@ -144,7 +146,7 @@ test("replace a child - html element", async () => {
 // This test is to make sure the `replaceChild` function will stop all components
 // if a parent component is replaced
 test("replace a child - should unmount child components", async () => {
-	let counter = 0
+	let counter = 0;
 	async function Button(this: SeqflowFunctionContext, data: { text: string }) {
 		this.renderSync(<button type="button">{data.text}</button>);
 
@@ -157,7 +159,7 @@ test("replace a child - should unmount child components", async () => {
 		const button = <Button text="click me" />;
 		this.renderSync(
 			<div>
-				<div key="content" >{button}</div>
+				<div key="content">{button}</div>
 			</div>,
 		);
 
@@ -178,7 +180,7 @@ test("replace a child - should unmount child components", async () => {
 		expect(document.body.innerHTML).toBe(
 			'<div><div key="content"><div><button type="button">click me</button></div></div></div>',
 		),
-	)
+	);
 	expect(counter).toBe(0);
 
 	button.click();
@@ -187,7 +189,7 @@ test("replace a child - should unmount child components", async () => {
 		expect(document.body.innerHTML).toBe(
 			'<div><div key="content">No button here</div></div>',
 		),
-	)
+	);
 	expect(counter).toBe(1);
 
 	for (let i = 0; i < 10; i++) {
