@@ -53,7 +53,9 @@ export async function Main(this: SeqflowFunctionContext) {
 
 	this.renderSync(
 		<>
-			<button key="refresh-button" type="button">Refresh</button>
+			<button key="refresh-button" type="button">
+				Refresh
+			</button>
 			<Spot key="quote" />
 		</>,
 	);
@@ -61,7 +63,7 @@ export async function Main(this: SeqflowFunctionContext) {
 	await fetchAndRender();
 
 	const button = this.getChild("refresh-button") as HTMLButtonElement;
-	const events = this.waitEvents(this.domEvent("click",'refresh-button'));
+	const events = this.waitEvents(this.domEvent("click", "refresh-button"));
 	for await (const _ of events) {
 		button.disabled = true;
 		await fetchAndRender();
