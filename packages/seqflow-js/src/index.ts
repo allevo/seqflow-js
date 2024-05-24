@@ -102,7 +102,7 @@ export interface SeqflowFunctionContext {
 	replaceChild: (
 		key: string,
 		newChild: () => JSX.Element | Promise<JSX.Element>,
-	) => void;
+	) => void | Promise<void>;
 	/**
 	 * The DOM element where this component is mounted
 	 */
@@ -154,7 +154,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 	componentOption: T | undefined,
 ) {
 	const componentName = component.name;
-	parentContext.app.log.debug?.({
+	parentContext.app.log.debug({
 		message: "startComponent",
 		data: { componentOption, componentName },
 	});
@@ -214,10 +214,10 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			this: SeqflowFunctionContext,
 			key: string,
 			newChild: () => JSX.Element | Promise<JSX.Element>,
-		) {
+		): void | Promise<void> {
 			const oldChildIndex = componentChildren.findIndex((c) => c.key === key);
 			if (oldChildIndex < 0) {
-				this.app.log.error?.({
+				this.app.log.error({
 					message: "replaceChild: wrapper not found",
 					data: { key, newChild },
 				});
@@ -235,12 +235,25 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 
 			const { el: wrapper } = oldChild;
 
+			for (const otherChild of componentChildren) {
+				// If we replace a child which contains another child,
+				// we have to abort the other child also
+				if (oldChild.el.contains(otherChild.el)) {
+					this.app.log.debug({
+						message: "replaceChild: wrapper contains other child",
+						data: { parent: key, child: otherChild.key },
+					});
+					this.abortController.signal.dispatchEvent(
+						new Event(`abort-component-${otherChild.key}`),
+					);
+				}
+			}
+
 			const a = newChild();
 			if (a instanceof Promise) {
-				a.then((child) => {
+				return a.then((child) => {
 					wrapper.replaceWith(child as Node);
 				});
-				return;
 			}
 
 			wrapper.replaceWith(a as Node);
@@ -267,7 +280,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			return domainEvent(b.t, eventTarget);
 		},
 		navigationEvent(): EventAsyncGenerator<NavigationEvent> {
-			this.app.log.debug?.({
+			this.app.log.debug({
 				message: "navigationEvent",
 				data: {
 					componentName,
@@ -285,7 +298,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			this: SeqflowFunctionContext,
 			{ children }: { children?: ChildenType[] },
 		): DocumentFragment {
-			this.app.log.debug?.({
+			this.app.log.debug({
 				message: "createDOMFragment",
 				data: { children },
 			});
@@ -314,7 +327,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 					continue;
 				}
 
-				this.app.log.error?.({
+				this.app.log.error({
 					message: "Unsupported child type. Implement me",
 					data: { child, children },
 				});
@@ -329,7 +342,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			options?: { [key: string]: string },
 			...children: ChildenType[]
 		): Node {
-			this.app.log.debug?.({
+			this.app.log.debug({
 				message: "createDOMElement",
 				data: { tagName, options, children },
 			});
@@ -359,6 +372,15 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 						}
 						continue;
 					}
+
+					// keep the key for the componentChildren array
+					if (key === "key") {
+						componentChildren.push({
+							key: options[key],
+							el,
+						});
+					}
+
 					el.setAttribute(key, options[key]);
 				}
 
@@ -380,7 +402,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 						continue;
 					}
 
-					this.app.log.error?.({
+					this.app.log.error({
 						message: "Unsupported child type. Implement me",
 						data: {
 							child,
@@ -399,19 +421,22 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 				return this.createDOMFragment({ children });
 			}
 
-			const wrapper = document.createElement("div");
-			if (options?.key) {
-				componentChildren.push({
-					key: options.key,
-					el: wrapper,
-				});
+			const opt = options || {};
+			if (!opt?.key) {
+				opt.key = Math.random().toString();
 			}
-			if (options?.wrapperClass) {
-				wrapper.classList.add(options.wrapperClass);
+
+			const wrapper = document.createElement("div");
+			componentChildren.push({
+				key: opt.key,
+				el: wrapper,
+			});
+			if (opt?.wrapperClass) {
+				wrapper.classList.add(opt.wrapperClass);
 			}
 
 			startComponent(childContext, wrapper, tagName, {
-				...options,
+				...opt,
 				children,
 			});
 			return wrapper;
@@ -430,7 +455,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 	if (v.then !== undefined) {
 		v.then(
 			() => {
-				parentContext.app.log.debug?.({
+				parentContext.app.log.debug({
 					message: "Component rendering ended",
 					data: {
 						componentOption,
@@ -439,7 +464,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 				});
 			},
 			(e) => {
-				parentContext.app.log.error?.({
+				parentContext.app.log.error({
 					message: "Component throws an error",
 					data: {
 						componentOption,
@@ -484,7 +509,7 @@ export function start<
 		router: seqflowConfig.router,
 	};
 	seqflowConfig.router.getEventTarget().addEventListener("navigation", (ev) => {
-		appContext.log.info?.({
+		appContext.log.info({
 			message: "navigate",
 			data: {
 				path: (ev as NavigationEvent).path,
@@ -653,6 +678,7 @@ declare global {
 			> &
 				ARG<{
 					style?: Partial<CSSStyleDeclaration> | string;
+					key?: string;
 				}>;
 		};
 		interface IntrinsicElements extends Foo {}
