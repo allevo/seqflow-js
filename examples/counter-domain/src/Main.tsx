@@ -14,7 +14,7 @@ export async function Counter(this: SeqflowFunctionContext) {
 				<ChangeCounterButton delta={1} text="Increment" />
 			</div>
 			<div className={classes.counter} key="counter">
-				{this.app.domains.counter}
+				{this.app.domains.counter.get()}
 			</div>
 		</>,
 	);
