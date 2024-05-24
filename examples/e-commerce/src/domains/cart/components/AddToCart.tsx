@@ -8,42 +8,58 @@ export async function AddToCart(
 ) {
 	const initCount = this.app.domains.cart.getProductCount(data.product.id);
 
-	const firstAddToCart = (
-		<button type="button" className={classes.firstAddToCart}>
-			Add to cart
-		</button>
-	);
-	const removeFromCart = (
-		<button type="button" className={classes.removeFromCart}>
-			-
-		</button>
-	);
-	const secondAddFromCart = (
-		<button type="button" className={classes.secondAddFromCart}>
-			+
-		</button>
-	);
-	const count = <span className="count">{initCount}</span>;
-	const otherAddToCartWrapper = (
-		<div className={`${classes.otherAddToCartWrapper} ${classes.show}`}>
-			{removeFromCart}
-			{count}
-			{secondAddFromCart}
-		</div>
-	);
 	this.renderSync(
 		<div>
-			{firstAddToCart}
-			{otherAddToCartWrapper}
+			<button
+				key="first-add-to-cart"
+				type="button"
+				className={classes.firstAddToCart}
+			>
+				Add to cart
+			</button>
+			<div
+				key="other-add-to-cart-wrapper"
+				className={`${classes.otherAddToCartWrapper} ${classes.show}`}
+			>
+				<button
+					key="remove-from-cart"
+					type="button"
+					className={classes.removeFromCart}
+				>
+					-
+				</button>
+				<span key="counter" className="count">
+					{initCount}
+				</span>
+				<button
+					key="second-add-to-cart"
+					type="button"
+					className={classes.secondAddFromCart}
+				>
+					+
+				</button>
+			</div>
 		</div>,
 	);
 
+	const firstAddToCart = this.getChild(
+		"first-add-to-cart",
+	) as HTMLButtonElement;
+	const secondAddToCart = this.getChild(
+		"second-add-to-cart",
+	) as HTMLButtonElement;
+	const removeFromCart = this.getChild("remove-from-cart") as HTMLButtonElement;
+	const otherAddToCartWrapper = this.getChild(
+		"other-add-to-cart-wrapper",
+	) as HTMLDivElement;
+	const counter = this.getChild("counter") as HTMLSpanElement;
+
 	if (initCount > 0) {
-		count.textContent = `${initCount}`;
+		counter.textContent = `${initCount}`;
 		firstAddToCart.classList.remove(classes.show);
 		otherAddToCartWrapper.classList.add(classes.show);
 	} else {
-		count.textContent = "0";
+		counter.textContent = "0";
 		firstAddToCart.classList.add(classes.show);
 		otherAddToCartWrapper.classList.remove(classes.show);
 	}
@@ -58,7 +74,7 @@ export async function AddToCart(
 		switch (true) {
 			case firstAddToCart.contains(target): {
 				const c = this.app.domains.cart.addToCart({ product: data.product });
-				count.textContent = `${c}`;
+				counter.textContent = `${c}`;
 				otherAddToCartWrapper.classList.add(classes.show);
 				firstAddToCart.classList.remove(classes.show);
 				break;
@@ -67,16 +83,16 @@ export async function AddToCart(
 				const remain = this.app.domains.cart.removeFromCart({
 					product: data.product,
 				});
-				count.textContent = `${remain}`;
+				counter.textContent = `${remain}`;
 				if (remain === 0) {
 					otherAddToCartWrapper.classList.remove(classes.show);
 					firstAddToCart.classList.add(classes.show);
 				}
 				break;
 			}
-			case secondAddFromCart.contains(target): {
+			case secondAddToCart.contains(target): {
 				const c = this.app.domains.cart.addToCart({ product: data.product });
-				count.textContent = `${c}`;
+				counter.textContent = `${c}`;
 				break;
 			}
 		}

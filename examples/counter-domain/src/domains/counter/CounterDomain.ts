@@ -4,10 +4,6 @@ export const CounterChanged = createDomainEventClass<{
 	delta: number;
 	counter: number;
 }>("counter", "changed");
-export const CounterReset = createDomainEventClass<{ counter: number }>(
-	"counter",
-	"reset",
-);
 
 export class CounterDomain {
 	private counter: number;
@@ -24,11 +20,6 @@ export class CounterDomain {
 		this.eventTarget.dispatchEvent(
 			new CounterChanged({ delta, counter: this.counter }),
 		);
-	}
-
-	reset() {
-		this.counter = this.init;
-		this.eventTarget.dispatchEvent(new CounterReset({ counter: this.counter }));
 	}
 
 	get() {

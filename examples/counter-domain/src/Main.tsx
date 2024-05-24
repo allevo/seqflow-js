@@ -1,52 +1,30 @@
-import { SeqflowFunctionContext } from "seqflow-js";
-import {
-	CounterChanged,
-	CounterDomain,
-	CounterReset,
-	components,
-} from "./domains/counter";
+import { type SeqflowFunctionContext } from "seqflow-js";
+import classes from "./Main.module.css";
+import { CounterChanged } from "./domains/counter";
+import { ChangeCounterButton } from "./domains/counter/components/ChangeCounterButton";
 
-import "./index.css";
+export async function Counter(this: SeqflowFunctionContext) {
+	this._el.classList.add(classes["counter-card"]);
 
-export async function Main(this: SeqflowFunctionContext) {
-	const counter = this.app.domains.counter.get();
-
-	const decrement = (
-		<components.ChangeCounterButton delta={-1} text={"Decrement"} />
-	);
-	const increment = (
-		<components.ChangeCounterButton delta={1} text={"Increment"} />
-	);
-	const reset = <components.ResetCounterButton />;
-	const counterDiv = <div>{counter}</div>;
 	this.renderSync(
 		<>
-			<div />
-			<div id="counter-card">
-				<div id="actions">
-					{decrement}
-					<div />
-					{increment}
-					<div />
-					{reset}
-				</div>
-				{counterDiv}
+			<div className={classes.buttons}>
+				<ChangeCounterButton delta={-1} text="Decrement" />
+				<div className={classes.divider} />
+				<ChangeCounterButton delta={1} text="Increment" />
 			</div>
-			<div />
+			<div className={classes.counter} key="counter">
+				{this.app.domains.counter}
+			</div>
 		</>,
 	);
 
-	const events = this.waitEvents(
-		this.domainEvent(CounterChanged),
-		this.domainEvent(CounterReset),
-	);
+	const events = this.waitEvents(this.domainEvent(CounterChanged));
 	for await (const ev of events) {
-		counterDiv.textContent = `${ev.detail.counter}`;
+		this.getChild("counter").textContent = `${ev.detail.counter}`;
 	}
 }
 
-declare module "seqflow-js" {
-	interface Domains {
-		counter: CounterDomain;
-	}
+export async function Main(this: SeqflowFunctionContext) {
+	this.renderSync(<Counter wrapperClass={classes["main-counter"]} />);
 }

@@ -1,41 +1,38 @@
 import { type SeqflowFunctionContext } from "seqflow-js";
+import classes from "./Main.module.css";
 
 export async function Main(this: SeqflowFunctionContext) {
-	const incrementButton = <button type="button">Increment</button>;
-	const decrementButton = <button type="button">Decrement</button>;
-	const counterDiv = <div>0</div>;
-
 	let counter = 0;
 	this.renderSync(
-		<>
-			<div />
-			<div id="counter-card">
-				<div id="actions">
-					{decrementButton}
-					<div />
-					{incrementButton}
+		<div className={classes["main-counter"]}>
+			<div className={classes["counter-card"]}>
+				<div className={classes.buttons}>
+					<button key="decrement-button" type="button">
+						Decrement
+					</button>
+					<div className={classes.divider} />
+					<button key="increment-button" type="button">
+						Increment
+					</button>
 				</div>
-				{counterDiv}
+				<div className={classes.counter} key="counter">
+					0
+				</div>
 			</div>
-			<div />
-		</>,
+		</div>,
 	);
 
 	const events = this.waitEvents(
-		this.domEvent("click", {
-			el: incrementButton,
-		}),
-		this.domEvent("click", {
-			el: decrementButton,
-		}),
+		this.domEvent("click", "increment-button"),
+		this.domEvent("click", "decrement-button"),
 	);
 	for await (const ev of events) {
-		if (incrementButton.contains(ev.target as Node)) {
+		if (this.getChild("increment-button").contains(ev.target as Node)) {
 			counter++;
-		} else if (decrementButton.contains(ev.target as Node)) {
+		} else if (this.getChild("decrement-button").contains(ev.target as Node)) {
 			counter--;
 		}
 
-		counterDiv.textContent = `${counter}`;
+		this.getChild("counter").textContent = `${counter}`;
 	}
 }

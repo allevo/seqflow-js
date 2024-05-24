@@ -36,14 +36,14 @@ async function Spot(this: SeqflowFunctionContext) {}
 
 export async function Main(this: SeqflowFunctionContext) {
 	const fetchAndRender = async () => {
-		this.replaceChild("quote", () => <Loading key="quote" />);
+		await this.replaceChild("quote", () => <Loading key="quote" />);
 
 		let quote: Quote;
 		try {
 			// this.app.config is the configuration object
 			quote = await getRandomQuote(this.app.config.api.baseUrl);
 		} catch (error) {
-			this.replaceChild("quote", () => (
+			await this.replaceChild("quote", () => (
 				<ErrorMessage key="quote" message={error.message} />
 			));
 			return;
@@ -51,17 +51,17 @@ export async function Main(this: SeqflowFunctionContext) {
 		this.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
 	};
 
-	const button = (<button type="button">Refresh</button>) as HTMLButtonElement;
 	this.renderSync(
 		<>
-			{button}
+			<button key="refresh-button" type="button">Refresh</button>
 			<Spot key="quote" />
 		</>,
 	);
 
 	await fetchAndRender();
 
-	const events = this.waitEvents(this.domEvent("click", { el: button }));
+	const button = this.getChild("refresh-button") as HTMLButtonElement;
+	const events = this.waitEvents(this.domEvent("click",'refresh-button'));
 	for await (const _ of events) {
 		button.disabled = true;
 		await fetchAndRender();

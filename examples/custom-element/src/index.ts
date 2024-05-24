@@ -37,7 +37,9 @@ class CounterElement extends HTMLElement {
 		// It works anyway.
 		this.abortController = start(div, Counter, undefined, {
 			log: {
-				error: (l) => console.error(l),
+				error: (l) => {
+					throw l;
+				},
 				info: (l) => console.info(l),
 				debug: (l) => console.debug(l),
 			},
