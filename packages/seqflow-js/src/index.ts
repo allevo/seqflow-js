@@ -421,24 +421,22 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 				return this.createDOMFragment({ children });
 			}
 
-			if (!options?.key) {
-				if (!options) {
-					options = {};
-				}
-				options.key = Math.random().toString();
+			const opt = options || {};
+			if (!opt?.key) {
+				opt.key = Math.random().toString();
 			}
 
 			const wrapper = document.createElement("div");
 			componentChildren.push({
-				key: options.key,
+				key: opt.key,
 				el: wrapper,
 			});
-			if (options?.wrapperClass) {
-				wrapper.classList.add(options.wrapperClass);
+			if (opt?.wrapperClass) {
+				wrapper.classList.add(opt.wrapperClass);
 			}
 
 			startComponent(childContext, wrapper, tagName, {
-				...options,
+				...opt,
 				children,
 			});
 			return wrapper;
