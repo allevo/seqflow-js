@@ -3,38 +3,3 @@ html, body {
     margin: 0;
     padding: 0;
 }
-
-
-body {
-    width: 200px;
-    margin: auto;
-}
-
-#root {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-#root > div {
-    flex: 0.4;
-}
-
-#counter-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    flex: 0 !important;
-}
-
-#actions {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-#actions button {
-    flex: 1;
-}
-#actions div {
-    flex: 0.3;
-}

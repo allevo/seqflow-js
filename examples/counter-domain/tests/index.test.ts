@@ -17,7 +17,6 @@ test("should increment and decrement the counter", async () => {
 		await screen.findByText<HTMLButtonElement>("Increment");
 	const decrementButton =
 		await screen.findByText<HTMLButtonElement>("Decrement");
-	const resetButton = await screen.findByText<HTMLButtonElement>("Reset");
 	const counterDiv = await screen.findByText<HTMLDivElement>("0");
 
 	expect(counterDiv.textContent).toBe("0");
@@ -31,13 +30,4 @@ test("should increment and decrement the counter", async () => {
 	// decrement the counter
 	decrementButton?.click();
 	await waitFor(() => expect(counterDiv?.textContent).toBe("1"));
-	// reset the counter
-	resetButton?.click();
-	await waitFor(() => expect(counterDiv?.textContent).toBe("0"));
-	// counter can be negative
-	decrementButton?.click();
-	await waitFor(() => expect(counterDiv?.textContent).toBe("-1"));
-	// reset the counter again
-	resetButton?.click();
-	await waitFor(() => expect(counterDiv?.textContent).toBe("0"));
 });

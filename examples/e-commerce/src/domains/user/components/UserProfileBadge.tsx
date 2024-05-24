@@ -14,15 +14,6 @@ export async function UserProfileBadge(this: SeqflowFunctionContext) {
 
 	const profileHeaderMenuId = classes["profile-header-menu"];
 
-	const profilePicture = (
-		<img
-			width={size}
-			height={size}
-			className={classes.logo}
-			src={getProfileUrl(user, size)}
-			alt="Profile Avatar"
-		/>
-	) as HTMLImageElement;
 	const profileHeaderMenu = (
 		<div id={profileHeaderMenuId}>
 			<ol>
@@ -38,13 +29,21 @@ export async function UserProfileBadge(this: SeqflowFunctionContext) {
 
 	this.renderSync(
 		<button type="button" className={classes.logoWrapper}>
-			{profilePicture}
+			<img
+				key="logo"
+				width={size}
+				height={size}
+				className={classes.logo}
+				src={getProfileUrl(user, size)}
+				alt="Profile Avatar"
+			/>
 			<div className={classes["profile-header-menu-wrapper"]}>
 				{profileHeaderMenu}
 			</div>
 		</button>,
 	);
 
+	const profilePicture = this.getChild("logo") as HTMLImageElement;
 	const events = this.waitEvents(
 		this.domainEvent(UserLoggedEvent),
 		this.domainEvent(UserLoggedOutEvent),

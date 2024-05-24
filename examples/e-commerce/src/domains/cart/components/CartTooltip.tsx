@@ -11,12 +11,11 @@ export async function CartTooltip(this: SeqflowFunctionContext) {
 		this._el.style.display = "inline";
 	}
 
-	const cartTooltipLink = (
+	this.renderSync(
 		<a className={classes.cartTooltipLink} id="cart-tooltip-link" href="/cart">
 			Go to checkout
-		</a>
+		</a>,
 	);
-	this.renderSync(cartTooltipLink);
 
 	const events = this.waitEvents(
 		this.domainEvent(ChangeCartEvent),
@@ -26,8 +25,7 @@ export async function CartTooltip(this: SeqflowFunctionContext) {
 	);
 	for await (const ev of events) {
 		switch (true) {
-			case ev.type === "click" &&
-				cartTooltipLink.contains(ev.target as HTMLElement): {
+			case ev.type === "click" && this._el.contains(ev.target as HTMLElement): {
 				this.app.router.navigate("/cart");
 				break;
 			}

@@ -10,16 +10,17 @@ export async function Header(
 	this: SeqflowFunctionContext,
 	data: { user?: UserType },
 ) {
-	const loginButton = <button type="button">Sign in</button>;
-	const storeLogo = <img src={icon} alt="icon" className={classes.icon} />;
-
 	this.renderSync(
 		<header className={classes.header}>
-			<a href="/">{storeLogo}</a>
+			<a href="/">
+				<img key="store-logo" src={icon} alt="icon" className={classes.icon} />
+			</a>
 			<div className={classes.emptySpace} />
 			<UserProfileBadge wrapperClass={classes.displayOnLogged} />
 			<div id="login" className={classes.displayOnUnlogged}>
-				{loginButton}
+				<button key="sign-in" type="button">
+					Sign in
+				</button>
 			</div>
 			<CartBadge />
 		</header>,
@@ -49,9 +50,9 @@ export async function Header(
 			this._el.classList.add(classes.logged);
 		} else if (ev instanceof UserLoggedOutEvent) {
 			this._el.classList.remove(classes.logged);
-		} else if (loginButton.contains(ev.target as HTMLElement)) {
+		} else if (this.getChild("sign-in").contains(ev.target as HTMLElement)) {
 			this.app.router.navigate("/login");
-		} else if (storeLogo.contains(ev.target as HTMLElement)) {
+		} else if (this.getChild("store-logo").contains(ev.target as HTMLElement)) {
 			this.app.router.navigate("/");
 		}
 	}

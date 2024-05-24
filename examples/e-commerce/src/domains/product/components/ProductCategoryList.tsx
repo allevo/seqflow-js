@@ -7,7 +7,7 @@ async function CategoryItem(
 	this: SeqflowFunctionContext,
 	data: ProductCategory,
 ) {
-	const anchor = (
+	this.renderSync(
 		<a className={classes.categoryAnchor} href={`/category/${data.name}`}>
 			<img
 				className={classes.categoryImage}
@@ -15,13 +15,12 @@ async function CategoryItem(
 				alt={data.name}
 			/>
 			<span>{data.name}</span>
-		</a>
+		</a>,
 	);
-	this.renderSync(anchor);
 
 	const events = this.waitEvents(
 		this.domEvent("click", {
-			el: anchor,
+			el: this._el,
 			preventDefault: true,
 		}),
 	);

@@ -1,38 +1,47 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import { type SeqflowFunctionContext } from "seqflow-js";
+import classes from "./Main.module.css";
 
-async function Button(this: SeqflowFunctionContext, data: { text: string }) {
-	this.renderSync(<button type="button">{data.text}</button>);
-}
+export async function Counter(
+	this: SeqflowFunctionContext,
+	data: { initialCounter: number },
+) {
+	this._el.classList.add(classes["counter-card"]);
 
-export async function Main(this: SeqflowFunctionContext) {
-	let counter = 0;
-	const incrementButton = <Button text="Increment" />;
-	const decrementButton = <Button text="Decrement" />;
-	const counterDiv = <div>{counter}</div>;
+	let counter = data.initialCounter;
 	this.renderSync(
 		<>
-			<div>
-				{decrementButton}
-				{incrementButton}
+			<div className={classes.buttons}>
+				<button key="decrement-button" type="button">
+					Decrement
+				</button>
+				<div className={classes.divider} />
+				<button key="increment-button" type="button">
+					Increment
+				</button>
 			</div>
-			{counterDiv}
+			<div className={classes.counter} key="counter">
+				{counter}
+			</div>
 		</>,
 	);
 
 	const events = this.waitEvents(
-		this.domEvent("click", { el: this._el as HTMLElement }),
+		this.domEvent("click", "increment-button"),
+		this.domEvent("click", "decrement-button"),
 	);
 	for await (const ev of events) {
-		if (!(ev.target instanceof HTMLElement)) {
-			continue;
-		}
-
-		if (incrementButton.contains(ev.target)) {
+		if (this.getChild("increment-button").contains(ev.target as Node)) {
 			counter++;
-		} else if (decrementButton.contains(ev.target)) {
+		} else if (this.getChild("decrement-button").contains(ev.target as Node)) {
 			counter--;
 		}
 
-		counterDiv.textContent = `${counter}`;
+		this.getChild("counter").textContent = `${counter}`;
 	}
+}
+
+export async function Main(this: SeqflowFunctionContext) {
+	this.renderSync(
+		<Counter initialCounter={0} wrapperClass={classes["main-counter"]} />,
+	);
 }

@@ -32,7 +32,7 @@ function injectCSS(el) {
         },
 
         define: {
-            'shadowDomMode': withShadowDom ? '"open"': false
+            'shadowDomMode': withShadowDom ? '"closed"': false
         }
     }
 });

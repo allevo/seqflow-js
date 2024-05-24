@@ -12,11 +12,6 @@ export async function CartProduct(
 	this: SeqflowFunctionContext,
 	data: { product: Product; count: number; subTotal: number },
 ) {
-	const removeButton = (
-		<button type="button" className="remove-from-cart">
-			<i className="fa-solid fa-trash" />
-		</button>
-	);
 	this.renderSync(
 		<div className={classes.product} id={`cart-product-${data.product.id}`}>
 			<div className={classes.left}>
@@ -32,15 +27,13 @@ export async function CartProduct(
 			</div>
 			<div>x {data.count}</div>
 			<div>= {data.subTotal} €</div>
-			{removeButton}
+			<button key="remove-from-cart" type="button" className="remove-from-cart">
+				<i className="fa-solid fa-trash" />
+			</button>
 		</div>,
 	);
 
-	const events = this.waitEvents(
-		this.domEvent("click", {
-			el: removeButton,
-		}),
-	);
+	const events = this.waitEvents(this.domEvent("click", "remove-from-cart"));
 	for await (const ev of events) {
 		this.app.domains.cart.removeAllFromCart({ product: data.product });
 	}

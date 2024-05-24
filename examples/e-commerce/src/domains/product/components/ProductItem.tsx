@@ -4,13 +4,15 @@ import { Product } from "../ProductDomain";
 import classes from "./ProductItem.module.css";
 
 export async function ProductItem(this: SeqflowFunctionContext, data: Product) {
-	const productImage = (
-		<img src={data.image} className={classes.productImage} alt={data.title} />
-	);
 	const tooltip = <div className={classes.tooltipWrapper}>{data.title}</div>;
 	this.renderSync(
 		<div className={classes.wrapper}>
-			{productImage}
+			<img
+				key="product-image"
+				src={data.image}
+				className={classes.productImage}
+				alt={data.title}
+			/>
 			<p className={classes.price}>{data.price} €</p>
 			{tooltip}
 			<div id={`product-card-cart-${data.id}`}>
@@ -19,6 +21,7 @@ export async function ProductItem(this: SeqflowFunctionContext, data: Product) {
 		</div>,
 	);
 
+	const productImage = this.getChild("product-image") as HTMLImageElement;
 	const events = this.waitEvents(
 		this.domEvent("mouseover", { el: this._el }),
 		this.domEvent("mouseout", { el: this._el }),

@@ -5,11 +5,6 @@ import classes from "./cart-badge.module.css";
 export async function CartBadge(this: SeqflowFunctionContext) {
 	const count = this.app.domains.cart.getProductCount();
 
-	const counter = (
-		<span arial-hidden={true} className={classes.cartProductCounter}>
-			{count}
-		</span>
-	);
 	this.renderSync(
 		<a
 			href="/cart"
@@ -17,10 +12,17 @@ export async function CartBadge(this: SeqflowFunctionContext) {
 			className={classes.numberOfProductsInCart}
 		>
 			<i className={`fa-solid fa-cart-shopping ${classes.icon}`} />
-			{counter}
+			<span
+				key="counter"
+				arial-hidden={true}
+				className={classes.cartProductCounter}
+			>
+				{count}
+			</span>
 		</a>,
 	);
 
+	const counter = this.getChild("counter") as HTMLSpanElement;
 	const events = this.waitEvents(
 		this.domainEvent(ChangeCartEvent),
 		this.domainEvent(CheckoutEndedCartEvent),
