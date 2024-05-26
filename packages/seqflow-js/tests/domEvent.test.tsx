@@ -1,6 +1,5 @@
 import { screen, waitFor } from "@testing-library/dom";
 import { expect, test } from "vitest";
-
 import { type SeqflowFunctionContext, start } from "../src/index";
 
 test("dom event - increment", async () => {
@@ -291,4 +290,111 @@ test("uses `key`", async () => {
 	(await screen.findByText(/increment/i)).click();
 
 	await waitFor(() => expect(counter).toBe(3));
+});
+
+test("onClick on element", async () => {
+	async function App(this: SeqflowFunctionContext) {
+		let counter = 0;
+
+		const changeCounter = (amount: number) => {
+			return () => {
+				counter += amount;
+				this.getChild('counter').innerHTML = `${counter}`;
+			}
+		}
+		const replaceWrapper = () => {
+			this.replaceChild('wrapper', () => <div/>);
+		}
+		this.renderSync(
+			<>
+				<div key="wrapper">
+					<button onClick={changeCounter(-1)}>Decrement</button>
+					<button onClick={changeCounter(1)}>Increment</button>
+				</div>
+				<div key="counter">{counter}</div>
+				<button onClick={replaceWrapper}>Replace Child</button>
+			</>,
+		);
+	}
+
+	start(document.body, App, undefined, {});
+
+	const incrementButton = await screen.findByRole('button', { name: /increment/i });
+
+	incrementButton.click();
+	incrementButton.click();
+	incrementButton.click();
+
+	// Wait for the counter to be updated
+	await screen.findByText(/3/i);
+
+	const decrementButton = await screen.findByRole('button', { name: /decrement/i });
+
+	decrementButton.click();
+
+	await screen.findByText(/2/i);
+
+	(await screen.findByRole('button', { name: /replace child/i })).click();
+
+	for (let i = 0; i < 10; i++) {
+		incrementButton.click();
+	}
+	await new Promise((resolve) => setTimeout(resolve, 100));
+	await screen.findByText(/2/i);
+});
+
+test("onClick on component", async () => {
+	async function Button(this: SeqflowFunctionContext, data: { text: string }) {
+		this.renderSync(<button type="button">{data.text}</button>);
+	}
+
+	async function App(this: SeqflowFunctionContext) {
+		let counter = 0;
+
+		const changeCounter = (amount: number) => {
+			return () => {
+				counter += amount;
+				this.getChild('counter').innerHTML = `${counter}`;
+			}
+		}
+		const replaceWrapper = () => {
+			this.replaceChild('wrapper', () => <div/>);
+		}
+		this.renderSync(
+			<>
+				<div key="wrapper">
+					<Button onClick={changeCounter(-1)} text="Decrement" />
+					<Button onClick={changeCounter(1)} text="Increment" />
+				</div>
+				<div key="counter">{counter}</div>
+				<button onClick={replaceWrapper}>Replace Child</button>
+			</>,
+		);
+	}
+
+	start(document.body, App, undefined, {});
+
+	const incrementButton = await screen.findByRole('button', { name: /increment/i });
+
+	incrementButton.click();
+	incrementButton.click();
+	incrementButton.click();
+
+	// Wait for the counter to be updated
+	await screen.findByText(/3/i);
+
+	const decrementButton = await screen.findByRole('button', { name: /decrement/i });
+
+	decrementButton.click();
+
+	await screen.findByText(/2/i);
+
+	(await screen.findByRole('button', { name: /replace child/i })).click();
+
+	for (let i = 0; i < 10; i++) {
+		incrementButton.click();
+	}
+
+	await new Promise((resolve) => setTimeout(resolve, 100));
+	await screen.findByText(/2/i);
 });
