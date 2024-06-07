@@ -50,7 +50,7 @@ import { SeqflowFunctionContext } from "seqflow-js";
 export async function MyComponent(this: SeqflowFunctionContext) {
     this.renderSync(<div>Loading...</div>);
     const data = await fetchData(); // async function
-    this.renderSync(<pre><code>{JSON.stringify(data), null, 2}</code></pre>);
+    this.renderSync(<pre><code>{JSON.stringify(data, null, 2)}</code></pre>);
 }
 ```
 
