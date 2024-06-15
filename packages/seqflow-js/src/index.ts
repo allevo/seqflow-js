@@ -383,7 +383,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 		createDOMElement(
 			this: SeqflowFunctionContext,
 			tagName: string,
-			options?: { [key: string]: string },
+			options?: { [key: string]: unknown },
 			...children: ChildenType[]
 		): Node {
 			this.app.log.debug({
@@ -395,11 +395,30 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 				const el = document.createElement(tagName);
 				for (const key in options) {
 					if (key === "className") {
-						el.setAttribute("class", options[key]);
+						el.setAttribute("class", options[key] as string);
 						continue;
 					}
 					if (key === "htmlFor") {
-						el.setAttribute("for", options[key]);
+						el.setAttribute("for", options[key] as string);
+						continue;
+					}
+					if (key === "onClick") {
+						const k = (options.key as string) ?? Math.random().toString();
+						const elAbortController = new AbortController();
+						this.abortController.signal.addEventListener(
+							`abort-component-${k}`,
+							() => {
+								elAbortController.abort();
+							},
+							{ once: true },
+						);
+						componentChildren.push({
+							key: k,
+							el,
+						});
+						el.addEventListener("click", options[key] as EventListener, {
+							signal: elAbortController.signal,
+						});
 						continue;
 					}
 					if (key === "style") {
@@ -420,12 +439,12 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 					// keep the key for the componentChildren array
 					if (key === "key") {
 						componentChildren.push({
-							key: options[key],
+							key: options[key] as string,
 							el,
 						});
 					}
 
-					el.setAttribute(key, options[key]);
+					el.setAttribute(key, options[key] as string);
 				}
 
 				const c = children.flat(Number.POSITIVE_INFINITY);
@@ -472,11 +491,17 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 
 			const wrapper = document.createElement("div");
 			componentChildren.push({
-				key: opt.key,
+				key: opt.key as string,
 				el: wrapper,
 			});
-			if (opt?.wrapperClass) {
-				wrapper.classList.add(opt.wrapperClass);
+			if (opt.wrapperClass) {
+				wrapper.classList.add(opt.wrapperClass as string);
+			}
+
+			if (typeof opt.onClick === "function") {
+				wrapper.addEventListener("click", opt.onClick as EventListener, {
+					signal: childContext.abortController.signal,
+				});
 			}
 
 			startComponent(childContext, wrapper, tagName, {
@@ -728,6 +753,7 @@ declare global {
 			> &
 				ARG<{
 					style?: Partial<CSSStyleDeclaration> | string;
+					onClick?: (ev: MouseEvent) => void;
 					key?: string;
 				}>;
 		};
@@ -735,6 +761,7 @@ declare global {
 
 		interface IntrinsicAttributes {
 			key?: string;
+			onClick?: (ev: MouseEvent) => void;
 			wrapperClass?: string;
 		}
 	}
