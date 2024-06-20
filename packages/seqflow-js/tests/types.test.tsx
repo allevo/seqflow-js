@@ -15,7 +15,5 @@ test("render simple button", async () => {
 		},
 		{},
 	);
-	expect(document.body.innerHTML).toBe(
-		'<input type="button" list="button">',
-	);
+	expect(document.body.innerHTML).toBe('<input type="button" list="button">');
 });

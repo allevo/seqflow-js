@@ -7,6 +7,7 @@ import {
 	type Router,
 } from "./router";
 import { domEvent, domainEvent, navigationEvent } from "./typedEvents";
+export { debugEventTarget } from "./debug";
 
 export { BrowserRouter, type Router, NavigationEvent, InMemoryRouter };
 export type { EventAsyncGenerator, CustomEventAsyncGenerator } from "./events";
