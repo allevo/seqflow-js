@@ -1,6 +1,6 @@
 {
   "name": "create-seqflow",
-  "version": "1.0.0",
+  "version": "0.0.1-beta.15",
   "description": "SeqFlow CLI",
   "main": "dist/index.js",
   "type": "module",
@@ -44,7 +44,7 @@
     "@types/prompts": "^2.4.9",
     "bootstrap": "5.3.3",
     "prompts": "^2.4.2",
-    "seqflow-js": "workspace:*",
+    "seqflow-js": "0.0.1-beta.15",
     "tar": "^6.2.0"
   }
 }
