@@ -752,20 +752,36 @@ declare global {
 					data?: Record<string, any>,
 			  ) => Promise<void>);
 
-		type Foo = {
-			[K in keyof HTMLElementTagNameMap]: Omit<
+		type IntrinsicEl = Omit<
+			{
+				[K in keyof HTMLElementTagNameMap]: Omit<
+					Partial<{
+						[V in keyof HTMLElementTagNameMap[K]]: HTMLElementTagNameMap[K][V];
+					}>,
+					"style"
+				> &
+					ARG<{
+						style?: Partial<CSSStyleDeclaration> | string;
+						onClick?: (ev: MouseEvent) => void;
+						key?: string;
+					}>;
+			},
+			"input"
+		> & {
+			input: Omit<
 				Partial<{
-					[V in keyof HTMLElementTagNameMap[K]]: HTMLElementTagNameMap[K][V];
+					[V in keyof HTMLElementTagNameMap["input"]]: HTMLElementTagNameMap["input"][V];
 				}>,
-				"style"
+				"style" | "list"
 			> &
 				ARG<{
 					style?: Partial<CSSStyleDeclaration> | string;
 					onClick?: (ev: MouseEvent) => void;
 					key?: string;
+					list?: string;
 				}>;
 		};
-		interface IntrinsicElements extends Foo {}
+		interface IntrinsicElements extends IntrinsicEl {}
 
 		interface IntrinsicAttributes {
 			key?: string;
