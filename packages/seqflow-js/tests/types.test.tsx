@@ -4,7 +4,7 @@ import { type Log, type SeqflowFunctionContext, start } from "../src/index";
 
 test("render simple button", async () => {
 	async function App(this: SeqflowFunctionContext, data: { text: string }) {
-		this.renderSync(<input list="button" />);
+		this.renderSync(<input type="button" list="button" />);
 	}
 
 	start(
@@ -16,6 +16,6 @@ test("render simple button", async () => {
 		{},
 	);
 	expect(document.body.innerHTML).toBe(
-		'<button type="button">increment</button>',
+		'<input type="button" list="button">',
 	);
 });
