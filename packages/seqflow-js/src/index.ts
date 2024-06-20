@@ -102,14 +102,14 @@ export interface SeqflowFunctionContext {
 	 * @param key the key of the child to get
 	 * @returns the child component
 	 */
-	getChild(key: string): HTMLElement;
+	getChild<E extends HTMLElement = HTMLElement>(key: string): E;
 	/**
 	 * Get a child component by its key
 	 *
 	 * @param key the key of the child to get
 	 * @returns the child component or null if not found
 	 */
-	findChild(key: string): HTMLElement | null;
+	findChild<E extends HTMLElement = HTMLElement>(key: string): E | null;
 	/**
 	 * Replace a child component with a new one
 	 *
@@ -228,8 +228,11 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 				yield ev;
 			}
 		},
-		getChild(this: SeqflowFunctionContext, key: string): HTMLElement {
-			const child = this.findChild(key);
+		getChild<E extends HTMLElement = HTMLElement>(
+			this: SeqflowFunctionContext,
+			key: string,
+		): E {
+			const child = this.findChild<E>(key);
 			if (!child) {
 				this.app.log.error({
 					message: "getChild: wrapper not found",
@@ -239,10 +242,13 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			}
 			return child;
 		},
-		findChild(this: SeqflowFunctionContext, key: string): HTMLElement | null {
+		findChild<E extends HTMLElement = HTMLElement>(
+			this: SeqflowFunctionContext,
+			key: string,
+		): E | null {
 			const child = componentChildren.find((c) => c.key === key);
 			if (child) {
-				return child.el;
+				return child.el as E;
 			}
 			return null;
 		},
