@@ -1,6 +1,6 @@
 {
   "name": "seqflow-js",
-  "version": "0.0.1-beta.14",
+  "version": "1.0.0",
   "description": "SeqFlow is a modern web framework that is designed to be simple and easy to use. It optimizes the development process by providing a simple and easy-to-understand API. It is a good choice for those who want to create web applications without the complexity of other frameworks.",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
