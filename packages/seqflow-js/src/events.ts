@@ -110,3 +110,51 @@ export async function* combineEvents<T>(
 		}
 	}
 }
+
+export type CustomEventAsyncGenerator<E> = EventAsyncGenerator<E> & {
+	push: (ev: E) => void;
+};
+
+export function createCustomEventAsyncGenerator<
+	E,
+>(): CustomEventAsyncGenerator<E> {
+	const queue: E[] = [];
+
+	const pipeAbortController = new AbortController();
+	async function* iterOnEvents(abortController: AbortController) {
+		// If already aborted, throw immediately
+		abortController.signal.throwIfAborted();
+		abortController.signal.addEventListener("abort", () => {
+			pipeAbortController.abort();
+		});
+
+		while (true) {
+			pipeAbortController.signal.throwIfAborted();
+
+			if (queue.length > 0) {
+				const ev = queue.shift();
+				if (ev) {
+					yield ev;
+				}
+			} else {
+				await new Promise<void>((resolve) => {
+					pipeAbortController.signal.addEventListener(
+						wakeupEventName,
+						() => resolve(),
+						{
+							once: true,
+							signal: pipeAbortController.signal,
+						},
+					);
+				});
+			}
+		}
+	}
+
+	iterOnEvents.push = (ev: E) => {
+		queue.push(ev);
+		pipeAbortController.signal.dispatchEvent(WAKEUP_EVENT);
+	};
+
+	return iterOnEvents;
+}

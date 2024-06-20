@@ -299,27 +299,35 @@ test("onClick on element", async () => {
 		const changeCounter = (amount: number) => {
 			return () => {
 				counter += amount;
-				this.getChild('counter').innerHTML = `${counter}`;
-			}
-		}
+				this.getChild("counter").innerHTML = `${counter}`;
+			};
+		};
 		const replaceWrapper = () => {
-			this.replaceChild('wrapper', () => <div/>);
-		}
+			this.replaceChild("wrapper", () => <div />);
+		};
 		this.renderSync(
 			<>
 				<div key="wrapper">
-					<button onClick={changeCounter(-1)}>Decrement</button>
-					<button onClick={changeCounter(1)}>Increment</button>
+					<button type="button" onClick={changeCounter(-1)}>
+						Decrement
+					</button>
+					<button type="button" onClick={changeCounter(1)}>
+						Increment
+					</button>
 				</div>
 				<div key="counter">{counter}</div>
-				<button onClick={replaceWrapper}>Replace Child</button>
+				<button type="button" onClick={replaceWrapper}>
+					Replace Child
+				</button>
 			</>,
 		);
 	}
 
 	start(document.body, App, undefined, {});
 
-	const incrementButton = await screen.findByRole('button', { name: /increment/i });
+	const incrementButton = await screen.findByRole("button", {
+		name: /increment/i,
+	});
 
 	incrementButton.click();
 	incrementButton.click();
@@ -328,13 +336,15 @@ test("onClick on element", async () => {
 	// Wait for the counter to be updated
 	await screen.findByText(/3/i);
 
-	const decrementButton = await screen.findByRole('button', { name: /decrement/i });
+	const decrementButton = await screen.findByRole("button", {
+		name: /decrement/i,
+	});
 
 	decrementButton.click();
 
 	await screen.findByText(/2/i);
 
-	(await screen.findByRole('button', { name: /replace child/i })).click();
+	(await screen.findByRole("button", { name: /replace child/i })).click();
 
 	for (let i = 0; i < 10; i++) {
 		incrementButton.click();
@@ -354,12 +364,12 @@ test("onClick on component", async () => {
 		const changeCounter = (amount: number) => {
 			return () => {
 				counter += amount;
-				this.getChild('counter').innerHTML = `${counter}`;
-			}
-		}
+				this.getChild("counter").innerHTML = `${counter}`;
+			};
+		};
 		const replaceWrapper = () => {
-			this.replaceChild('wrapper', () => <div/>);
-		}
+			this.replaceChild("wrapper", () => <div />);
+		};
 		this.renderSync(
 			<>
 				<div key="wrapper">
@@ -367,14 +377,18 @@ test("onClick on component", async () => {
 					<Button onClick={changeCounter(1)} text="Increment" />
 				</div>
 				<div key="counter">{counter}</div>
-				<button onClick={replaceWrapper}>Replace Child</button>
+				<button type="button" onClick={replaceWrapper}>
+					Replace Child
+				</button>
 			</>,
 		);
 	}
 
 	start(document.body, App, undefined, {});
 
-	const incrementButton = await screen.findByRole('button', { name: /increment/i });
+	const incrementButton = await screen.findByRole("button", {
+		name: /increment/i,
+	});
 
 	incrementButton.click();
 	incrementButton.click();
@@ -383,13 +397,15 @@ test("onClick on component", async () => {
 	// Wait for the counter to be updated
 	await screen.findByText(/3/i);
 
-	const decrementButton = await screen.findByRole('button', { name: /decrement/i });
+	const decrementButton = await screen.findByRole("button", {
+		name: /decrement/i,
+	});
 
 	decrementButton.click();
 
 	await screen.findByText(/2/i);
 
-	(await screen.findByRole('button', { name: /replace child/i })).click();
+	(await screen.findByRole("button", { name: /replace child/i })).click();
 
 	for (let i = 0; i < 10; i++) {
 		incrementButton.click();

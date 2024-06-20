@@ -9,6 +9,8 @@ import {
 import { domEvent, domainEvent, navigationEvent } from "./typedEvents";
 
 export { BrowserRouter, type Router, NavigationEvent, InMemoryRouter };
+export type { EventAsyncGenerator, CustomEventAsyncGenerator } from "./events";
+export { createCustomEventAsyncGenerator } from "./events";
 
 // biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
 export interface Domains {}
