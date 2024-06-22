@@ -525,7 +525,17 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 				return;
 			}
 			this._el.innerHTML = "";
-			this._el.appendChild(html as Node);
+			if (Array.isArray(html)) {
+				for (const h of html) {
+					if (typeof h === "string") {
+						this._el.appendChild(document.createTextNode(h));
+						continue;
+					}
+					this._el.appendChild(h as Node);
+				}
+			} else {
+				this._el.appendChild(html as Node);
+			}
 		},
 	};
 
@@ -733,12 +743,12 @@ function createDomains(
 	};
 }
 
-type ChildenType = Element | Element[];
+type ChildenType = HTMLElement | HTMLElement[];
 
 declare global {
 	namespace JSX {
 		// The return type of <button />
-		type Element = HTMLElement;
+		type Element = HTMLElement | HTMLElement[];
 
 		export type ARG<T = object> = T & {
 			children?: ChildenType;
