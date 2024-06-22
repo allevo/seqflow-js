@@ -219,3 +219,29 @@ test("getChild", async () => {
 		'<div key="key1">key1</div><div key="key2"><div key="key3">key3</div></div>',
 	);
 });
+
+test("render children", async () => {
+	async function Foo(
+		this: SeqflowFunctionContext,
+		{ children }: JSX.ARG<object>,
+	) {
+		// biome-ignore lint/style/noNonNullAssertion: it is a test
+		this.renderSync(children!);
+	}
+	async function App(this: SeqflowFunctionContext) {
+		this.renderSync(
+			<Foo>
+				<button type="button">increment</button>
+			</Foo>,
+		);
+	}
+	start(document.body, App, undefined, {
+		log: console,
+	});
+
+	await new Promise((resolve) => setTimeout(resolve, 100));
+
+	expect(document.body.innerHTML).toBe(
+		'<div><button type="button">increment</button></div>',
+	);
+});
