@@ -16,13 +16,15 @@
   },
   "type": "module",
   "scripts": {
-    "test": "npm-run-all biome unit build",
+    "test": "npm-run-all biome unit test:component build",
     "unit": "vitest --run",
     "biome": "biome ci ./src",
     "biome:check": "biome check --apply src tests",
     "start": "vite -c vite.config.js",
     "build": "vite build --emptyOutDir -c vite.config.js",
     "storybook": "storybook dev -p 6006 --no-open",
+    "test:component": "node tests/test.js",
+    "test:storybook": "playwright install && test-storybook",
     "build-storybook": "storybook build",
     "depcheck": "depcheck ."
   },
@@ -37,6 +39,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
     "@storybook/test": "^8.2.4",
+    "@storybook/test-runner": "^0.19.1",
     "autoprefixer": "^10.4.2",
     "depcheck": "^1.4.7",
     "jsdom": "^24.0.0",
@@ -47,9 +50,11 @@
     "typescript": "^5.4.2",
     "vite": "^5.0.0",
     "vite-plugin-dts": "^3.6.4",
-    "vitest": "^1.2.2"
+    "vitest": "^1.2.2",
+    "wait-on": "^7.2.0"
   },
   "dependencies": {
-    "@tailwindcss/typography": "^0.5.13"
+    "@tailwindcss/typography": "^0.5.13",
+    "playwright": "^1.45.2"
   }
 }
