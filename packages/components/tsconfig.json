@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "es2020",
+        "lib": ["es2015", "dom"],
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "jsx": "react",
+        "jsxFactory": "this.createDOMElement",
+        "jsxFragmentFactory": "this.createDOMFragment",
+        "forceConsistentCasingInFileNames": true,
+        "module": "es2020",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "declaration":true
+    },
+    "include": ["./src/**/*", "./tests/**/*"]
+}

@@ -1,0 +1,55 @@
+{
+  "name": "seqflow-js-components",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./style.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "test": "npm-run-all biome unit build",
+    "unit": "vitest --run",
+    "biome": "biome ci ./src",
+    "biome:check": "biome check --apply src tests",
+    "start": "vite -c vite.config.js",
+    "build": "vite build --emptyOutDir -c vite.config.js",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build",
+    "depcheck": "depcheck ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "daisyui": "^4.12.10",
+    "seqflow-js": "workspace:*",
+    "tailwindcss": "^3.4.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.5.3",
+    "@storybook/test": "^8.2.4",
+    "autoprefixer": "^10.4.2",
+    "depcheck": "^1.4.7",
+    "jsdom": "^24.0.0",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.21",
+    "seqflow-js-storybook": "workspace:*",
+    "storybook": "^8.2.4",
+    "typescript": "^5.4.2",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.6.4",
+    "vitest": "^1.2.2"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.13"
+  }
+}
