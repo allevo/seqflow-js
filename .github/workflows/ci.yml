@@ -36,4 +36,4 @@ jobs:
         run: pnpm build
 
       - name: Test
-        run: cd packages/components && pnpm test
+        run: pnpm test
