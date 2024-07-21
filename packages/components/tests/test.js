@@ -25,7 +25,7 @@ try {
 	process.exit(1);
 }
 
-/*
+
 console.log("STARTING STORYBOOK TESTS");
 try {
 	spawnSync("pnpm", ["test:storybook"], { stdio: "inherit" });
@@ -34,7 +34,7 @@ try {
 	process.exit(1);
 }
 console.log("STORYBOOK TESTS PASSED");
-*/
+
 
 console.log("KILLING STORYBOOK");
 storybookProcess.kill();

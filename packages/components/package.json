@@ -16,7 +16,7 @@
   },
   "type": "module",
   "scripts": {
-    "test": "npm-run-all biome unit test:component build",
+    "test": "npm-run-all biome unit build test:component",
     "unit": "vitest --run",
     "biome": "biome ci ./src",
     "biome:check": "biome check --apply src tests",
@@ -24,7 +24,7 @@
     "build": "vite build --emptyOutDir -c vite.config.js",
     "storybook": "storybook dev -p 6006 --no-open",
     "test:component": "node tests/test.js",
-    "test:storybook": "echo si",
+    "test:storybook": "test-storybook",
     "build-storybook": "storybook build",
     "depcheck": "depcheck --ignores @storybook/addon-essentials,@storybook/addon-themes ."
   },

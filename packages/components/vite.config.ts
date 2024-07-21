@@ -14,6 +14,7 @@ export default defineConfig(({command}) => {
 	// Generate storybook meta data only in serve mode
 	// This is to avoid generating storybook meta data in build mode
 	if (command === 'serve') {
+		// @ts-ignore
 		plugins.push(p.addStorybookMetaPlugin({}))
 	}
 
