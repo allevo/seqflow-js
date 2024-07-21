@@ -24,7 +24,7 @@ try {
 	console.error("Storybook did not start in time", error);
 	process.exit(1);
 }
-*/
+
 
 console.log("STARTING STORYBOOK TESTS");
 try {
@@ -34,8 +34,10 @@ try {
 	process.exit(1);
 }
 console.log("STORYBOOK TESTS PASSED");
+*/
 
-storybookProcess.kill("SIGINT");
+console.log("KILLING STORYBOOK");
+storybookProcess.kill();
 
 console.log("SKIPPED");
 
