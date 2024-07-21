@@ -24,7 +24,7 @@
     "build": "vite build --emptyOutDir -c vite.config.js",
     "storybook": "storybook dev -p 6006 --no-open",
     "test:component": "node tests/test.js",
-    "test:storybook": "playwright install chrome",
+    "test:storybook": "echo si",
     "build-storybook": "storybook build",
     "depcheck": "depcheck --ignores @storybook/addon-essentials,@storybook/addon-themes ."
   },

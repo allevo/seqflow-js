@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Install playwright
+        run: cd packages/components && npx playwright install --with-deps
+
       - name: Build
         run: pnpm build
 
