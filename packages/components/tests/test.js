@@ -5,10 +5,10 @@ console.log("STARTING STORYBOOK");
 
 const storybookProcess = spawn("pnpm", ["run", "storybook"]);
 storybookProcess.stderr.on("data", (data) => {
-	console.error(data.toString());
+	console.error('stderr', data.toString());
 });
 storybookProcess.stdout.on("data", (data) => {
-	console.log(data.toString());
+	console.log('stdout', data.toString());
 });
 storybookProcess.on("exit", (code) => {
 	console.log(`--- Storybook exited with code ${code}`);
@@ -17,7 +17,6 @@ storybookProcess.on("exit", (code) => {
 console.log('AWAITING for a WHILE');
 await new Promise((resolve) => setTimeout(resolve, 10_000));
 
-/*
 console.log("WAITING FOR STORYBOOK TO START");
 try {
 	await waitOn({
@@ -29,7 +28,7 @@ try {
 	process.exit(1);
 }
 
-
+/*
 console.log("STARTING STORYBOOK TESTS");
 try {
 	spawnSync("pnpm", ["test:storybook"], { stdio: "inherit" });
