@@ -14,9 +14,6 @@ storybookProcess.on("exit", (code) => {
 	console.log(`--- Storybook exited with code ${code}`);
 });
 
-console.log('AWAITING for a WHILE');
-await new Promise((resolve) => setTimeout(resolve, 10_000));
-
 console.log("WAITING FOR STORYBOOK TO START");
 try {
 	await waitOn({
