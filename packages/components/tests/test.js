@@ -38,3 +38,6 @@ console.log("STORYBOOK TESTS PASSED");
 storybookProcess.kill("SIGINT");
 
 console.log("SKIPPED");
+
+// Force the process to exit
+process.exit(0);
