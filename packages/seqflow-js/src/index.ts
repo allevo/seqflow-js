@@ -527,7 +527,15 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 				el: wrapper,
 			});
 			if (opt.wrapperClass) {
-				wrapper.classList.add(opt.wrapperClass as string);
+				const wrapperClass: string[] = [];
+				if (Array.isArray(opt.wrapperClass)) {
+					wrapperClass.push(...opt.wrapperClass);
+				} else {
+					wrapperClass.push(...(opt.wrapperClass as string).split(" "));
+				}
+				for (const c of wrapperClass) {
+					wrapper.classList.add(c);
+				}
 			}
 
 			if (typeof opt.onClick === "function") {
@@ -826,7 +834,7 @@ declare global {
 		interface IntrinsicAttributes {
 			key?: string;
 			onClick?: (ev: MouseEvent) => void;
-			wrapperClass?: string;
+			wrapperClass?: string | string[];
 		}
 	}
 }

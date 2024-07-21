@@ -12,6 +12,7 @@
     "module": "ES2020",
     "target": "ES2020",
     "skipLibCheck": true,
+    "declaration": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "isolatedModules": true,

@@ -3,7 +3,7 @@ import { global } from '@storybook/global';
 import { dedent } from 'ts-dedent';
 import { simulatePageLoad, simulateDOMContentLoaded } from '@storybook/preview-api';
 import type { RenderContext } from '@storybook/types';
-import type { HtmlRenderer } from './types';
+import type { SeqFlowJSRenderer } from './types';
 import { SeqflowFunctionContext, start } from 'seqflow-js';
 import { Component } from '@storybook/docs-tools';
 
@@ -52,47 +52,37 @@ export const render = (args: any, context: any) => {
   */
 };
 
+const AsyncFunction = async function () {}.constructor;
+
 export function renderToCanvas(
-  { storyFn, kind, name, showMain, showError, forceRemount, storyContext, ...other }: RenderContext<HtmlRenderer>,
-  canvasElement: HtmlRenderer['canvasElement']
+  { storyFn, kind, name, showMain, showError, forceRemount, storyContext, ...other }: RenderContext<SeqFlowJSRenderer>,
+  canvasElement: SeqFlowJSRenderer['canvasElement'],
 ) {
 
+  const exportedModule = storyContext?.moduleExport
+
   const Component = storyContext?.component;
-  if (Component) {
+  if (exportedModule && (exportedModule instanceof AsyncFunction)) {
     canvasElement.innerHTML = '';
 
-    // @ts-ignore
-    const r = storyContext.originalStoryFn(storyContext.args, storyContext)
-
-    if (r instanceof Node) {
-      canvasElement.appendChild(r);
-      // @ts-ignore
-    } else if (typeof r === 'object' && r.component && r.args) {
-      // @ts-ignore
-      const c = buildComponent(r.component, r.args)
-      canvasElement.appendChild(c);
-    } else {
-      console.log(r)
-      throw new Error(`Unsupported element type: ${r}`);
+    const c = buildComponent(exportedModule, storyContext.args);
+    canvasElement.appendChild(c);
+  } else if (Component) {
+    if (!(Component instanceof AsyncFunction)) {
+      console.error('Invalid component', Component);
+      throw new Error(`Invalid component: ${Component}. Expected AsyncFunction \`async function(this: SeqflowFunctionContext, args: any) { ... }\``);
     }
+    canvasElement.innerHTML = '';
+
+    const c = buildComponent(storyContext.component, storyContext.args);
+    canvasElement.appendChild(c);
   } else {
-    const element = storyFn();
-
-    if (element instanceof Node) {
-
-      canvasElement.innerHTML = '';
-      canvasElement.appendChild(element);
-      simulateDOMContentLoaded();
-    } else if (typeof element === 'function') {
-      canvasElement.innerHTML = '';
-      canvasElement.appendChild(buildComponent(element, {}));
-    } else {
-      console.log(element)
-      throw new Error(`Unsupported element type: ${element}`);
-    }
+    console.error('Unsupported element type', Component);
+    throw new Error(`Unsupported element type: ${Component}`);
   }
 
   showMain();
+  
 }
 
 async function App(this: SeqflowFunctionContext, { component, args }: any) {

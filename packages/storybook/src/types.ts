@@ -1,54 +1,33 @@
-import type { StorybookConfig as StorybookConfigBase, CompatibleString, WebRenderer, ArgsStoryFn, Args, AnnotatedStoryFn } from '@storybook/types';
+import type { StorybookConfig as StorybookConfigBase, WebRenderer, ArgsStoryFn, Args, AnnotatedStoryFn, PlayFunctionContext, StoryContext } from '@storybook/types';
 import type { StorybookConfigVite, BuilderOptions } from '@storybook/builder-vite';
 import { ArgTypesExtractor } from '@storybook/docs-tools';
-
-type FrameworkName = CompatibleString<'@storybook/html-vite'>;
-type BuilderName = CompatibleString<'@storybook/builder-vite'>;
+import { SeqflowFunction } from 'seqflow-js';
 
 export type FrameworkOptions = {
   builder?: BuilderOptions;
 };
 
-type StorybookConfigFramework = {
-  framework:
-    | FrameworkName
-    | {
-        name: FrameworkName;
-        options: FrameworkOptions;
-      };
-  core?: StorybookConfigBase['core'] & {
-    builder?:
-      | BuilderName
-      | {
-          name: BuilderName;
-          options: BuilderOptions;
-        };
-  };
-};
 
 /**
  * The interface for Storybook configuration in `main.ts` files.
  */
 export type StorybookConfig = Omit<
   StorybookConfigBase,
-  keyof StorybookConfigVite | keyof StorybookConfigFramework
+  keyof StorybookConfigVite
 > &
-  StorybookConfigVite &
-  StorybookConfigFramework;
+  StorybookConfigVite;
 
 
-export interface HtmlRenderer extends WebRenderer {
-  component: string | HTMLElement | ArgsStoryFn<HtmlRenderer>;
+export type StoryFnHtmlReturnType = Promise<void>;
+export interface SeqFlowJSRenderer extends WebRenderer {
+  component: SeqflowFunction<unknown>;
   storyResult: StoryFnHtmlReturnType;
 }
-export type StoryFnHtmlReturnType = string | Node;
-
 
 export interface Parameters {
   renderer: 'seqflow-js-storybook';
   docs?: {
     story: { inline: boolean };
-    renderer?: any,
     extractArgTypes?: ArgTypesExtractor;
     source: {
       type: 'dynamic';
@@ -59,4 +38,7 @@ export interface Parameters {
   };
 }
 
-export type StoryFn<TArgs = Args> = AnnotatedStoryFn<HtmlRenderer, TArgs>;
+export type StoryFn<TArgs = Args> = SeqflowFunction<TArgs> | {
+  play: (context: StoryContext<SeqFlowJSRenderer, TArgs>) => Promise<void> | void;
+  args?: TArgs;
+}

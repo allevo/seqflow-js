@@ -1,14 +1,12 @@
 
 import type { DecoratorFunction } from '@storybook/types';
 
-import type { HtmlRenderer } from '../types';
+import type { SeqFlowJSRenderer } from '../types';
 import { SeqflowFunctionContext, start } from 'seqflow-js';
 
-export const sourceDecorator: DecoratorFunction<HtmlRenderer> = () => {
-  // TODO
-  return document.createElement('div');
+export const sourceDecorator: DecoratorFunction<SeqFlowJSRenderer> = async () => {
+  
 };
-
 
 async function App(this: SeqflowFunctionContext, { component, args }: any) {
   const r: Element = this.createDOMElement(component, args) as Element;

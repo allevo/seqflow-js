@@ -1,7 +1,7 @@
 import { expect, userEvent, within } from "@storybook/test";
 
 import { SeqflowFunctionContext } from "seqflow-js";
-import { buildComponent } from "seqflow-js-storybook/render";
+import { StoryFn } from "seqflow-js-storybook";
 import { Button, ButtonComponent } from ".";
 
 export default {
@@ -13,7 +13,9 @@ export default {
 	},
 };
 
-export const DisableButton = {
+export const Empty = {};
+
+export const DisableButton: StoryFn = {
 	play: async ({ canvasElement }) => {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		const canvas = within(canvasElement);
@@ -37,7 +39,7 @@ export const DisableButton = {
 	},
 };
 
-export const TrasitionButton = {
+export const TrasitionButton: StoryFn = {
 	play: async ({ canvasElement }) => {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		const canvas = within(canvasElement);
@@ -72,60 +74,67 @@ export const TrasitionButton = {
 	},
 };
 
-export const Foo = {
-	title: "Example/Button",
-	tags: ["autodocs"],
-	name: "foo",
-	render: (ctx, args) => {
-		async function WWW(this: SeqflowFunctionContext, args) {
-			this.renderSync(
-				<>
-					<div className="flex items-center gap-2">
-						<Button label="Default" />
-						<Button color="neutral" label="neutral" />
-						<Button color="primary" label="primary" />
-						<Button color="secondary" label="secondary" />
-						<Button color="accent" label="accent" />
-						<Button color="ghost" label="ghost" />
-						<Button color="link" label="link" />
-					</div>
+export const AllButtons: StoryFn = async function (
+	this: SeqflowFunctionContext,
+) {
+	this.renderSync(
+		<>
+			<div
+				style={{
+					display: "grid",
+					gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr",
+				}}
+			>
+				<div />
+				<div>
+					<Button label="Default" />
+				</div>
+				<div>
+					<Button color="neutral" label="neutral" />
+				</div>
+				<div>
+					<Button color="primary" label="primary" />
+				</div>
+				<div>
+					<Button color="secondary" label="secondary" />
+				</div>
+				<div>
+					<Button color="accent" label="accent" />
+				</div>
+				<div>
+					<Button color="ghost" label="ghost" />
+				</div>
+				<div>
+					<Button color="link" label="link" />
+				</div>
 
-					<div className="flex items-center gap-2">
-						<Button active={true} label="Default" />
-						<Button active={true} color="neutral" label="neutral" />
-						<Button active={true} color="primary" label="primary" />
-						<Button active={true} color="secondary" label="secondary" />
-						<Button active={true} color="accent" label="accent" />
-						<Button active={true} color="ghost" label="ghost" />
-						<Button active={true} color="link" label="link" />
-					</div>
+				<div>Active</div>
+				<Button active={true} label="Default" />
+				<Button active={true} color="neutral" label="neutral" />
+				<Button active={true} color="primary" label="primary" />
+				<Button active={true} color="secondary" label="secondary" />
+				<Button active={true} color="accent" label="accent" />
+				<Button active={true} color="ghost" label="ghost" />
+				<Button active={true} color="link" label="link" />
 
-					<div className="flex items-center gap-2">
-						<Button disabled label="Default" />
-						<Button disabled color="neutral" label="neutral" />
-						<Button disabled color="primary" label="primary" />
-						<Button disabled color="secondary" label="secondary" />
-						<Button disabled color="accent" label="accent" />
-						<Button disabled color="ghost" label="ghost" />
-						<Button disabled color="link" label="link" />
-					</div>
+				<div>Disabled</div>
+				<Button disabled label="Default" />
+				<Button disabled color="neutral" label="neutral" />
+				<Button disabled color="primary" label="primary" />
+				<Button disabled color="secondary" label="secondary" />
+				<Button disabled color="accent" label="accent" />
+				<Button disabled color="ghost" label="ghost" />
+				<Button disabled color="link" label="link" />
 
-					<div className="flex items-center gap-2">
-						<Button glass label="Default" />
-						<Button glass color="neutral" label="neutral" />
-						<Button glass color="primary" label="primary" />
-						<Button glass color="secondary" label="secondary" />
-						<Button glass color="accent" label="accent" />
-						<Button glass color="ghost" label="ghost" />
-						<Button glass color="link" label="link" />
-					</div>
-				</>,
-			);
-		}
-
-		return buildComponent(WWW, args);
-	},
-	args: {
-		label: "FHFHFHFFHHFFHHHF",
-	},
+				<div>Glass</div>
+				<Button glass label="Default" />
+				<Button glass color="neutral" label="neutral" />
+				<Button glass color="primary" label="primary" />
+				<Button glass color="secondary" label="secondary" />
+				<Button glass color="accent" label="accent" />
+				<Button glass color="ghost" label="ghost" />
+				<Button glass color="link" label="link" />
+			</div>
+		</>,
+	);
 };

@@ -19,6 +19,7 @@ const config = {
     // getAbsolutePath("@storybook/addon-essentials"),
     // getAbsolutePath("@chromatic-com/storybook"),
     // getAbsolutePath("@storybook/addon-interactions"),
+    '@storybook/addon-interactions',
     {
       name: '@storybook/addon-themes',
       options: {

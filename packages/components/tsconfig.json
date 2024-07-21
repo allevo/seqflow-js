@@ -16,5 +16,5 @@
         "noEmit": true,
         "declaration":true
     },
-    "include": ["./src/**/*", "./tests/**/*"]
+    "include": ["./src/**/*", "./src/**/*.stories.tsx", "./tests/**/*"]
 }
