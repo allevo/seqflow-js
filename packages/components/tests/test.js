@@ -3,8 +3,12 @@ import waitOn from "wait-on";
 
 console.log("STARTING STORYBOOK");
 
-const storybookProcess = spawn("pnpm", ["run", "storybook"], {
-	stdio: "inherit",
+const storybookProcess = spawn("pnpm", ["run", "storybook"]);
+storybookProcess.stderr.on("data", (data) => {
+	console.error(data.toString());
+});
+storybookProcess.stdout.on("data", (data) => {
+	console.log(data.toString());
 });
 storybookProcess.on("exit", (code) => {
 	console.log(`--- Storybook exited with code ${code}`);
