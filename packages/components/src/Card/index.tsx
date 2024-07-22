@@ -1,5 +1,4 @@
 import {
-	SeqflowAppContext,
 	SeqflowFunctionContext,
 	SeqflowFunctionData,
 } from "seqflow-js";
@@ -33,13 +32,7 @@ async function InnerCard(
 	this.renderSync(children);
 }
 
-export const Card = Object.assign(InnerCard, {
-	Body,
-	Title,
-	Actions,
-});
-
-async function Body(
+export async function Body(
 	this: SeqflowFunctionContext,
 	{ children }: SeqflowFunctionData<unknown>,
 ) {
@@ -54,9 +47,13 @@ async function Body(
 	this.renderSync(children);
 }
 
-async function Title(
+export interface TitlePropsType {
+	level: 1 | 2 | 3 | 4
+}
+
+export async function Title(
 	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: SeqflowFunctionData<TitlePropsType>,
 ) {
 	this._el.classList.add("card-title");
 	if (!children) {
@@ -70,7 +67,7 @@ async function Title(
 }
 Title.tagName = () => "h2";
 
-async function Actions(
+export async function Actions(
 	this: SeqflowFunctionContext,
 	{ children }: SeqflowFunctionData<unknown>,
 ) {
@@ -86,3 +83,9 @@ async function Actions(
 
 	this.renderSync(children);
 }
+
+export const Card = Object.assign(InnerCard, {
+	Body,
+	Title,
+	Actions,
+});

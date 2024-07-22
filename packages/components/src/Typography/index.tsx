@@ -17,7 +17,7 @@ export interface HeadingProps {
 
 export async function Heading(
 	this: SeqflowFunctionContext,
-	{ title }: SeqflowFunctionData<HeadingProps>,
+	{ title }: HeadingProps,
 ) {
 	this.renderSync(title);
 }

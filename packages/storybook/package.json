@@ -1,24 +1,12 @@
 {
   "name": "seqflow-js-storybook",
-  "version": "8.1.9",
+  "version": "1.0.0",
   "type": "module",
-  "description": "Storybook for HTML and Vite: Develop HTML in isolation with Hot Reloading.",
+  "description": "Storybook for SeqFlow JS and Vite.",
   "keywords": [
+    "seqflow",
     "storybook"
   ],
-  "homepage": "https://github.com/storybookjs/storybook/tree/next/code/frameworks/html-vite",
-  "bugs": {
-    "url": "https://github.com/storybookjs/storybook/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/storybookjs/storybook.git",
-    "directory": "code/frameworks/html-vite"
-  },
-  "funding": {
-    "type": "opencollective",
-    "url": "https://opencollective.com/storybook"
-  },
   "license": "MIT",
   "exports": {
     ".": {
@@ -35,17 +23,10 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist/**/*",
-    "README.md",
-    "*.js",
-    "*.d.ts",
-    "!src/**/*"
-  ],
   "scripts": {
     "biome": "biome ci ./src",
     "biome:check": "biome check --apply src tests",
-    "test": "echo 'TODO: add tests'",
+    "test": "node --import tsx tests/foo.test.ts",
     "build": "tsc --outDir ./dist --target es2020 || echo 'ouch'; mv dist/entry-preview.js dist/entry-preview.mjs && mv dist/entry-preview-docs.js dist/entry-preview-docs.mjs",
     "depcheck": "depcheck --ignores @vitest/coverage-v8 ."
   },
@@ -75,16 +56,5 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "bundler": {
-    "entries": [
-      "./src/index.ts",
-      "./src/preset.ts"
-    ],
-    "platform": "node"
-  },
-  "gitHead": "e6a7fd8a655c69780bc20b9749c2699e44beae17"
+  }
 }

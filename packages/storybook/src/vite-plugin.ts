@@ -1,7 +1,7 @@
 import ts from 'typescript'
 import fs from 'node:fs'
 import MagicString from "magic-string";
-import type { StrictArgTypes, StrictInputType } from '@storybook/types'
+import type { SBScalarType, StrictArgTypes, StrictInputType } from '@storybook/types'
 
 import { type Plugin, createFilter } from "vite";
 
@@ -41,93 +41,175 @@ function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, checker: ts.
         if (!sub.type) {
             throw new Error(`Expected a type`)
         }
-        if (sub.type.kind !== ts.SyntaxKind.UnionType) {
-            throw new Error(`Expected a UnionType`)
-        }
-        const s = sub.type as ts.UnionTypeNode
-        const options = s.types.map(t => {
-            if (t.kind !== ts.SyntaxKind.LiteralType) {
-                throw new Error(`Expected a LiteralType`)
-            }
-            const tt = t as ts.LiteralTypeNode
-            const l = tt.literal as ts.LiteralLikeNode
-            return l.text
-        })
+        if (sub.type.kind == ts.SyntaxKind.UnionType) {
+            const s = sub.type as ts.UnionTypeNode
 
-        return {
-            name,
-            description,
-            type: {
-                name: 'string',
-                required: !isOptional,
-            },
-            control: {
-                type: 'select',
-            },
-            options,
-        }
+            const kinds = Array.from(new Set(s.types.map(t => {
+                if (t.kind !== ts.SyntaxKind.LiteralType) {
+                    throw new Error(`Expected a LiteralType`)
+                }
+                const tt = t as ts.LiteralTypeNode
+                const l = tt.literal as ts.LiteralLikeNode
+
+                return l.kind
+            })))
+            if (kinds.length !== 1) {
+                console.log('Unmanaged multiple kinds.', { kinds })
+                throw new Error('Expect only one kind')
+            }
+            let typeName: SBScalarType['name']
+            switch (kinds[0]) {
+                case ts.SyntaxKind.NumericLiteral:
+                    typeName = 'number'
+                    break
+                case ts.SyntaxKind.StringLiteral:
+                    typeName = 'string'
+                    break
+                default:
+                    console.log('Unexpected kind', {name, kinds})
+                    throw new Error('Unexpected kind. Only String and Number are supported')
+            }
+
+            const options = s.types.map(t => {
+                if (t.kind !== ts.SyntaxKind.LiteralType) {
+                    throw new Error(`Expected a LiteralType`)
+                }
+                const tt = t as ts.LiteralTypeNode
+                const l = tt.literal as ts.LiteralLikeNode
+
+                if (typeName === 'number') {
+                    return parseInt(l.text, 10)
+                }
+                return l.text
+            })
+
+            return {
+                name,
+                description,
+                type: {
+                    name: typeName,
+                    required: !isOptional,
+                },
+                control: {
+                    type: 'select',
+                },
+                options,
+            }
+        } /* else if (sub.type.kind == ts.SyntaxKind.IndexedAccessType) {
+            
+            const type = sub.type as ts.IndexedAccessTypeNode
+
+            console.log('objectType', {...type.objectType, parent: undefined})
+            console.log('indexType', {...type.indexType, parent: undefined})
+
+        } */
+
+        throw new Error(`Unsupported type: ${sub.type.kind}`)
     }
 
     throw new Error(`Unsupported intrinsicName ${intrinsicName}`)
 }
 
+export function foo(filePath: string, tsConfig: any) {
+    const program = ts.createProgram([filePath], tsConfig)
+
+    const out = program.getSourceFile(filePath)
+
+    if (!out) {
+        console.log(`No source file for ${filePath}`)
+        return
+    }
+
+    const checker = program.getTypeChecker();
+    const moduleSymbol = checker.getSymbolAtLocation(out)
+    if (!moduleSymbol) {
+        console.log(`No module symbol for ${filePath}`)
+        return
+    }
+    const allComponents = checker.getExportsOfModule(moduleSymbol);
+
+    const components = allComponents.filter(c => c.valueDeclaration?.kind === ts.SyntaxKind.FunctionDeclaration)
+    if (components.length === 0) {
+        console.log(`No component for ${filePath}`)
+        return
+    }
+
+    const output: {
+        componentName: string,
+        fields: Record<string, unknown>
+    }[] = []
+    for (const component of components) {
+
+        let componentName = component.escapedName
+        if (componentName === 'default') {
+            if (component.valueDeclaration && 'localSymbol' in component.valueDeclaration) {
+                const ls = component.valueDeclaration.localSymbol as { escapedName: ts.__String }
+                componentName = ls.escapedName
+            } else {
+                console.log('Export default is shaped differently')
+                console.log(component.valueDeclaration)
+                throw new Error('WHAAATT??')
+            }
+        }
+
+        if (typeof componentName !== 'string') {
+            console.log(componentName)
+            throw new Error('Component Name is not a string')
+        }
+
+        const propInterface = allComponents.find(c => {
+            return typeof c.escapedName === 'string' &&
+                /prop/i.test(c.escapedName) &&
+                new RegExp(componentName, 'i').test(c.escapedName)
+        })
+
+        if (!propInterface) {
+            console.log(`No prop interface for ${filePath}`, { componentName })
+            continue
+        }
+
+        if (!propInterface.members) {
+            console.log(`No prop interface members for ${filePath}`, {componentName})
+            continue
+        }
+
+        const fields: StrictArgTypes = {}
+        for (const [name, symbol] of propInterface.members) {
+            if (typeof name !== 'string') {
+                continue
+            }
+
+            fields[name] = tsSymbolToStrictInputType(name, symbol, checker)
+        }
+
+        output.push({
+            fields,
+            componentName,
+        })
+    }
+
+    return output
+}
 
 function builder(tsConfigPath: string) {
     const tsConfig = ts.readConfigFile(tsConfigPath, p => fs.readFileSync(p, 'utf8'))
 
     return {
         generateStorybookMetadataFor(filePath: string, compiledSource: string) {
-            const program = ts.createProgram([filePath], tsConfig.config)
 
-            const out = program.getSourceFile(filePath)
-
-            if (!out) {
-                console.log(`No source file for ${filePath}`)
+            const components = foo(filePath, tsConfig.config)
+            if (!components) {
+                console.log('No data found')
                 return
             }
-        
-            const checker = program.getTypeChecker();
-            const moduleSymbol = checker.getSymbolAtLocation(out)
-            if (!moduleSymbol) {
-                console.log(`No module symbol for ${filePath}`)
-                return
-            }
-            const components = checker.getExportsOfModule(moduleSymbol);
             
-            const component = components.find(c => c.valueDeclaration?.kind === ts.SyntaxKind.FunctionDeclaration)
-            if (!component) {
-                console.log(`No component for ${filePath}`)
-                return
-            }
-            const componentName = component.escapedName
-
-            const propInterface = components.find(c => typeof c.escapedName === 'string' && /prop/i.test(c.escapedName))
-
-            if (!propInterface) {
-                console.log(`No prop interface for ${filePath}`)
-                return
-            }
-
-            if (!propInterface.members) {
-                console.log(`No prop interface members for ${filePath}`)
-                return
-            }
-
-            const fields: StrictArgTypes = {}
-            for (const [name, symbol] of propInterface.members) {
-                if (typeof name !== 'string') {
-                    continue
-                }
-
-                fields[name] = tsSymbolToStrictInputType(name, symbol, checker)
-            }
-
             const s = new MagicString(compiledSource);
-
-            s.append(`
+            for (const { componentName, fields } of components) {
+                s.append(`
 ${componentName}.__storybook = {
     props: ${JSON.stringify(fields)}
 }`)
+                }
 
             return {
                 code: s.toString(),
