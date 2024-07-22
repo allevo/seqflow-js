@@ -5,10 +5,10 @@ console.log("STARTING STORYBOOK");
 
 const storybookProcess = spawn("pnpm", ["run", "storybook"]);
 storybookProcess.stderr.on("data", (data) => {
-	console.error('stderr', data.toString());
+	console.error("stderr", data.toString());
 });
 storybookProcess.stdout.on("data", (data) => {
-	console.log('stdout', data.toString());
+	console.log("stdout", data.toString());
 });
 storybookProcess.on("exit", (code) => {
 	console.log(`--- Storybook exited with code ${code}`);
@@ -25,7 +25,6 @@ try {
 	process.exit(1);
 }
 
-
 console.log("STARTING STORYBOOK TESTS");
 try {
 	spawnSync("pnpm", ["test:storybook"], { stdio: "inherit" });
@@ -34,7 +33,6 @@ try {
 	process.exit(1);
 }
 console.log("STORYBOOK TESTS PASSED");
-
 
 console.log("KILLING STORYBOOK");
 storybookProcess.kill();

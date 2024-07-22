@@ -1,6 +1,6 @@
 import { SeqflowFunctionContext } from "seqflow-js";
 
-export interface TextInputPropsType {
+export interface NumberInputPropsType {
 	placeholder?: string;
 	withBorder?: boolean;
 	color?:
@@ -16,9 +16,9 @@ export interface TextInputPropsType {
 	disabled?: boolean;
 }
 
-export async function TextInput(
+export async function NumberInput(
 	this: SeqflowFunctionContext,
-	{ placeholder, withBorder, color, disabled }: TextInputPropsType,
+	{ placeholder, withBorder, color, disabled }: NumberInputPropsType,
 ) {
 	const classNames = ["input"];
 	if (withBorder !== false) {
@@ -27,14 +27,15 @@ export async function TextInput(
 	if (color && color !== "normal") {
 		classNames.push(`input-${color}`);
 	}
-
-	this.renderSync(
-		<input
-			type="text"
-			key="input"
-			disabled={disabled ? true : undefined}
-			placeholder={placeholder}
-			className={classNames.join(" ")}
-		/>,
-	);
+	for (const c of classNames) {
+		this._el.classList.add(c);
+	}
+	const el = this._el as HTMLInputElement;
+	el.type = "number";
+	el.disabled = disabled ? true : false;
+	if (placeholder) {
+		el.placeholder = placeholder;
+	}
 }
+
+NumberInput.tagName = () => "input";

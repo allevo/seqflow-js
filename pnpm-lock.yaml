@@ -34,6 +34,9 @@ importers:
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
+      '@types/css-modules':
+        specifier: ^1.0.5
+        version: 1.0.5
       daisyui:
         specifier: ^4.12.10
         version: 4.12.10(postcss@8.4.39)

@@ -1,0 +1,4 @@
+
+.wrapper {
+    @apply flex flex-row gap-4;
+}

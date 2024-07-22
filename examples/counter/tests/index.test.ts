@@ -2,9 +2,14 @@ import { screen, waitFor } from "@testing-library/dom";
 import { start } from "seqflow-js";
 import { expect, test } from "vitest";
 import { Main } from "../src/Main";
+import { CounterDomain } from "../src/domains/counter";
 
 test("should increment and decrement the counter", async () => {
-	start(document.body, Main, undefined, {});
+	start(document.body, Main, undefined, {
+		domains: {
+			counter: (et) => new CounterDomain(et),
+		}
+	});
 
 	const incrementButton = await screen.findByText(/increment/i);
 	const decrementButton = await screen.findByText(/decrement/i);

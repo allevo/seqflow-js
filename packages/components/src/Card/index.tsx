@@ -1,7 +1,4 @@
-import {
-	SeqflowFunctionContext,
-	SeqflowFunctionData,
-} from "seqflow-js";
+import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
 interface CardProps {
 	compact?: boolean;
@@ -48,7 +45,7 @@ export async function Body(
 }
 
 export interface TitlePropsType {
-	level: 1 | 2 | 3 | 4
+	level: 1 | 2 | 3 | 4;
 }
 
 export async function Title(

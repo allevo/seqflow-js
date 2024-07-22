@@ -1,6 +1,6 @@
 
 .wrapper {
-	@apply flex flex-row m-auto w-min items-center mt-16;
+	@apply flex flex-row items-center;
 }
 
 .counter {

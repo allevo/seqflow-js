@@ -1,6 +1,6 @@
 import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
-import { Heading, Prose, HeadingProps } from ".";
+import { Heading, HeadingProps, Prose } from ".";
 
 export default {
 	title: "Example/Heading",
@@ -13,20 +13,19 @@ export default {
 
 export const Empty: StoryFn<HeadingProps> = async function HeadingStory(
 	this: SeqflowFunctionContext,
-	{ title, level }
+	{ title, level },
 ) {
 	this.renderSync(
 		<Prose wrapperClass="m-auto">
 			<Heading level={level} title={title} />
-		</Prose>
+		</Prose>,
 	);
 };
-
 
 export const AllHeading: StoryFn<unknown> = async function (
 	this: SeqflowFunctionContext,
 ) {
-	const title = 'The heading'
+	const title = "The heading";
 	this.renderSync(
 		<Prose wrapperClass="m-auto">
 			<Heading level={1} title={`${title} 1`} />
