@@ -1,6 +1,7 @@
 import { SeqflowFunctionContext } from "seqflow-js";
 
 export interface NumberInputPropsType {
+	name: string;
 	placeholder?: string;
 	withBorder?: boolean;
 	color?:
@@ -18,7 +19,7 @@ export interface NumberInputPropsType {
 
 export async function NumberInput(
 	this: SeqflowFunctionContext,
-	{ placeholder, withBorder, color, disabled }: NumberInputPropsType,
+	{ name, placeholder, withBorder, color, disabled }: NumberInputPropsType,
 ) {
 	const classNames = ["input"];
 	if (withBorder !== false) {
@@ -32,6 +33,7 @@ export async function NumberInput(
 	}
 	const el = this._el as HTMLInputElement;
 	el.type = "number";
+	el.name = name;
 	el.disabled = disabled ? true : false;
 	if (placeholder) {
 		el.placeholder = placeholder;

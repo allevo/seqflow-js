@@ -27,14 +27,14 @@ export async function TextInput(
 	if (color && color !== "normal") {
 		classNames.push(`input-${color}`);
 	}
-
-	this.renderSync(
-		<input
-			type="text"
-			key="input"
-			disabled={disabled ? true : undefined}
-			placeholder={placeholder}
-			className={classNames.join(" ")}
-		/>,
-	);
+	for (const c of classNames) {
+		this._el.classList.add(c);
+	}
+	const el = this._el as HTMLInputElement;
+	el.type = "text";
+	el.disabled = disabled ? true : false;
+	if (placeholder) {
+		el.placeholder = placeholder;
+	}
 }
+TextInput.tagName = () => "input";

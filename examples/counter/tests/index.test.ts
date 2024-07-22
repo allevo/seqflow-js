@@ -8,7 +8,7 @@ test("should increment and decrement the counter", async () => {
 	start(document.body, Main, undefined, {
 		domains: {
 			counter: (et) => new CounterDomain(et),
-		}
+		},
 	});
 
 	const incrementButton = await screen.findByText(/increment/i);

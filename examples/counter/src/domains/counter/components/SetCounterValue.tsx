@@ -6,7 +6,7 @@ export async function SetCounterValue(this: SeqflowFunctionContext) {
 	this._el.classList.add(classes.wrapper);
 	this.renderSync(
 		<>
-			<NumberInput key="choose-value" />
+			<NumberInput name="set-value" key="choose-value" />
 			<Button
 				key="set-value-button"
 				label="Set value"
