@@ -14,7 +14,7 @@ export default {
   // it should be automatically detected, but it is not
   safelist: [
     {
-      pattern: /(btn|input|bg|w-full|grid|card|shadow|center|divider|loading|chat)/,
+      pattern: /(btn|input|bg|w-full|grid|card|shadow|center|divider|loading|chat|select)/,
     }
   ],
   daisyui: {
