@@ -1,7 +1,7 @@
 import { start } from "seqflow-js";
+import "seqflow-js-components/style.css";
 import { Main } from "./Main";
 import "./index.css";
-import "seqflow-js-components/style.css";
 
 import { QuoteDomain } from "./domains/quote";
 

@@ -19,7 +19,7 @@ export default {
 						<p>You underestimate my power!</p>
 					</ChatBubble.Bubble>
 				</ChatBubble>
-			</>
+			</>,
 		);
 	},
 	args: {},
@@ -28,19 +28,25 @@ export default {
 export const AllColors: StoryFn<unknown> = async function (
 	this: SeqflowFunctionContext,
 ) {
-	const colors: BubbleProps['color'][] = ['primary', 'secondary', 'accent', 'info', 'success', 'warning', 'error'];
-	const elements: JSX.Element[] = []
+	const colors: BubbleProps["color"][] = [
+		"primary",
+		"secondary",
+		"accent",
+		"info",
+		"success",
+		"warning",
+		"error",
+	];
+	const elements: JSX.Element[] = [];
 	for (const color of colors) {
 		elements.push(
 			<ChatBubble spot="start">
 				<ChatBubble.Bubble color={color}>
 					<p>{color} bubble</p>
 				</ChatBubble.Bubble>
-			</ChatBubble>
-		)
+			</ChatBubble>,
+		);
 	}
 
-	this.renderSync(
-		elements
-	);
+	this.renderSync(elements);
 };

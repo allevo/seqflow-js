@@ -8,14 +8,11 @@ export async function RefreshQuoteButton(this: SeqflowFunctionContext) {
 	};
 
 	this.renderSync(
-        <Button
-            key="button"
-            onClick={refreshQuote}
-            label="Refresh quote"
-            />);
-    const button = this.getChild<ButtonComponent>('button')
+		<Button key="button" onClick={refreshQuote} label="Refresh quote" />,
+	);
+	const button = this.getChild<ButtonComponent>("button");
 
-    const events = this.waitEvents(
+	const events = this.waitEvents(
 		this.domainEvent(FetchingNewQuote),
 		this.domainEvent(NewQuoteFetched),
 	);
@@ -23,14 +20,14 @@ export async function RefreshQuoteButton(this: SeqflowFunctionContext) {
 	for await (const ev of events) {
 		if (ev instanceof FetchingNewQuote) {
 			button.transition({
-                disabled: true,
-                loading: true
-            })
+				disabled: true,
+				loading: true,
+			});
 		} else if (ev instanceof NewQuoteFetched) {
 			button.transition({
-                disabled: false,
-                loading: false
-            })
+				disabled: false,
+				loading: false,
+			});
 		}
 	}
 }

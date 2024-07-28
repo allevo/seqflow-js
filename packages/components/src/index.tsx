@@ -5,3 +5,5 @@ export * from "./NumberInput/index.js";
 export * from "./Typography/index.js";
 export * from "./Card/index.js";
 export * from "./Divider/index.js";
+export * from "./Loading/index.js";
+export * from "./ChatBubble/index.js";

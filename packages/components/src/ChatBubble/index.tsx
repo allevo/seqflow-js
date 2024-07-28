@@ -1,7 +1,7 @@
 import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
 interface InnerChatBubbleProps {
-	spot: 'start' | 'end',
+	spot: "start" | "end";
 }
 
 export async function InnerChatBubble(
@@ -9,7 +9,7 @@ export async function InnerChatBubble(
 	{ children, spot }: SeqflowFunctionData<InnerChatBubbleProps>,
 ) {
 	const classes = ["chat"];
-	classes.push(`chat-${spot}`)
+	classes.push(`chat-${spot}`);
 	for (const c of classes) {
 		this._el.classList.add(c);
 	}
@@ -25,27 +25,34 @@ export async function InnerChatBubble(
 }
 
 export interface BubbleProps {
-	color?: 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'
+	color?:
+		| "primary"
+		| "secondary"
+		| "accent"
+		| "info"
+		| "success"
+		| "warning"
+		| "error";
 }
 
 async function Bubble(
 	this: SeqflowFunctionContext,
-	{ children, color }: SeqflowFunctionData<BubbleProps>
+	{ children, color }: SeqflowFunctionData<BubbleProps>,
 ) {
-	this._el.classList.add('chat-bubble')
+	this._el.classList.add("chat-bubble");
 	if (color) {
-		this._el.classList.add(`chat-bubble-${color}`)
+		this._el.classList.add(`chat-bubble-${color}`);
 	}
 
 	if (!children) {
 		this.app.log.error({
-			message: 'ChatBubble.Bubble component requires children'
-		})
+			message: "ChatBubble.Bubble component requires children",
+		});
 		return;
 	}
-	this.renderSync(children)
+	this.renderSync(children);
 }
 
 export const ChatBubble = Object.assign(InnerChatBubble, {
-	Bubble: Bubble
-})
+	Bubble: Bubble,
+});

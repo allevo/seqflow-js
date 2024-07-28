@@ -1,8 +1,8 @@
 import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
 export interface LoadingPropsType {
-	type?: 'spinner' | 'dots' | 'ring' | 'ball' | 'bars' | 'infinity';
-	size?: 'xs' | 'sm' | 'md' | 'lg';
+	type?: "spinner" | "dots" | "ring" | "ball" | "bars" | "infinity";
+	size?: "xs" | "sm" | "md" | "lg";
 }
 
 export async function Loading(
@@ -12,7 +12,7 @@ export async function Loading(
 	this._el.classList.add("loading");
 	this._el.classList.add("loading-spinner");
 
-	this._el.role = 'progressbar'
+	this._el.role = "progressbar";
 
 	if (type) {
 		this._el.classList.add(`loading-${type}`);

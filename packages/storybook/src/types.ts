@@ -40,5 +40,6 @@ export interface Parameters {
 
 export type StoryFn<TArgs = Args> = SeqflowFunction<TArgs> | {
   play: (context: StoryContext<SeqFlowJSRenderer, TArgs>) => Promise<void> | void;
+  component?: SeqflowFunction<TArgs>,
   args?: TArgs;
 }

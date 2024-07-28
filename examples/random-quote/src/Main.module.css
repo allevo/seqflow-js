@@ -6,7 +6,7 @@
 	@apply !hidden;
 }
 .loading {
-	@apply min-h-24 flex flex-col justify-center items-center;
+	@apply min-h-24 self-center;
 }
 .quote {
 	@apply min-h-24;

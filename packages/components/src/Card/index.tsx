@@ -3,7 +3,7 @@ import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 interface CardProps {
 	compact?: boolean;
 	side?: boolean;
-	shadow?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+	shadow?: "sm" | "md" | "lg" | "xl" | "2xl";
 }
 
 async function InnerCard(
