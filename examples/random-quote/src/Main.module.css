@@ -1,0 +1,13 @@
+
+.main {
+	@apply m-auto mt-16 w-2/4;
+}
+.hide {
+	@apply !hidden;
+}
+.loading {
+	@apply min-h-24 flex flex-col justify-center items-center;
+}
+.quote {
+	@apply min-h-24;
+}

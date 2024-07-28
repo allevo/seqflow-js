@@ -58,10 +58,9 @@ export function renderToCanvas(
   { storyFn, kind, name, showMain, showError, forceRemount, storyContext, ...other }: RenderContext<SeqFlowJSRenderer>,
   canvasElement: SeqFlowJSRenderer['canvasElement'],
 ) {
-
   const exportedModule = storyContext?.moduleExport
 
-  const Component = storyContext?.component;
+  const Component = exportedModule?.component || storyContext?.component;
   if (exportedModule && (exportedModule instanceof AsyncFunction)) {
     canvasElement.innerHTML = '';
 
@@ -74,7 +73,7 @@ export function renderToCanvas(
     }
     canvasElement.innerHTML = '';
 
-    const c = buildComponent(storyContext.component, storyContext.args);
+    const c = buildComponent(Component, storyContext.args);
     canvasElement.appendChild(c);
   } else {
     console.error('Unsupported element type', Component);

@@ -3,6 +3,6 @@ import "seqflow-js-components/style.css";
 import { Main } from "./Main";
 import "./index.css";
 
-start(document.getElementById("root"), Main, undefined, {
+start(document.getElementById("root")!, Main, undefined, {
 	log: console,
 });

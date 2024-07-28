@@ -3,18 +3,22 @@ import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 interface CardProps {
 	compact?: boolean;
 	side?: boolean;
+	shadow?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 async function InnerCard(
 	this: SeqflowFunctionContext,
-	{ children, compact, side }: SeqflowFunctionData<CardProps>,
+	{ children, compact, side, shadow }: SeqflowFunctionData<CardProps>,
 ) {
-	const classes = ["card", "bg-base-100", "w-96", "shadow-xl"];
+	const classes = ["card", "bg-base-100"];
 	if (compact) {
 		classes.push("card-compact");
 	}
 	if (side) {
 		classes.push("card-side");
+	}
+	if (shadow) {
+		classes.push(`shadow-${shadow}`);
 	}
 	for (const c of classes) {
 		this._el.classList.add(c);
