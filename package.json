@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "turbo run build",
-    "test": "turbo run test",
+    "build": "turbo run --log-order=stream build",
+    "test": "turbo run --log-order=stream test",
     "biome:check": "turbo run biome:check"
   },
   "keywords": [],

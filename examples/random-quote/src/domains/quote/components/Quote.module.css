@@ -1,0 +1,12 @@
+
+
+.wrapper {
+    @apply flex flex-col justify-around !max-w-full;
+
+    .quote {
+        @apply mb-0;
+    }
+}
+.author {
+    @apply self-end;
+}

@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "strict": true,
-        "lib": ["es2015", "dom"],
+        "lib": ["ES2019", "DOM", "DOM.Iterable", "DOM.AsyncIterable"],
         "jsx": "react",
         "jsxFactory": "this.createDOMElement",
         "jsxFragmentFactory": "this.createDOMFragment"

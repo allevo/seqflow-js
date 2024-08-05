@@ -1,23 +1,8 @@
 
-.counter-card {
-    display: flex;
-	flex-direction: column;
-
-	.buttons {
-		display: flex;
-
-		.divider {
-			flex-grow: 1;
-		}
-	}
-
-	.counter {
-		text-align: center;
-	}
+.wrapper {
+	@apply flex flex-row items-center;
 }
 
-.main-counter {
-	width: 200px;
-	margin: auto; 
-	margin-top: 100px;
+.counter {
+	@apply grow min-w-14 text-center;
 }

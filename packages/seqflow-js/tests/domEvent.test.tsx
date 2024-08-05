@@ -1,6 +1,10 @@
 import { screen, waitFor } from "@testing-library/dom";
 import { expect, test } from "vitest";
-import { type SeqflowFunctionContext, start } from "../src/index";
+import {
+	type SeqflowFunctionContext,
+	type SeqflowFunctionData,
+	start,
+} from "../src/index";
 
 test("dom event - increment", async () => {
 	async function App(this: SeqflowFunctionContext) {
@@ -202,7 +206,10 @@ test("dom event - stop listen on unmount", async () => {
 test("child component can be used to listen", async () => {
 	let counter = 0;
 
-	async function Button(this: SeqflowFunctionContext, data: { text: string }) {
+	async function Button(
+		this: SeqflowFunctionContext,
+		data: SeqflowFunctionData<{ text: string }>,
+	) {
 		this.renderSync(<button type="button">{data.text}</button>);
 	}
 
