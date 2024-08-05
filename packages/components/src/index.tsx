@@ -7,3 +7,5 @@ export * from "./Card/index.js";
 export * from "./Divider/index.js";
 export * from "./Loading/index.js";
 export * from "./ChatBubble/index.js";
+export * from "./Select/index.js";
+export * from './Checkbox/index.js';

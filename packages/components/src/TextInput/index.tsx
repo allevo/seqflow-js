@@ -14,11 +14,13 @@ export interface TextInputPropsType {
 		| "error"
 		| "ghost";
 	disabled?: boolean;
+	initialValue?: string;
+	name?: string;
 }
 
 export async function TextInput(
 	this: SeqflowFunctionContext,
-	{ placeholder, withBorder, color, disabled }: TextInputPropsType,
+	{ name, placeholder, withBorder, color, disabled, initialValue }: TextInputPropsType,
 ) {
 	const classNames = ["input"];
 	if (withBorder !== false) {
@@ -35,6 +37,12 @@ export async function TextInput(
 	el.disabled = disabled ? true : false;
 	if (placeholder) {
 		el.placeholder = placeholder;
+	}
+	if (initialValue) {
+		el.value = initialValue;
+	}
+	if (name) {
+		el.name = name;
 	}
 }
 TextInput.tagName = () => "input";

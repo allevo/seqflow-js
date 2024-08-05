@@ -1,6 +1,7 @@
 import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
 export interface SelectPropsType {
+	name?: string;
 	size?: "xs" | "sm" | "md" | "lg";
 	bordered?: boolean;
 	color?:
@@ -16,10 +17,8 @@ export interface SelectPropsType {
 
 export async function Select(
 	this: SeqflowFunctionContext,
-	{ size, bordered, color, children }: SeqflowFunctionData<SelectPropsType>,
+	{ size, bordered, color, children, name }: SeqflowFunctionData<SelectPropsType>,
 ) {
-	this._el.id = "pippo";
-
 	const classes = ["select"];
 	if (bordered === true) {
 		classes.push("select-bordered");
@@ -32,6 +31,10 @@ export async function Select(
 	}
 	for (const c of classes) {
 		this._el.classList.add(c);
+	}
+
+	if (name) {
+		this._el.setAttribute('name', name)
 	}
 
 	if (!children) {

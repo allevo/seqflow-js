@@ -22,6 +22,7 @@ export interface ButtonPropsType {
 	glass?: boolean;
 	disabled?: boolean;
 	loading?: boolean;
+	type?: 'button' | 'submit';
 	// TODO
 	// responsive,
 	// html input type
@@ -42,6 +43,7 @@ export async function Button(
 		glass,
 		disabled,
 		loading,
+		type,
 	}: ButtonPropsType,
 ) {
 	const classNames = ["btn"];
@@ -72,7 +74,7 @@ export async function Button(
 
 	const el = this._el as ButtonComponent;
 	el.classList.add(...classNames);
-	el.setAttribute("type", "button");
+	el.setAttribute("type", type ?? 'button');
 
 	const loaderStyle = loading ? { display: "inherit" } : { display: "none" };
 
