@@ -1,4 +1,4 @@
-import { type SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 import { Card, Divider } from "seqflow-js-components";
 import classes from "./Main.module.css";
 import { ApplyDeltaButton, SetCounterValue } from "./domains/counter";

@@ -1,4 +1,8 @@
-import type { ChildrenType, SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type {
+	ChildrenType,
+	SeqflowFunctionContext,
+	SeqflowFunctionData,
+} from "seqflow-js";
 
 export type ButtonComponent = HTMLElement & {
 	transition: (state: {
@@ -10,7 +14,17 @@ export type ButtonComponent = HTMLElement & {
 
 export interface ButtonPropsType {
 	/** color */
-	color?: "neutral" | "primary" | "secondary" | "accent" | "ghost" | "link" | "info" | "success" | "warning" | "error";
+	color?:
+		| "neutral"
+		| "primary"
+		| "secondary"
+		| "accent"
+		| "ghost"
+		| "link"
+		| "info"
+		| "success"
+		| "warning"
+		| "error";
 	/** is active? */
 	active?: boolean;
 	outline?: boolean;
@@ -19,7 +33,7 @@ export interface ButtonPropsType {
 	glass?: boolean;
 	disabled?: boolean;
 	loading?: boolean;
-	type?: 'button' | 'submit';
+	type?: "button" | "submit";
 	// TODO
 	// responsive,
 	// html input type
@@ -80,19 +94,19 @@ export async function Button(
 
 	const el = this._el as ButtonComponent;
 	el.classList.add(...classNames);
-	el.setAttribute("type", type ?? 'button');
+	el.setAttribute("type", type ?? "button");
 
 	const loaderStyle = loading ? { display: "inherit" } : { display: "none" };
 
 	if (Array.isArray(children)) {
-		children = children.map(c => {
+		children = children.map((c) => {
 			if (typeof c === "string") {
 				return <span>{c}</span>;
 			}
 			return c;
-		})
+		});
 	}
-	this._el.setAttribute("aria-live", "polite")
+	this._el.setAttribute("aria-live", "polite");
 	this.renderSync(
 		<>
 			<span
@@ -100,7 +114,9 @@ export async function Button(
 				key="loading"
 				style={loaderStyle}
 			/>
-			<span key="loading-text" style={loaderStyle}>Loading...</span>
+			<span key="loading-text" style={loaderStyle}>
+				Loading...
+			</span>
 			{children}
 		</>,
 	);
@@ -122,27 +138,28 @@ export async function Button(
 		loader.style.display = "inherit";
 		const loadingText = this.getChild("loading-text");
 		loadingText.style.display = "inherit";
-		this._el.setAttribute("aria-busy", "true")
+		this._el.setAttribute("aria-busy", "true");
 	};
 	const removeLoading = () => {
 		const loader = this.getChild("loading");
 		loader.style.display = "none";
 		const loadingText = this.getChild("loading-text");
 		loadingText.style.display = "none";
-		this._el.removeAttribute("aria-busy")
+		this._el.removeAttribute("aria-busy");
 	};
 
-	const previousChildren: HTMLElement[] | undefined = Array.from(this._el.childNodes)
-		.filter((child) => {
-			if (child instanceof Text) {
-				return true
-			}
-			if (!(child instanceof HTMLElement)) {
-				return false
-			}
-			const k = child.getAttribute("key")
-			return k !== "loading" && k !== "loading-text"
-		}) as HTMLElement[];
+	const previousChildren: HTMLElement[] | undefined = Array.from(
+		this._el.childNodes,
+	).filter((child) => {
+		if (child instanceof Text) {
+			return true;
+		}
+		if (!(child instanceof HTMLElement)) {
+			return false;
+		}
+		const k = child.getAttribute("key");
+		return k !== "loading" && k !== "loading-text";
+	}) as HTMLElement[];
 
 	el.transition = (state: {
 		disabled?: boolean;

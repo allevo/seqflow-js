@@ -9,7 +9,7 @@ export async function Prose(
 		this.app.log.error({
 			message: "Prose component requires children",
 		});
-		return
+		return;
 	}
 	this.renderSync(children);
 }

@@ -11,7 +11,7 @@ export default {
 		placeholder: "Type a number",
 		name: "number",
 		withBorder: true,
-		color: 'normal',
+		color: "normal",
 	},
 };
 

@@ -2,15 +2,23 @@ import { expect, userEvent, within } from "@storybook/test";
 
 import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
-import { FormField, type FormFieldPropsType } from ".";
+import { FormField, type FormFieldComponent, type FormFieldPropsType } from ".";
 import { TextInput } from "../TextInput";
 
-async function FormFieldExample(this: SeqflowFunctionContext, { label, errorMessage }: SeqflowFunctionData<FormFieldPropsType>) {
+async function FormFieldExample(
+	this: SeqflowFunctionContext,
+	props: SeqflowFunctionData<FormFieldPropsType>,
+) {
 	this.renderSync(
-		<FormField id="username-label" label={label} errorMessage={errorMessage}>
-			<TextInput id="username" name="username" placeholder="Insert username" />
+		<FormField id="username-label" {...props}>
+			<TextInput
+				id="username"
+				name="username"
+				placeholder="Insert username"
+				withBorder
+			/>
 		</FormField>,
-	)
+	);
 }
 // biome-ignore lint/suspicious/noExplicitAny: storybook
 FormFieldExample.__storybook = (FormField as any).__storybook;
@@ -26,12 +34,14 @@ export default {
 
 export const Empty = {};
 
-export const WithError: StoryFn = async function (this: SeqflowFunctionContext) {
+export const WithError: StoryFn = async function (
+	this: SeqflowFunctionContext,
+) {
 	this.renderSync(
 		<FormField label="Username" errorMessage="Username is required">
 			<TextInput name="username" placeholder="Insert username" />
 		</FormField>,
-	)
+	);
 };
 
 export const SetError: StoryFn<FormFieldPropsType> = {
@@ -40,15 +50,21 @@ export const SetError: StoryFn<FormFieldPropsType> = {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		const canvas = within(canvasElement);
 
-		const label = canvasElement.querySelector('#username-label') as HTMLLabelElement;
+		const label = canvasElement.querySelector(
+			"#username-label",
+		) as FormFieldComponent;
 		const input = canvas.getByRole("textbox") as HTMLInputElement;
 
 		await userEvent.type(input, "test");
 
-		expect(label).not.toHaveAttribute("error");
+		expect(label).not.toHaveClass("form-control-error");
 
-		await userEvent.clear(input);
+		label.setError("Username should be at least 5 characters");
 
-		expect(label).toHaveAttribute("error");
+		expect(label).toHaveClass("form-control-error");
+
+		label.clearError();
+
+		expect(label).not.toHaveClass("form-control-error");
 	},
 };

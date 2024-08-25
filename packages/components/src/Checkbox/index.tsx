@@ -1,8 +1,15 @@
 import type { SeqflowFunctionContext } from "seqflow-js";
 
 export interface CheckboxPropsType {
-	color?: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'info' | 'error'
-	size?: 'lg' | 'md' | 'sm' | 'xs'
+	color?:
+		| "primary"
+		| "secondary"
+		| "accent"
+		| "success"
+		| "warning"
+		| "info"
+		| "error";
+	size?: "lg" | "md" | "sm" | "xs";
 	disabled?: boolean;
 	defaultChecked?: boolean;
 	name?: string;
@@ -21,25 +28,25 @@ export async function Checkbox(
 		// checkbox-warning
 		// checkbox-info
 		// checkbox-error
-		classNames.push(`checkbox-${color}`)
+		classNames.push(`checkbox-${color}`);
 	}
 	if (size) {
 		// checkbox-lg
 		// checkbox-md
 		// checkbox-sm
 		// checkbox-xs
-		classNames.push(`checkbox-${size}`)
+		classNames.push(`checkbox-${size}`);
 	}
-	this._el.classList.add(...classNames)
+	this._el.classList.add(...classNames);
 
-	const el = this._el as HTMLInputElement
-	el.type = 'checkbox'
+	const el = this._el as HTMLInputElement;
+	el.type = "checkbox";
 	if (disabled !== undefined) {
-		el.disabled = disabled
+		el.disabled = disabled;
 	}
 	if (defaultChecked !== undefined) {
-		el.defaultChecked = defaultChecked
-		el.checked = defaultChecked
+		el.defaultChecked = defaultChecked;
+		el.checked = defaultChecked;
 	}
 	if (name !== undefined) {
 		el.name = name;

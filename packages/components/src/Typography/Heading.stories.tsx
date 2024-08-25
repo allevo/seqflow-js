@@ -2,7 +2,10 @@ import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
 import { Heading, type HeadingProps, Prose } from ".";
 
-async function HeadingStory(this: SeqflowFunctionContext, { title, level }: HeadingProps) {
+async function HeadingStory(
+	this: SeqflowFunctionContext,
+	{ title, level }: HeadingProps,
+) {
 	this.renderSync(
 		<Prose wrapperClass="m-auto">
 			<Heading level={level} title={title} />
@@ -21,7 +24,7 @@ export default {
 	},
 };
 
-export const Empty = {}
+export const Empty = {};
 
 export const AllHeading: StoryFn<unknown> = async function (
 	this: SeqflowFunctionContext,

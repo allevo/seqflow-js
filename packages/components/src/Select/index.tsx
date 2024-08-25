@@ -18,7 +18,14 @@ export interface SelectPropsType {
 
 export async function Select(
 	this: SeqflowFunctionContext,
-	{ size, bordered, color, children, name, disabled }: SeqflowFunctionData<SelectPropsType>,
+	{
+		size,
+		bordered,
+		color,
+		children,
+		name,
+		disabled,
+	}: SeqflowFunctionData<SelectPropsType>,
 ) {
 	const classes = ["select"];
 	if (bordered === true) {
@@ -45,10 +52,10 @@ export async function Select(
 	this._el.classList.add(...classes);
 
 	if (name) {
-		this._el.setAttribute('name', name)
+		this._el.setAttribute("name", name);
 	}
 	if (disabled === true) {
-		this._el.setAttribute('disabled', '')
+		this._el.setAttribute("disabled", "");
 	}
 
 	if (!children) {

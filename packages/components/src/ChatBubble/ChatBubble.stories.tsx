@@ -2,7 +2,10 @@ import type { SeqflowFunctionContext } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
 import { type BubbleProps, ChatBubble, type ChatBubbleProps } from ".";
 
-async function ChatBubbleStory(this: SeqflowFunctionContext, props: ChatBubbleProps) {
+async function ChatBubbleStory(
+	this: SeqflowFunctionContext,
+	props: ChatBubbleProps,
+) {
 	this.renderSync(
 		<>
 			<ChatBubble {...props}>
@@ -30,7 +33,7 @@ export default {
 	},
 };
 
-export const Empty = {}
+export const Empty = {};
 
 export const AllColors: StoryFn<unknown> = async function (
 	this: SeqflowFunctionContext,

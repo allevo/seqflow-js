@@ -1,0 +1,6 @@
+
+.form-control.form-control-error {
+    input {
+        @apply input-error;
+    }
+}

@@ -16,12 +16,20 @@ export interface TextInputPropsType {
 	disabled?: boolean;
 	initialValue?: string;
 	name?: string;
-	type?: 'text' | 'password';
+	type?: "text" | "password";
 }
 
 export async function TextInput(
 	this: SeqflowFunctionContext,
-	{ name, placeholder, withBorder, color, disabled, initialValue, type }: TextInputPropsType,
+	{
+		name,
+		placeholder,
+		withBorder,
+		color,
+		disabled,
+		initialValue,
+		type,
+	}: TextInputPropsType,
 ) {
 	const classNames = ["input"];
 	if (withBorder === true) {

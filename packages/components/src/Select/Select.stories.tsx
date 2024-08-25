@@ -1,7 +1,10 @@
 import type { SeqflowFunctionContext } from "seqflow-js";
 import { Select, type SelectPropsType } from ".";
 
-async function SelectStory(this: SeqflowFunctionContext, props: SelectPropsType) {
+async function SelectStory(
+	this: SeqflowFunctionContext,
+	props: SelectPropsType,
+) {
 	this.renderSync(
 		<Select {...props}>
 			<option selected>Option 1</option>
@@ -20,7 +23,7 @@ export default {
 	component: SelectStory,
 	args: {
 		bordered: true,
-	}
+	},
 };
 
 export const Empty = {};

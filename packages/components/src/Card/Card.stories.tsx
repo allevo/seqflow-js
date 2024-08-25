@@ -1,11 +1,11 @@
 import type { SeqflowFunctionContext } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
-import { Card, Body, type CardProps } from ".";
+import { Body, Card, type CardProps } from ".";
 import { Button } from "../Button";
 
 async function CardStory(this: SeqflowFunctionContext, props: CardProps) {
 	this.renderSync(
-		<Card {...props} wrapperClass={'w-96 m-auto'}>
+		<Card {...props} wrapperClass={"w-96 m-auto"}>
 			<Body>
 				<Card.Title level={1}>Card title</Card.Title>
 				<p>The content of the Card</p>
@@ -53,7 +53,7 @@ export const ActionOnTop: StoryFn<unknown> = async function (
 	this.renderSync(
 		<Card shadow="md">
 			<Card.Body>
-				<Card.Actions >
+				<Card.Actions>
 					<Button size="sm">X</Button>
 				</Card.Actions>
 				<Card.Title level={1}>Card title</Card.Title>

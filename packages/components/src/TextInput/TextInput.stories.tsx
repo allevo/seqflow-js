@@ -9,8 +9,8 @@ export default {
 	component: TextInput,
 	args: {
 		withBorder: true,
-		placeholder: 'a placeholder',
-	}
+		placeholder: "a placeholder",
+	},
 };
 
 export const Typing: StoryFn<unknown> = {
