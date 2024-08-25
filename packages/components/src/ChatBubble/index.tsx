@@ -1,14 +1,16 @@
-import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
-interface InnerChatBubbleProps {
+export interface ChatBubbleProps {
 	spot: "start" | "end";
 }
 
-export async function InnerChatBubble(
+export async function ChatBubble(
 	this: SeqflowFunctionContext,
-	{ children, spot }: SeqflowFunctionData<InnerChatBubbleProps>,
+	{ children, spot }: SeqflowFunctionData<ChatBubbleProps>,
 ) {
 	const classes = ["chat"];
+	// chat-start
+	// chat-end
 	classes.push(`chat-${spot}`);
 	for (const c of classes) {
 		this._el.classList.add(c);
@@ -41,6 +43,13 @@ async function Bubble(
 ) {
 	this._el.classList.add("chat-bubble");
 	if (color) {
+		// chat-bubble-primary
+		// chat-bubble-secondary
+		// chat-bubble-accent
+		// chat-bubble-info
+		// chat-bubble-success
+		// chat-bubble-warning
+		// chat-bubble-error
 		this._el.classList.add(`chat-bubble-${color}`);
 	}
 
@@ -52,7 +61,4 @@ async function Bubble(
 	}
 	this.renderSync(children);
 }
-
-export const ChatBubble = Object.assign(InnerChatBubble, {
-	Bubble: Bubble,
-});
+ChatBubble.Bubble = Bubble;

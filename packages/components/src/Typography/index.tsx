@@ -1,11 +1,17 @@
-import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
 export async function Prose(
 	this: SeqflowFunctionContext,
 	{ children }: SeqflowFunctionData<unknown>,
 ) {
 	this._el.classList.add("prose");
-	this.renderSync(children!);
+	if (!children) {
+		this.app.log.error({
+			message: "Prose component requires children",
+		});
+		return
+	}
+	this.renderSync(children);
 }
 
 export interface HeadingProps {

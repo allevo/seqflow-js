@@ -77,7 +77,7 @@ export interface SeqflowFunctionContext {
 	 * @returns
 	 */
 	domEvent: <K extends keyof HTMLElementEventMap>(
-		eventType: K,
+		eventType: K | (string & {}),
 		options:
 			| {
 					el: HTMLElement;
@@ -133,7 +133,7 @@ export interface SeqflowFunctionContext {
 		tagName: string | SeqflowFunction<unknown>,
 		options?: { [key: string]: string },
 		...children: HTMLElement[]
-	): Node;
+	): HTMLElement | DocumentFragment;
 	/**
 	 * Create a DOM Fragment element. It is used internally by the framework.
 	 */
@@ -308,7 +308,7 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 		},
 		domEvent<K extends keyof HTMLElementEventMap>(
 			this: SeqflowFunctionContext,
-			eventType: K,
+			eventType: K | (string & {}),
 			options:
 				| {
 						el: HTMLElement;
@@ -402,7 +402,7 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 			tagName: string | SeqflowFunction<unknown>,
 			options?: { [key: string]: unknown },
 			...children: HTMLElement[]
-		): Node {
+		): HTMLElement | DocumentFragment {
 			this.app.log.debug({
 				message: "createDOMElement",
 				data: { tagName, options, children },
@@ -442,6 +442,24 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 						el.addEventListener("click", options[key] as EventListener, {
 							signal: elAbortController.signal,
 						});
+						continue;
+					}
+					if (key === "style") {
+						const style = options[key] as string | Partial<CSSStyleDeclaration>;
+						if (typeof style === "string") {
+							el.setAttribute("style", style);
+						} else {
+							for (const styleKey in style) {
+								const value = style[styleKey];
+								if (value) {
+									el.style[styleKey] = value;
+								}
+							}
+						}
+						continue;
+					}
+					if (key === "id") {
+						el.id = options[key] as string;
 						continue;
 					}
 					if (key === "style") {
@@ -522,6 +540,24 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 			}
 
 			const wrapper = document.createElement(wrapperTagName);
+
+			if (opt.id) {
+				wrapper.id = opt.id as string;
+			}
+			if (opt.style) {
+				const style = opt.style as string | Partial<CSSStyleDeclaration>;
+				if (typeof style === "string") {
+					wrapper.setAttribute("style", style);
+				} else {
+					for (const styleKey in style) {
+						const value = style[styleKey];
+						if (value) {
+							wrapper.style[styleKey] = value;
+						}
+					}
+				}
+			}
+
 			componentChildren.push({
 				key: opt.key as string,
 				el: wrapper,
@@ -675,7 +711,7 @@ export function start<
 			tagName: string,
 			options?: { [key: string]: string },
 			...children: HTMLElement[]
-		): Node {
+		): HTMLElement | DocumentFragment {
 			const el = document.createElement(tagName);
 			for (const key in options) {
 				el.setAttribute(key, options[key]);
@@ -784,7 +820,7 @@ function createDomains(
 	};
 }
 
-type ChildrenType = string | HTMLElement | HTMLElement[];
+export type ChildrenType = string | HTMLElement | HTMLElement[];
 
 declare global {
 	namespace JSX {
@@ -832,9 +868,11 @@ declare global {
 		interface IntrinsicElements extends IntrinsicEl {}
 
 		interface IntrinsicAttributes {
+			id?: string;
 			key?: string;
 			onClick?: (ev: MouseEvent) => void;
 			wrapperClass?: string | string[];
+			style?: Partial<CSSStyleDeclaration> | string;
 		}
 	}
 }

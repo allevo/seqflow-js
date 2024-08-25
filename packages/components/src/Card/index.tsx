@@ -1,12 +1,12 @@
-import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
-interface CardProps {
+export interface CardProps {
 	compact?: boolean;
 	side?: boolean;
 	shadow?: "sm" | "md" | "lg" | "xl" | "2xl";
 }
 
-async function InnerCard(
+export async function Card(
 	this: SeqflowFunctionContext,
 	{ children, compact, side, shadow }: SeqflowFunctionData<CardProps>,
 ) {
@@ -18,11 +18,15 @@ async function InnerCard(
 		classes.push("card-side");
 	}
 	if (shadow) {
+		// shadow-sm
+		// shadow-md
+		// shadow-lg
+		// shadow-xl
+		// shadow-2xl
 		classes.push(`shadow-${shadow}`);
 	}
-	for (const c of classes) {
-		this._el.classList.add(c);
-	}
+	this._el.classList.add(...classes);
+
 	if (!children) {
 		this.app.log.error({
 			message: "Card component requires children",
@@ -85,7 +89,10 @@ export async function Actions(
 	this.renderSync(children);
 }
 
-export const Card = Object.assign(InnerCard, {
+Card.Body = Body;
+Card.Title = Title;
+Card.Actions = Actions;
+Object.assign(Card, {
 	Body,
 	Title,
 	Actions,

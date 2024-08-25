@@ -3,7 +3,7 @@ import type { DomainEvent } from "./index";
 import type { NavigationEvent } from "./router";
 
 export function domEvent<K extends keyof HTMLElementEventMap>(
-	eventType: K,
+	eventType: K | (string & {}),
 	options: {
 		el: HTMLElement;
 		preventDefault: boolean;

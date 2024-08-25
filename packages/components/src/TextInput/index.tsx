@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 
 export interface TextInputPropsType {
 	placeholder?: string;
@@ -16,25 +16,37 @@ export interface TextInputPropsType {
 	disabled?: boolean;
 	initialValue?: string;
 	name?: string;
+	type?: 'text' | 'password';
 }
 
 export async function TextInput(
 	this: SeqflowFunctionContext,
-	{ name, placeholder, withBorder, color, disabled, initialValue }: TextInputPropsType,
+	{ name, placeholder, withBorder, color, disabled, initialValue, type }: TextInputPropsType,
 ) {
 	const classNames = ["input"];
-	if (withBorder !== false) {
+	if (withBorder === true) {
 		classNames.push("input-bordered");
 	}
 	if (color && color !== "normal") {
+		// input-primary
+		// input-secondary
+		// input-accent
+		// input-info
+		// input-success
+		// input-warning
+		// input-error
+		// input-ghost
 		classNames.push(`input-${color}`);
 	}
-	for (const c of classNames) {
-		this._el.classList.add(c);
-	}
+	this._el.classList.add(...classNames);
+
 	const el = this._el as HTMLInputElement;
-	el.type = "text";
-	el.disabled = disabled ? true : false;
+	if (type) {
+		el.type = type;
+	} else {
+		el.type = "text";
+	}
+	el.disabled = Boolean(disabled);
 	if (placeholder) {
 		el.placeholder = placeholder;
 	}

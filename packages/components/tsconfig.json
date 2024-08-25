@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "target": "es2020",
-        "lib": ["es2015", "dom"],
+        "target": "es2022",
+        "lib": ["es2022", "dom"],
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "strict": true,
@@ -9,12 +9,13 @@
         "jsxFactory": "this.createDOMElement",
         "jsxFragmentFactory": "this.createDOMFragment",
         "forceConsistentCasingInFileNames": true,
-        "module": "es2020",
+        "module": "es2022",
         "moduleResolution": "Node",
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-        "declaration":true
+        "declaration":true,
+        "types": ["seqflow-js"]
     },
     "include": ["./src/**/*", "./src/**/*.stories.tsx", "./tests/**/*"]
 }

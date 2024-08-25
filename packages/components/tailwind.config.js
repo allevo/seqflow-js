@@ -2,21 +2,14 @@
 export default {
   content: [
     './src/**/*.{js,jsx,ts,tsx,css}',
+    './src/**/*.stories.{tsx}',
     './.storybook/**/*.{js,jsx,ts,tsx,mdx}',
     './stories/**/*.{js,jsx,ts,tsx,mdx}',
-    './src/Button/Button.stories.tsx'
   ],
 
   theme: {
     extend: {},
   },
-  // TODO: remove this safelist
-  // it should be automatically detected, but it is not
-  safelist: [
-    {
-      pattern: /(btn|input|bg|w-full|grid|card|shadow|center|divider|loading|chat|select|checkbox)/,
-    }
-  ],
   daisyui: {
     styled: true,
     themes: false,

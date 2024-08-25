@@ -4,38 +4,66 @@ import { readFileSync } from "node:fs";
 import t from "node:test";
 import assert from "node:assert";
 
-t.test("Enum", () => {
+t.test("Normal", () => {
   const { config: tsConfig } = ts.readConfigFile("./tsconfig.json", (p) =>
     readFileSync(p, "utf8")
   );
 
-  const componentPath = "./tests/fixtures/Enum.ts";
+  const componentPath = "./tests/fixtures/Normal.ts";
   const output = foo(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
-      componentName: "Enum",
+      componentName: "Normal",
       fields: {
-        booleans: {
-          description: undefined,
-          name: "booleans",
+        label: {
+          name: "label",
+          description: 'The text',
           type: {
-            name: "boolean",
-            required: false,
+            name: "string",
+            required: true,
           },
+          control: { type: 'text' },
+          options: undefined,
         },
-        numbers: {
-          control: {
-            type: "select",
-          },
-          description: undefined,
-          name: "numbers",
-          options: [1, 2, 3, 4],
+        size: {
+          name: "size",
+          description: 'size in pixel',
           type: {
             name: "number",
-            required: false,
+            required: true,
           },
+          control: { type: 'number' },
+          options: undefined,
         },
+        active: {
+          name: "active",
+          description: 'is active?',
+          type: {
+            name: "boolean",
+            required: true,
+          },
+          control: { type: "boolean" },
+          options: undefined,
+        },
+      },
+    }],
+    output
+  );
+});
+
+t.test("SimpleEnum", () => {
+  const { config: tsConfig } = ts.readConfigFile("./tsconfig.json", (p) =>
+    readFileSync(p, "utf8")
+  );
+
+  const componentPath = "./tests/fixtures/SimpleEnum.ts";
+  const output = foo(componentPath, tsConfig);
+
+  assert.deepStrictEqual(
+    [{
+      componentName: "SimpleEnum",
+      fields: {
         strings: {
           control: {
             type: "select",
@@ -61,6 +89,66 @@ t.test("Enum", () => {
   );
 });
 
+t.test("Enum", () => {
+  const { config: tsConfig } = ts.readConfigFile("./tsconfig.json", (p) =>
+    readFileSync(p, "utf8")
+  );
+
+  const componentPath = "./tests/fixtures/Enum.ts";
+  const output = foo(componentPath, tsConfig);
+
+  assert.deepStrictEqual(
+    [{
+      componentName: "Enum",
+      fields: {
+        booleans: {
+          name: "booleans",
+          description: undefined,
+          type: {
+            name: "boolean",
+            required: false,
+          },
+          control: { type: 'boolean' },
+          options: undefined,
+        },
+        numbers: {
+          name: "numbers",
+          description: undefined,
+          type: {
+            name: "number",
+            required: false,
+          },
+          control: {
+            type: "select",
+          },
+          options: ['1', '2', '3', '4'],
+          
+        },
+        strings: {
+          name: "strings",
+          description: undefined,
+          type: {
+            name: "string",
+            required: false,
+          },
+          control: {
+            type: "select",
+          },
+          options: [
+            "neutral",
+            "primary",
+            "secondary",
+            "accent",
+            "ghost",
+            "link",
+          ],
+        },
+      },
+    }],
+    output
+  );
+});
+
 t.test("ExportDefault", () => {
   const { config: tsConfig } = ts.readConfigFile("./tsconfig.json", (p) =>
     readFileSync(p, "utf8")
@@ -74,12 +162,14 @@ t.test("ExportDefault", () => {
       componentName: "ExportDefault",
       fields: {
         name: {
-          description: undefined,
           name: "name",
+          description: undefined,
           type: {
             name: "string",
             required: true,
           },
+          control: { type: 'text' },
+          options: undefined,
         },
       },
     }],
@@ -100,24 +190,28 @@ t.test("MultipleExports", () => {
       componentName: "Export1",
       fields: {
         name: {
-          description: undefined,
           name: "name",
+          description: undefined,
           type: {
             name: "string",
             required: true,
           },
+          control: { type: 'text' },
+          options: undefined
         },
       },
     }, {
       componentName: "Export2",
       fields: {
         title: {
-          description: undefined,
           name: "title",
+          description: undefined,
           type: {
             name: "string",
             required: true,
           },
+          control: { type: 'text' },
+          options: undefined
         },
       },
     }],
@@ -125,25 +219,60 @@ t.test("MultipleExports", () => {
   );
 });
 
-t.test("EnumOutside", { skip: true }, () => {
+t.test("EnumOutsidePropertyAccessPropsType", { skip: false }, () => {
   const { config: tsConfig } = ts.readConfigFile("./tsconfig.json", (p) =>
     readFileSync(p, "utf8")
   );
 
-  const componentPath = "./tests/fixtures/EnumOutside.ts";
+  const componentPath = "./tests/fixtures/EnumOutsidePropertyAccessPropsType.ts";
   const output = foo(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
-      componentName: "Export1",
+      componentName: "EnumOutsidePropertyAccess",
       fields: {
-        name: {
+        strings: {
+          name: "strings",
           description: undefined,
-          name: "name",
           type: {
             name: "string",
-            required: true,
+            required: false,
           },
+          control: {
+            type: "select",
+          },
+          options: [
+            "neutral",
+            "primary",
+            "secondary",
+            "accent",
+            "ghost",
+            "link",
+          ],
+        },
+        numbers: {
+          name: "numbers",
+          description: undefined,
+          type: {
+            name: "number",
+            required: false,
+          },
+          control: {
+            type: "select",
+          },
+          options: ['1', '2', '3', '4'],
+        },
+        booleans: {
+          name: "booleans",
+          description: undefined,
+          type: {
+            name: "boolean",
+            required: false,
+          },
+          control: {
+            type: "boolean",
+          },
+          options: undefined,
         },
       },
     }],
@@ -170,13 +299,19 @@ t.test("Button", () => {
             name: "boolean",
             required: false,
           },
+          control: { type: 'boolean' },
+          options: undefined,
         },
         color: {
+          name: "color",
+          description: "color",
+          type: {
+            name: "string",
+            required: false,
+          },
           control: {
             type: "select",
           },
-          description: "color",
-          name: "color",
           options: [
             "neutral",
             "primary",
@@ -185,82 +320,234 @@ t.test("Button", () => {
             "ghost",
             "link",
           ],
-          type: {
-            name: "string",
-            required: false,
-          },
+          
         },
         disabled: {
-          description: undefined,
           name: "disabled",
+          description: undefined,
           type: {
             name: "boolean",
             required: false,
           },
+          control: { type: 'boolean' },
+          options: undefined,
         },
         glass: {
-          description: undefined,
           name: "glass",
+          description: undefined,
           type: {
             name: "boolean",
             required: false,
           },
+          control: { type: 'boolean' },
+          options: undefined,
         },
         label: {
-          description: "The text",
           name: "label",
+          description: "The text",
           type: {
             name: "string",
             required: true,
           },
+          control: { type: 'text' },
+          options: undefined,
         },
         loading: {
-          description: undefined,
           name: "loading",
+          description: undefined,
           type: {
             name: "boolean",
             required: false,
           },
+          control: { type: 'boolean' },
+          options: undefined,
         },
         outline: {
-          description: undefined,
           name: "outline",
+          description: undefined,
           type: {
             name: "boolean",
             required: false,
           },
+          control: { type: 'boolean' },
+          options: undefined,
         },
         size: {
-          control: {
-            type: "select",
-          },
-          description: undefined,
           name: "size",
-          options: ["lg", "normal", "sm", "xs"],
+          description: undefined,
           type: {
             name: "string",
             required: false,
           },
+          control: {
+            type: "select",
+          },
+          options: ["lg", "normal", "sm", "xs"],
         },
         state: {
-          control: {
-            type: "select",
-          },
-          description: undefined,
           name: "state",
-          options: ["info", "success", "warning", "error"],
+          description: undefined,
           type: {
             name: "string",
             required: false,
           },
+          control: {
+            type: "select",
+          },
+          options: ["info", "success", "warning", "error"],
+          
         },
         wide: {
-          description: undefined,
           name: "wide",
+          description: undefined,
           type: {
             name: "boolean",
             required: false,
           },
+          control: { type: 'boolean' },
+          options: undefined,
+        },
+      },
+    }],
+    output
+  );
+});
+
+t.test("OrSimple", () => {
+  const { config: tsConfig } = ts.readConfigFile("./tsconfig.json", (p) =>
+    readFileSync(p, "utf8")
+  );
+
+  const componentPath = "./tests/fixtures/OrSimple.ts";
+  const output = foo(componentPath, tsConfig);
+
+  assert.deepStrictEqual(
+    [{
+      componentName: "Or",
+      fields: {
+        label: {
+          name: 'label',
+          description: 'the label',
+          type: {
+            name: 'union',
+            required: true,
+            value: [
+              {
+                name: 'string'
+              },
+              {
+                name: 'number'
+              },
+              {
+                name: 'boolean'
+              }
+            ]
+          },
+          control: undefined,
+          options: undefined
+        }
+      },
+    }],
+    output
+  );
+});
+
+t.test("Or2", () => {
+  const { config: tsConfig } = ts.readConfigFile("./tsconfig.json", (p) =>
+    readFileSync(p, "utf8")
+  );
+
+  const componentPath = "./tests/fixtures/Or2.ts";
+  const output = foo(componentPath, tsConfig);
+
+  assert.deepStrictEqual(
+    [{
+      componentName: "Or2",
+      fields: {
+        label: {
+          description: 'the label',
+          name: 'label',
+          type: {
+            name: 'union',
+            required: true,
+            value: [
+              {
+                name: 'string'
+              },
+              {
+                name: 'other',
+                value: 'JSX.Element'
+              }
+            ]
+          },
+          control: undefined,
+          options: undefined
+        }
+      },
+    }],
+    output
+  );
+});
+
+t.test("FormField", () => {
+  const { config: tsConfig } = ts.readConfigFile("./tsconfig.json", (p) =>
+    readFileSync(p, "utf8")
+  );
+
+  const componentPath = "./tests/fixtures/formField.ts";
+  const output = foo(componentPath, tsConfig);
+
+  assert.deepStrictEqual(
+    [{
+      componentName: "FormField",
+      fields: {
+        label: {
+          name: 'label',
+          description: undefined,
+          type: {
+            name: 'union',
+            required: true,
+            value: [
+              {
+                name: 'string'
+              },
+              {
+                name: 'other',
+                value: 'JSX.Element'
+              }
+            ]
+          },
+          control: undefined,
+          options: undefined
+        },
+        errorMessage: {
+          name: 'errorMessage',
+          description: undefined,
+          type: {
+            name: 'union',
+            required: false,
+            value: [
+              {
+                name: 'string'
+              },
+              {
+                name: 'other',
+                value: 'JSX.Element'
+              }
+            ]
+          },
+          control: undefined,
+          options: undefined,
+        },
+        size: {
+          name: 'size',
+          description: undefined,
+          type: {
+            name: 'number',
+            required: true,
+          },
+          control: { type: 'number' },
+          options: undefined,
         },
       },
     }],

@@ -1,6 +1,6 @@
 import { screen, waitFor } from "@testing-library/dom";
 import { expect, test } from "vitest";
-import { type Log, type SeqflowFunctionContext, start } from "../src/index";
+import { type SeqflowFunctionContext, type SeqflowFunctionData, start } from "../src/index";
 
 test("render simple button", async () => {
 	async function App(this: SeqflowFunctionContext, data: { text: string }) {
@@ -99,7 +99,7 @@ test("render a indirect nested component button with jsx", async () => {
 });
 
 test("render a component with children", async () => {
-	async function MyDiv(this: SeqflowFunctionContext, { children }: JSX.ARG) {
+	async function MyDiv(this: SeqflowFunctionContext, { children }: SeqflowFunctionData<unknown>) {
 		this.renderSync(<div>{children}</div>);
 	}
 	async function App(this: SeqflowFunctionContext) {
@@ -223,7 +223,7 @@ test("getChild", async () => {
 test("render children", async () => {
 	async function Foo(
 		this: SeqflowFunctionContext,
-		{ children }: JSX.ARG<object>,
+		{ children }: SeqflowFunctionData<unknown>,
 	) {
 		// biome-ignore lint/style/noNonNullAssertion: it is a test
 		this.renderSync(children!);
@@ -236,7 +236,7 @@ test("render children", async () => {
 		);
 	}
 	start(document.body, App, undefined, {
-		log: console,
+		// log: console,
 	});
 
 	await new Promise((resolve) => setTimeout(resolve, 100));

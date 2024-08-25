@@ -1,12 +1,16 @@
 import { expect, userEvent, within } from "@storybook/test";
 
-import { StoryFn } from "seqflow-js-storybook";
+import type { StoryFn } from "seqflow-js-storybook";
 import { TextInput } from ".";
 
 export default {
 	title: "Example/TextInput",
 	tags: ["autodocs"],
 	component: TextInput,
+	args: {
+		withBorder: true,
+		placeholder: 'a placeholder',
+	}
 };
 
 export const Typing: StoryFn<unknown> = {

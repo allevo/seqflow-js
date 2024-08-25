@@ -1,25 +1,32 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
-import { Card } from ".";
+import { Card, Body, type CardProps } from ".";
 import { Button } from "../Button";
+
+async function CardStory(this: SeqflowFunctionContext, props: CardProps) {
+	this.renderSync(
+		<Card {...props} wrapperClass={'w-96 m-auto'}>
+			<Body>
+				<Card.Title level={1}>Card title</Card.Title>
+				<p>The content of the Card</p>
+				<Card.Actions>
+					<Button color="primary">Do something</Button>
+				</Card.Actions>
+			</Body>
+		</Card>,
+	);
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: storybook
+CardStory.__storybook = (Card as any).__storybook;
 
 export default {
 	title: "Example/Card",
 	tags: ["autodocs"],
-	component: async function (this: SeqflowFunctionContext) {
-		this.renderSync(
-			<Card>
-				<Card.Body>
-					<Card.Title>Card title</Card.Title>
-					<p>The content of the Card</p>
-					<Card.Actions>
-						<Button color="primary" label="do something" />
-					</Card.Actions>
-				</Card.Body>
-			</Card>,
-		);
+	component: CardStory,
+	args: {
+		shadow: "md",
 	},
-	args: {},
 };
 
 export const Empty = {};
@@ -28,14 +35,14 @@ export const Centered: StoryFn<unknown> = async function (
 	this: SeqflowFunctionContext,
 ) {
 	this.renderSync(
-		<Card>
-			<Card.Body wrapperClass="items-center text-center">
-				<Card.Title>Card title</Card.Title>
+		<Card shadow="md">
+			<Body wrapperClass="items-center text-center">
+				<Card.Title level={1}>Card title</Card.Title>
 				<p>The content of the Card</p>
 				<Card.Actions>
-					<Button color="primary" label="do something" />
+					<Button color="primary">Do something</Button>
 				</Card.Actions>
-			</Card.Body>
+			</Body>
 		</Card>,
 	);
 };
@@ -44,12 +51,12 @@ export const ActionOnTop: StoryFn<unknown> = async function (
 	this: SeqflowFunctionContext,
 ) {
 	this.renderSync(
-		<Card>
+		<Card shadow="md">
 			<Card.Body>
-				<Card.Actions>
-					<Button label="X" />
+				<Card.Actions >
+					<Button size="sm">X</Button>
 				</Card.Actions>
-				<Card.Title>Card title</Card.Title>
+				<Card.Title level={1}>Card title</Card.Title>
 				<p>The content of the Card</p>
 			</Card.Body>
 		</Card>,

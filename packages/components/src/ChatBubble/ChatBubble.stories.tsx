@@ -1,29 +1,36 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
-import { BubbleProps, ChatBubble } from ".";
-import { Button } from "../Button";
+import { type BubbleProps, ChatBubble, type ChatBubbleProps } from ".";
+
+async function ChatBubbleStory(this: SeqflowFunctionContext, props: ChatBubbleProps) {
+	this.renderSync(
+		<>
+			<ChatBubble {...props}>
+				<ChatBubble.Bubble>
+					<p>It's over Anakin,I have the high ground.</p>
+				</ChatBubble.Bubble>
+			</ChatBubble>
+			<ChatBubble {...props} spot="end">
+				<ChatBubble.Bubble>
+					<p>You underestimate my power!</p>
+				</ChatBubble.Bubble>
+			</ChatBubble>
+		</>,
+	);
+}
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+ChatBubbleStory.__storybook = (ChatBubble as any).__storybook;
 
 export default {
 	title: "Example/ChatBubble",
 	tags: ["autodocs"],
-	component: async function (this: SeqflowFunctionContext) {
-		this.renderSync(
-			<>
-				<ChatBubble spot="start">
-					<ChatBubble.Bubble>
-						<p>It's over Anakin,I have the high ground.</p>
-					</ChatBubble.Bubble>
-				</ChatBubble>
-				<ChatBubble spot="end">
-					<ChatBubble.Bubble>
-						<p>You underestimate my power!</p>
-					</ChatBubble.Bubble>
-				</ChatBubble>
-			</>,
-		);
+	component: ChatBubbleStory,
+	args: {
+		spot: "start",
 	},
-	args: {},
 };
+
+export const Empty = {}
 
 export const AllColors: StoryFn<unknown> = async function (
 	this: SeqflowFunctionContext,

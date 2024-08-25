@@ -1,6 +1,6 @@
 import { expect, userEvent, within } from "@storybook/test";
 
-import { StoryFn } from "seqflow-js-storybook";
+import type { StoryFn } from "seqflow-js-storybook";
 import { NumberInput } from ".";
 
 export default {
@@ -10,6 +10,8 @@ export default {
 	args: {
 		placeholder: "Type a number",
 		name: "number",
+		withBorder: true,
+		color: 'normal',
 	},
 };
 

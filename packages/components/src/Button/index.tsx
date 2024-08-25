@@ -1,4 +1,4 @@
-import { SeqflowFunction, SeqflowFunctionContext } from "seqflow-js";
+import type { ChildrenType, SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
 export type ButtonComponent = HTMLElement & {
 	transition: (state: {
@@ -9,13 +9,10 @@ export type ButtonComponent = HTMLElement & {
 };
 
 export interface ButtonPropsType {
-	/** The text */
-	label: string;
 	/** color */
-	color?: "neutral" | "primary" | "secondary" | "accent" | "ghost" | "link";
+	color?: "neutral" | "primary" | "secondary" | "accent" | "ghost" | "link" | "info" | "success" | "warning" | "error";
 	/** is active? */
 	active?: boolean;
-	state?: "info" | "success" | "warning" | "error";
 	outline?: boolean;
 	size?: "lg" | "normal" | "sm" | "xs";
 	wide?: boolean;
@@ -33,10 +30,8 @@ export interface ButtonPropsType {
 export async function Button(
 	this: SeqflowFunctionContext,
 	{
-		label,
 		color,
 		active,
-		state,
 		outline,
 		size,
 		wide,
@@ -44,10 +39,22 @@ export async function Button(
 		disabled,
 		loading,
 		type,
-	}: ButtonPropsType,
+		children,
+	}: SeqflowFunctionData<ButtonPropsType>,
 ) {
 	const classNames = ["btn"];
 	if (color) {
+		/*
+		btn-primary
+		btn-secondary
+		btn-accent
+		btn-ghost
+		btn-link
+		btn-info
+		btn-success
+		btn-warning
+		btn-error
+		*/
 		classNames.push(`btn-${color}`);
 	}
 	if (active) {
@@ -57,6 +64,11 @@ export async function Button(
 		classNames.push("btn-outline");
 	}
 	if (size && size !== "normal") {
+		/*
+		btn-lg
+		btn-sm
+		btn-xs
+		*/
 		classNames.push(`btn-${size}`);
 	}
 	if (wide) {
@@ -65,12 +77,6 @@ export async function Button(
 	if (glass) {
 		classNames.push("glass");
 	}
-	if (disabled) {
-		classNames.push("btn-disabled");
-	}
-	if (state) {
-		classNames.push(`btn-${state}`);
-	}
 
 	const el = this._el as ButtonComponent;
 	el.classList.add(...classNames);
@@ -78,6 +84,15 @@ export async function Button(
 
 	const loaderStyle = loading ? { display: "inherit" } : { display: "none" };
 
+	if (Array.isArray(children)) {
+		children = children.map(c => {
+			if (typeof c === "string") {
+				return <span>{c}</span>;
+			}
+			return c;
+		})
+	}
+	this._el.setAttribute("aria-live", "polite")
 	this.renderSync(
 		<>
 			<span
@@ -85,7 +100,8 @@ export async function Button(
 				key="loading"
 				style={loaderStyle}
 			/>
-			{label || ""}
+			<span key="loading-text" style={loaderStyle}>Loading...</span>
+			{children}
 		</>,
 	);
 
@@ -93,6 +109,10 @@ export async function Button(
 		el.classList.add("btn-disabled");
 		el.setAttribute("disabled", "disabled");
 	};
+
+	if (disabled) {
+		disable();
+	}
 	const enable = () => {
 		el.classList.remove("btn-disabled");
 		el.removeAttribute("disabled");
@@ -100,13 +120,30 @@ export async function Button(
 	const makeLoading = () => {
 		const loader = this.getChild("loading");
 		loader.style.display = "inherit";
+		const loadingText = this.getChild("loading-text");
+		loadingText.style.display = "inherit";
+		this._el.setAttribute("aria-busy", "true")
 	};
 	const removeLoading = () => {
 		const loader = this.getChild("loading");
 		loader.style.display = "none";
+		const loadingText = this.getChild("loading-text");
+		loadingText.style.display = "none";
+		this._el.removeAttribute("aria-busy")
 	};
 
-	const previousTexts = [label];
+	const previousChildren: HTMLElement[] | undefined = Array.from(this._el.childNodes)
+		.filter((child) => {
+			if (child instanceof Text) {
+				return true
+			}
+			if (!(child instanceof HTMLElement)) {
+				return false
+			}
+			const k = child.getAttribute("key")
+			return k !== "loading" && k !== "loading-text"
+		}) as HTMLElement[];
+
 	el.transition = (state: {
 		disabled?: boolean;
 		loading?: boolean;
@@ -122,14 +159,15 @@ export async function Button(
 		} else if (state.loading === false) {
 			removeLoading();
 		}
-		if (state.replaceText) {
-			const textNode = el.childNodes[1];
-
+		if (state.replaceText && previousChildren) {
 			if (state.replaceText === "__previous__") {
-				textNode.textContent = previousTexts.pop()!;
+				for (const c of previousChildren) {
+					c.style.display = "inherit";
+				}
 			} else {
-				previousTexts.push(el.textContent!);
-				textNode.textContent = state.replaceText;
+				for (const c of previousChildren) {
+					c.style.display = "none";
+				}
 			}
 		}
 	};

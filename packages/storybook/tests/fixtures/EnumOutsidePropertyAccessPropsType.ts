@@ -6,13 +6,13 @@ interface Foo {
 	booleans?: true | false;
 }
 
-export interface EnumOutsidePropsType {
+export interface EnumOutsidePropertyAccessPropsType {
 	strings?: Foo['strings'],
 	numbers?: Foo['numbers'];
 	booleans?: Foo['booleans'];
 }
 
-export async function Enum(
+export async function EnumOutsidePropertyAccess(
 	this: SeqflowFunctionContext,
-	_: EnumOutsidePropsType,
+	_: EnumOutsidePropertyAccessPropsType,
 ) { }

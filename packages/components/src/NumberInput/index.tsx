@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 
 export interface NumberInputPropsType {
 	name: string;
@@ -26,18 +26,24 @@ export async function NumberInput(
 		classNames.push("input-bordered");
 	}
 	if (color && color !== "normal") {
+		// input-primary
+		// input-secondary
+		// input-accent
+		// input-info
+		// input-success
+		// input-warning
+		// input-error
+		// input-ghost
 		classNames.push(`input-${color}`);
 	}
-	for (const c of classNames) {
-		this._el.classList.add(c);
-	}
+	this._el.classList.add(...classNames);
+
 	const el = this._el as HTMLInputElement;
 	el.type = "number";
 	el.name = name;
-	el.disabled = disabled ? true : false;
+	el.disabled = Boolean(disabled);
 	if (placeholder) {
 		el.placeholder = placeholder;
 	}
 }
-
 NumberInput.tagName = () => "input";

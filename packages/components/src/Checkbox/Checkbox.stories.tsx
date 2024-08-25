@@ -1,4 +1,4 @@
-import { StoryFn } from "seqflow-js-storybook";
+import type { StoryFn } from "seqflow-js-storybook";
 import { Checkbox } from ".";
 
 export default {
@@ -6,6 +6,8 @@ export default {
 	tags: ["autodocs"],
 	component: Checkbox,
 };
+
+export const Empty = {}
 
 export const AllColors: StoryFn<unknown> = async function () {
 	this.renderSync(

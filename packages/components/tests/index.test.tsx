@@ -4,7 +4,7 @@ import { Button } from "../src";
 
 test("should increment and decrement the counter", async () => {
 	async function App(this: SeqflowFunctionContext) {
-		this.renderSync(<Button label="Button" />);
+		this.renderSync(<Button>Button</Button>);
 	}
 	start(document.body, App, {}, {});
 
