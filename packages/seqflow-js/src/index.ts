@@ -42,6 +42,20 @@ type GetYieldType<A extends EventAsyncGenerator<unknown>> = Exclude<
 	IteratorReturnResult<unknown>
 >["value"];
 
+export type DomEventOption = {
+	preventDefault?: boolean;
+	stopPropagation?: boolean;
+	stopImmediatePropagation?: boolean;
+	fn?: (ev: Event) => void;
+} & (
+	| {
+			el: HTMLElement;
+	  }
+	| {
+			key: string;
+	  }
+);
+
 export interface SeqflowFunctionContext {
 	/**
 	 * The application context
@@ -78,12 +92,7 @@ export interface SeqflowFunctionContext {
 	 */
 	domEvent: <K extends keyof HTMLElementEventMap>(
 		eventType: K | (string & {}),
-		options:
-			| {
-					el: HTMLElement;
-					preventDefault?: boolean;
-			  }
-			| string,
+		options: DomEventOption,
 	) => EventAsyncGenerator<HTMLElementEventMap[K]>;
 	/**
 	 * Wait for a domain event to happen
@@ -309,24 +318,24 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 		domEvent<K extends keyof HTMLElementEventMap>(
 			this: SeqflowFunctionContext,
 			eventType: K | (string & {}),
-			options:
-				| {
-						el: HTMLElement;
-						preventDefault?: boolean;
-				  }
-				| string,
+			options: DomEventOption,
 		): EventAsyncGenerator<HTMLElementEventMap[K]> {
 			let el: HTMLElement;
 			let preventDefault = false;
-			if (typeof options === "string") {
-				el = this.getChild(options);
-			} else {
+			if ("key" in options) {
+				el = this.getChild(options.key);
+			} else if ("el" in options) {
 				el = options.el;
 				preventDefault = options.preventDefault ?? false;
+			} else {
+				throw new Error("Invalid options");
 			}
 			return domEvent(eventType, {
 				el,
 				preventDefault,
+				stopPropagation: options.stopPropagation,
+				stopImmediatePropagation: options.stopImmediatePropagation,
+				fn: options.fn,
 			});
 		},
 		domainEvent<BEE extends typeof DomainsPackage.DomainEvent<unknown>>(
@@ -390,7 +399,7 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 
 				this.app.log.error({
 					message: "Unsupported child type. Implement me",
-					data: { child, children },
+					data: { child, children, childType: typeof child },
 				});
 				throw new Error("Unsupported child type");
 			}
@@ -506,6 +515,10 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 						continue;
 					}
 
+					if (child === undefined) {
+						continue;
+					}
+
 					this.app.log.error({
 						message: "Unsupported child type. Implement me",
 						data: {
@@ -562,16 +575,14 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 				key: opt.key as string,
 				el: wrapper,
 			});
-			if (opt.wrapperClass) {
-				const wrapperClass: string[] = [];
-				if (Array.isArray(opt.wrapperClass)) {
-					wrapperClass.push(...opt.wrapperClass);
+			if (opt.className) {
+				const className: string[] = [];
+				if (Array.isArray(opt.className)) {
+					className.push(...opt.className);
 				} else {
-					wrapperClass.push(...(opt.wrapperClass as string).split(" "));
+					className.push(...(opt.className as string).split(" "));
 				}
-				for (const c of wrapperClass) {
-					wrapper.classList.add(c);
-				}
+				wrapper.classList.add(...className);
 			}
 
 			if (typeof opt.onClick === "function") {
@@ -871,7 +882,7 @@ declare global {
 			id?: string;
 			key?: string;
 			onClick?: (ev: MouseEvent) => void;
-			wrapperClass?: string | string[];
+			className?: string | string[];
 			style?: Partial<CSSStyleDeclaration> | string;
 		}
 	}

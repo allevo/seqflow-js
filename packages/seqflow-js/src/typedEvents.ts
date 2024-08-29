@@ -7,6 +7,9 @@ export function domEvent<K extends keyof HTMLElementEventMap>(
 	options: {
 		el: HTMLElement;
 		preventDefault: boolean;
+		stopPropagation?: boolean;
+		stopImmediatePropagation?: boolean;
+		fn?: (ev: HTMLElementEventMap[K]) => void;
 	},
 ): EventAsyncGenerator<HTMLElementEventMap[K]> {
 	return yieldEvent(eventType, options);

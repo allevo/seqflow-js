@@ -33,7 +33,7 @@ test("domain event - increment", async () => {
 			</button>,
 		);
 
-		const events = this.waitEvents(this.domEvent("click", "button"));
+		const events = this.waitEvents(this.domEvent("click", { key: "button" }));
 		for await (const _ of events) {
 			pipe.push(new DeltaEvent(delta));
 		}

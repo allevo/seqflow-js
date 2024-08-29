@@ -1,6 +1,10 @@
 import { screen, waitFor } from "@testing-library/dom";
 import { expect, test } from "vitest";
-import { type SeqflowFunctionContext, type SeqflowFunctionData, start } from "../src/index";
+import {
+	type SeqflowFunctionContext,
+	type SeqflowFunctionData,
+	start,
+} from "../src/index";
 
 test("render simple button", async () => {
 	async function App(this: SeqflowFunctionContext, data: { text: string }) {
@@ -99,7 +103,10 @@ test("render a indirect nested component button with jsx", async () => {
 });
 
 test("render a component with children", async () => {
-	async function MyDiv(this: SeqflowFunctionContext, { children }: SeqflowFunctionData<unknown>) {
+	async function MyDiv(
+		this: SeqflowFunctionContext,
+		{ children }: SeqflowFunctionData<unknown>,
+	) {
 		this.renderSync(<div>{children}</div>);
 	}
 	async function App(this: SeqflowFunctionContext) {
@@ -244,4 +251,36 @@ test("render children", async () => {
 	expect(document.body.innerHTML).toBe(
 		'<div><button type="button">increment</button></div>',
 	);
+});
+
+test("render className - string", async () => {
+	async function Foo(this: SeqflowFunctionContext) {
+		this.renderSync("foo");
+	}
+	async function App(this: SeqflowFunctionContext) {
+		this.renderSync(<Foo className={"class1 class2"} />);
+	}
+	start(document.body, App, undefined, {
+		// log: console,
+	});
+
+	await new Promise((resolve) => setTimeout(resolve, 100));
+
+	expect(document.body.innerHTML).toBe('<div class="class1 class2">foo</div>');
+});
+
+test("render className - array", async () => {
+	async function Foo(this: SeqflowFunctionContext) {
+		this.renderSync("foo");
+	}
+	async function App(this: SeqflowFunctionContext) {
+		this.renderSync(<Foo className={["class1", "class2"]} />);
+	}
+	start(document.body, App, undefined, {
+		// log: console,
+	});
+
+	await new Promise((resolve) => setTimeout(resolve, 100));
+
+	expect(document.body.innerHTML).toBe('<div class="class1 class2">foo</div>');
 });
