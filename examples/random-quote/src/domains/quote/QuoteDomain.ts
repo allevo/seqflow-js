@@ -13,6 +13,10 @@ export const NewQuoteFetched = createDomainEventClass<Quote>(
 	"quotes",
 	"new-quote-fetched",
 );
+export const QuoteErrorFetched = createDomainEventClass<string>(
+	"quotes",
+	"quote-error-fetched",
+);
 
 export class QuoteDomain {
 	constructor(
@@ -20,17 +24,21 @@ export class QuoteDomain {
 		private baseUrl: string,
 	) {}
 
-	async fetchNewQuote(): Promise<Quote> {
+	async fetchNewQuote() {
 		this.et.dispatchEvent(new FetchingNewQuote(null));
 
-		const [quote] = await Promise.all([
-			getRandomQuote(this.baseUrl),
-			new Promise((r) => setTimeout(r, 500)),
-		]);
+		let quote: Quote;
+		try {
+			const ret = await Promise.all([
+				getRandomQuote(this.baseUrl),
+				new Promise((r) => setTimeout(r, 500)),
+			]);
+			quote = ret[0];
 
-		this.et.dispatchEvent(new NewQuoteFetched(quote));
-
-		return quote;
+			this.et.dispatchEvent(new NewQuoteFetched(quote));
+		} catch (e) {
+			this.et.dispatchEvent(new QuoteErrorFetched("Failed to fetch quote"));
+		}
 	}
 }
 

@@ -34,25 +34,29 @@ test("should render the quote and refresh it", async () => {
 		},
 		domains: {
 			quotes: (et, _, config) => new QuoteDomain(et, config.api.baseUrl),
-		}
+		},
 	});
 
-	await screen.findByRole('progressbar');
-
-	await screen.findByText(new RegExp(quotes[0].content, "i"));
-	await screen.findByText(new RegExp(quotes[0].author, "i"));
+	await screen.findByText('Click the button to read a quote');
 
 	const button = await screen.findByRole("button");
 	button.click();
 
-	await screen.findByRole('progressbar');
+	await screen.findByRole("progressbar");
+
+	await screen.findByText(new RegExp(quotes[0].content, "i"));
+	await screen.findByText(new RegExp(quotes[0].author, "i"));
+
+	button.click();
+
+	await screen.findByRole("progressbar");
 
 	await screen.findByText(new RegExp(quotes[1].content, "i"));
 	await screen.findByText(new RegExp(quotes[1].author, "i"));
 
 	button.click();
 
-	await screen.findByRole('progressbar');
+	await screen.findByRole("progressbar");
 
 	await screen.findByText(new RegExp(quotes[0].content, "i"));
 	await screen.findByText(new RegExp(quotes[0].author, "i"));

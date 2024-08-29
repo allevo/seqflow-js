@@ -1,6 +1,6 @@
-import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 import { Prose } from "seqflow-js-components";
-import { Quote } from "../QuoteDomain";
+import type { Quote } from "../QuoteDomain";
 import classes from "./Quote.module.css";
 
 export async function QuoteComponent(
@@ -8,7 +8,7 @@ export async function QuoteComponent(
 	data: SeqflowFunctionData<{ quote: Quote }>,
 ) {
 	this.renderSync(
-		<Prose wrapperClass={classes.wrapper}>
+		<Prose className={classes.wrapper}>
 			<blockquote className={classes.quote}>
 				<p>{data.quote.content}</p>
 			</blockquote>

@@ -1,11 +1,12 @@
-import { SeqflowFunctionContext } from "seqflow-js";
-import { Card, Divider, Loading } from "seqflow-js-components";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import { Card, Divider, Loading, Prose } from "seqflow-js-components";
 import classes from "./Main.module.css";
 import {
 	FetchingNewQuote,
 	NewQuoteFetched,
-	Quote,
+	type Quote,
 	QuoteComponent,
+	QuoteErrorFetched,
 	RefreshQuoteButton,
 } from "./domains/quote";
 
@@ -15,17 +16,13 @@ const emptyQuote: Quote = {
 };
 
 export async function Main(this: SeqflowFunctionContext) {
-	// this._el.setAttribute('data-theme', "dark")
-
 	this.renderSync(
-		<Card wrapperClass={[classes.main]} compact shadow="xl">
+		<Card className={[classes.main]} compact shadow="xl">
 			<Card.Body>
 				<div key="loading" />
-				<QuoteComponent
-					key="quote"
-					quote={emptyQuote}
-					wrapperClass={classes.quote}
-				/>
+				<Prose key="quote" className={classes.initialText}>
+					<p>Click the button to read a quote</p>
+				</Prose>
 				<Divider />
 				<Card.Actions>
 					<RefreshQuoteButton key="refresh-button" />
@@ -37,15 +34,12 @@ export async function Main(this: SeqflowFunctionContext) {
 	const events = this.waitEvents(
 		this.domainEvent(FetchingNewQuote),
 		this.domainEvent(NewQuoteFetched),
+		this.domainEvent(QuoteErrorFetched),
 	);
-	setTimeout(() => {
-		this.getChild("refresh-button").querySelector("button")!.click();
-	}, 0);
-
 	for await (const ev of events) {
 		if (ev instanceof FetchingNewQuote) {
 			this.replaceChild("loading", () => (
-				<Loading wrapperClass={classes.loading} key="loading" />
+				<Loading className={classes.loading} key="loading" />
 			));
 			this.getChild("quote").classList.add(classes.hide);
 		} else if (ev instanceof NewQuoteFetched) {
@@ -54,8 +48,17 @@ export async function Main(this: SeqflowFunctionContext) {
 					<QuoteComponent
 						key="quote"
 						quote={ev.detail}
-						wrapperClass={classes.quote}
+						className={classes.quote}
 					/>
+				);
+			});
+			this.replaceChild("loading", () => <div key="loading" />);
+		} else if (ev instanceof QuoteErrorFetched) {
+			this.replaceChild("quote", () => {
+				return (
+					<div key="quote" className={classes.quote}>
+						{ev.detail}
+					</div>
 				);
 			});
 			this.replaceChild("loading", () => <div key="loading" />);

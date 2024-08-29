@@ -1,4 +1,4 @@
-import { start } from "seqflow-js";
+import { debugEventTarget, start } from "seqflow-js";
 import "seqflow-js-components/style.css";
 import { Main } from "./Main";
 import "./index.css";
@@ -13,7 +13,8 @@ start(document.getElementById("root")!, Main, undefined, {
 		},
 	},
 	domains: {
-		quotes: (et, _, config) => new QuoteDomain(et, config.api.baseUrl),
+		quotes: (et, _, config) =>
+			new QuoteDomain(debugEventTarget(et), config.api.baseUrl),
 	},
 });
 
