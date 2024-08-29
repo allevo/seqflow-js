@@ -73,17 +73,20 @@ export async function TextInput(
 		el.ariaRequired = "true";
 	}
 
-	if (validationFunction) {
-		const ev = this.waitEvents(this.domEvent("input", { el: this._el }));
-		for await (const _ of ev) {
+	const ev = this.waitEvents(this.domEvent("input", { el: this._el }));
+	for await (const _ of ev) {
+		if (validationFunction) {
 			const error = validationFunction(el.value);
 			if (error) {
 				el.setCustomValidity(error.errorMessage);
 				el.checkValidity();
 			} else {
 				el.setCustomValidity("");
-				el.dispatchEvent(new Event("valid"));
 			}
+		}
+
+		if (el.validity.valid) {
+			el.dispatchEvent(new Event("valid"));
 		}
 	}
 }

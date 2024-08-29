@@ -4,6 +4,7 @@ export * from "./Card/index.js";
 export * from "./ChatBubble/index.js";
 export * from "./Checkbox/index.js";
 export * from "./Divider/index.js";
+export * from "./Form/index.js";
 export * from "./FormField/index.js";
 export * from "./Loading/index.js";
 export * from "./NumberInput/index.js";

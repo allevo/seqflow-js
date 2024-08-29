@@ -57,5 +57,12 @@ export async function NumberInput(
 		el.required = true;
 		el.ariaRequired = "true";
 	}
+
+	const ev = this.waitEvents(this.domEvent("input", { el: this._el }));
+	for await (const _ of ev) {
+		if (el.validity.valid) {
+			el.dispatchEvent(new Event("valid"));
+		}
+	}
 }
 NumberInput.tagName = () => "input";

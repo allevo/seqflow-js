@@ -1,10 +1,11 @@
-import { expect, userEvent, within } from "@storybook/test";
+import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
 import { Form } from ".";
 import { Button } from "../Button";
 import { FormField } from "../FormField";
+import { NumberInput } from "../NumberInput";
 import { TextInput } from "../TextInput";
 
 async function FormExample(
@@ -52,3 +53,141 @@ export default {
 };
 
 export const Empty = {};
+
+async function RequiredNumberInputForm(this: SeqflowFunctionContext) {
+	this.renderSync(
+		<>
+			<Form>
+				<FormField label={"Choose a value"}>
+					<NumberInput required name="set-value" key="number" />
+				</FormField>
+				<Button type="submit" color="primary">
+					Set value
+				</Button>
+			</Form>
+			<span key="show-number">Empty</span>
+		</>,
+	);
+
+	const events = this.waitEvents(
+		this.domEvent("submit", { el: this._el, preventDefault: true }),
+	);
+	for await (const _ of events) {
+		const input = this.getChild<HTMLInputElement>("number");
+		const value = input.valueAsNumber;
+		const showNumber = this.getChild<HTMLSpanElement>("show-number");
+		showNumber.textContent = `value: ${value}`;
+	}
+}
+
+export const NumberTextElement: StoryFn = {
+	component: RequiredNumberInputForm,
+	play: async ({ canvasElement }) => {
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		const canvas = within(canvasElement);
+		const submitButton = canvas.getByRole("button") as HTMLInputElement;
+		const input = canvas.getByRole("spinbutton") as HTMLInputElement;
+		const formControl = input.closest(".form-control") as HTMLElement;
+
+		expect(input.validity.valid).toBe(false);
+		expect(canvas.getByText("Empty")).toBeInTheDocument();
+		expect(formControl).not.toHaveClass("form-control-error");
+
+		submitButton.click();
+
+		await waitFor(() => expect(input.validity.valid).toBe(false));
+		await waitFor(() => expect(canvas.getByText("Empty")).toBeInTheDocument());
+		await waitFor(() => expect(formControl).toHaveClass("form-control-error"));
+		await waitFor(() => canvas.getByText(/Please fill/i));
+
+		await userEvent.type(input, "123");
+		submitButton.click();
+
+		await waitFor(() => expect(input.validity.valid).toBe(true));
+		await waitFor(() =>
+			expect(canvas.getByText("value: 123")).toBeInTheDocument(),
+		);
+		await waitFor(() =>
+			expect(formControl).not.toHaveClass("form-control-error"),
+		);
+
+		// Remove the value
+		await userEvent.clear(input);
+		submitButton.click();
+
+		await waitFor(() => expect(input.validity.valid).toBe(false));
+		await waitFor(() => expect(input.validity.valid).toBe(false));
+		await waitFor(() => expect(formControl).toHaveClass("form-control-error"));
+		await waitFor(() => canvas.getByText(/Please fill/i));
+	},
+};
+
+async function RequiredTextInputForm(this: SeqflowFunctionContext) {
+	this.renderSync(
+		<>
+			<Form>
+				<FormField label={"Choose a value"}>
+					<TextInput withBorder required name="set-value" key="text" />
+				</FormField>
+				<Button type="submit" color="primary">
+					Set value
+				</Button>
+			</Form>
+			<span key="show-text">Empty</span>
+		</>,
+	);
+
+	const events = this.waitEvents(
+		this.domEvent("submit", { el: this._el, preventDefault: true }),
+	);
+	for await (const _ of events) {
+		const input = this.getChild<HTMLInputElement>("text");
+		const value = input.value;
+		const showText = this.getChild<HTMLSpanElement>("show-text");
+		showText.textContent = `value: ${value}`;
+	}
+}
+
+export const TextTextElement: StoryFn = {
+	component: RequiredTextInputForm,
+	play: async ({ canvasElement }) => {
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		const canvas = within(canvasElement);
+		const submitButton = canvas.getByRole("button") as HTMLInputElement;
+		const input = canvas.getByRole("textbox") as HTMLInputElement;
+		const formControl = input.closest(".form-control") as HTMLElement;
+
+		expect(input.validity.valid).toBe(false);
+		expect(canvas.getByText("Empty")).toBeInTheDocument();
+		expect(formControl).not.toHaveClass("form-control-error");
+
+		submitButton.click();
+
+		await waitFor(() => expect(input.validity.valid).toBe(false));
+		await waitFor(() => expect(canvas.getByText("Empty")).toBeInTheDocument());
+		await waitFor(() => expect(formControl).toHaveClass("form-control-error"));
+		await waitFor(() =>
+			expect(canvas.getByText(/Please fill/i)).toBeInTheDocument(),
+		);
+
+		await userEvent.type(input, "123");
+		submitButton.click();
+
+		await waitFor(() => expect(input.validity.valid).toBe(true));
+		await waitFor(() =>
+			expect(canvas.getByText("value: 123")).toBeInTheDocument(),
+		);
+		await waitFor(() =>
+			expect(formControl).not.toHaveClass("form-control-error"),
+		);
+
+		// Remove the value
+		await userEvent.clear(input);
+		submitButton.click();
+
+		await waitFor(() => expect(input.validity.valid).toBe(false));
+		await waitFor(() => expect(input.validity.valid).toBe(false));
+		await waitFor(() => expect(formControl).toHaveClass("form-control-error"));
+		await waitFor(() => canvas.getByText(/Please fill/i));
+	},
+};
