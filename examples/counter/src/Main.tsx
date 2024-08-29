@@ -11,7 +11,7 @@ export async function Main(this: SeqflowFunctionContext) {
 	this.renderSync(
 		<Card
 			compact
-			className={"m-auto w-96 bg-neutral text-neutral-content mt-6"}
+			className={"m-auto w-96 bg-slate-900 text-slate-200 mt-6"}
 			shadow="md"
 		>
 			<Card.Body>

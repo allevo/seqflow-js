@@ -14,7 +14,7 @@ test("should increment and decrement the counter", async () => {
 	const incrementButton = await screen.findByText(/increment/i);
 	const decrementButton = await screen.findByText(/decrement/i);
 	const setValueButton = await screen.findByText(/Set value/i);
-	const spinInput = await screen.findByRole<HTMLInputElement>('spinbutton');
+	const spinInput = await screen.findByRole<HTMLInputElement>("spinbutton");
 	const counterDiv = await screen.findByText(/0/i);
 
 	expect(counterDiv?.textContent).toBe("0");
