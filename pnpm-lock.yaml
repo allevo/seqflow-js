@@ -165,7 +165,7 @@ importers:
         version: 1.0.5
       daisyui:
         specifier: ^4.12.10
-        version: 4.12.10(postcss@8.4.39)
+        version: 4.12.10(postcss@8.4.41)
       depcheck:
         specifier: ^1.4.7
         version: 1.4.7
@@ -184,58 +184,6 @@ importers:
       vitest:
         specifier: ^1.2.2
         version: 1.3.1(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1)
-
-  examples/gen-ai:
-    dependencies:
-      fiume:
-        specifier: 0.3.5
-        version: 0.3.5
-      monaco-editor:
-        specifier: ^0.50.0
-        version: 0.50.0
-      seqflow-js:
-        specifier: workspace:*
-        version: link:../../packages/seqflow-js
-      seqflow-js-components:
-        specifier: workspace:*
-        version: link:../../packages/components
-      typescript:
-        specifier: ^5.4.2
-        version: 5.4.2
-    devDependencies:
-      '@biomejs/biome':
-        specifier: 1.5.3
-        version: 1.5.3
-      '@testing-library/dom':
-        specifier: ^9.3.4
-        version: 9.3.4
-      '@types/css-modules':
-        specifier: ^1.0.5
-        version: 1.0.5
-      daisyui:
-        specifier: ^4.12.10
-        version: 4.12.10(postcss@8.4.39)
-      msw:
-        specifier: ^2.2.1
-        version: 2.2.1(typescript@5.4.2)
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
-      tailwindcss:
-        specifier: ^3.4.6
-        version: 3.4.6
-      vite:
-        specifier: ^5.0.0
-        version: 5.3.3(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1)
-      vite-plugin-full-reload:
-        specifier: ^1.1.0
-        version: 1.1.0
-      vite-plugin-live-reload:
-        specifier: ^3.0.3
-        version: 3.0.3(vite@5.3.3(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1))
-      vitest:
-        specifier: ^1.2.2
-        version: 1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1)
 
   examples/random-quote:
     dependencies:
@@ -257,7 +205,7 @@ importers:
         version: 1.0.5
       daisyui:
         specifier: ^4.12.10
-        version: 4.12.10(postcss@8.4.39)
+        version: 4.12.10(postcss@8.4.41)
       msw:
         specifier: ^2.2.1
         version: 2.2.1(typescript@5.3.3)
@@ -3930,9 +3878,6 @@ packages:
     resolution: {integrity: sha512-MzwXju70AuyflbgeOhzvQWAvvQdo1XL0A9bVvlXsYcFEBM87WR4OakL4OfZq+QRmr+duJubio+UtNQCPsVESzQ==}
     engines: {node: '>= 10.13.0'}
 
-  fiume@0.3.5:
-    resolution: {integrity: sha512-KUK8E/wjDwpfQHNOBkgqa2Kzeu23UjkeqCMUpnj0DxrYF0aPQ5V9aYvQqLKzzwsKm9fv3DR/3g5YHxFIACMciw==}
-
   flow-parser@0.238.3:
     resolution: {integrity: sha512-hNUhucq8V6KWSX1skXUS3vnDmrRNuKWzDvEVK5b+n97uMF32zj2y8pmcLDQEqlY5u926B0GYGWT/3XhwDJfLOQ==}
     engines: {node: '>=0.4.0'}
@@ -5074,9 +5019,6 @@ packages:
   mlly@1.7.1:
     resolution: {integrity: sha512-rrVRZRELyQzrIUAVMHxP97kv+G786pHmOKzuFII8zDYahFBS7qnHh2AlYSl1GAHhaMPCz6/oHjVMcfFYgFYHgA==}
 
-  monaco-editor@0.50.0:
-    resolution: {integrity: sha512-8CclLCmrRRh+sul7C08BmPBP3P8wVWfBHomsTcndxg5NRCEPfu/mc2AGU8k37ajjDVXcXFc12ORAMUkmk+lkFA==}
-
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
 
@@ -5522,6 +5464,10 @@ packages:
 
   postcss@8.4.39:
     resolution: {integrity: sha512-0vzE+lAiG7hZl1/9I8yzKLx3aR9Xbof3fBHKunvMfOCYAtMhrsnccJY2iTURb9EZd5+pLuiNV9/c/GZJOHsgIw==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  postcss@8.4.41:
+    resolution: {integrity: sha512-TesUflQ0WKZqAvg52PWL6kHgLKP6xB6heTOdoYM0Wt2UHyxNa4K25EZZMgKns3BH1RLVbZCREPpLY0rhnNoHVQ==}
     engines: {node: ^10 || ^12 || >=14}
 
   prettier@3.3.2:
@@ -10239,6 +10185,15 @@ snapshots:
     transitivePeerDependencies:
       - postcss
 
+  daisyui@4.12.10(postcss@8.4.41):
+    dependencies:
+      css-selector-tokenizer: 0.8.0
+      culori: 3.3.0
+      picocolors: 1.0.0
+      postcss-js: 4.0.1(postcss@8.4.41)
+    transitivePeerDependencies:
+      - postcss
+
   dashdash@1.14.1:
     dependencies:
       assert-plus: 1.0.0
@@ -10921,8 +10876,6 @@ snapshots:
       is-glob: 4.0.3
       micromatch: 4.0.5
       resolve-dir: 1.0.1
-
-  fiume@0.3.5: {}
 
   flow-parser@0.238.3: {}
 
@@ -12339,8 +12292,6 @@ snapshots:
       pkg-types: 1.1.2
       ufo: 1.5.3
 
-  monaco-editor@0.50.0: {}
-
   ms@2.0.0: {}
 
   ms@2.1.2: {}
@@ -12773,6 +12724,11 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.4.39
 
+  postcss-js@4.0.1(postcss@8.4.41):
+    dependencies:
+      camelcase-css: 2.0.1
+      postcss: 8.4.41
+
   postcss-load-config@4.0.2(postcss@8.4.39):
     dependencies:
       lilconfig: 3.1.2
@@ -12804,6 +12760,12 @@ snapshots:
       source-map-js: 1.2.0
 
   postcss@8.4.39:
+    dependencies:
+      nanoid: 3.3.7
+      picocolors: 1.0.1
+      source-map-js: 1.2.0
+
+  postcss@8.4.41:
     dependencies:
       nanoid: 3.3.7
       picocolors: 1.0.1
@@ -14107,12 +14069,6 @@ snapshots:
       chokidar: 3.6.0
       picocolors: 1.0.0
       vite: 5.2.10(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1)
-
-  vite-plugin-live-reload@3.0.3(vite@5.3.3(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1)):
-    dependencies:
-      chokidar: 3.6.0
-      picocolors: 1.0.0
-      vite: 5.3.3(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1)
 
   vite-plugin-markdown@2.2.0(vite@5.1.4(@types/node@20.11.24)(less@4.2.0)(terser@5.31.1)):
     dependencies:
