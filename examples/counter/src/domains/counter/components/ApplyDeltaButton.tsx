@@ -6,7 +6,7 @@ export async function ApplyDeltaButton(
 	{ delta, label }: SeqflowFunctionData<{ delta: number; label: string }>,
 ) {
 	this.renderSync(
-		<Button onClick={() => this.app.domains.counter.applyDelta(delta)}>
+		<Button color="primary" onClick={() => this.app.domains.counter.applyDelta(delta)}>
 			{label}
 		</Button>,
 	);
