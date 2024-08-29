@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 
 export async function Profile(this: SeqflowFunctionContext) {
 	const user = await this.app.domains.user.getUser();

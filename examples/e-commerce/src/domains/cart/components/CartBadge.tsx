@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 import { ChangeCartEvent, CheckoutEndedCartEvent } from "../events";
 import classes from "./cart-badge.module.css";
 

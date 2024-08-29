@@ -1,6 +1,6 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 import { CartBadge } from "../domains/cart/components/CartBadge";
-import { UserType } from "../domains/user";
+import type { UserType } from "../domains/user";
 import { UserProfileBadge } from "../domains/user/components/UserProfileBadge";
 import { UserLoggedEvent, UserLoggedOutEvent } from "../domains/user/events";
 import classes from "./header.module.css";
@@ -16,7 +16,7 @@ export async function Header(
 				<img key="store-logo" src={icon} alt="icon" className={classes.icon} />
 			</a>
 			<div className={classes.emptySpace} />
-			<UserProfileBadge wrapperClass={classes.displayOnLogged} />
+			<UserProfileBadge className={classes.displayOnLogged} />
 			<div id="login" className={classes.displayOnUnlogged}>
 				<button key="sign-in" type="button">
 					Sign in

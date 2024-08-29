@@ -1,6 +1,6 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 import { CardList } from "../../../components/CardList";
-import { ProductCategory } from "../ProductDomain";
+import type { ProductCategory } from "../ProductDomain";
 import classes from "./ProductCategoryList.module.css";
 
 async function CategoryItem(

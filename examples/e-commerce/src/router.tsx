@@ -1,7 +1,7 @@
-import { NavigationEvent, SeqflowFunctionContext } from "seqflow-js";
+import { NavigationEvent, type SeqflowFunctionContext } from "seqflow-js";
 import { Header } from "./components/header";
 import { components } from "./domains/cart";
-import { UserType } from "./domains/user";
+import type { UserType } from "./domains/user";
 import { Cart } from "./pages/cart";
 import { Category } from "./pages/category";
 import { Checkout } from "./pages/checkout";
@@ -46,9 +46,9 @@ export async function Router(this: SeqflowFunctionContext) {
 	const Component = getComponent(window.location.pathname);
 	this.renderSync(
 		<div id={classes.app}>
-			<Header user={user} wrapperClass={"header"} />
-			<Component key="main" wrapperClass={classes.main} />
-			<components.CartTooltip wrapperClass={"tooltip"} />
+			<Header user={user} className={"header"} />
+			<Component key="main" className={classes.main} />
+			<components.CartTooltip className={"tooltip"} />
 		</div>,
 	);
 
@@ -57,7 +57,7 @@ export async function Router(this: SeqflowFunctionContext) {
 		if (ev instanceof NavigationEvent) {
 			this.replaceChild("main", () => {
 				const Component = getComponent(ev.path);
-				return <Component key="main" wrapperClass={classes.main} />;
+				return <Component key="main" className={classes.main} />;
 			});
 		} else {
 			console.error("Unknown event", ev);

@@ -1,4 +1,4 @@
-import { NavigationEvent, SeqflowFunctionContext } from "seqflow-js";
+import { NavigationEvent, type SeqflowFunctionContext } from "seqflow-js";
 import { ChangeCartEvent, CheckoutEndedCartEvent } from "../events";
 import classes from "./CartTooltip.module.css";
 

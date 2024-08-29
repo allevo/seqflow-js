@@ -1,14 +1,14 @@
-import { Product } from "../product/ProductDomain";
+import type { Product } from "../product";
 import { ChangeCartEvent, CheckoutEndedCartEvent } from "./events";
 
 export class CartDomain {
-	private products: Map<number, [Product, number]>;
+	private products: Map<string, [Product, number]>;
 
 	constructor(private eventTarget: EventTarget) {
 		this.products = loadLocalStorage();
 	}
 
-	getProductCount(productId?: number): number {
+	getProductCount(productId?: string): number {
 		if (productId !== undefined) {
 			const value = this.products.get(productId);
 			return value ? value[1] : 0;
@@ -105,7 +105,7 @@ export class CartDomain {
 	}
 }
 
-function updateLocalStorage(products: Map<number, [Product, number]>) {
+function updateLocalStorage(products: Map<string, [Product, number]>) {
 	window.localStorage.setItem("cart", JSON.stringify(Array.from(products)));
 }
 

@@ -1,4 +1,4 @@
-import { ApplicationConfiguration } from "seqflow-js";
+import type { ApplicationConfiguration } from "seqflow-js";
 
 export class ProductDomain {
 	constructor(private applicationConfig: Readonly<ApplicationConfiguration>) {}
@@ -16,7 +16,7 @@ export class ProductDomain {
 
 		return categories.map((name, id) => {
 			const url = `/images/categories/${name}.webp`;
-			return { id, name, image: { url } };
+			return { id: `${id}`, name, image: { url } };
 		});
 	}
 
@@ -33,7 +33,7 @@ export class ProductDomain {
 }
 
 export interface ProductCategory {
-	id: number;
+	id: string;
 	name: string;
 	image: {
 		url: string;
@@ -41,7 +41,7 @@ export interface ProductCategory {
 }
 
 export interface Product {
-	id: number;
+	id: string;
 	title: string;
 	price: number;
 	description: string;

@@ -1,5 +1,5 @@
-import { SeqflowFunctionContext } from "seqflow-js";
-import { UserType } from "../domains/user";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import type { UserType } from "../domains/user";
 
 export async function Login(this: SeqflowFunctionContext) {
 	this.renderSync(

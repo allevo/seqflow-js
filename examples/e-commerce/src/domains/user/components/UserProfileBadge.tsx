@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 import { UserLoggedEvent, UserLoggedOutEvent } from "../events";
 import classes from "./user-profile-badge.module.css";
 

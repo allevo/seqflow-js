@@ -1,6 +1,6 @@
-import { SeqflowFunctionContext } from "seqflow-js";
-import { Product } from "../../product/ProductDomain";
-import { Cart } from "../CartDomain";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import type { Product } from "../../product";
+import type { Cart } from "../CartDomain";
 import { ChangeCartEvent } from "../events";
 import classes from "./CartProductList.module.css";
 
@@ -33,7 +33,9 @@ export async function CartProduct(
 		</div>,
 	);
 
-	const events = this.waitEvents(this.domEvent("click", "remove-from-cart"));
+	const events = this.waitEvents(
+		this.domEvent("click", { key: "remove-from-cart" }),
+	);
 	for await (const ev of events) {
 		this.app.domains.cart.removeAllFromCart({ product: data.product });
 	}
@@ -60,7 +62,7 @@ export async function CartProductList(
 			<ul className={classes.cartProducts}>
 				{data.cart.products.map(({ product, count, subTotal }) => {
 					return (
-						<li id={`cart-item-${product.id}`}>
+						<li key={product.id} id={`cart-item-${product.id}`}>
 							<CartProduct
 								product={product}
 								count={count}

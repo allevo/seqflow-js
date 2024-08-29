@@ -1,5 +1,5 @@
-import { SeqflowFunctionContext } from "seqflow-js";
-import { Product } from "../../product/ProductDomain";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import type { Product } from "../../product";
 import classes from "./AddToCart.module.css";
 
 export async function AddToCart(

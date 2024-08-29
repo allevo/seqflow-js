@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 
 export async function Logout(this: SeqflowFunctionContext) {
 	// blank

@@ -1,7 +1,7 @@
-import { SeqflowFunctionContext } from "seqflow-js";
-import { CartDomain } from "./domains/cart";
-import { ProductDomain } from "./domains/product";
-import { UserDomain } from "./domains/user";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import type { CartDomain } from "./domains/cart";
+import type { ProductDomain } from "./domains/product";
+import type { UserDomain } from "./domains/user";
 import { Router } from "./router";
 
 export async function Main(this: SeqflowFunctionContext) {

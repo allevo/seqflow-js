@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 import { components } from "../domains/cart";
 
 export async function Cart(this: SeqflowFunctionContext) {

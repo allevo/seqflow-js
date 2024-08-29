@@ -1,5 +1,5 @@
 import { createDomainEventClass } from "seqflow-js";
-import { UserType } from "./UserDomain";
+import type { UserType } from "./UserDomain";
 
 export const UserLoggedEvent = createDomainEventClass<UserType>(
 	"user",
