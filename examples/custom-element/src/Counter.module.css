@@ -6,13 +6,11 @@
 	.buttons {
 		display: flex;
 
-		.divider {
+		.counter {
+			text-align: center;
 			flex-grow: 1;
+			align-self: center;
 		}
-	}
-
-	.counter {
-		text-align: center;
 	}
 }
 
