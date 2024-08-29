@@ -14,6 +14,7 @@ export interface SelectPropsType {
 		| "success"
 		| "warning"
 		| "error";
+	required?: boolean;
 }
 
 export async function Select(
@@ -25,6 +26,7 @@ export async function Select(
 		children,
 		name,
 		disabled,
+		required,
 	}: SeqflowFunctionData<SelectPropsType>,
 ) {
 	const classes = ["select"];
@@ -66,5 +68,9 @@ export async function Select(
 	}
 
 	this.renderSync(children);
+
+	if (required) {
+		this._el.setAttribute("required", "");
+	}
 }
 Select.tagName = () => "select";

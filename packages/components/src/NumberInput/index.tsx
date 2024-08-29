@@ -15,11 +15,19 @@ export interface NumberInputPropsType {
 		| "error"
 		| "ghost";
 	disabled?: boolean;
+	required?: boolean;
 }
 
 export async function NumberInput(
 	this: SeqflowFunctionContext,
-	{ name, placeholder, withBorder, color, disabled }: NumberInputPropsType,
+	{
+		name,
+		placeholder,
+		withBorder,
+		color,
+		disabled,
+		required,
+	}: NumberInputPropsType,
 ) {
 	const classNames = ["input"];
 	if (withBorder !== false) {
@@ -44,6 +52,10 @@ export async function NumberInput(
 	el.disabled = Boolean(disabled);
 	if (placeholder) {
 		el.placeholder = placeholder;
+	}
+	if (required) {
+		el.required = true;
+		el.ariaRequired = "true";
 	}
 }
 NumberInput.tagName = () => "input";

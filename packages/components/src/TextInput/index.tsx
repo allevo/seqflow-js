@@ -17,6 +17,8 @@ export interface TextInputPropsType {
 	initialValue?: string;
 	name?: string;
 	type?: "text" | "password";
+	required?: boolean;
+	validationFunction?: (value: string) => { errorMessage: string } | null;
 }
 
 export async function TextInput(
@@ -29,6 +31,8 @@ export async function TextInput(
 		disabled,
 		initialValue,
 		type,
+		required,
+		validationFunction,
 	}: TextInputPropsType,
 ) {
 	const classNames = ["input"];
@@ -63,6 +67,24 @@ export async function TextInput(
 	}
 	if (name) {
 		el.name = name;
+	}
+	if (required) {
+		el.required = true;
+		el.ariaRequired = "true";
+	}
+
+	if (validationFunction) {
+		const ev = this.waitEvents(this.domEvent("input", { el: this._el }));
+		for await (const _ of ev) {
+			const error = validationFunction(el.value);
+			if (error) {
+				el.setCustomValidity(error.errorMessage);
+				el.checkValidity();
+			} else {
+				el.setCustomValidity("");
+				el.dispatchEvent(new Event("valid"));
+			}
+		}
 	}
 }
 TextInput.tagName = () => "input";

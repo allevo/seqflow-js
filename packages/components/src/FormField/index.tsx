@@ -8,12 +8,22 @@ export type FormFieldComponent = HTMLLabelElement & {
 
 export interface FormFieldPropsType {
 	label: string | JSX.Element;
+	hint?: string | JSX.Element;
 	errorMessage?: string;
+}
+
+function generateId() {
+	return `id-${Math.random().toString(36).substr(2, 9)}`;
 }
 
 export async function FormField(
 	this: SeqflowFunctionContext,
-	{ children, label, errorMessage }: SeqflowFunctionData<FormFieldPropsType>,
+	{
+		children,
+		label,
+		errorMessage,
+		hint,
+	}: SeqflowFunctionData<FormFieldPropsType>,
 ) {
 	if (!children) {
 		this.app.log.error({
@@ -49,28 +59,41 @@ export async function FormField(
 
 	this._el.classList.add("form-control");
 
-	let top: JSX.Element | string = "";
-	if (label) {
-		top = (
-			<div className="label">
-				<span className="label-text">{label}</span>
-			</div>
-		);
-	}
+	const describedBy = generateId();
+	const top = (
+		<div className="label">
+			<span id={describedBy} className="label-text">
+				{label}
+			</span>
+		</div>
+	);
+	input.setAttribute("aria-describedby", describedBy);
+
+	const hintElement = (
+		<span key="hint" className="label-text-alt hint">
+			{hint || ""}
+		</span>
+	);
+
+	const bottom = (
+		<div className="label">
+			{hintElement}
+			<span key="text-error" className="label-text-alt text-error" />
+		</div>
+	);
 
 	this.renderSync(
 		<>
 			{top}
 			{children}
-			<div className="label">
-				{/* "text-red-500" is bad here. We should put in configuration */}
-				<span key="text-error" className="label-text-alt text-error" />
-			</div>
+			{bottom}
 		</>,
 	);
 
-	const textErrorSpan = this.getChild<HTMLSpanElement>("text-error");
 	const el = this._el as FormFieldComponent;
+
+	const textErrorSpan = this.getChild<HTMLSpanElement>("text-error");
+
 	el.setError = (textError: string) => {
 		textErrorSpan.textContent = textError;
 		el.classList.add("form-control-error");
@@ -82,6 +105,21 @@ export async function FormField(
 
 	if (errorMessage) {
 		el.setError(errorMessage);
+	}
+
+	if (input instanceof HTMLInputElement) {
+		const events = this.waitEvents(
+			this.domEvent("valid", { el: input }),
+			this.domEvent("invalid", { el: input }),
+		);
+		for await (const ev of events) {
+			if (ev.type === "invalid") {
+				el.setError(input.validationMessage);
+			}
+			if (ev.type === "valid") {
+				el.clearError();
+			}
+		}
 	}
 }
 FormField.tagName = () => "label";

@@ -66,5 +66,8 @@
   },
   "dependencies": {
     "playwright": "^1.45.2"
+  },
+  "overrides": {
+    "@types/react": "../_EXCLUDED_"
   }
 }

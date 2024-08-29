@@ -29,6 +29,7 @@ export default {
 	component: FormFieldExample,
 	args: {
 		label: "Username",
+		hint: "Insert your username",
 	},
 };
 
@@ -60,11 +61,12 @@ export const SetError: StoryFn<FormFieldPropsType> = {
 		expect(label).not.toHaveClass("form-control-error");
 
 		label.setError("Username should be at least 5 characters");
-
 		expect(label).toHaveClass("form-control-error");
+		canvas.getByText("Username should be at least 5 characters");
+
+		await new Promise((resolve) => setTimeout(resolve, 200));
 
 		label.clearError();
-
 		expect(label).not.toHaveClass("form-control-error");
 	},
 };

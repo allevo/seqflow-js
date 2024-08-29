@@ -10,7 +10,7 @@ export async function Card(
 	this: SeqflowFunctionContext,
 	{ children, compact, side, shadow }: SeqflowFunctionData<CardProps>,
 ) {
-	const classes = ["card", "bg-base-100"];
+	const classes = ["card"];
 	if (compact) {
 		classes.push("card-compact");
 	}
