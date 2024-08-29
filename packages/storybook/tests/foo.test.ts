@@ -554,3 +554,20 @@ t.test("FormField", () => {
     output
   );
 });
+
+t.test("function", () => {
+  const { config: tsConfig } = ts.readConfigFile("./tsconfig.json", (p) =>
+    readFileSync(p, "utf8")
+  );
+
+  const componentPath = "./tests/fixtures/WithFunction.ts";
+  const output = foo(componentPath, tsConfig);
+
+  assert.deepStrictEqual(
+    [{
+      componentName: "WithFunctionAsProp",
+      fields: {},
+    }],
+    output
+  );
+});

@@ -146,14 +146,14 @@ function extrapolateSBOptionsFromUnionType(type: TypeNode): StrictInputType['opt
     return ret
 }
 
-function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: ts.SourceFile): StrictInputType {
+function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: ts.SourceFile): StrictInputType | null {
     if (symbol.valueDeclaration?.kind  !== ts.SyntaxKind.PropertySignature) {
         throw new Error(`Expected a PropertySignature, got ${symbol.valueDeclaration?.kind}`)
     }
     const valueDeclaration = symbol.valueDeclaration as ts.PropertySignature & { jsDoc: ts.JSDoc[] } | undefined
 
     if (!valueDeclaration) {
-        throw new Error(`valueDeclaration is undefined`)
+        throw new Error('valueDeclaration is undefined')
     }
 
     const isOptional = !!valueDeclaration.questionToken
@@ -169,7 +169,7 @@ function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: 
     }
 
     if (!valueDeclaration.type) {
-        throw new Error(`Expected a type`)
+        throw new Error('Expected a type')
     }
     let sbType: SBType
     let control: StrictInputType['control']
@@ -243,7 +243,11 @@ function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: 
 
             return tsSymbolToStrictInputType(propertyName, member.symbol, sourceFile)
         }
+        case ts.SyntaxKind.FunctionType: {
+            return null
+        }
         default:
+            console.log(valueDeclaration.type)
             throw new Error(`Unsupported type ${valueDeclaration.type.kind}`)
     }
 
@@ -335,7 +339,11 @@ export function foo(filePath: string, tsConfig: any) {
                 continue
             }
 
-            fields[name] = tsSymbolToStrictInputType(name, symbol, sourceFile)
+            const field = tsSymbolToStrictInputType(name, symbol, sourceFile)
+            if (!field) {
+                continue
+            }
+            fields[name] = field
         }
 
         output.push({
