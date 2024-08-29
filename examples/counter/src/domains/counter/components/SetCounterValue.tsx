@@ -4,8 +4,8 @@ import classes from "./SetCounterValue.module.css";
 
 export async function SetCounterValue(this: SeqflowFunctionContext) {
 	this.renderSync(
-		<Form className={[classes.wrapper, 'a']}>
-			<FormField label={'Choose a value'} className={'w-full max-w-xs'}>
+		<Form className={[classes.wrapper, "a"]}>
+			<FormField label={"Choose a value"} className={"w-full max-w-xs"}>
 				<NumberInput required name="set-value" key="choose-value" />
 			</FormField>
 			<Button
@@ -20,7 +20,7 @@ export async function SetCounterValue(this: SeqflowFunctionContext) {
 	);
 
 	const events = this.waitEvents(
-		this.domEvent('submit', { el: this._el, preventDefault: true }),
+		this.domEvent("submit", { el: this._el, preventDefault: true }),
 	);
 	for await (const _ of events) {
 		const input = this.getChild<HTMLInputElement>("choose-value");

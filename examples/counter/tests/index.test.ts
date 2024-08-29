@@ -13,6 +13,8 @@ test("should increment and decrement the counter", async () => {
 
 	const incrementButton = await screen.findByText(/increment/i);
 	const decrementButton = await screen.findByText(/decrement/i);
+	const setValueButton = await screen.findByText(/Set value/i);
+	const spinInput = await screen.findByRole<HTMLInputElement>('spinbutton');
 	const counterDiv = await screen.findByText(/0/i);
 
 	expect(counterDiv?.textContent).toBe("0");
@@ -23,4 +25,9 @@ test("should increment and decrement the counter", async () => {
 	await waitFor(() => expect(counterDiv?.textContent).toBe("2"));
 	decrementButton?.click();
 	await waitFor(() => expect(counterDiv?.textContent).toBe("1"));
+
+	spinInput.value = "10";
+	setValueButton?.click();
+
+	await waitFor(() => expect(counterDiv?.textContent).toBe("10"));
 });
