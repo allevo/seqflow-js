@@ -1,14 +1,10 @@
-import type {
-	ChildrenType,
-	SeqflowFunctionContext,
-	SeqflowFunctionData,
-} from "seqflow-js";
+import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
 export type ButtonComponent = HTMLElement & {
 	transition: (state: {
 		disabled?: boolean;
 		loading?: boolean;
-		replaceText?: string;
+		replaceText?: ("__previous__" & {}) | string;
 	}) => void;
 };
 

@@ -2,7 +2,7 @@ import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
-import { Form } from ".";
+import { Form, type FormComponent } from ".";
 import { Button } from "../Button";
 import { FormField } from "../FormField";
 import { NumberInput } from "../NumberInput";
@@ -80,10 +80,9 @@ async function RequiredNumberInputForm(this: SeqflowFunctionContext) {
 	}
 }
 
-export const NumberTextElement: StoryFn = {
+export const NumberInputStory: StoryFn = {
 	component: RequiredNumberInputForm,
 	play: async ({ canvasElement }) => {
-		await new Promise((resolve) => setTimeout(resolve, 500));
 		const canvas = within(canvasElement);
 		const submitButton = canvas.getByRole("button") as HTMLInputElement;
 		const input = canvas.getByRole("spinbutton") as HTMLInputElement;
@@ -148,10 +147,9 @@ async function RequiredTextInputForm(this: SeqflowFunctionContext) {
 	}
 }
 
-export const TextTextElement: StoryFn = {
+export const TextInputStory: StoryFn = {
 	component: RequiredTextInputForm,
 	play: async ({ canvasElement }) => {
-		await new Promise((resolve) => setTimeout(resolve, 500));
 		const canvas = within(canvasElement);
 		const submitButton = canvas.getByRole("button") as HTMLInputElement;
 		const input = canvas.getByRole("textbox") as HTMLInputElement;
@@ -189,5 +187,59 @@ export const TextTextElement: StoryFn = {
 		await waitFor(() => expect(input.validity.valid).toBe(false));
 		await waitFor(() => expect(formControl).toHaveClass("form-control-error"));
 		await waitFor(() => canvas.getByText(/Please fill/i));
+	},
+};
+
+async function AsyncSubmitionForm(this: SeqflowFunctionContext) {
+	this.renderSync(
+		<>
+			<Form key="form">
+				<FormField label={"Choose a value"}>
+					<TextInput withBorder required name="set-value" key="text" />
+				</FormField>
+				<Button type="submit" color="primary">
+					Set value
+				</Button>
+			</Form>
+			<span key="show-text">Empty</span>
+		</>,
+	);
+
+	const form = this.getChild<FormComponent>("form");
+
+	const events = this.waitEvents(
+		this.domEvent("submit", { el: this._el, preventDefault: true }),
+	);
+	for await (const _ of events) {
+		const input = this.getChild<HTMLInputElement>("text");
+		const value = input.value;
+		const showText = this.getChild<HTMLSpanElement>("show-text");
+
+		// Simulate an async operation
+		await form.runAsync(async () => {
+			await new Promise((resolve) => setTimeout(resolve, 500));
+		});
+
+		showText.textContent = `value: ${value}`;
+	}
+}
+
+export const AsyncSubmitionStory: StoryFn = {
+	component: AsyncSubmitionForm,
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const submitButton = canvas.getByRole("button") as HTMLInputElement;
+		const input = canvas.getByRole("textbox") as HTMLInputElement;
+		const formControl = input.closest(".form-control") as HTMLElement;
+
+		await userEvent.type(input, "123");
+		submitButton.click();
+
+		await waitFor(() =>
+			expect(canvas.getByText("Loading...")).toBeInTheDocument(),
+		);
+		await waitFor(() =>
+			expect(canvas.getByText("value: 123")).toBeInTheDocument(),
+		);
 	},
 };

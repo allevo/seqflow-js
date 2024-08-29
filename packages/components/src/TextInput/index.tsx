@@ -1,5 +1,10 @@
 import type { SeqflowFunctionContext } from "seqflow-js";
 
+export type TextInputComponent = HTMLInputElement & {
+	setError: (message: string) => void;
+	clearError: () => void;
+};
+
 export interface TextInputPropsType {
 	placeholder?: string;
 	withBorder?: boolean;
@@ -52,7 +57,7 @@ export async function TextInput(
 	}
 	this._el.classList.add(...classNames);
 
-	const el = this._el as HTMLInputElement;
+	const el = this._el as TextInputComponent;
 	if (type) {
 		el.type = type;
 	} else {
@@ -72,6 +77,18 @@ export async function TextInput(
 		el.required = true;
 		el.ariaRequired = "true";
 	}
+
+	el.setError = (message: string) => {
+		el.setCustomValidity(message);
+		el.checkValidity();
+	};
+	el.clearError = () => {
+		el.setCustomValidity("");
+
+		if (el.validity.valid) {
+			el.dispatchEvent(new Event("valid"));
+		}
+	};
 
 	const ev = this.waitEvents(this.domEvent("input", { el: this._el }));
 	for await (const _ of ev) {

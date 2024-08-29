@@ -26,7 +26,6 @@ export const Empty = {};
 
 export const DisableButton: StoryFn = {
 	play: async ({ canvasElement }) => {
-		await new Promise((resolve) => setTimeout(resolve, 100));
 		const canvas = within(canvasElement);
 
 		const buttonComponent = canvas.getByRole("button") as ButtonComponent;
@@ -37,8 +36,6 @@ export const DisableButton: StoryFn = {
 		});
 
 		expect(buttonComponent).toHaveAttribute("disabled");
-
-		await new Promise((resolve) => setTimeout(resolve, 1000));
 
 		buttonComponent.transition({
 			disabled: false,
@@ -53,7 +50,6 @@ export const TrasitionButton: StoryFn = {
 		this.renderSync(<Button>The button text</Button>);
 	},
 	play: async ({ canvasElement }) => {
-		await new Promise((resolve) => setTimeout(resolve, 200));
 		const canvas = within(canvasElement);
 
 		const buttonComponent = canvas.getByRole("button") as ButtonComponent;
@@ -138,9 +134,7 @@ export const AllButtons: StoryFn = async function (
 				</Button>
 
 				<div>Disabled</div>
-				<Button disabled label="">
-					Default
-				</Button>
+				<Button disabled>Default</Button>
 				<Button disabled color="neutral">
 					neutral
 				</Button>
