@@ -84,6 +84,7 @@ export async function TextInput(
 	};
 	el.clearError = () => {
 		el.setCustomValidity("");
+		el.checkValidity();
 
 		if (el.validity.valid) {
 			el.dispatchEvent(new Event("valid"));
@@ -99,7 +100,11 @@ export async function TextInput(
 				el.checkValidity();
 			} else {
 				el.setCustomValidity("");
+				el.checkValidity();
 			}
+		} else {
+			el.setCustomValidity("");
+			el.checkValidity();
 		}
 
 		if (el.validity.valid) {
