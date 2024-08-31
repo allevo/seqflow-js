@@ -427,6 +427,10 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 					}
 
 					if (key === "className") {
+						if (Array.isArray(options[key])) {
+							el.classList.add(...options[key] as string[]);
+							continue;
+						}
 						el.setAttribute("class", options[key] as string);
 						continue;
 					}
@@ -853,12 +857,13 @@ declare global {
 					Partial<{
 						[V in keyof HTMLElementTagNameMap[K]]: HTMLElementTagNameMap[K][V];
 					}>,
-					"style"
+					"style" | "className"
 				> &
 					SeqflowFunctionData<{
 						style?: Partial<CSSStyleDeclaration> | string;
 						onClick?: (ev: MouseEvent) => void;
 						key?: string;
+						className?: string | string[];
 					}>;
 			},
 			"input"
@@ -867,13 +872,14 @@ declare global {
 				Partial<{
 					[V in keyof HTMLElementTagNameMap["input"]]: HTMLElementTagNameMap["input"][V];
 				}>,
-				"style" | "list"
+				"style" | "className" | "list"
 			> &
 				SeqflowFunctionData<{
 					style?: Partial<CSSStyleDeclaration> | string;
 					onClick?: (ev: MouseEvent) => void;
 					key?: string;
 					list?: string;
+					className?: string | string[];
 				}>;
 		};
 		interface IntrinsicElements extends IntrinsicEl {}
