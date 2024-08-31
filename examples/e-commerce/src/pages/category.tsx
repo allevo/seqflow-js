@@ -11,6 +11,11 @@ export async function Category(this: SeqflowFunctionContext) {
 
 	const categoryId = this.app.router.segments.pop();
 
+	if (!categoryId) {
+		this.app.router.navigate("/");
+		return;
+	}
+
 	const products = await this.app.domains.product.fetchProductsByCategory(
 		{ categoryId },
 		this.abortController.signal,

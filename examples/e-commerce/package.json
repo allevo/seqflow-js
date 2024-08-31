@@ -19,6 +19,7 @@
     "@biomejs/biome": "1.5.3",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/user-event": "^14.5.2",
     "@types/css-modules": "^1.0.5",
     "chokidar": "^3.6.0",
     "jsdom": "^24.0.0",
@@ -31,6 +32,7 @@
     "vitest": "^1.2.2"
   },
   "dependencies": {
-    "seqflow-js": "workspace:*"
+    "seqflow-js": "workspace:*",
+    "seqflow-js-components": "workspace:*"
   }
 }

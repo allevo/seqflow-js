@@ -1,4 +1,5 @@
 import { start } from "seqflow-js";
+import "seqflow-js-components/style.css";
 import { Main } from "./Main";
 import { CartDomain } from "./domains/cart";
 import { ProductDomain } from "./domains/product";

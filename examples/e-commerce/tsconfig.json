@@ -1,10 +1,10 @@
 {
     "compilerOptions": {
         "lib": ["es2015", "dom"],
-        "downlevelIteration": true,
         "jsx": "react",
         "jsxFactory": "this.createDOMElement",
-        "jsxFragmentFactory": "this.createDOMFragment"
+        "jsxFragmentFactory": "this.createDOMFragment",
+        "strict": true
     },
     "include": ["./src/**/*", "./tests/**/*"]
 }

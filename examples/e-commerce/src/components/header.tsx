@@ -1,9 +1,10 @@
 import type { SeqflowFunctionContext } from "seqflow-js";
+import { Button, Navbar } from "seqflow-js-components";
 import { CartBadge } from "../domains/cart/components/CartBadge";
 import type { UserType } from "../domains/user";
 import { UserProfileBadge } from "../domains/user/components/UserProfileBadge";
 import { UserLoggedEvent, UserLoggedOutEvent } from "../domains/user/events";
-import classes from "./header.module.css";
+import classes from "./Header.module.css";
 import icon from "./icon.png";
 
 export async function Header(
@@ -11,29 +12,29 @@ export async function Header(
 	data: { user?: UserType },
 ) {
 	this.renderSync(
-		<header className={classes.header}>
-			<a href="/">
-				<img key="store-logo" src={icon} alt="icon" className={classes.icon} />
-			</a>
-			<div className={classes.emptySpace} />
-			<UserProfileBadge className={classes.displayOnLogged} />
-			<div id="login" className={classes.displayOnUnlogged}>
-				<button key="sign-in" type="button">
+		<Navbar className={classes.header}>
+			<Navbar.Start>
+				<a href="/">
+					<img
+						key="store-logo"
+						src={icon}
+						alt="icon"
+						className={classes.icon}
+					/>
+				</a>
+			</Navbar.Start>
+			<Navbar.End className={"gap-4"}>
+				<UserProfileBadge className={classes.userProfileBadge} />
+				<Button key="sign-in" color="ghost" className={classes.signInButton}>
 					Sign in
-				</button>
-			</div>
-			<CartBadge />
-		</header>,
+				</Button>
+				<CartBadge />
+			</Navbar.End>
+		</Navbar>,
 	);
 
 	const user: UserType | undefined = data.user;
-
-	let className: string;
-	if (user) {
-		className = classes.logged;
-	} else {
-		className = classes.unlogged;
-	}
+	const className = user ? classes.logged : classes.unlogged;
 	this._el.classList.add(className);
 
 	const events = this.waitEvents(
@@ -41,14 +42,16 @@ export async function Header(
 		this.domainEvent(UserLoggedOutEvent),
 		this.domEvent("click", {
 			el: this._el,
+			preventDefault: true,
 		}),
 	);
 
 	for await (const ev of events) {
-		ev.preventDefault();
 		if (ev instanceof UserLoggedEvent) {
 			this._el.classList.add(classes.logged);
+			this._el.classList.remove(classes.unlogged);
 		} else if (ev instanceof UserLoggedOutEvent) {
+			this._el.classList.add(classes.unlogged);
 			this._el.classList.remove(classes.logged);
 		} else if (this.getChild("sign-in").contains(ev.target as HTMLElement)) {
 			this.app.router.navigate("/login");

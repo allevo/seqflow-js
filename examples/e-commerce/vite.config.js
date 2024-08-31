@@ -1,7 +1,7 @@
-import { resolve } from "path";
+// import { resolve } from "path";
 import { defineConfig } from "vite";
-import chokidar from "chokidar";
-import child_process from "child_process";
+// import chokidar from "chokidar";
+// import child_process from "child_process";
 
 export default defineConfig({
 	root: "src",
@@ -9,40 +9,9 @@ export default defineConfig({
 		outDir: "../dist",
 	},
 	publicDir: "../public",
-	/*
-  plugins: [
-    myLiveReload()
-  ],
-  build: {
-    emptyOutDir: false,
-    cssCodeSplit: false,
-    copyPublicDir: false,
-    /*
-    lib: {
-      // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/index.ts'),
-      formats: ['es', 'cjs'],
-      name: 'web',
-      // the proper extensions will be added
-      fileName: 'web',
-
-    },
-    rollupOptions: {
-      // make sure to externalize deps that shouldn't be bundled
-      // into your library
-      external: [],
-      output: {},
-    },
-  },
-  server: {
-    hmr: true,
-    watch: {
-      cwd: resolve(__dirname, 'src'),
-    }
-  }
-  */
 });
 
+/*
 function myLiveReload() {
 	const paths = ["src/**"];
 	return {
@@ -79,3 +48,4 @@ function myLiveReload() {
 		},
 	};
 }
+*/

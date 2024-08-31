@@ -1,4 +1,5 @@
 import type { SeqflowFunctionContext } from "seqflow-js";
+import { Button } from "seqflow-js-components";
 import { UserLoggedEvent, UserLoggedOutEvent } from "../events";
 import classes from "./user-profile-badge.module.css";
 
@@ -28,7 +29,7 @@ export async function UserProfileBadge(this: SeqflowFunctionContext) {
 	);
 
 	this.renderSync(
-		<button type="button" className={classes.logoWrapper}>
+		<Button color="link" className={classes.logoWrapper}>
 			<img
 				key="logo"
 				width={size}
@@ -37,10 +38,10 @@ export async function UserProfileBadge(this: SeqflowFunctionContext) {
 				src={getProfileUrl(user, size)}
 				alt="Profile Avatar"
 			/>
-			<div className={classes["profile-header-menu-wrapper"]}>
+			<span className={classes["profile-header-menu-wrapper"]}>
 				{profileHeaderMenu}
-			</div>
-		</button>,
+			</span>
+		</Button>,
 	);
 
 	const profilePicture = this.getChild("logo") as HTMLImageElement;

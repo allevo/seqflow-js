@@ -1,16 +1,21 @@
 
 .wrapper {
+  z-index: 10;
   display: none;
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background-color: red;
+
+  .cartTooltipLink {
+    display: inline-block
+  }
 }
 .wrapper.show {
   display: inline;
 }
-
+/*
 .cartTooltipLink {
   display: inline-block;
   padding: 30px;
 }
+*/

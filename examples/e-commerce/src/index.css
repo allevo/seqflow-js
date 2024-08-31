@@ -1,7 +1,18 @@
 
-body {
-    max-width: unset;
-    margin: unset;
-    padding: unset;
-    background-color: rgb(200 200 200);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    /* background color */
+    --b1: 0.3 0 0;
+    /* text color */
+    --bc: 0.91 0 0;
+
+    /* primary color - button color */
+    --p: 0.6 0.22 257.22;
+    --pc: 1 0 0;
+    /* secondary color - button color */
+    --s: 0.64 0.18 146.74;
+    --sc: 1 0 0;
 }

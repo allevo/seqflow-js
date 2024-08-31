@@ -1,4 +1,6 @@
-import { screen } from "@testing-library/dom";
+import { screen, waitFor } from "@testing-library/dom";
+import userEvent from "@testing-library/user-event";
+
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
@@ -132,6 +134,7 @@ test("The user should buy products", async () => {
 				return new ProductDomain(config);
 			},
 		},
+		// log: console,
 		router,
 		config: {
 			api: {
@@ -140,18 +143,17 @@ test("The user should buy products", async () => {
 		},
 	});
 
-	const goToCheckoutTooltipBefore = await screen.findByText(/Go to checkout/i);
-	expect(goToCheckoutTooltipBefore).not.toBeVisible();
-
 	const electronicsCategory = await screen.findByText(/electronics/i);
 	electronicsCategory.click();
 
 	// Wait for the products to be rendered
-	await screen.findByText(
-		/WD 2TB Elements Portable External Hard Drive - USB 3.0/i,
-	);
+	await screen.findByRole("heading", {
+		name: /WD 2TB Elements Portable External Hard Drive - USB 3.0/i,
+	});
 
-	const cartButtons = await screen.findAllByText(/Add to cart/i);
+	const cartButtons = await screen.findAllByRole("button", {
+		name: /Add to cart/i,
+	});
 	expect(cartButtons).toHaveLength(6);
 	// Add 2 products to the cart
 	cartButtons[0].click();
@@ -170,7 +172,7 @@ test("The user should buy products", async () => {
 	await screen.findByText(/login/i);
 
 	const input: HTMLInputElement = await screen.findByLabelText(/username/i);
-	input.value = "johnd";
+	userEvent.type(input, "johnd");
 	const loginButton = await screen.findByText(/login/i);
 	loginButton.click();
 

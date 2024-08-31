@@ -1,5 +1,5 @@
 import { NavigationEvent, type SeqflowFunctionContext } from "seqflow-js";
-import { Header } from "./components/header";
+import { Header } from "./components/Header";
 import { components } from "./domains/cart";
 import type { UserType } from "./domains/user";
 import { Cart } from "./pages/cart";

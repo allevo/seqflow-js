@@ -1,4 +1,5 @@
 
+/*
 .productList {
     margin-top: 30px;
 }
@@ -15,4 +16,33 @@
     border-radius: 3px 4px 0px 0px;
     max-width: 100%;
     height: auto;
+}
+*/
+
+.card:hover:before {
+    background-color: transparent !important;
+}
+
+.card:hover .body {
+    --tw-bg-opacity: 0.8;
+}
+
+.card .body {
+    position: absolute !important;
+    bottom: 0px;
+    width: 100%;
+    padding: 0px;
+    flex-direction: row;
+    height: 60px;
+    align-items: center;
+    background-color: var(--fallback-n, oklch(var(--n) / var(--tw-bg-opacity)));
+    border-bottom-left-radius: var(--rounded-box, 1rem);
+    border-bottom-right-radius: var(--rounded-box, 1rem);
+
+    h2 {
+        display: inline;
+        flex-grow: 1;
+        margin: 0px;
+        text-align: center;
+    }
 }

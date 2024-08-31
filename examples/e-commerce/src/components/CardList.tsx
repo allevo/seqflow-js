@@ -17,7 +17,7 @@ export async function CardList<T extends { id: string }>(
 					className={classes.element}
 					id={`${data.prefix}-${item.id}`}
 				>
-					<data.Component {...item} />
+					<data.Component {...item} style={{ height: "100%" }} />
 				</li>
 			))}
 		</ol>,
