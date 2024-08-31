@@ -6,7 +6,9 @@ import { Button } from "../Button";
 async function NavbarStory(this: SeqflowFunctionContext) {
 	this.renderSync(
 		<Navbar className={"bg-base-100"}>
-			<Button color="ghost" className="text-xl">SeqflowJS</Button>
+			<Button color="ghost" className="text-xl">
+				SeqflowJS
+			</Button>
 		</Navbar>,
 	);
 }
@@ -18,49 +20,63 @@ export default {
 	title: "Example/Navbar",
 	tags: ["autodocs"],
 	component: NavbarStory,
-	args: {
-	},
+	args: {},
 };
 
 export const Empty = {};
 
 export const NavbarWithStartCenterEnd: StoryFn = {
-	component: async function (this: SeqflowFunctionContext, _: SeqflowFunctionData<unknown>) {
+	component: async function (
+		this: SeqflowFunctionContext,
+		_: SeqflowFunctionData<unknown>,
+	) {
 		this.renderSync(
 			<Navbar className={"bg-base-100"}>
 				<Navbar.Start>
-				<Button color="ghost" shape="circle" className="text-xl">S</Button>
+					<Button color="ghost" shape="circle" className="text-xl">
+						S
+					</Button>
 				</Navbar.Start>
 				<Navbar.Center>
-					<Button color="ghost" className="text-xl">SeqflowJS</Button>
+					<Button color="ghost" className="text-xl">
+						SeqflowJS
+					</Button>
 				</Navbar.Center>
 				<Navbar.End>
-					<Button color="ghost" shape="circle" className="text-xl">E</Button>
+					<Button color="ghost" shape="circle" className="text-xl">
+						E
+					</Button>
 				</Navbar.End>
 			</Navbar>,
 		);
 	},
-	play: async () => {
-	},
-}
-
+	play: async () => {},
+};
 
 export const NavbarResponsive: StoryFn = {
-	component: async function (this: SeqflowFunctionContext, _: SeqflowFunctionData<unknown>) {
+	component: async function (
+		this: SeqflowFunctionContext,
+		_: SeqflowFunctionData<unknown>,
+	) {
 		this.renderSync(
 			<Navbar className={"bg-base-100"}>
 				<Navbar.Start>
-				<Button color="ghost" shape="circle" className="text-xl">S</Button>
+					<Button color="ghost" shape="circle" className="text-xl">
+						S
+					</Button>
 				</Navbar.Start>
-				<Navbar.Center className={'hidden lg:flex'}>
-					<Button color="ghost" className="text-xl">SeqflowJS</Button>
+				<Navbar.Center className={"hidden lg:flex"}>
+					<Button color="ghost" className="text-xl">
+						SeqflowJS
+					</Button>
 				</Navbar.Center>
 				<Navbar.End>
-					<Button color="ghost" shape="circle" className="text-xl">E</Button>
+					<Button color="ghost" shape="circle" className="text-xl">
+						E
+					</Button>
 				</Navbar.End>
 			</Navbar>,
 		);
 	},
-	play: async () => {
-	},
-}
+	play: async () => {},
+};

@@ -4,10 +4,11 @@ import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
 import { Alert, type AlertPropsType } from ".";
 
-async function AlertStory(this: SeqflowFunctionContext, props: SeqflowFunctionData<AlertPropsType>) {
-	this.renderSync(
-		<Alert {...props}>This is an alert</Alert>,
-	);
+async function AlertStory(
+	this: SeqflowFunctionContext,
+	props: SeqflowFunctionData<AlertPropsType>,
+) {
+	this.renderSync(<Alert {...props}>This is an alert</Alert>);
 }
 // biome-ignore lint/suspicious/noExplicitAny: storybook
 AlertStory.__storybook = (Alert as any).__storybook;
@@ -23,9 +24,7 @@ export default {
 
 export const Empty = {};
 
-export const AllAlert: StoryFn = async function (
-	this: SeqflowFunctionContext,
-) {
+export const AllAlert: StoryFn = async function (this: SeqflowFunctionContext) {
 	this.renderSync(
 		<>
 			<div
@@ -35,11 +34,21 @@ export const AllAlert: StoryFn = async function (
 				}}
 			>
 				<div>Color</div>
-				<div><Alert>No color</Alert></div>
-				<div><Alert color="info">info</Alert></div>
-				<div><Alert color="success">success</Alert></div>
-				<div><Alert color="warning">warning</Alert></div>
-				<div><Alert color="error">error</Alert></div>
+				<div>
+					<Alert>No color</Alert>
+				</div>
+				<div>
+					<Alert color="info">info</Alert>
+				</div>
+				<div>
+					<Alert color="success">success</Alert>
+				</div>
+				<div>
+					<Alert color="warning">warning</Alert>
+				</div>
+				<div>
+					<Alert color="error">error</Alert>
+				</div>
 			</div>
 		</>,
 	);

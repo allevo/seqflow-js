@@ -1,8 +1,8 @@
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
+import type { SeqflowFunctionContext } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
 import { TextInput, type TextInputComponent } from ".";
-import type { SeqflowFunctionContext } from "seqflow-js";
 import { FormField, type FormFieldComponent } from "../FormField";
 
 export default {
@@ -49,16 +49,24 @@ export const SetError: StoryFn<unknown> = {
 export const SetErrorWithFormField: StoryFn<unknown> = {
 	component: async function (this: SeqflowFunctionContext) {
 		this.renderSync(
-			<FormField label='username'>
-				<TextInput withBorder type="text" required name="userame" initialValue="johnd"  />
-			</FormField>
+			<FormField label="username">
+				<TextInput
+					withBorder
+					type="text"
+					required
+					name="userame"
+					initialValue="johnd"
+				/>
+			</FormField>,
 		);
 	},
 	play: async ({ canvasElement }) => {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		const canvas = within(canvasElement);
 
-		const formField = canvasElement.querySelector('.form-control') as FormFieldComponent;
+		const formField = canvasElement.querySelector(
+			".form-control",
+		) as FormFieldComponent;
 		const input = canvas.getByRole("textbox") as TextInputComponent;
 		await waitFor(() => expect(input.validity.valid).toBe(true));
 
@@ -73,6 +81,8 @@ export const SetErrorWithFormField: StoryFn<unknown> = {
 		await userEvent.type(input, "Hello, World!");
 
 		await waitFor(() => expect(input.validity.valid).toBe(true));
-		await waitFor(() => expect(formField).not.toHaveClass("form-control-error"));
+		await waitFor(() =>
+			expect(formField).not.toHaveClass("form-control-error"),
+		);
 	},
 };

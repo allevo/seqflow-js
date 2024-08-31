@@ -15,9 +15,7 @@ export default {
 
 export const Empty = {};
 
-export const AllBadge: StoryFn = async function (
-	this: SeqflowFunctionContext,
-) {
+export const AllBadge: StoryFn = async function (this: SeqflowFunctionContext) {
 	this.renderSync(
 		<>
 			<div
@@ -27,16 +25,36 @@ export const AllBadge: StoryFn = async function (
 				}}
 			>
 				<div>Color</div>
-				<div><Badge color="neutral">neutral</Badge></div>
-				<div><Badge color="primary">primary</Badge></div>
-				<div><Badge color="secondary">secondary</Badge></div>
-				<div><Badge color="accent">accent</Badge></div>
-				<div><Badge color="ghost">ghost</Badge></div>
-				<div><Badge color="info">info</Badge></div>
-				<div><Badge color="success">success</Badge></div>
-				<div><Badge color="warning">warning</Badge></div>
-				<div><Badge color="error">error</Badge></div>
-				<div><Badge color="outline">outline</Badge></div>
+				<div>
+					<Badge color="neutral">neutral</Badge>
+				</div>
+				<div>
+					<Badge color="primary">primary</Badge>
+				</div>
+				<div>
+					<Badge color="secondary">secondary</Badge>
+				</div>
+				<div>
+					<Badge color="accent">accent</Badge>
+				</div>
+				<div>
+					<Badge color="ghost">ghost</Badge>
+				</div>
+				<div>
+					<Badge color="info">info</Badge>
+				</div>
+				<div>
+					<Badge color="success">success</Badge>
+				</div>
+				<div>
+					<Badge color="warning">warning</Badge>
+				</div>
+				<div>
+					<Badge color="error">error</Badge>
+				</div>
+				<div>
+					<Badge color="outline">outline</Badge>
+				</div>
 			</div>
 		</>,
 	);

@@ -1,8 +1,18 @@
 import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
 export interface BadgePropsType {
-	color?: 'neutral' | 'primary' | 'secondary' | 'accent' | 'ghost' | 'info' | 'success' | 'warning' | 'error' | 'outline';
-	size?: 'normal' | 'lg' | 'md' | 'sm' | 'xs'
+	color?:
+		| "neutral"
+		| "primary"
+		| "secondary"
+		| "accent"
+		| "ghost"
+		| "info"
+		| "success"
+		| "warning"
+		| "error"
+		| "outline";
+	size?: "normal" | "lg" | "md" | "sm" | "xs";
 }
 
 export async function Badge(
@@ -45,7 +55,5 @@ export async function Badge(
 		return;
 	}
 
-	this.renderSync(
-		children
-	);
+	this.renderSync(children);
 }

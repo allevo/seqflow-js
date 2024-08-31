@@ -1,7 +1,7 @@
 import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
 
 export interface AlertPropsType {
-	color?: 'info' | 'success' | 'warning' | 'error'
+	color?: "info" | "success" | "warning" | "error";
 }
 
 export async function Alert(
@@ -19,7 +19,7 @@ export async function Alert(
 		classNames.push(`alert-${color}`);
 	}
 	this._el.role = "alert";
-	
+
 	this._el.classList.add(...classNames);
 
 	if (!children || (Array.isArray(children) && children.length === 0)) {
@@ -29,7 +29,5 @@ export async function Alert(
 		return;
 	}
 
-	this.renderSync(
-		children
-	);
+	this.renderSync(children);
 }
