@@ -53,21 +53,17 @@ export async function FormField(
 		return;
 	}
 
-	if (typeof label === "string") {
-		this._el.setAttribute("aria-label", label);
-	}
-
 	this._el.classList.add("form-control");
 
 	const describedBy = generateId();
 	const top = (
 		<div className="label">
-			<span id={describedBy} className="label-text">
+			<label id={describedBy} className="label-text">
 				{label}
-			</span>
+			</label>
 		</div>
 	);
-	input.setAttribute("aria-describedby", describedBy);
+	input.setAttribute("aria-labelledby", describedBy);
 
 	const hintElement = (
 		<span key="hint" className="label-text-alt hint">
@@ -122,4 +118,4 @@ export async function FormField(
 		}
 	}
 }
-FormField.tagName = () => "label";
+FormField.tagName = () => "div";
