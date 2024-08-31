@@ -30,6 +30,7 @@ export interface ButtonPropsType {
 	disabled?: boolean;
 	loading?: boolean;
 	type?: "button" | "submit";
+	shape?: "circle" | "square";
 	// TODO
 	// responsive,
 	// html input type
@@ -49,6 +50,7 @@ export async function Button(
 		disabled,
 		loading,
 		type,
+		shape,
 		children,
 	}: SeqflowFunctionData<ButtonPropsType>,
 ) {
@@ -86,6 +88,12 @@ export async function Button(
 	}
 	if (glass) {
 		classNames.push("glass");
+	}
+	if (shape) {
+		/*
+		btn-circle
+		*/
+		classNames.push(`btn-${shape}`);
 	}
 
 	const el = this._el as ButtonComponent;

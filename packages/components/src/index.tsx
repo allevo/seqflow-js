@@ -1,4 +1,6 @@
 import "./index.css";
+export * from "./Alert/index.js";
+export * from "./Badge/index.js";
 export * from "./Button/index.js";
 export * from "./Card/index.js";
 export * from "./ChatBubble/index.js";
@@ -7,6 +9,7 @@ export * from "./Divider/index.js";
 export * from "./Form/index.js";
 export * from "./FormField/index.js";
 export * from "./Loading/index.js";
+export * from "./Navbar/index.js";
 export * from "./NumberInput/index.js";
 export * from "./Select/index.js";
 export * from "./TextInput/index.js";

@@ -12,7 +12,6 @@ async function ButtonStory(
 }
 // biome-ignore lint/suspicious/noExplicitAny: storybook
 ButtonStory.__storybook = (Button as any).__storybook;
-console.log("---", ButtonStory.__storybook);
 ButtonStory.__storybook.props.active.control = { type: "boolean" };
 
 export default {

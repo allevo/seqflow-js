@@ -5,7 +5,7 @@ import { Button } from "../Button";
 
 async function CardStory(this: SeqflowFunctionContext, props: CardProps) {
 	this.renderSync(
-		<Card {...props} wrapperClass={"w-96 m-auto"}>
+		<Card {...props} className={"w-96 m-auto"}>
 			<Body>
 				<Card.Title level={1}>Card title</Card.Title>
 				<p>The content of the Card</p>
@@ -36,7 +36,7 @@ export const Centered: StoryFn<unknown> = async function (
 ) {
 	this.renderSync(
 		<Card shadow="md">
-			<Body wrapperClass="items-center text-center">
+			<Body className="items-center text-center">
 				<Card.Title level={1}>Card title</Card.Title>
 				<p>The content of the Card</p>
 				<Card.Actions>
