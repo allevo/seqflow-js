@@ -79,7 +79,7 @@ importers:
         version: 9.3.4
       '@testing-library/jest-dom':
         specifier: ^6.4.5
-        version: 6.4.5(@jest/globals@29.7.0)(jest@29.7.0(@types/node@20.12.7))(vitest@1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1))
+        version: 6.4.5(@jest/globals@29.7.0)(jest@29.7.0(@types/node@20.12.7)(babel-plugin-macros@3.1.0))(vitest@1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1))
       '@types/css-modules':
         specifier: ^1.0.5
         version: 1.0.5
@@ -95,12 +95,6 @@ importers:
       vite-plugin-checker:
         specifier: ^0.7.2
         version: 0.7.2(@biomejs/biome@1.5.3)(typescript@5.4.2)(vite@5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1))
-      vite-plugin-full-reload:
-        specifier: ^1.1.0
-        version: 1.1.0
-      vite-plugin-live-reload:
-        specifier: ^3.0.3
-        version: 3.0.3(vite@5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1))
       vitest:
         specifier: ^1.2.2
         version: 1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1)
@@ -147,12 +141,6 @@ importers:
       vite-plugin-checker:
         specifier: ^0.7.2
         version: 0.7.2(@biomejs/biome@1.5.3)(typescript@5.3.3)(vite@5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1))
-      vite-plugin-full-reload:
-        specifier: ^1.1.0
-        version: 1.1.0
-      vite-plugin-live-reload:
-        specifier: ^3.0.3
-        version: 3.0.3(vite@5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1))
       vitest:
         specifier: ^1.2.2
         version: 1.3.1(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1)
@@ -385,12 +373,6 @@ importers:
       vite-plugin-dts:
         specifier: ^3.6.4
         version: 3.7.3(@types/node@20.11.24)(rollup@4.20.0)(typescript@5.4.2)(vite@5.4.2(@types/node@20.11.24)(less@4.2.0)(terser@5.31.1))
-      vite-plugin-full-reload:
-        specifier: ^1.1.0
-        version: 1.1.0
-      vite-plugin-live-reload:
-        specifier: ^3.0.3
-        version: 3.0.3(vite@5.4.2(@types/node@20.11.24)(less@4.2.0)(terser@5.31.1))
       vitest:
         specifier: ^1.2.2
         version: 1.3.1(@types/node@20.11.24)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1)
@@ -570,12 +552,6 @@ importers:
       vite-plugin-dts:
         specifier: ^3.6.4
         version: 3.7.3(@types/node@20.11.24)(rollup@4.20.0)(typescript@5.4.2)(vite@5.4.2(@types/node@20.11.24)(less@4.2.0)(terser@5.31.1))
-      vite-plugin-full-reload:
-        specifier: ^1.1.0
-        version: 1.1.0
-      vite-plugin-live-reload:
-        specifier: ^3.0.3
-        version: 3.0.3(vite@5.4.2(@types/node@20.11.24)(less@4.2.0)(terser@5.31.1))
       vite-plugin-markdown:
         specifier: ^2.2.0
         version: 2.2.0(vite@5.4.2(@types/node@20.11.24)(less@4.2.0)(terser@5.31.1))
@@ -6496,14 +6472,6 @@ packages:
       vite:
         optional: true
 
-  vite-plugin-full-reload@1.1.0:
-    resolution: {integrity: sha512-3cObNDzX6DdfhD9E7kf6w2mNunFpD7drxyNgHLw+XwIYAgb+Xt16SEXo0Up4VH+TMf3n+DSVJZtW2POBGcBYAA==}
-
-  vite-plugin-live-reload@3.0.3:
-    resolution: {integrity: sha512-ce1ygNPmfVdiO6SyjpephroZiK+X5+BFetkceD/FFOYZEPoVSydJRfKT2JPaL4/D3C3NwqJvtPjnla1GSa264A==}
-    peerDependencies:
-      vite: ^4.0.0 || ^5.0.0
-
   vite-plugin-markdown@2.2.0:
     resolution: {integrity: sha512-eH2tXMZcx3EHb5okd+/0VIyoR8Gp9pGe24UXitOOcGkzObbJ1vl48aGOAbakoT88FBdzC8MXNkMfBIB9VK0Ndg==}
     peerDependencies:
@@ -9010,21 +8978,6 @@ snapshots:
       '@jest/globals': 29.7.0
       jest: 29.7.0(@types/node@20.12.7)(babel-plugin-macros@3.1.0)
       vitest: 1.3.1(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1)
-
-  '@testing-library/jest-dom@6.4.5(@jest/globals@29.7.0)(jest@29.7.0(@types/node@20.12.7))(vitest@1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1))':
-    dependencies:
-      '@adobe/css-tools': 4.3.3
-      '@babel/runtime': 7.24.4
-      aria-query: 5.3.0
-      chalk: 3.0.0
-      css.escape: 1.5.1
-      dom-accessibility-api: 0.6.3
-      lodash: 4.17.21
-      redent: 3.0.0
-    optionalDependencies:
-      '@jest/globals': 29.7.0
-      jest: 29.7.0(@types/node@20.12.7)(babel-plugin-macros@3.1.0)
-      vitest: 1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1)
 
   '@testing-library/jest-dom@6.5.0':
     dependencies:
@@ -13986,23 +13939,6 @@ snapshots:
       - '@types/node'
       - rollup
       - supports-color
-
-  vite-plugin-full-reload@1.1.0:
-    dependencies:
-      picocolors: 1.0.0
-      picomatch: 2.3.1
-
-  vite-plugin-live-reload@3.0.3(vite@5.4.2(@types/node@20.11.24)(less@4.2.0)(terser@5.31.1)):
-    dependencies:
-      chokidar: 3.6.0
-      picocolors: 1.0.0
-      vite: 5.4.2(@types/node@20.11.24)(less@4.2.0)(terser@5.31.1)
-
-  vite-plugin-live-reload@3.0.3(vite@5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1)):
-    dependencies:
-      chokidar: 3.6.0
-      picocolors: 1.0.0
-      vite: 5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1)
 
   vite-plugin-markdown@2.2.0(vite@5.4.2(@types/node@20.11.24)(less@4.2.0)(terser@5.31.1)):
     dependencies:
