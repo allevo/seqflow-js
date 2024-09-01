@@ -1,3 +1,4 @@
+import { SeqflowFunctionContext } from "seqflow-js";
 import type { StoryFn } from "seqflow-js-storybook";
 import { Checkbox } from ".";
 
@@ -9,7 +10,9 @@ export default {
 
 export const Empty = {};
 
-export const AllColors: StoryFn<unknown> = async function () {
+export const AllColors: StoryFn<unknown> = async function (
+	this: SeqflowFunctionContext,
+) {
 	this.renderSync(
 		<div>
 			<Checkbox />
@@ -24,7 +27,9 @@ export const AllColors: StoryFn<unknown> = async function () {
 	);
 };
 
-export const AllSizes: StoryFn<unknown> = async function () {
+export const AllSizes: StoryFn<unknown> = async function (
+	this: SeqflowFunctionContext,
+) {
 	this.renderSync(
 		<div>
 			<Checkbox />

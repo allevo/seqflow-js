@@ -2,7 +2,7 @@
 export default {
   content: [
     './src/**/*.{js,jsx,ts,tsx,css}',
-    './src/**/*.stories.{tsx}',
+    './src/**/*.stories.tsx',
     './.storybook/**/*.{js,jsx,ts,tsx,mdx}',
     './stories/**/*.{js,jsx,ts,tsx,mdx}',
   ],

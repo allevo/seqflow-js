@@ -15,7 +15,8 @@
         "isolatedModules": true,
         "noEmit": true,
         "declaration":true,
-        "types": []
+        "types": [],
+        "skipLibCheck": true
     },
     "include": ["./src/**/*", "./src/**/*.stories.tsx", "./tests/**/*"]
 }

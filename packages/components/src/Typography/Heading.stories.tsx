@@ -7,7 +7,7 @@ async function HeadingStory(
 	{ title, level }: HeadingProps,
 ) {
 	this.renderSync(
-		<Prose wrapperClass="m-auto">
+		<Prose className="m-auto">
 			<Heading level={level} title={title} />
 		</Prose>,
 	);
@@ -31,7 +31,7 @@ export const AllHeading: StoryFn<unknown> = async function (
 ) {
 	const title = "The heading";
 	this.renderSync(
-		<Prose wrapperClass="m-auto">
+		<Prose className="m-auto">
 			<Heading level={1} title={`${title} 1`} />
 			<Heading level={2} title={`${title} 2`} />
 			<Heading level={3} title={`${title} 3`} />

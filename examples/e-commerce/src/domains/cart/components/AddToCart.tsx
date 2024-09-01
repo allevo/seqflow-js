@@ -56,8 +56,6 @@ export async function AddToCart(
 	const otherAddToCartWrapper = this.getChild("other-add-to-cart-wrapper");
 	const counter = this.getChild("counter");
 
-	console.log("initCount", initCount);
-
 	if (initCount > 0) {
 		counter.textContent = `${initCount}`;
 		firstAddToCart.classList.remove(classes.show);

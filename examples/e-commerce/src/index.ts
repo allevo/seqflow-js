@@ -6,7 +6,7 @@ import { ProductDomain } from "./domains/product";
 import { UserDomain } from "./domains/user";
 import "./index.css";
 
-start(document.getElementById("root"), Main, undefined, {
+start(document.getElementById("root")!, Main, undefined, {
 	log: console,
 	domains: {
 		user: (eventTarget, _, config) => {

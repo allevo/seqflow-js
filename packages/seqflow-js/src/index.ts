@@ -428,7 +428,7 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 
 					if (key === "className") {
 						if (Array.isArray(options[key])) {
-							el.classList.add(...options[key]);
+							el.classList.add(...(options[key] as string[]));
 							continue;
 						}
 						el.setAttribute("class", options[key] as string);

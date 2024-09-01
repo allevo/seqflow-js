@@ -4,7 +4,7 @@ import classes from "./Main.module.css";
 
 export async function Main(this: SeqflowFunctionContext) {
 	this.renderSync(
-		<Card wrapperClass={classes["card-wrapper"]}>
+		<Card className={classes["card-wrapper"]}>
 			<Card.Body>
 				<Card.Title level={1}>Empty example</Card.Title>
 				<p>This is the empty example</p>

@@ -35,8 +35,7 @@
     "@storybook/core-server": "^8.2.5",
     "@storybook/node-logger": "^8.2.5",
     "@storybook/types": "^8.2.5",
-    "magic-string": "^0.30.0",
-    "vite": "^5.3.3"
+    "magic-string": "^0.30.0"
   },
   "devDependencies": {
     "@storybook/components": "^8.2.5",
@@ -52,7 +51,8 @@
     "seqflow-js": "workspace:*",
     "ts-dedent": "^2.2.0",
     "tsx": "^4.7.1",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.2",
+    "vite": "^5.4.2"
   },
   "engines": {
     "node": ">=18.0.0"

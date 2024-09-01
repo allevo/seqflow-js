@@ -26,7 +26,7 @@ export class CartDomain {
 			this.products.set(productId, [product, 0]);
 		}
 
-		const value = this.products.get(productId);
+		const value = this.products.get(productId)!;
 		value[1] += 1;
 		updateLocalStorage(this.products);
 
@@ -47,7 +47,7 @@ export class CartDomain {
 			return 0;
 		}
 
-		const value = this.products.get(productId);
+		const value = this.products.get(productId)!;
 		value[1] -= 1;
 
 		if (value[1] === 0) {

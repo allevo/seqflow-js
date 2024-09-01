@@ -2,12 +2,16 @@ import { resolve } from 'node:path'
 import type { ConfigEnv } from 'vite';
 import type { PluginOption } from 'vite';
 import { defineConfig } from "vite";
+import checker from 'vite-plugin-checker'
 
 export default defineConfig((configEnv: ConfigEnv) => {
     const withShadowDom = configEnv.mode !== 'development';
     return {
         root: "src",
         plugins: [
+            checker({
+                typescript: true,
+            }),
             cssInjectedByJsPlugin({
                 injectFunction: (css) => {
                     return `
@@ -94,8 +98,6 @@ function cssInjectedByJsPlugin({ injectFunction }: {
 					warnLog('More than 1 CSS assets found in the bundle. This plugin is designed to work with 1 CSS asset only.');
 					return;
 				}
-
-				const cssAsset = cssAssets[0];
 
 				await globalCssInjection(bundle, cssAssets, injectFunction);
             },
