@@ -19,8 +19,8 @@ export async function Dropdown(
 	this: SeqflowFunctionContext,
 	{ label, openOn, align, children }: SeqflowFunctionData<DropdownPropsType>,
 ) {
-	console.log('......')
-	console.log(label)
+	console.log("......");
+	console.log(label);
 
 	const classes = ["dropdown"];
 	if (openOn === "hover") {
@@ -53,9 +53,14 @@ export async function Dropdown(
 	}
 
 	console.log("label", label, typeof label);
-	const btn = typeof label === 'string'
-		? <div tabIndex={0} role="button" className="btn m-1">{label}</div>
-		: label;
+	const btn =
+		typeof label === "string" ? (
+			<div tabIndex={0} role="button" className="btn m-1">
+				{label}
+			</div>
+		) : (
+			label
+		);
 
 	this.renderSync(
 		<>

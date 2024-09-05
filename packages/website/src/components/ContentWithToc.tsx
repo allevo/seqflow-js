@@ -37,28 +37,30 @@ export async function ContentWithToc(
 		this._el.classList.add(classes.top);
 	}
 
-	const aside = toc.length > 0
-		?
-		<>
-		<aside>
-				<ul className="list-group">
-					{toc.map((t) => (
-						<li className={`list-group-item ${classes[`level-${t.level}`]}`}>
-							<a className="" href={`#${t.slug}`}>
-								{t.title}
-							</a>
-						</li>
-					))}
-				</ul>
-			</aside>
-		</>
-		: <></>;
+	const aside =
+		toc.length > 0 ? (
+			<>
+				<aside>
+					<ul className="list-group">
+						{toc.map((t) => (
+							<li className={`list-group-item ${classes[`level-${t.level}`]}`}>
+								<a className="" href={`#${t.slug}`}>
+									{t.title}
+								</a>
+							</li>
+						))}
+					</ul>
+				</aside>
+			</>
+		) : (
+			<></>
+		);
 
 	this.renderSync(
 		<>
 			{aside}
 			<main style="grid-area: main; order: 1 !important; overflow-x: hidden; padding-bottom: 30px; padding-right: 15px;">
-				<Prose className={[classes.content, 'm-auto']}>
+				<Prose className={[classes.content, "m-auto"]}>
 					<h1>{data.title}</h1>
 					{...getElementFromString(html)}
 				</Prose>
