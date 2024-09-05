@@ -13,6 +13,7 @@ import classes from "./ContentWithToc.module.css";
 import "prismjs/plugins/toolbar/prism-toolbar";
 
 import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard";
+import { Heading, Prose } from "seqflow-js-components";
 
 export interface Toc {
 	title: string;
@@ -24,7 +25,7 @@ export interface Toc {
 function getElementFromString(string: string) {
 	const template = document.createElement("div");
 	template.innerHTML = string;
-	return Array.from(template.children) as Element & HTMLElement[];
+	return Array.from(template.children) as HTMLElement[];
 }
 
 export async function ContentWithToc(
@@ -49,8 +50,10 @@ export async function ContentWithToc(
 				</ul>
 			</aside>
 			<main style="grid-area: main; order: 1 !important; overflow-x: hidden; padding-bottom: 30px; padding-right: 15px;">
-				<h1>{data.title}</h1>
-				{getElementFromString(html)}
+				<Prose className={classes.content}>
+					<h1>{data.title}</h1>
+					{...getElementFromString(html)}
+				</Prose>
 			</main>
 		</div>,
 	);

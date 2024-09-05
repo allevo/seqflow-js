@@ -4,11 +4,11 @@ import { Heading, HeadingProps, Prose } from ".";
 
 async function HeadingStory(
 	this: SeqflowFunctionContext,
-	{ title }: SeqflowFunctionData<HeadingProps>,
+	{ children, ...props }: SeqflowFunctionData<HeadingProps>,
 ) {
 	this.renderSync(
 		<Prose>
-			<Heading title={title} />
+			<Heading {...props}>Heading</Heading>
 			<p>
 				Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod
 				tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim
@@ -25,9 +25,7 @@ export default {
 	title: "Example/Prose",
 	tags: ["autodocs"],
 	component: HeadingStory,
-	args: {
-		title: "Heading",
-	},
+	args: {},
 };
 
 export const Simple: StoryFn<{ label: string }> = async function (
@@ -36,7 +34,7 @@ export const Simple: StoryFn<{ label: string }> = async function (
 ) {
 	this.renderSync(
 		<Prose>
-			<Heading title={label} />
+			<Heading>{label}</Heading>
 			<p>
 				Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod
 				tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim
@@ -53,22 +51,22 @@ export const MoreText: StoryFn<{ label: string }> = async function (
 ) {
 	this.renderSync(
 		<Prose className="m-auto">
-			<Heading title={label} />
+			<Heading>{label}</Heading>
 			<p>
 				Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod
 				tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid
 				ex ea commodi consequatur
 			</p>
-			<Heading level={2} title={label} />
+			<Heading level={2}>{label}</Heading>
 			<p>
 				Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod
 				tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid
 				ex ea commodi consequatur
 			</p>
-			<Heading level={2} title={label} />
-			<Heading level={3} title={label} />
+			<Heading level={2}>{label}</Heading>
+			<Heading level={3}>{label}</Heading>
 			<p>
 				Lorem ipsum dolor sit amet, consectetur adipisci elit, sed do eiusmod
 				tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim

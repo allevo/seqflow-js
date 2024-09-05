@@ -1,116 +1,207 @@
 import { SeqflowFunctionContext } from "seqflow-js";
+import {
+	Button,
+	Divider,
+	Dropdown,
+	Link,
+	Menu,
+	Navbar,
+} from "seqflow-js-components";
 import githubLogoAsString from "../public/images/github.svg";
 import logoAsString from "../public/images/logo.svg";
-import "./Header.css";
+import classes from "./Header.module.css";
 
-function getSvg(html: string) {
+function getSvg(html: string, style: Partial<HTMLElement["style"]> = {}) {
 	const div = document.createElement("div");
 	div.innerHTML = html;
-	return div.children[0] as HTMLElement;
+	const svg = div.children[0] as HTMLElement;
+	if (style) {
+		Object.assign(svg.style, style);
+	}
+	return svg;
 }
 
 export async function Header(this: SeqflowFunctionContext) {
+	this._el.style.backgroundColor = "#2b3035";
 	const svg = getSvg(logoAsString(30, 30));
 	const githubLogo = getSvg(githubLogoAsString(30, 30));
+	githubLogo.style.fill = "currentColor";
 
-	const anchor = (
-		<a className="navbar-brand" href="/" id="seqflow-anchor">
-			{svg}
-			SeqFlow
-		</a>
-	);
+	/*
 	this.renderSync(
-		<nav className="navbar navbar-expand-lg bg-body-tertiary">
-			<div className="container-fluid">
-				{anchor}
-				<button
-					className="navbar-toggler"
-					type="button"
-					data-bs-toggle="collapse"
-					data-bs-target="#navbarSupportedContent"
-					aria-controls="navbarSupportedContent"
-					aria-expanded="false"
-					aria-label="Toggle navigation"
-				>
-					<span className="navbar-toggler-icon" />
-				</button>
-				<div className="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul className="navbar-nav me-auto mb-2 mb-lg-0">
-						<li className="nav-item">
-							<a
-								className="nav-link"
+			<Navbar className={'shadow-md'}>
+				<Navbar.Start>
+					<a href="/" className={classes.headerAnchor} id="seqflow-anchor">
+						{svg}
+						SeqFlowJS
+					</a>
+				</Navbar.Start>
+				<Navbar.Center className={["hidden", "lg:flex"]}>
+					<ul className={classes.links}>
+						<li>
+							<Link
+								showAsButton="ghost"
 								href="/getting-started"
-								id="getting-started-link"
-							>
+								id="getting-started-link">
 								Getting started
-							</a>
+							</Link>
 						</li>
-						<li className="nav-item">
-							<a
-								className="nav-link"
-								aria-current="page"
+						<li>
+							<Link
+								showAsButton="ghost"
 								href="/why"
-								id="why-link"
-							>
+								id="why-link">
 								Why
-							</a>
+							</Link>
 						</li>
-						<li className="nav-item">
-							<a
-								className="nav-link"
+						<li>
+							<Link
+								showAsButton="ghost"
 								href="/api-reference"
-								id="api-reference-link"
-							>
+								id="api-reference-link">
 								Api Reference
-							</a>
+							</Link>
 						</li>
-						<li className="nav-item dropdown">
-							<button
-								type="button"
-								className="nav-link dropdown-toggle"
-								data-bs-toggle="dropdown"
-								id="exampleDropdownMenuLink"
-								data-toggle="dropdown"
-								aria-haspopup="true"
-								aria-expanded="false"
-							>
-								Examples
-							</button>
-							<div
-								className="dropdown-menu"
-								aria-labelledby="exampleDropdownMenuLink"
-							>
-								<a className="dropdown-item" href="/examples#counter">
-									Counter
-								</a>
-								<a className="dropdown-item" href="/examples#e-commerce">
-									E-Commerce
-								</a>
-								<div className="dropdown-divider" />
-								<a className="dropdown-item" href="/examples#web-component">
-									Custom Element with Shadow DOM
-								</a>
-							</div>
+						<li>
+							<Dropdown openOn="hover" label="Examples">
+								<Menu className={['w-56', 'shadow-md']} style={{ backgroundColor: '#3a3d40' }}>
+									<Menu.Item>
+										<Link showAsButton="ghost" href="/examples#counter" style={{ justifyContent: 'start', textAlign: 'start' }}>Counter</Link>
+									</Menu.Item>
+									<Menu.Item>
+										<Link showAsButton="ghost" href="/examples#counter" style={{ justifyContent: 'start', textAlign: 'start' }}>E-Commerce</Link>
+									</Menu.Item>
+									<Menu.Item>
+										<Link showAsButton="ghost" href="/examples#counter" style={{ justifyContent: 'start', textAlign: 'start' }}>Custom Element with Shadow DOM</Link>
+									</Menu.Item>
+								</Menu>
+							</Dropdown>
 						</li>
 					</ul>
-					<div className="navbar-nav">
-						<a
-							aria-label="github"
-							rel="noreferrer"
-							target="_blank"
-							href="https://github.com/allevo/seqflow-js"
-							className="nav-link"
+				</Navbar.Center>
+				<Navbar.End>
+					<Link
+						rel="noreferrer"
+						target="_blank"
+						aria-label="GitHub"
+						showAsButton="ghost"
+						href="https://github.com/allevo/seqflow-js"
+						id="api-reference-link">
+						{githubLogo}
+					</Link>
+				</Navbar.End>
+			</Navbar>
+	);
+	*/
+
+	const getItems = () => {
+		return (
+			<>
+				<Menu.SubMenuItem>
+					<Link showAsButton="ghost" href="/examples#random-quote">
+						Random quote
+					</Link>
+				</Menu.SubMenuItem>
+				<Menu.SubMenuItem>
+					<Link showAsButton="ghost" href="/examples#counter">
+						Counter
+					</Link>
+				</Menu.SubMenuItem>
+				<Menu.SubMenuItem>
+					<Link showAsButton="ghost" href="/examples#e-commerce">
+						E-Commerce
+					</Link>
+				</Menu.SubMenuItem>
+				<Menu.SubMenuItem>
+					<Link
+						showAsButton="ghost"
+						href="/examples#counter-with-custom-element"
+					>
+						Custom Element with Shadow DOM
+					</Link>
+				</Menu.SubMenuItem>
+			</>
+		);
+	};
+
+	this.renderSync(
+		<Navbar className={"shadow-md"}>
+			<Navbar.Start>
+				<Dropdown label={"X"} className={["lg:hidden", classes.submenu]}>
+					<Menu
+						direction="vertical"
+						size="md"
+						className={["w-80", "shadow-md"]}
+					>
+						<Menu.Item>
+							<Button className={"justify-start"} color="ghost">
+								This is a button link
+							</Button>
+						</Menu.Item>
+						<Menu.Item>
+							<Link className={"justify-start"} href="#" showAsButton="ghost">
+								This is a link
+							</Link>
+						</Menu.Item>
+						<Menu.Item>
+							<Menu.SubMenu label="Examples">{getItems()}</Menu.SubMenu>
+						</Menu.Item>
+					</Menu>
+				</Dropdown>
+				<Link
+					showAsButton="ghost"
+					href="/"
+					className={classes.headerAnchor}
+					id="seqflow-anchor"
+				>
+					{svg}
+					SeqFlowJS
+				</Link>
+			</Navbar.Start>
+			<Navbar.Center className={["hidden", "lg:flex"]}>
+				<Menu direction="horizontal" className={["!p-0"]}>
+					<Menu.Item>
+						<Link
+							showAsButton="ghost"
+							href="/getting-started"
+							id="getting-started-link"
 						>
-							<span style="color: white; fill: currentColor;">
-								{githubLogo}
-							</span>
-							<span className="github-name" style="margin-left: 10px;">
-								GitHub
-							</span>
-						</a>
-					</div>
-				</div>
-			</div>
-		</nav>,
+							Getting started
+						</Link>
+					</Menu.Item>
+					<Menu.Item>
+						<Link showAsButton="ghost" href="/why" id="why-link">
+							Why
+						</Link>
+					</Menu.Item>
+					<Menu.Item>
+						<Link
+							showAsButton="ghost"
+							href="/api-reference"
+							id="api-reference-link"
+						>
+							Api Reference
+						</Link>
+					</Menu.Item>
+					<Menu.Item>
+						<Menu.SubMenu className={classes.submenu} label="Examples">
+							{getItems()}
+						</Menu.SubMenu>
+					</Menu.Item>
+				</Menu>
+			</Navbar.Center>
+			<Navbar.End>
+				<Link
+					rel="noreferrer"
+					target="_blank"
+					aria-label="GitHub"
+					showAsButton="ghost"
+					href="https://github.com/allevo/seqflow-js"
+					id="api-reference-link"
+				>
+					{githubLogo}
+				</Link>
+			</Navbar.End>
+		</Navbar>,
 	);
 }

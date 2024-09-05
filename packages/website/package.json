@@ -33,6 +33,7 @@
     "serve": "^14.2.3",
     "tsx": "^4.7.1",
     "vite": "^5.4.2",
+    "vite-plugin-checker": "^0.7.2",
     "vite-plugin-dts": "^3.6.4",
     "vite-plugin-markdown": "^2.2.0",
     "vitest": "^1.2.2"
@@ -46,6 +47,7 @@
     "bootstrap": "5.3.3",
     "html-minifier": "^4.0.0",
     "prismjs": "^1.29.0",
-    "seqflow-js": "workspace:*"
+    "seqflow-js": "workspace:*",
+    "seqflow-js-components": "workspace:*"
   }
 }

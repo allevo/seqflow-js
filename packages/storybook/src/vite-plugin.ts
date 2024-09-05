@@ -1,7 +1,7 @@
 import ts, { LiteralTypeNode, TypeNode } from 'typescript'
 import fs from 'node:fs'
 import MagicString from "magic-string";
-import type { SBScalarType, SBType, StrictArgTypes, StrictInputType } from '@storybook/types'
+import type { SBType, StrictArgTypes, StrictInputType } from '@storybook/types'
 
 import { type Plugin, createFilter } from "vite";
 
@@ -65,6 +65,7 @@ function extrapolateSBTypeFromUnionType(type: TypeNode): SBType {
                 break
             }
             default:
+                console.log(t)
                 throw new Error(`Unsupported type ${t.kind}`)
         }
     }
@@ -263,7 +264,7 @@ function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: 
     }
 }
 
-export function foo(filePath: string, tsConfig: any) {
+export function getFileComponents(filePath: string, tsConfig: any) {
     const program = ts.createProgram([filePath], tsConfig)
 
     const out = program.getSourceFile(filePath)
@@ -361,23 +362,29 @@ function builder(tsConfigPath: string) {
     return {
         generateStorybookMetadataFor(filePath: string, compiledSource: string) {
 
-            const components = foo(filePath, tsConfig.config)
-            if (!components) {
-                console.log('No data found')
-                return
-            }
-            
-            const s = new MagicString(compiledSource);
-            for (const { componentName, fields } of components) {
-                s.append(`
-${componentName}.__storybook = {
-    props: ${JSON.stringify(fields)}
-}`)
+            try {
+                const components = getFileComponents(filePath, tsConfig.config)
+                if (!components) {
+                    console.log('No data found')
+                    return
                 }
+                
+                const s = new MagicString(compiledSource);
+                for (const { componentName, fields } of components) {
+                    s.append(`
+    ${componentName}.__storybook = {
+        props: ${JSON.stringify(fields)}
+    }`)
+                    }
 
-            return {
-                code: s.toString(),
-                map: s.generateMap()
+                return {
+                    code: s.toString(),
+                    map: s.generateMap()
+                }
+            } catch (e) {
+                console.error('Cannot generate storybook metadata for', filePath)
+                console.error(e)
+                return
             }
         }
     }

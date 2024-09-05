@@ -25,8 +25,8 @@ export async function Main(this: SeqflowFunctionContext) {
 	const InitalComponent = getComponent(this.app.router.segments);
 	this.renderSync(
 		<>
-			<Header />
-			<div id="main" className="flex-grow-1 overflow-y-auto">
+			<Header style={{ position: "sticky", top: "0px", zIndex: "50" }} />
+			<div id="main" className="flex-grow-1 overflow-y-auto relative">
 				<InitalComponent key="main" />
 			</div>
 		</>,

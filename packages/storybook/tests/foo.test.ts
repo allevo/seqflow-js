@@ -1,5 +1,5 @@
 import ts from "typescript";
-import { foo } from "../src/vite-plugin";
+import { getFileComponents } from "../src/vite-plugin";
 import { readFileSync } from "node:fs";
 import t from "node:test";
 import assert from "node:assert";
@@ -10,7 +10,7 @@ t.test("Normal", () => {
   );
 
   const componentPath = "./tests/fixtures/Normal.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
@@ -58,7 +58,7 @@ t.test("SimpleEnum", () => {
   );
 
   const componentPath = "./tests/fixtures/SimpleEnum.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
@@ -95,7 +95,7 @@ t.test("Enum", () => {
   );
 
   const componentPath = "./tests/fixtures/Enum.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
@@ -155,7 +155,7 @@ t.test("ExportDefault", () => {
   );
 
   const componentPath = "./tests/fixtures/ExportDefault.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
@@ -183,7 +183,7 @@ t.test("MultipleExports", () => {
   );
 
   const componentPath = "./tests/fixtures/MultipleExports.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
@@ -225,7 +225,7 @@ t.test("EnumOutsidePropertyAccessPropsType", { skip: false }, () => {
   );
 
   const componentPath = "./tests/fixtures/EnumOutsidePropertyAccessPropsType.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
@@ -286,7 +286,7 @@ t.test("Button", () => {
   );
 
   const componentPath = "./tests/fixtures/Button.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
@@ -419,7 +419,7 @@ t.test("OrSimple", () => {
   );
 
   const componentPath = "./tests/fixtures/OrSimple.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
@@ -458,7 +458,7 @@ t.test("Or2", () => {
   );
 
   const componentPath = "./tests/fixtures/Or2.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
@@ -495,7 +495,7 @@ t.test("FormField", () => {
   );
 
   const componentPath = "./tests/fixtures/formField.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{
@@ -561,7 +561,7 @@ t.test("function", () => {
   );
 
   const componentPath = "./tests/fixtures/WithFunction.ts";
-  const output = foo(componentPath, tsConfig);
+  const output = getFileComponents(componentPath, tsConfig);
 
   assert.deepStrictEqual(
     [{

@@ -37,7 +37,7 @@ test("should render the quote and refresh it", async () => {
 		},
 	});
 
-	await screen.findByText('Click the button to read a quote');
+	await screen.findByText("Click the button to read a quote");
 
 	const button = await screen.findByRole("button");
 	button.click();

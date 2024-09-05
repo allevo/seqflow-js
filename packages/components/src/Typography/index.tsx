@@ -15,17 +15,22 @@ export async function Prose(
 }
 
 export interface HeadingProps {
-	/** Title */
-	title: string;
 	/** Level */
 	level?: 1 | 2 | 3 | 4;
 }
 
 export async function Heading(
 	this: SeqflowFunctionContext,
-	{ title }: HeadingProps,
+	{ children }: SeqflowFunctionData<HeadingProps>,
 ) {
-	this.renderSync(title);
+	if (!children) {
+		this.app.log.error({
+			message: "Heading component requires children",
+		});
+		return;
+	}
+
+	this.renderSync(children);
 }
 Heading.tagName = (props: HeadingProps) => {
 	return `h${props.level || 1}`;

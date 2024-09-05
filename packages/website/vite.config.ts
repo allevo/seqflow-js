@@ -2,11 +2,13 @@ import { defineConfig } from "vite";
 import MarkdownIt from 'markdown-it'
 import pluginPurgeCss from "@mojojoejo/vite-plugin-purgecss";
 import fs from 'fs'
+import checker from 'vite-plugin-checker'
 
 export default defineConfig({
 	root: "src",
 	plugins: [
 		pluginPurgeCss(),
+		checker({ typescript: true }),
 		loadMarkdownPlugin({
 			components: [
 				{
