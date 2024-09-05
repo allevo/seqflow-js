@@ -124,6 +124,6 @@ In this tutorial, we have learned how to create a simple application using SeqFl
 
 Any comments or suggestions are really appreciated. Feel free to open an issue on the [GitHub repository](https://github.com/allevo/seqflow-js/issues).
 
-<div class="d-grid gap-2 col-6 mx-auto">
-    <a href="/examples" class="btn btn-outline-primary btn-lg">See other examples</a>
-</div>
+:::next:::
+{"label": "See other examples", "next": "/examples"}
+:::end-next:::

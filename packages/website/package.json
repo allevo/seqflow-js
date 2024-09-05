@@ -9,9 +9,7 @@
     "biome": "biome ci ./src",
     "biome:check": "biome check --apply src",
     "start": "vite -c vite.config.js",
-    "build:vite": "NODE_ENV=production vite build --emptyOutDir -c vite.config.js",
-    "build:static": "node --import tsx scripts/print.ts",
-    "build": "npm-run-all build:vite build:static",
+    "build": "NODE_ENV=production vite build --emptyOutDir -c vite.config.js",
     "serve:static": "serve printed"
   },
   "keywords": [],
@@ -30,6 +28,7 @@
     "markdown-it": "^14.1.0",
     "msw": "^2.2.1",
     "npm-run-all": "^4.1.5",
+    "purgecss": "^6.0.0",
     "serve": "^14.2.3",
     "tsx": "^4.7.1",
     "vite": "^5.4.2",

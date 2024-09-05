@@ -115,6 +115,6 @@ We changed the `getRandomQuote` function to receive the `baseUrl` as an argument
 
 Even if the configuration part is not commonly covered in tutorials, it's an essential part of any application. In this guide, we learned how to define a configuration object and how to use it in our application.
 
-<div class="d-grid gap-2 col-6 mx-auto">
-    <a href="/getting-started/test" class="btn btn-outline-primary btn-lg">Learn how to test the application</a>
-</div>
+:::next:::
+{"label": "Learn how to test the application", "next": "/getting-started/test"}
+:::end-next:::

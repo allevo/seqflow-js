@@ -74,6 +74,6 @@ We split the application into multiple components.
 
 In the next guide, we will learn how to handle user interactions.
 
-<div class="d-grid gap-2 col-6 mx-auto">
-    <a href="/getting-started/refresh-quote" class="btn btn-outline-primary btn-lg">Learn how to handle events</a>
-</div>
+:::next:::
+{"label": "Learn how to handle events", "next": "/getting-started/refresh-quote"}
+:::end-next:::

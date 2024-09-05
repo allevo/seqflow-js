@@ -13,7 +13,7 @@ import classes from "./ContentWithToc.module.css";
 import "prismjs/plugins/toolbar/prism-toolbar";
 
 import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard";
-import { Heading, Prose } from "seqflow-js-components";
+import { Prose } from "seqflow-js-components";
 
 export interface Toc {
 	title: string;
@@ -32,13 +32,15 @@ export async function ContentWithToc(
 	this: SeqflowFunctionContext,
 	data: { toc: Toc[]; html: string; title: string },
 ) {
-	// await import("prismjs/components/prism-tsx.min");
-
 	const { toc, html } = data;
+	if (toc.length > 0) {
+		this._el.classList.add(classes.top);
+	}
 
-	this.renderSync(
-		<div className={classes.top}>
-			<aside>
+	const aside = toc.length > 0
+		?
+		<>
+		<aside>
 				<ul className="list-group">
 					{toc.map((t) => (
 						<li className={`list-group-item ${classes[`level-${t.level}`]}`}>
@@ -49,13 +51,19 @@ export async function ContentWithToc(
 					))}
 				</ul>
 			</aside>
+		</>
+		: <></>;
+
+	this.renderSync(
+		<>
+			{aside}
 			<main style="grid-area: main; order: 1 !important; overflow-x: hidden; padding-bottom: 30px; padding-right: 15px;">
-				<Prose className={classes.content}>
+				<Prose className={[classes.content, 'm-auto']}>
 					<h1>{data.title}</h1>
 					{...getElementFromString(html)}
 				</Prose>
 			</main>
-		</div>,
+		</>,
 	);
 
 	Prism.highlightAll();

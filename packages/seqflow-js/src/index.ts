@@ -373,7 +373,7 @@ function startComponent<T extends { children?: ChildrenType; key?: string }>(
 			if (!children) {
 				return fragment;
 			}
-			const cc: (HTMLElement | string)[] = [];
+			const cc: (SVGElement | HTMLElement | string)[] = [];
 			if (Array.isArray(children)) {
 				cc.push(...children);
 			} else {

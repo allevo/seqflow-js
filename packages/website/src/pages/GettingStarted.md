@@ -10,6 +10,6 @@ The tutorial covers the following topics:
 
 But let's start from the beginning.
 
-<div class="d-grid gap-2 col-6 mx-auto">
-    <a href="/getting-started/prerequisites" class="btn btn-outline-primary btn-lg">Prerequisites</a>
-</div>
+:::next:::
+{"label": "Prerequisites", "next": "/getting-started/prerequisites"}
+:::end-next:::

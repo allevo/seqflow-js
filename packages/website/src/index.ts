@@ -1,4 +1,5 @@
 import { start } from "seqflow-js";
+import '@fortawesome/fontawesome-svg-core/styles.css';
 import "seqflow-js-components/style.css";
 import { Main } from "./Main";
 import "./index.css";

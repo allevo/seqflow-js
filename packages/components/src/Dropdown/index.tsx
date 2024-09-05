@@ -1,5 +1,4 @@
 import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
-import { Button } from "../Button";
 
 export interface DropdownPropsType {
 	label?: string | JSX.Element;
@@ -20,6 +19,9 @@ export async function Dropdown(
 	this: SeqflowFunctionContext,
 	{ label, openOn, align, children }: SeqflowFunctionData<DropdownPropsType>,
 ) {
+	console.log('......')
+	console.log(label)
+
 	const classes = ["dropdown"];
 	if (openOn === "hover") {
 		classes.push("dropdown-hover");
@@ -50,11 +52,14 @@ export async function Dropdown(
 		}
 	}
 
+	console.log("label", label, typeof label);
+	const btn = typeof label === 'string'
+		? <div tabIndex={0} role="button" className="btn m-1">{label}</div>
+		: label;
+
 	this.renderSync(
 		<>
-			<div tabIndex={0} role="button" className="btn m-1">
-				{label}
-			</div>
+			{btn}
 			{/*<Button color="ghost" className="rounded-btn">{label}</Button>*/}
 			{children}
 		</>,

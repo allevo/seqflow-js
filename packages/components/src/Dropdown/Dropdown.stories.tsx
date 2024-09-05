@@ -20,7 +20,7 @@ async function DropdownStory(
 					<Button color="ghost">This is a button link</Button>
 				</Menu.Item>
 				<Menu.Item>
-					<Link href="#" showAsGhostButton>
+					<Link href="#" showAsButton="ghost">
 						This is a link
 					</Link>
 				</Menu.Item>
