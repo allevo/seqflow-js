@@ -3,6 +3,8 @@ import { Button, Heading, Hero, Link } from "seqflow-js-components";
 import classes from "./Home.module.css";
 
 export async function Home(this: SeqflowFunctionContext) {
+	this._el.classList.add(classes.home);
+
 	this.renderSync(
 		<Hero>
 			<Hero.Content className="text-center">

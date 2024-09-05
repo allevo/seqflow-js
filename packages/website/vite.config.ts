@@ -150,8 +150,10 @@ export const toc = ${JSON.stringify(toc)}
 }
 
 function generateAllPages(): Plugin {
+	
+
 	return {
-		name: 'generateAllPages',
+		name: 'aaa',
 		enforce: "post" as const,
 		async generateBundle(this: vite.Rollup.PluginContext,
 			options: vite.Rollup.NormalizedOutputOptions,
@@ -168,7 +170,14 @@ function generateAllPages(): Plugin {
 				if (!req.url) {
 					throw new Error('No url')
 				}
-				const r = getAsString(bundle[req.url.slice(1)])
+				let r = ''
+
+				const el = bundle[req.url.slice(1)]
+				if (el.type === 'asset') {
+					r = el.source.toString()
+				} else if (el.type === 'chunk') {
+					r = el.code
+				}
 				res.end(r);
 			})
 			await new Promise((res) => server.listen(() => res(void 0)))
@@ -282,37 +291,42 @@ function generateAllPages(): Plugin {
 
 			server.close()
 
+			// purgeCss brokes the css
+			// we should investivate why
+
+			/*
 			const cssFilesKeys = Object.keys(bundle).filter((k) => k.endsWith('.css'))
 			if (cssFilesKeys.length !== 1) {
 				throw new Error('Expected one css file')
 			}
-			const cssContent = getAsString(bundle[cssFilesKeys[0]])
+			const cssContent = bundle[cssFilesKeys[0]].source.toString()
 
 			const htmlFiles = Object.keys(bundle).filter((k) => k.endsWith('.html'))
-			const htmlFilesContent: string[] = htmlFiles.map((k) => getAsString(bundle[k]))
+			const htmlFilesContent: string[] = htmlFiles.map((k) => bundle[k].source.toString())
+				// .map((html) => {
+				// 	return html
+				// 	.replace(/<html .*>/, '')
+				// 	.replace('</html>', '')
+				// 	.replace('</html>', '')
+				// 	.replace('</head>', '')
+				// 	.replace('<head>', '')
+				// })
+				// .join('')
 			const c: RawContent[] = htmlFilesContent.map(t => ({ raw: t, extension: 'html' }))
 
 			const purgeCss = new PurgeCSS()
 
+			const start = Date.now()
 			const r = await purgeCss.purge({
 				content: c,
 				css: [{ raw: cssContent }],
 			})
+			console.log('Time', Date.now() - start)
+			console.log('r', r)
 
-			// @ts-ignore
 			bundle[cssFilesKeys[0]].source = r[0].css
+			*/
 
-			const jsFiles = Object.keys(bundle).filter((k) => k.endsWith('.js'))
-			for (const jsFile of jsFiles) {
-				delete bundle[jsFile]
-			}
 		}
 	}
-}
-
-function getAsString(a: vite.Rollup.OutputAsset | vite.Rollup.OutputChunk) {
-	if (a.type === 'asset') {
-		return a.source.toString()
-	}
-	return a.code
 }
