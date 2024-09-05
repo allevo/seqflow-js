@@ -299,6 +299,7 @@ function generateAllPages(): Plugin {
 				css: [{ raw: cssContent }],
 			})
 
+			// @ts-ignore
 			bundle[cssFilesKeys[0]].source = r[0].css
 
 			const jsFiles = Object.keys(bundle).filter((k) => k.endsWith('.js'))

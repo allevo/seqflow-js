@@ -27,7 +27,7 @@
     "biome": "biome ci ./src",
     "biome:check": "biome check --apply src tests",
     "test": "node --import tsx tests/foo.test.ts",
-    "build": "tsc --outDir ./dist --target es2020 || echo 'ouch'; mv dist/entry-preview.js dist/entry-preview.mjs && mv dist/entry-preview-docs.js dist/entry-preview-docs.mjs",
+    "build": "npx tsc --outDir ./dist --target es2020 || echo 'ouch'; mv dist/entry-preview.js dist/entry-preview.mjs && mv dist/entry-preview-docs.js dist/entry-preview-docs.mjs",
     "depcheck": "depcheck --ignores @vitest/coverage-v8 ."
   },
   "dependencies": {

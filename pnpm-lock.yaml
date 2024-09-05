@@ -242,9 +242,6 @@ importers:
       daisyui:
         specifier: ^4.12.10
         version: 4.12.10(postcss@8.4.38)
-      playwright:
-        specifier: ^1.45.2
-        version: 1.45.2
       seqflow-js:
         specifier: workspace:*
         version: link:../seqflow-js
@@ -288,6 +285,9 @@ importers:
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
+      playwright:
+        specifier: ^1.45.2
+        version: 1.45.2
       postcss:
         specifier: ^8.4.21
         version: 8.4.38
