@@ -42,8 +42,6 @@
     "@fortawesome/free-brands-svg-icons": "^6.5.1",
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
-    "@mojojoejo/vite-plugin-purgecss": "^1.1.0",
-    "bootstrap": "5.3.3",
     "html-minifier": "^4.0.0",
     "prismjs": "^1.29.0",
     "seqflow-js": "workspace:*",
