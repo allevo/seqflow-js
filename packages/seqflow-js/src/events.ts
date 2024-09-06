@@ -10,6 +10,9 @@ export function yieldEvent<E extends Event>(
 	options: {
 		el: EventTarget;
 		preventDefault: boolean;
+		stopPropagation?: boolean;
+		stopImmediatePropagation?: boolean;
+		fn?: (ev: E) => void;
 	},
 ): EventAsyncGenerator<E> {
 	async function* iterOnEvents(abortController: AbortController) {
@@ -20,8 +23,17 @@ export function yieldEvent<E extends Event>(
 		options.el.addEventListener(
 			eventType,
 			(event) => {
+				if (options.fn) {
+					options.fn(event as E);
+				}
 				if (options.preventDefault) {
 					event.preventDefault();
+				}
+				if (options.stopPropagation) {
+					event.stopPropagation();
+				}
+				if (options.stopImmediatePropagation) {
+					event.stopImmediatePropagation();
 				}
 				queue.push(event as E);
 				abortController.signal.dispatchEvent(WAKEUP_EVENT);

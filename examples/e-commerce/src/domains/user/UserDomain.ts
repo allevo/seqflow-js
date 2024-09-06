@@ -1,4 +1,4 @@
-import { ApplicationConfiguration } from "seqflow-js";
+import type { ApplicationConfiguration } from "seqflow-js";
 import { UserLoggedEvent, UserLoggedOutEvent } from "./events";
 
 const LOCALSTORAGE_USER_KEY = "user";

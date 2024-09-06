@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 
 export async function Checkout(this: SeqflowFunctionContext) {
 	this.app.domains.cart.checkout();
@@ -12,7 +12,7 @@ export async function Checkout(this: SeqflowFunctionContext) {
 		</>,
 	);
 
-	const events = this.waitEvents(this.domEvent("click", "go-home"));
+	const events = this.waitEvents(this.domEvent("click", { key: "go-home" }));
 	for await (const ev of events) {
 		ev.preventDefault();
 		this.app.router.navigate("/");

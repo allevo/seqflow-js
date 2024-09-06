@@ -13,6 +13,7 @@ import classes from "./ContentWithToc.module.css";
 import "prismjs/plugins/toolbar/prism-toolbar";
 
 import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard";
+import { Prose } from "seqflow-js-components";
 
 export interface Toc {
 	title: string;
@@ -24,35 +25,47 @@ export interface Toc {
 function getElementFromString(string: string) {
 	const template = document.createElement("div");
 	template.innerHTML = string;
-	return Array.from(template.children) as Element & HTMLElement[];
+	return Array.from(template.children) as HTMLElement[];
 }
 
 export async function ContentWithToc(
 	this: SeqflowFunctionContext,
 	data: { toc: Toc[]; html: string; title: string },
 ) {
-	// await import("prismjs/components/prism-tsx.min");
-
 	const { toc, html } = data;
+	if (toc.length > 0) {
+		this._el.classList.add(classes.top);
+	}
+
+	const aside =
+		toc.length > 0 ? (
+			<>
+				<aside>
+					<ul className="list-group">
+						{toc.map((t) => (
+							<li className={`list-group-item ${classes[`level-${t.level}`]}`}>
+								<a className="" href={`#${t.slug}`}>
+									{t.title}
+								</a>
+							</li>
+						))}
+					</ul>
+				</aside>
+			</>
+		) : (
+			<></>
+		);
 
 	this.renderSync(
-		<div className={classes.top}>
-			<aside>
-				<ul className="list-group">
-					{toc.map((t) => (
-						<li className={`list-group-item ${classes[`level-${t.level}`]}`}>
-							<a className="" href={`#${t.slug}`}>
-								{t.title}
-							</a>
-						</li>
-					))}
-				</ul>
-			</aside>
+		<>
+			{aside}
 			<main style="grid-area: main; order: 1 !important; overflow-x: hidden; padding-bottom: 30px; padding-right: 15px;">
-				<h1>{data.title}</h1>
-				{getElementFromString(html)}
+				<Prose className={[classes.content, "m-auto"]}>
+					<h1>{data.title}</h1>
+					{...getElementFromString(html)}
+				</Prose>
 			</main>
-		</div>,
+		</>,
 	);
 
 	Prism.highlightAll();

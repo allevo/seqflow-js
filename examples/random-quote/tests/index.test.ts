@@ -6,6 +6,7 @@ import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
 
 import { start } from "seqflow-js";
 import { Main } from "../src/Main";
+import { QuoteDomain } from "../src/domains/quote";
 
 const quotes = [
 	{ content: "quote 1", author: "Author 1" },
@@ -25,35 +26,37 @@ afterAll(() => server.close());
 
 test("should render the quote and refresh it", async () => {
 	start(document.body, Main, undefined, {
-		// log: {
-		// 	error: (l) => console.error(l),
-		// 	info: (l) => console.info(l),
-		// 	debug: (l) => console.debug(l),
-		// },
 		config: {
 			api: {
 				// Route to the mock server
 				baseUrl: "",
 			},
 		},
+		domains: {
+			quotes: (et, _, config) => new QuoteDomain(et, config.api.baseUrl),
+		},
 	});
 
-	await screen.findByText(/loading/i);
-
-	await screen.findByText(new RegExp(quotes[0].content, "i"));
-	await screen.findByText(new RegExp(quotes[0].author, "i"));
+	await screen.findByText("Click the button to read a quote");
 
 	const button = await screen.findByRole("button");
 	button.click();
 
-	await screen.findByText(/loading/i);
+	await screen.findByRole("progressbar");
+
+	await screen.findByText(new RegExp(quotes[0].content, "i"));
+	await screen.findByText(new RegExp(quotes[0].author, "i"));
+
+	button.click();
+
+	await screen.findByRole("progressbar");
 
 	await screen.findByText(new RegExp(quotes[1].content, "i"));
 	await screen.findByText(new RegExp(quotes[1].author, "i"));
 
 	button.click();
 
-	await screen.findByText(/loading/i);
+	await screen.findByRole("progressbar");
 
 	await screen.findByText(new RegExp(quotes[0].content, "i"));
 	await screen.findByText(new RegExp(quotes[0].author, "i"));

@@ -1,6 +1,7 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import { Card } from "seqflow-js-components";
 import { CardList } from "../../../components/CardList";
-import { ProductCategory } from "../ProductDomain";
+import type { ProductCategory } from "../ProductDomain";
 import classes from "./ProductCategoryList.module.css";
 
 async function CategoryItem(
@@ -9,12 +10,20 @@ async function CategoryItem(
 ) {
 	this.renderSync(
 		<a className={classes.categoryAnchor} href={`/category/${data.name}`}>
-			<img
-				className={classes.categoryImage}
-				src={data.image.url}
-				alt={data.name}
-			/>
-			<span>{data.name}</span>
+			<Card compact className={["image-full", classes.card]}>
+				<figure>
+					<img
+						className={classes.categoryImage}
+						src={data.image.url}
+						alt={data.name}
+					/>
+				</figure>
+				<Card.Body className={classes.body}>
+					<Card.Title level={2} className={classes.productName}>
+						{data.name}
+					</Card.Title>
+				</Card.Body>
+			</Card>
 		</a>,
 	);
 

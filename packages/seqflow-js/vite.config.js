@@ -1,10 +1,12 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
+import checker from 'vite-plugin-checker'
 
 export default defineConfig({
   plugins: [
     dts({ include: ['src'] }),
+    checker({ typescript: true }),
   ],
   build: {
     emptyOutDir: false,
@@ -17,7 +19,6 @@ export default defineConfig({
       name: 'index',
       // the proper extensions will be added
       fileName: 'index',
-
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

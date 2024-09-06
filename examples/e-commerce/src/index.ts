@@ -1,14 +1,13 @@
-import { InMemoryRouter, start } from "seqflow-js";
+import { start } from "seqflow-js";
+import "seqflow-js-components/style.css";
 import { Main } from "./Main";
 import { CartDomain } from "./domains/cart";
 import { ProductDomain } from "./domains/product";
 import { UserDomain } from "./domains/user";
 import "./index.css";
 
-start(document.getElementById("root"), Main, undefined, {
-	log(log) {
-		console.log(log);
-	},
+start(document.getElementById("root")!, Main, undefined, {
+	log: console,
 	domains: {
 		user: (eventTarget, _, config) => {
 			return new UserDomain(eventTarget, config);

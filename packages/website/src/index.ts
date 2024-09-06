@@ -1,10 +1,10 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import { start } from "seqflow-js";
+import "seqflow-js-components/style.css";
 import { Main } from "./Main";
 import "./index.css";
 
-start(document.getElementById("root"), Main, undefined, {
+start(document.getElementById("root")!, Main, undefined, {
 	log: {
 		error: (l) => console.error(l),
 		info: (l) => console.info(l),

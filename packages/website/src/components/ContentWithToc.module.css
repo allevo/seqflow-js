@@ -53,3 +53,7 @@
 		}
 	}
 }
+
+.content h1, .content h2, .content h3, .content h4 {
+    scroll-margin-top: 77px;
+}

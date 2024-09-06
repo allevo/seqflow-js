@@ -1,0 +1,23 @@
+
+
+@media (min-width: 992px) {
+    .github-name {
+        display: none;
+    }
+}
+
+.headerAnchor {
+    @apply flex items-center gap-2;
+}
+
+.links {
+    @apply flex items-center gap-4;
+}
+
+.submenu ul {
+    background-color: #3a3d40;
+
+    li {
+        align-items: flex-start;
+    }
+}

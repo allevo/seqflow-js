@@ -1,0 +1,61 @@
+name: Build & Vercel Preview Deployment
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  build:
+    name: Build
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    environment: Preview
+
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      ENV_NAME: ${{ vars.ENV_NAME }}
+
+    steps:
+      - name: Print env
+        run : echo $ENV_NAME
+
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install playwright
+        run: cd packages/components && npx playwright install --with-deps
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+      - name: Install Vercel CLI
+        working-directory: packages/website
+        run: pnpm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        working-directory: packages/website
+        run: vercel pull --yes --environment=preview --token ${{ secrets.VERCEL_TOKEN }}
+      - name: Build Project Artifacts
+        working-directory: packages/website
+        run: vercel build
+      - name: Deploy Project Artifacts to Vercel
+        working-directory: packages/website
+        run: vercel deploy --prebuilt --token ${{ secrets.VERCEL_TOKEN }}

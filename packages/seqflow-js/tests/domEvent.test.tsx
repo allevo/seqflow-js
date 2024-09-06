@@ -1,6 +1,10 @@
 import { screen, waitFor } from "@testing-library/dom";
-import { expect, test } from "vitest";
-import { type SeqflowFunctionContext, start } from "../src/index";
+import { assert, expect, test } from "vitest";
+import {
+	type SeqflowFunctionContext,
+	type SeqflowFunctionData,
+	start,
+} from "../src/index";
 
 test("dom event - increment", async () => {
 	async function App(this: SeqflowFunctionContext) {
@@ -202,7 +206,10 @@ test("dom event - stop listen on unmount", async () => {
 test("child component can be used to listen", async () => {
 	let counter = 0;
 
-	async function Button(this: SeqflowFunctionContext, data: { text: string }) {
+	async function Button(
+		this: SeqflowFunctionContext,
+		data: SeqflowFunctionData<{ text: string }>,
+	) {
 		this.renderSync(<button type="button">{data.text}</button>);
 	}
 
@@ -266,8 +273,8 @@ test("uses `key`", async () => {
 		);
 
 		const events = this.waitEvents(
-			this.domEvent("click", "decrement-button"),
-			this.domEvent("click", "increment-button"),
+			this.domEvent("click", { key: "decrement-button" }),
+			this.domEvent("click", { key: "increment-button" }),
 		);
 		for await (const ev of events) {
 			if (!(ev.target instanceof HTMLElement)) {
@@ -413,4 +420,39 @@ test("onClick on component", async () => {
 
 	await new Promise((resolve) => setTimeout(resolve, 100));
 	await screen.findByText(/2/i);
+});
+
+test("fn", async () => {
+	const allEvents = [];
+	async function Button(this: SeqflowFunctionContext, data: { text: string }) {
+		this.renderSync(<button type="button">{data.text}</button>);
+	}
+
+	async function App(this: SeqflowFunctionContext) {
+		this.renderSync(<Button text="the button" />);
+
+		const events = this.waitEvents(
+			this.domEvent("click", {
+				el: this._el,
+				fn: (ev) => {
+					allEvents.push(ev);
+				},
+			}),
+		);
+		for await (const ev of events) {
+			console.log(ev);
+		}
+	}
+
+	start(document.body, App, undefined, {});
+
+	const buttonElement = await screen.findByRole("button", {
+		name: /the button/i,
+	});
+
+	buttonElement.click();
+	buttonElement.click();
+	buttonElement.click();
+
+	assert.equal(allEvents.length, 3);
 });

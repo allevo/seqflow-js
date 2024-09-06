@@ -1,116 +1,154 @@
 import { SeqflowFunctionContext } from "seqflow-js";
+import { Button, Dropdown, Link, Menu, Navbar } from "seqflow-js-components";
 import githubLogoAsString from "../public/images/github.svg";
 import logoAsString from "../public/images/logo.svg";
-import "./Header.css";
+import classes from "./Header.module.css";
 
-function getSvg(html: string) {
+function getSvg(html: string, style: Partial<HTMLElement["style"]> = {}) {
 	const div = document.createElement("div");
 	div.innerHTML = html;
-	return div.children[0] as HTMLElement;
+	const svg = div.children[0] as HTMLElement;
+	if (style) {
+		Object.assign(svg.style, style);
+	}
+	return svg;
 }
 
 export async function Header(this: SeqflowFunctionContext) {
+	this._el.style.backgroundColor = "#2b3035";
 	const svg = getSvg(logoAsString(30, 30));
 	const githubLogo = getSvg(githubLogoAsString(30, 30));
+	githubLogo.style.fill = "currentColor";
 
-	const anchor = (
-		<a className="navbar-brand" href="/" id="seqflow-anchor">
-			{svg}
-			SeqFlow
-		</a>
+	const getItems = () => {
+		return (
+			<>
+				<Menu.SubMenuItem>
+					<Link showAsButton="ghost" href="/examples#random-quote">
+						Random quote
+					</Link>
+				</Menu.SubMenuItem>
+				<Menu.SubMenuItem>
+					<Link showAsButton="ghost" href="/examples#counter">
+						Counter
+					</Link>
+				</Menu.SubMenuItem>
+				<Menu.SubMenuItem>
+					<Link showAsButton="ghost" href="/examples#e-commerce">
+						E-Commerce
+					</Link>
+				</Menu.SubMenuItem>
+				<Menu.SubMenuItem>
+					<Link
+						showAsButton="ghost"
+						href="/examples#counter-with-custom-element"
+					>
+						Custom Element with Shadow DOM
+					</Link>
+				</Menu.SubMenuItem>
+			</>
+		);
+	};
+
+	// <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+	const svgMenu = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	svgMenu.setAttribute("viewBox", "0 0 448 512");
+	svgMenu.style.width = "10px";
+	svgMenu.style.fill = "oklch(var(--bc) / .8)";
+	const pathMenu = document.createElementNS(
+		"http://www.w3.org/2000/svg",
+		"path",
 	);
+	pathMenu.setAttribute(
+		"d",
+		"M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z",
+	);
+	svgMenu.appendChild(pathMenu);
+
+	const b = (
+		<Button shape="square" color="ghost">
+			{svgMenu}
+		</Button>
+	);
+
 	this.renderSync(
-		<nav className="navbar navbar-expand-lg bg-body-tertiary">
-			<div className="container-fluid">
-				{anchor}
-				<button
-					className="navbar-toggler"
-					type="button"
-					data-bs-toggle="collapse"
-					data-bs-target="#navbarSupportedContent"
-					aria-controls="navbarSupportedContent"
-					aria-expanded="false"
-					aria-label="Toggle navigation"
+		<Navbar className={"shadow-md"}>
+			<Navbar.Start>
+				<Dropdown label={b} className={["lg:hidden", classes.submenu]}>
+					<Menu
+						direction="vertical"
+						size="md"
+						className={["w-80", "shadow-md"]}
+					>
+						<Menu.Item>
+							<Button className={"justify-start"} color="ghost">
+								This is a button link
+							</Button>
+						</Menu.Item>
+						<Menu.Item>
+							<Link className={"justify-start"} href="#" showAsButton="ghost">
+								This is a link
+							</Link>
+						</Menu.Item>
+						<Menu.Item>
+							<Menu.SubMenu label="Examples">{getItems()}</Menu.SubMenu>
+						</Menu.Item>
+					</Menu>
+				</Dropdown>
+				<Link
+					showAsButton="ghost"
+					href="/"
+					className={classes.headerAnchor}
+					id="seqflow-anchor"
 				>
-					<span className="navbar-toggler-icon" />
-				</button>
-				<div className="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul className="navbar-nav me-auto mb-2 mb-lg-0">
-						<li className="nav-item">
-							<a
-								className="nav-link"
-								href="/getting-started"
-								id="getting-started-link"
-							>
-								Getting started
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								className="nav-link"
-								aria-current="page"
-								href="/why"
-								id="why-link"
-							>
-								Why
-							</a>
-						</li>
-						<li className="nav-item">
-							<a
-								className="nav-link"
-								href="/api-reference"
-								id="api-reference-link"
-							>
-								Api Reference
-							</a>
-						</li>
-						<li className="nav-item dropdown">
-							<button
-								type="button"
-								className="nav-link dropdown-toggle"
-								data-bs-toggle="dropdown"
-								id="exampleDropdownMenuLink"
-								data-toggle="dropdown"
-								aria-haspopup="true"
-								aria-expanded="false"
-							>
-								Examples
-							</button>
-							<div
-								className="dropdown-menu"
-								aria-labelledby="exampleDropdownMenuLink"
-							>
-								<a className="dropdown-item" href="/examples#counter">
-									Counter
-								</a>
-								<a className="dropdown-item" href="/examples#e-commerce">
-									E-Commerce
-								</a>
-								<div className="dropdown-divider" />
-								<a className="dropdown-item" href="/examples#web-component">
-									Custom Element with Shadow DOM
-								</a>
-							</div>
-						</li>
-					</ul>
-					<div className="navbar-nav">
-						<a
-							aria-label="github"
-							rel="noreferrer"
-							target="_blank"
-							href="https://github.com/allevo/seqflow-js"
-							className="nav-link"
+					{svg}
+					SeqFlowJS
+				</Link>
+			</Navbar.Start>
+			<Navbar.Center className={["hidden", "lg:flex"]}>
+				<Menu direction="horizontal" className={["!p-0"]}>
+					<Menu.Item>
+						<Link
+							showAsButton="ghost"
+							href="/getting-started"
+							id="getting-started-link"
 						>
-							<span style="color: white; fill: currentColor;">
-								{githubLogo}
-							</span>
-							<span className="github-name" style="margin-left: 10px;">
-								GitHub
-							</span>
-						</a>
-					</div>
-				</div>
-			</div>
-		</nav>,
+							Getting started
+						</Link>
+					</Menu.Item>
+					<Menu.Item>
+						<Link showAsButton="ghost" href="/why" id="why-link">
+							Why
+						</Link>
+					</Menu.Item>
+					<Menu.Item>
+						<Link
+							showAsButton="ghost"
+							href="/api-reference"
+							id="api-reference-link"
+						>
+							Api Reference
+						</Link>
+					</Menu.Item>
+					<Menu.Item>
+						<Menu.SubMenu className={classes.submenu} label="Examples">
+							{getItems()}
+						</Menu.SubMenu>
+					</Menu.Item>
+				</Menu>
+			</Navbar.Center>
+			<Navbar.End>
+				<Link
+					rel="noreferrer"
+					target="_blank"
+					aria-label="GitHub"
+					showAsButton="ghost"
+					href="https://github.com/allevo/seqflow-js"
+					id="api-reference-link"
+				>
+					{githubLogo}
+				</Link>
+			</Navbar.End>
+		</Navbar>,
 	);
 }

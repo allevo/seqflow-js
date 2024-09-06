@@ -1,19 +1,23 @@
-import { resolve } from 'path'
-import { ConfigEnv } from 'vite';
-import { PluginOption } from 'vite';
+import { resolve } from 'node:path'
+import type { ConfigEnv } from 'vite';
+import type { PluginOption } from 'vite';
 import { defineConfig } from "vite";
+import checker from 'vite-plugin-checker'
 
 export default defineConfig((configEnv: ConfigEnv) => {
     const withShadowDom = configEnv.mode !== 'development';
     return {
         root: "src",
         plugins: [
+            checker({
+                typescript: true,
+            }),
             cssInjectedByJsPlugin({
                 injectFunction: (css) => {
                     return `
 function injectCSS(el) {
     const style = document.createElement('style');
-    style.innerHTML = \`${css}\`;
+    style.innerHTML = \`${css.replace(/`/g, '\\`').replace(/:root/g, ':host')}\`;
     el.appendChild(style);
 }
     `.split('\n').map(i => i.trim()).join('');
@@ -25,7 +29,7 @@ function injectCSS(el) {
             outDir: resolve(__dirname, 'dist'),
             lib: {
                 entry: resolve(__dirname, 'src/index.ts'),
-                formats: ['es' as any],
+                formats: ['es' as const],
                 name: 'index',
                 fileName: 'index',
             },
@@ -53,7 +57,8 @@ async function globalCssInjection(bundle, cssAssets, injectFunction: InjectFunct
         return acc + cssSource;
     }, '');
 
-    bundle[jsAssetToInject].code = injectFunction(allCSS) + '\n' + bundle[jsAssetToInject].code;
+    bundle[jsAssetToInject].code = `${injectFunction(allCSS)}
+${bundle[jsAssetToInject].code}`;
 }
 
 export function warnLog(msg) {
@@ -62,7 +67,8 @@ export function warnLog(msg) {
 function cssInjectedByJsPlugin({ injectFunction }: {
     injectFunction: InjectFunction
 }) {
-    let config;
+    // biome-ignore lint/suspicious/noExplicitAny: don't care about the type of config
+    let config: any;
     const plugins = [
         {
             apply: 'build',
@@ -81,11 +87,10 @@ function cssInjectedByJsPlugin({ injectFunction }: {
             async generateBundle(opts, bundle) {
                 const cssAssets = Object.keys(bundle).filter((i) => {
                     const asset = bundle[i];
-                    return asset.type == 'asset' && asset.fileName.endsWith('.css')
+                    return asset.type === 'asset' && asset.fileName.endsWith('.css')
                 });
 
-				console.log(cssAssets)
-				if (cssAssets.length == 0) {
+				if (cssAssets.length === 0) {
 					warnLog('No CSS assets found in the bundle.');
 					return;
 				}
@@ -93,9 +98,6 @@ function cssInjectedByJsPlugin({ injectFunction }: {
 					warnLog('More than 1 CSS assets found in the bundle. This plugin is designed to work with 1 CSS asset only.');
 					return;
 				}
-
-				const cssAsset = cssAssets[0];
-				console.log(cssAsset)
 
 				await globalCssInjection(bundle, cssAssets, injectFunction);
             },

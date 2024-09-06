@@ -1,43 +1,55 @@
-import { SeqflowFunctionContext } from "seqflow-js";
-import { UserType } from "../domains/user";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import {
+	Button,
+	Card,
+	Form,
+	type FormComponent,
+	FormField,
+	TextInput,
+	type TextInputComponent,
+} from "seqflow-js-components";
+import type { UserType } from "../domains/user";
 
 export async function Login(this: SeqflowFunctionContext) {
 	this.renderSync(
-		<div>
-			<form>
-				<label htmlFor="username">Username</label>
-				<input
-					key="username"
-					id="username"
-					type="text"
-					name="username"
-					value="johnd"
-				/>
-				<p key="error" className="error" />
-				<button key="login-button" type="submit">
-					Login
-				</button>
-			</form>
-		</div>,
+		<Form key="login-form">
+			<Card compact className={"m-auto w-96 bg-zinc-700"} shadow="md">
+				<Card.Body>
+					<FormField label="Username">
+						<TextInput
+							withBorder
+							type="text"
+							key="username"
+							required
+							name="userame"
+							initialValue="johnd"
+						/>
+					</FormField>
+					<Button type="submit" key="login-button" color="primary">
+						Login
+					</Button>
+				</Card.Body>
+			</Card>
+		</Form>,
 	);
 
-	const usernameInput = this.getChild("username") as HTMLInputElement;
-	const error = this.getChild("error") as HTMLParagraphElement;
-	const loginButton = this.getChild("login-button") as HTMLButtonElement;
+	const usernameInput = this.getChild<TextInputComponent>("username");
+	const form = this.getChild<FormComponent>("login-form");
 	const events = this.waitEvents(
-		this.domEvent("submit", { el: this._el, preventDefault: true }),
+		this.domEvent("submit", { el: form, preventDefault: true }),
 	);
 	let user: UserType | undefined;
-	for await (const ev of events) {
-		loginButton.disabled = true;
+	for await (const _ of events) {
 		const username = usernameInput.value;
+		const user = await form.runAsync(async () => {
+			return await this.app.domains.user.login({ username });
+		});
 
-		user = await this.app.domains.user.login({ username });
 		if (!user) {
-			error.textContent = 'User not found. Try "johnd"';
-			loginButton.disabled = false;
+			usernameInput.setError("User not found. Try 'johnd'");
 			continue;
 		}
+
 		break;
 	}
 

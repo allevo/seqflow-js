@@ -1,0 +1,25 @@
+
+.form-control {
+    .text-error {
+        /* "text-red-500" is bad here. We should put in configuration */
+        @apply text-red-500 hidden;
+    }
+
+    .hint:empty:before {
+        content: "\200b";
+    }
+      
+}
+
+.form-control.form-control-error {
+    input {
+        @apply input-error;
+    }
+
+    .text-error {
+        @apply block;
+    }
+    .hint {
+        @apply hidden;
+    }
+}

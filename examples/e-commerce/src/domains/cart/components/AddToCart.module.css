@@ -2,6 +2,10 @@
 
 .firstAddToCart {
   display: none;
+  height: 2rem;
+  min-height: 2rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 .firstAddToCart.show {
   display: unset;
@@ -9,11 +13,20 @@
 
 .otherAddToCartWrapper {
   display: none;
-  
+  align-items: center;
+
+  button {
+    height: 2rem;
+    min-height: 2rem;
+    width: 2rem;
+  }
+
+  span {
+    flex-grow: 1;
+    text-align: center;
+  }
 }
 .otherAddToCartWrapper.show {
   display: flex;
   justify-content: center;
 }
-
-.secondAddFromCart {}

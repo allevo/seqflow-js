@@ -1,0 +1,8 @@
+
+.wrapper {
+    @apply flex flex-row gap-2;
+
+    .submitButton {
+        @apply mb-8 self-end;
+    }
+}

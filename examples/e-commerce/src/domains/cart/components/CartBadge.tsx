@@ -1,25 +1,30 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import { Badge, Button } from "seqflow-js-components";
 import { ChangeCartEvent, CheckoutEndedCartEvent } from "../events";
 import classes from "./cart-badge.module.css";
 
 export async function CartBadge(this: SeqflowFunctionContext) {
-	const count = this.app.domains.cart.getProductCount();
+	const productCount = this.app.domains.cart.getProductCount();
+	const count = productCount === 0 ? "" : productCount;
 
 	this.renderSync(
-		<a
-			href="/cart"
-			title="go to cart"
+		<Button
+			color="ghost"
+			shape="circle"
+			key="button"
 			className={classes.numberOfProductsInCart}
 		>
-			<i className={`fa-solid fa-cart-shopping ${classes.icon}`} />
-			<span
-				key="counter"
-				arial-hidden={true}
+			<i
+				className={`fa-solid fa-cart-shopping ${classes.icon}`}
+				title="Go to cart"
+			/>
+			<Badge
 				className={classes.cartProductCounter}
-			>
-				{count}
-			</span>
-		</a>,
+				arial-hidden={true}
+				color="primary"
+				key="counter"
+			>{`${count}`}</Badge>
+		</Button>,
 	);
 
 	const counter = this.getChild("counter") as HTMLSpanElement;
@@ -33,7 +38,9 @@ export async function CartBadge(this: SeqflowFunctionContext) {
 	);
 	for await (const ev of events) {
 		if (ev instanceof ChangeCartEvent || ev instanceof CheckoutEndedCartEvent) {
-			counter.textContent = `${this.app.domains.cart.getProductCount()}`;
+			const productCount = this.app.domains.cart.getProductCount();
+			const count = productCount === 0 ? "" : productCount;
+			counter.textContent = `${count}`;
 		} else {
 			// click event
 			this.app.router.navigate("/cart");

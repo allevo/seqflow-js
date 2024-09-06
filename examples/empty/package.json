@@ -1,7 +1,7 @@
 {
   "name": "empty",
   "version": "1.0.0",
-  "description": "",
+  "description": "Empty example",
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
@@ -10,22 +10,29 @@
     "biome": "biome ci ./src",
     "biome:check": "biome check --apply src tests",
     "start": "vite -c vite.config.js",
-    "build": "vite build --emptyOutDir -c vite.config.js"
+    "build": "vite build --emptyOutDir -c vite.config.js",
+    "depcheck": "depcheck --ignores @types/css-modules ."
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
+    "@tailwindcss/typography": "^0.5.13",
     "@testing-library/dom": "^9.3.4",
+    "@testing-library/jest-dom": "^6.5.0",
     "@types/css-modules": "^1.0.5",
+    "daisyui": "^4.12.10",
+    "depcheck": "^1.4.7",
+    "jsdom": "^24.0.0",
     "npm-run-all": "^4.1.5",
-    "vite": "^5.0.0",
-    "vite-plugin-full-reload": "^1.1.0",
-    "vite-plugin-live-reload": "^3.0.3",
+    "tailwindcss": "^3.4.6",
+    "vite": "^5.4.2",
+    "vite-plugin-checker": "^0.7.2",
     "vitest": "^1.2.2"
   },
   "dependencies": {
-    "seqflow-js": "workspace:*"
+    "seqflow-js": "workspace:*",
+    "seqflow-js-components": "workspace:*"
   }
 }

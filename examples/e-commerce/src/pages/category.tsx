@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
 import { CardList } from "../components/CardList";
 import { components } from "../domains/product";
 
@@ -10,6 +10,11 @@ export async function Category(this: SeqflowFunctionContext) {
 	this.renderSync(<Loading />);
 
 	const categoryId = this.app.router.segments.pop();
+
+	if (!categoryId) {
+		this.app.router.navigate("/");
+		return;
+	}
 
 	const products = await this.app.domains.product.fetchProductsByCategory(
 		{ categoryId },

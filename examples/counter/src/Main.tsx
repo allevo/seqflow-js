@@ -1,38 +1,29 @@
-import { type SeqflowFunctionContext } from "seqflow-js";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import { Card, Divider } from "seqflow-js-components";
 import classes from "./Main.module.css";
+import {
+	ApplyDeltaButton,
+	SetCounterValue,
+	ShowValue,
+} from "./domains/counter";
 
 export async function Main(this: SeqflowFunctionContext) {
-	let counter = 0;
 	this.renderSync(
-		<div className={classes["main-counter"]}>
-			<div className={classes["counter-card"]}>
-				<div className={classes.buttons}>
-					<button key="decrement-button" type="button">
-						Decrement
-					</button>
-					<div className={classes.divider} />
-					<button key="increment-button" type="button">
-						Increment
-					</button>
+		<Card
+			compact
+			className={"m-auto w-96 bg-slate-900 text-slate-200 mt-6"}
+			shadow="md"
+		>
+			<Card.Body>
+				<Card.Title level={1}>Counter Card</Card.Title>
+				<div className={classes.wrapper}>
+					<ApplyDeltaButton label="Decrement" delta={-1} />
+					<ShowValue className={classes.counter} />
+					<ApplyDeltaButton label="Increment" delta={1} />
 				</div>
-				<div className={classes.counter} key="counter">
-					0
-				</div>
-			</div>
-		</div>,
+				<Divider style={{ height: "auto", marginBottom: "0px" }} />
+				<SetCounterValue />
+			</Card.Body>
+		</Card>,
 	);
-
-	const events = this.waitEvents(
-		this.domEvent("click", "increment-button"),
-		this.domEvent("click", "decrement-button"),
-	);
-	for await (const ev of events) {
-		if (this.getChild("increment-button").contains(ev.target as Node)) {
-			counter++;
-		} else if (this.getChild("decrement-button").contains(ev.target as Node)) {
-			counter--;
-		}
-
-		this.getChild("counter").textContent = `${counter}`;
-	}
 }

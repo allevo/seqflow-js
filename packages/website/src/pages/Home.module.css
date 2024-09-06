@@ -30,3 +30,9 @@
     margin-bottom: 3%;
 }
 
+
+@media (min-height: 460px) {
+    .home {
+        @apply mt-[15vh];
+    }
+}

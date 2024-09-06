@@ -3,7 +3,22 @@
         "lib": ["es2015", "dom"],
         "jsx": "react",
         "jsxFactory": "this.createDOMElement",
-        "jsxFragmentFactory": "this.createDOMFragment"
+        "jsxFragmentFactory": "this.createDOMFragment",
+        "strict": true,
+        "skipLibCheck": true,
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "rootDir": "./",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "types": ["@testing-library/jest-dom"],
     },
-    "include": ["./src/**/*", "./tests/**/*"]
+    "include": [
+        "./src/**/*",
+        "./tests/**/*",
+        "./node_modules/@types/**/*.d.ts"
+    ],
 }

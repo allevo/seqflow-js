@@ -42,6 +42,20 @@ type GetYieldType<A extends EventAsyncGenerator<unknown>> = Exclude<
 	IteratorReturnResult<unknown>
 >["value"];
 
+export type DomEventOption = {
+	preventDefault?: boolean;
+	stopPropagation?: boolean;
+	stopImmediatePropagation?: boolean;
+	fn?: (ev: Event) => void;
+} & (
+	| {
+			el: HTMLElement;
+	  }
+	| {
+			key: string;
+	  }
+);
+
 export interface SeqflowFunctionContext {
 	/**
 	 * The application context
@@ -57,7 +71,7 @@ export interface SeqflowFunctionContext {
 	 * @param html the HTML to render as a string or a JSX element
 	 * @returns
 	 */
-	renderSync: (html: string | JSX.Element) => void;
+	renderSync: (html: ChildrenType) => void;
 	/**
 	 * Wait for multiple events to happen
 	 *
@@ -77,13 +91,8 @@ export interface SeqflowFunctionContext {
 	 * @returns
 	 */
 	domEvent: <K extends keyof HTMLElementEventMap>(
-		eventType: K,
-		options:
-			| {
-					el: HTMLElement;
-					preventDefault?: boolean;
-			  }
-			| string,
+		eventType: K | (string & {}),
+		options: DomEventOption,
 	) => EventAsyncGenerator<HTMLElementEventMap[K]>;
 	/**
 	 * Wait for a domain event to happen
@@ -130,23 +139,28 @@ export interface SeqflowFunctionContext {
 	 * Create a DOM element. It is used internally by the framework.
 	 */
 	createDOMElement(
-		tagName: string,
+		tagName: string | SeqflowFunction<unknown>,
 		options?: { [key: string]: string },
-		...children: ChildenType[]
-	): Node;
+		...children: HTMLElement[]
+	): HTMLElement | DocumentFragment;
 	/**
 	 * Create a DOM Fragment element. It is used internally by the framework.
 	 */
 	createDOMFragment({
 		children,
 	}: {
-		children?: ChildenType[];
+		children?: ChildrenType;
 	}): DocumentFragment;
 }
-export type SeqflowFunction<T> = (
+export type SeqflowFunctionData<T> = T & {
+	children?: ChildrenType;
+};
+export type SeqflowFunction<T> = ((
 	this: SeqflowFunctionContext,
-	data: T,
-) => Promise<void>;
+	data: SeqflowFunctionData<T>,
+) => Promise<void>) & {
+	tagName?: (props: T) => string;
+};
 
 // biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
 export interface ApplicationConfiguration {}
@@ -166,7 +180,7 @@ export interface SeqflowConfiguration {
 	router: Router;
 }
 
-function startComponent<T extends { children?: ChildenType[]; key?: string }>(
+function startComponent<T extends { children?: ChildrenType; key?: string }>(
 	parentContext: SeqflowFunctionContext,
 	el: HTMLElement,
 	component: SeqflowFunction<T>,
@@ -303,25 +317,25 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 		},
 		domEvent<K extends keyof HTMLElementEventMap>(
 			this: SeqflowFunctionContext,
-			eventType: K,
-			options:
-				| {
-						el: HTMLElement;
-						preventDefault?: boolean;
-				  }
-				| string,
+			eventType: K | (string & {}),
+			options: DomEventOption,
 		): EventAsyncGenerator<HTMLElementEventMap[K]> {
 			let el: HTMLElement;
 			let preventDefault = false;
-			if (typeof options === "string") {
-				el = this.getChild(options);
-			} else {
+			if ("key" in options) {
+				el = this.getChild(options.key);
+			} else if ("el" in options) {
 				el = options.el;
 				preventDefault = options.preventDefault ?? false;
+			} else {
+				throw new Error("Invalid options");
 			}
 			return domEvent(eventType, {
 				el,
 				preventDefault,
+				stopPropagation: options.stopPropagation,
+				stopImmediatePropagation: options.stopImmediatePropagation,
+				fn: options.fn,
 			});
 		},
 		domainEvent<BEE extends typeof DomainsPackage.DomainEvent<unknown>>(
@@ -349,7 +363,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 		},
 		createDOMFragment(
 			this: SeqflowFunctionContext,
-			{ children }: { children?: ChildenType[] },
+			{ children }: { children?: ChildrenType },
 		): DocumentFragment {
 			this.app.log.debug({
 				message: "createDOMFragment",
@@ -359,10 +373,13 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			if (!children) {
 				return fragment;
 			}
-			if (!Array.isArray(children)) {
-				children = [children];
+			const cc: (SVGElement | HTMLElement | string)[] = [];
+			if (Array.isArray(children)) {
+				cc.push(...children);
+			} else {
+				cc.push(children);
 			}
-			const c = children.flat(Number.POSITIVE_INFINITY);
+			const c = cc.flat(Number.POSITIVE_INFINITY);
 			for (const child of c) {
 				if (typeof child === "string") {
 					fragment.appendChild(document.createTextNode(child));
@@ -382,7 +399,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 
 				this.app.log.error({
 					message: "Unsupported child type. Implement me",
-					data: { child, children },
+					data: { child, children, childType: typeof child },
 				});
 				throw new Error("Unsupported child type");
 			}
@@ -391,10 +408,10 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 		},
 		createDOMElement(
 			this: SeqflowFunctionContext,
-			tagName: string,
+			tagName: string | SeqflowFunction<unknown>,
 			options?: { [key: string]: unknown },
-			...children: ChildenType[]
-		): Node {
+			...children: HTMLElement[]
+		): HTMLElement | DocumentFragment {
 			this.app.log.debug({
 				message: "createDOMElement",
 				data: { tagName, options, children },
@@ -403,7 +420,17 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			if (typeof tagName === "string") {
 				const el = document.createElement(tagName);
 				for (const key in options) {
+					// We allow `undefined` values for DX
+					// If the value is `undefined`, we skip it
+					if (options[key] === undefined) {
+						continue;
+					}
+
 					if (key === "className") {
+						if (Array.isArray(options[key])) {
+							el.classList.add(...(options[key] as string[]));
+							continue;
+						}
 						el.setAttribute("class", options[key] as string);
 						continue;
 					}
@@ -428,6 +455,24 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 						el.addEventListener("click", options[key] as EventListener, {
 							signal: elAbortController.signal,
 						});
+						continue;
+					}
+					if (key === "style") {
+						const style = options[key] as string | Partial<CSSStyleDeclaration>;
+						if (typeof style === "string") {
+							el.setAttribute("style", style);
+						} else {
+							for (const styleKey in style) {
+								const value = style[styleKey];
+								if (value) {
+									el.style[styleKey] = value;
+								}
+							}
+						}
+						continue;
+					}
+					if (key === "id") {
+						el.id = options[key] as string;
 						continue;
 					}
 					if (key === "style") {
@@ -474,6 +519,10 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 						continue;
 					}
 
+					if (child === undefined) {
+						continue;
+					}
+
 					this.app.log.error({
 						message: "Unsupported child type. Implement me",
 						data: {
@@ -489,6 +538,10 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 				return el;
 			}
 
+			// If we use `<></>` syntax, the `tagName` is a function
+			// But that function IS the `this.createDOMFragment`
+			// I don't know how to type this, so I have to use `@ts-ignore`
+			// @ts-ignore
 			if (tagName === this.createDOMFragment) {
 				return this.createDOMFragment({ children });
 			}
@@ -498,13 +551,42 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 				opt.key = Math.random().toString();
 			}
 
-			const wrapper = document.createElement("div");
+			let wrapperTagName = "div";
+			if (typeof tagName.tagName === "function") {
+				wrapperTagName = tagName.tagName(opt);
+			}
+
+			const wrapper = document.createElement(wrapperTagName);
+
+			if (opt.id) {
+				wrapper.id = opt.id as string;
+			}
+			if (opt.style) {
+				const style = opt.style as string | Partial<CSSStyleDeclaration>;
+				if (typeof style === "string") {
+					wrapper.setAttribute("style", style);
+				} else {
+					for (const styleKey in style) {
+						const value = style[styleKey];
+						if (value) {
+							wrapper.style[styleKey] = value;
+						}
+					}
+				}
+			}
+
 			componentChildren.push({
 				key: opt.key as string,
 				el: wrapper,
 			});
-			if (opt.wrapperClass) {
-				wrapper.classList.add(opt.wrapperClass as string);
+			if (opt.className) {
+				const className: string[] = [];
+				if (Array.isArray(opt.className)) {
+					className.push(...opt.className);
+				} else {
+					className.push(...(opt.className as string).split(" "));
+				}
+				wrapper.classList.add(...className);
 			}
 
 			if (typeof opt.onClick === "function") {
@@ -519,7 +601,7 @@ function startComponent<T extends { children?: ChildenType[]; key?: string }>(
 			});
 			return wrapper;
 		},
-		renderSync(this: SeqflowFunctionContext, html: string | JSX.Element) {
+		renderSync(this: SeqflowFunctionContext, html: ChildrenType) {
 			if (typeof html === "string") {
 				this._el.innerHTML = html;
 				return;
@@ -571,7 +653,7 @@ export function start<
 	Component extends SeqflowFunction<FirstComponentData>,
 	// biome-ignore lint/suspicious/noExplicitAny: We don't care about the component properties
 	FirstComponentData extends Record<string, any> & {
-		children?: ChildenType[];
+		children?: ChildrenType;
 	},
 >(
 	root: HTMLElement,
@@ -643,8 +725,8 @@ export function start<
 		createDOMElement(
 			tagName: string,
 			options?: { [key: string]: string },
-			...children: ChildenType[]
-		): Node {
+			...children: HTMLElement[]
+		): HTMLElement | DocumentFragment {
 			const el = document.createElement(tagName);
 			for (const key in options) {
 				el.setAttribute(key, options[key]);
@@ -658,13 +740,23 @@ export function start<
 			}
 			return el;
 		},
-		renderSync(html: string | JSX.Element) {
+		renderSync(html: ChildrenType) {
 			if (typeof html === "string") {
 				this._el.innerHTML = html;
 				return;
 			}
 			this._el.innerHTML = "";
-			this._el.appendChild(html as Node);
+			if (Array.isArray(html)) {
+				for (const h of html) {
+					if (typeof h === "string") {
+						this._el.appendChild(document.createTextNode(h));
+						continue;
+					}
+					this._el.appendChild(h);
+				}
+			} else {
+				this._el.appendChild(html);
+			}
 		},
 	};
 
@@ -743,24 +835,20 @@ function createDomains(
 	};
 }
 
-type ChildenType = HTMLElement | HTMLElement[];
+export type ChildrenType = string | HTMLElement | HTMLElement[];
 
 declare global {
 	namespace JSX {
 		// The return type of <button />
-		type Element = HTMLElement | HTMLElement[];
-
-		export type ARG<T = object> = T & {
-			children?: ChildenType;
-		};
+		type Element = HTMLElement;
 
 		// This is the type of the first parameter of the jsxFactory
-		type ElementType<T> =
+		type ElementType =
 			| string
 			| ((
 					this: SeqflowFunctionContext,
 					// biome-ignore lint/suspicious/noExplicitAny: We don't care about the component properties
-					data?: Record<string, any>,
+					data?: SeqflowFunctionData<any>,
 			  ) => Promise<void>);
 
 		type IntrinsicEl = Omit<
@@ -769,12 +857,13 @@ declare global {
 					Partial<{
 						[V in keyof HTMLElementTagNameMap[K]]: HTMLElementTagNameMap[K][V];
 					}>,
-					"style"
+					"style" | "className"
 				> &
-					ARG<{
+					SeqflowFunctionData<{
 						style?: Partial<CSSStyleDeclaration> | string;
 						onClick?: (ev: MouseEvent) => void;
 						key?: string;
+						className?: string | string[];
 					}>;
 			},
 			"input"
@@ -783,21 +872,24 @@ declare global {
 				Partial<{
 					[V in keyof HTMLElementTagNameMap["input"]]: HTMLElementTagNameMap["input"][V];
 				}>,
-				"style" | "list"
+				"style" | "className" | "list"
 			> &
-				ARG<{
+				SeqflowFunctionData<{
 					style?: Partial<CSSStyleDeclaration> | string;
 					onClick?: (ev: MouseEvent) => void;
 					key?: string;
 					list?: string;
+					className?: string | string[];
 				}>;
 		};
 		interface IntrinsicElements extends IntrinsicEl {}
 
 		interface IntrinsicAttributes {
+			id?: string;
 			key?: string;
 			onClick?: (ev: MouseEvent) => void;
-			wrapperClass?: string;
+			className?: string | string[];
+			style?: Partial<CSSStyleDeclaration> | string;
 		}
 	}
 }

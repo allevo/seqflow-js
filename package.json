@@ -5,9 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "turbo run build",
-    "test": "turbo run test",
-    "biome:check": "turbo run biome:check"
+    "build": "turbo run --concurrency=1 --log-order=stream build",
+    "test": "turbo run --concurrency=1 --log-order=stream test",
+    "biome:check": "turbo run biome:check",
+    "postinstall": "rm -rf node_modules/@types/react && rm -rf node_modules/.pnpm/@types+react*"
   },
   "keywords": [],
   "author": "",

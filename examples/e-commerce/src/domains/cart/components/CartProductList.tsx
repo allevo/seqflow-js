@@ -1,6 +1,7 @@
-import { SeqflowFunctionContext } from "seqflow-js";
-import { Product } from "../../product/ProductDomain";
-import { Cart } from "../CartDomain";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import { Alert, Button, Divider } from "seqflow-js-components";
+import type { Product } from "../../product";
+import type { Cart } from "../CartDomain";
 import { ChangeCartEvent } from "../events";
 import classes from "./CartProductList.module.css";
 
@@ -12,8 +13,10 @@ export async function CartProduct(
 	this: SeqflowFunctionContext,
 	data: { product: Product; count: number; subTotal: number },
 ) {
+	this._el.classList.add(classes.product);
+	this._el.id = `cart-product-${data.product.id}`;
 	this.renderSync(
-		<div className={classes.product} id={`cart-product-${data.product.id}`}>
+		<>
 			<div className={classes.left}>
 				<img
 					className={classes.productImage}
@@ -27,13 +30,15 @@ export async function CartProduct(
 			</div>
 			<div>x {data.count}</div>
 			<div>= {data.subTotal} €</div>
-			<button key="remove-from-cart" type="button" className="remove-from-cart">
+			<Button color="ghost" key="remove-from-cart" type="button">
 				<i className="fa-solid fa-trash" />
-			</button>
-		</div>,
+			</Button>
+		</>,
 	);
 
-	const events = this.waitEvents(this.domEvent("click", "remove-from-cart"));
+	const events = this.waitEvents(
+		this.domEvent("click", { key: "remove-from-cart" }),
+	);
 	for await (const ev of events) {
 		this.app.domains.cart.removeAllFromCart({ product: data.product });
 	}
@@ -48,19 +53,34 @@ export async function CartProductList(
 		return;
 	}
 
-	const checkoutButton = <button type="button">Checkout</button>;
-	const cartLogin = <a href="/login">Go to login</a>;
+	const checkoutButton = (
+		<Button
+			color="primary"
+			key="remove-from-cart"
+			type="button"
+			className={"mt-4"}
+		>
+			Checkout
+		</Button>
+	);
+
+	const cartLogin = (
+		<Alert color="warning" className={"mt-4"} style={{ display: "block" }}>
+			You have to log in to checkout. Click{" "}
+			<a href="/login">here to go to login page</a>
+		</Alert>
+	);
 	const cartTotal = (
 		<div className={classes.cartTotal} id="cart-total">
 			total: {data.cart.total} €
 		</div>
 	);
 	this.renderSync(
-		<div>
+		<>
 			<ul className={classes.cartProducts}>
 				{data.cart.products.map(({ product, count, subTotal }) => {
 					return (
-						<li id={`cart-item-${product.id}`}>
+						<li key={product.id} id={`cart-item-${product.id}`}>
 							<CartProduct
 								product={product}
 								count={count}
@@ -70,11 +90,11 @@ export async function CartProductList(
 					);
 				})}
 			</ul>
-			<hr />
+			<Divider />
 			{cartTotal}
 			<div className={classes.cartCheckout}>{checkoutButton}</div>
 			<div>{cartLogin}</div>
-		</div>,
+		</>,
 	);
 
 	const isLogged = this.app.domains.user.isLoggedIn();

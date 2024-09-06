@@ -1,10 +1,8 @@
-name: CI
+name: Main
 
 on:
   push:
-    branches: ["main", "fix/ci"]
-  pull_request:
-    types: [opened, synchronize]
+    branches: ["main"]
 
 jobs:
   build:
@@ -29,8 +27,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Install playwright
+        run: cd packages/components && npx playwright install --with-deps
+
       - name: Build
         run: pnpm build
 
       - name: Test
         run: pnpm test
+
+      

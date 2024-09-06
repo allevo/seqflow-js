@@ -5,3 +5,8 @@ node_modules/
 .DS_Store
 .turbo
 .idea/
+
+*storybook.log
+
+gen-ai
+orama-search-box

@@ -1,5 +1,5 @@
 import { createDomainEventClass } from "seqflow-js";
-import { Product } from "../product/ProductDomain";
+import type { Product } from "../product";
 
 export const ChangeCartEvent = createDomainEventClass<{
 	product: Product;

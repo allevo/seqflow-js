@@ -1,6 +1,10 @@
-import { SeqflowFunctionContext, createDomainEventClass } from "seqflow-js";
+import {
+	type SeqflowFunctionContext,
+	createDomainEventClass,
+} from "seqflow-js";
+import { Button, Card } from "seqflow-js-components";
 import classes from "./Counter.module.css";
-import { CHANGE_VALUE_EVENT_NAME, ExternalChangeValue } from "./external";
+import { CHANGE_VALUE_EVENT_NAME, type ExternalChangeValue } from "./external";
 
 const CounterChanged = createDomainEventClass<{
 	delta: number;
@@ -17,12 +21,9 @@ export class CounterDomain {
 	) {
 		this.counter = init;
 
-		externalEventTarget.addEventListener(
-			CHANGE_VALUE_EVENT_NAME,
-			(e: ExternalChangeValue) => {
-				this.set(e.detail.newValue);
-			},
-		);
+		externalEventTarget.addEventListener(CHANGE_VALUE_EVENT_NAME, (e) => {
+			this.set((e as ExternalChangeValue).detail.newValue);
+		});
 	}
 
 	applyDelta(delta: number) {
@@ -50,11 +51,11 @@ async function ChangeCounterButton(
 	data: { delta: number; text: string },
 ) {
 	this.renderSync(
-		<button key="button" type="button">
+		<Button key="button" type="button" color="primary">
 			{data.text}
-		</button>,
+		</Button>,
 	);
-	const events = this.waitEvents(this.domEvent("click", "button"));
+	const events = this.waitEvents(this.domEvent("click", { key: "button" }));
 
 	for await (const _ of events) {
 		this.app.domains.counter.applyDelta(data.delta);
@@ -65,16 +66,21 @@ export async function Counter(this: SeqflowFunctionContext) {
 	this._el.classList.add(classes["counter-card"]);
 
 	this.renderSync(
-		<>
-			<div className={classes.buttons}>
-				<ChangeCounterButton delta={-1} text="Decrement" />
-				<div className={classes.divider} />
-				<ChangeCounterButton delta={1} text="Increment" />
-			</div>
-			<div className={classes.counter} key="counter">
-				{this.app.domains.counter.get()}
-			</div>
-		</>,
+		<Card
+			compact
+			className={"m-auto w-96 bg-slate-900 text-slate-200 mt-6"}
+			shadow="md"
+		>
+			<Card.Body>
+				<div className={classes.buttons}>
+					<ChangeCounterButton delta={-1} text="Decrement" />
+					<div className={classes.counter} key={"counter"}>
+						{this.app.domains.counter.get()}
+					</div>
+					<ChangeCounterButton delta={1} text="Increment" />
+				</div>
+			</Card.Body>
+		</Card>,
 	);
 
 	const events = this.waitEvents(this.domainEvent(CounterChanged));

@@ -1,5 +1,6 @@
-import { SeqflowFunctionContext } from "seqflow-js";
-import { Product } from "../../product/ProductDomain";
+import type { SeqflowFunctionContext } from "seqflow-js";
+import { Button } from "seqflow-js-components";
+import type { Product } from "../../product";
 import classes from "./AddToCart.module.css";
 
 export async function AddToCart(
@@ -8,51 +9,52 @@ export async function AddToCart(
 ) {
 	const initCount = this.app.domains.cart.getProductCount(data.product.id);
 
+	this._el.style.width = "100px";
+
 	this.renderSync(
-		<div>
-			<button
+		<>
+			<Button
+				className={[classes.firstAddToCart, "w-full"]}
 				key="first-add-to-cart"
 				type="button"
-				className={classes.firstAddToCart}
+				color="primary"
 			>
 				Add to cart
-			</button>
+			</Button>
 			<div
 				key="other-add-to-cart-wrapper"
-				className={`${classes.otherAddToCartWrapper} ${classes.show}`}
+				className={[classes.otherAddToCartWrapper, classes.show, "w-full"]}
 			>
-				<button
+				<Button
+					className={classes.removeFromCart}
 					key="remove-from-cart"
 					type="button"
-					className={classes.removeFromCart}
+					color="ghost"
+					shape="circle"
 				>
 					-
-				</button>
+				</Button>
 				<span key="counter" className="count">
 					{initCount}
 				</span>
-				<button
+				<Button
+					className={classes.secondAddFromCart}
 					key="second-add-to-cart"
 					type="button"
-					className={classes.secondAddFromCart}
+					color="ghost"
+					shape="circle"
 				>
 					+
-				</button>
+				</Button>
 			</div>
-		</div>,
+		</>,
 	);
 
-	const firstAddToCart = this.getChild(
-		"first-add-to-cart",
-	) as HTMLButtonElement;
-	const secondAddToCart = this.getChild(
-		"second-add-to-cart",
-	) as HTMLButtonElement;
-	const removeFromCart = this.getChild("remove-from-cart") as HTMLButtonElement;
-	const otherAddToCartWrapper = this.getChild(
-		"other-add-to-cart-wrapper",
-	) as HTMLDivElement;
-	const counter = this.getChild("counter") as HTMLSpanElement;
+	const firstAddToCart = this.getChild("first-add-to-cart");
+	const secondAddToCart = this.getChild("second-add-to-cart");
+	const removeFromCart = this.getChild("remove-from-cart");
+	const otherAddToCartWrapper = this.getChild("other-add-to-cart-wrapper");
+	const counter = this.getChild("counter");
 
 	if (initCount > 0) {
 		counter.textContent = `${initCount}`;

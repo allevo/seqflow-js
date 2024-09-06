@@ -10,11 +10,17 @@
 
 .cartProductCounter {
     background-color: red;
+    border-color: transparent;
     color: white;
     padding: 1px 3px;
     text-align: center;
     border-radius: 5px;
     position: absolute;
-    top: -10px;
+    top: -3px;
     font-size: 10px;
+    right: 4px;
+}
+
+.cartProductCounter:empty {
+    display: none;
 }

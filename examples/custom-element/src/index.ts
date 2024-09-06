@@ -1,7 +1,9 @@
 import { start } from "seqflow-js";
 import { Counter, CounterDomain } from "./Counter";
-
 import { ExternalChangeValue } from "./external";
+
+import "seqflow-js-components/style.css";
+import "./index.css";
 
 declare global {
 	// `vite` build replaces `shadowDomMode` with the correct value

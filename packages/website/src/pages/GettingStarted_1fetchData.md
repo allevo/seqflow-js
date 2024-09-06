@@ -101,6 +101,6 @@ In this guide, we learned how to fetch data from an endpoint and render it using
 
 In the next guide, we will learn how to split the above code into multiple components to make it more maintainable.
 
-<div class="d-grid gap-2 col-6 mx-auto">
-    <a href="/getting-started/split-components" class="btn btn-outline-primary btn-lg">Learn how to split application into components</a>
-</div>
+:::next:::
+{"label": "Learn how to split application into components", "next": "/getting-started/split-components"}
+:::end-next:::

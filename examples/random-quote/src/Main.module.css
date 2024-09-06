@@ -1,0 +1,13 @@
+
+.main {
+	@apply m-auto mt-16 w-2/4 bg-gray-600;
+}
+.hide {
+	@apply !hidden;
+}
+.loading, .initialText {
+	@apply min-h-24 self-center;
+}
+.quote {
+	@apply min-h-24;
+}

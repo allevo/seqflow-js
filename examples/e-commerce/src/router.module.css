@@ -10,6 +10,8 @@
         display: flex;
         overflow: auto;
         padding-bottom: 40px;
+        margin: auto;
+        @apply mt-6;
 
         > div {
             width: 100%;

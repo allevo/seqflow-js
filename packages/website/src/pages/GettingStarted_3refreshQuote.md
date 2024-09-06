@@ -256,6 +256,6 @@ When a JSX element is created in SeqFlow, the type is a real HTML element. So, T
 
 In this tutorial, we have learned how to handle the click events and how to avoid double fetches. We also learned how to use the `key` attribute to track the components. Now, we have a fully functional application that shows a random quote and allows the user to refresh it by clicking a button!
 
-<div class="d-grid gap-2 col-6 mx-auto">
-    <a href="/getting-started/configuration" class="btn btn-outline-primary btn-lg">Learn how to configure the application</a>
-</div>
+:::next:::
+{"label": "Learn how to configure the application", "next": "/getting-started/configuration"}
+:::end-next:::

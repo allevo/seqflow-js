@@ -1,18 +1,18 @@
-export function debugEventTarget(ev: EventTarget): EventTarget {
-	const oldAddEventListener = ev.addEventListener;
-	ev.addEventListener = (
+export function debugEventTarget(et: EventTarget): EventTarget {
+	const oldAddEventListener = et.addEventListener;
+	et.addEventListener = (
 		type: string,
 		listener: EventListenerOrEventListenerObject,
 		options?: boolean | AddEventListenerOptions,
 	) => {
 		console.log("addEventListener", type);
-		return oldAddEventListener.call(ev, type, listener, options);
+		return oldAddEventListener.call(et, type, listener, options);
 	};
-	const oldDispatchEvent = ev.dispatchEvent;
-	ev.dispatchEvent = (event: Event) => {
+	const oldDispatchEvent = et.dispatchEvent;
+	et.dispatchEvent = (event: Event) => {
 		console.log("dispatchEvent", event.type);
-		return oldDispatchEvent.call(ev, event);
+		return oldDispatchEvent.call(et, event);
 	};
 
-	return ev;
+	return et;
 }
