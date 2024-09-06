@@ -16,7 +16,7 @@ jobs:
 
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
@@ -53,8 +53,16 @@ jobs:
       - name: Print env
         run : echo $ENV_NAME
       - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: pnpm install --global vercel@latest
       - name: Pull Vercel Environment Information
         working-directory: packages/website
         run: vercel pull --yes --environment=preview --token ${{ secrets.VERCEL_TOKEN }}
