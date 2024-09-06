@@ -10,7 +10,18 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
 
+    environment: Preview
+
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      ENV_NAME: ${{ vars.ENV_NAME }}
+
     steps:
+      - name: Print env
+        run : echo $ENV_NAME
+
       - name: Check out code
         uses: actions/checkout@v4
 
@@ -36,31 +47,6 @@ jobs:
       - name: Test
         run: pnpm test
 
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build
-
-    environment: Preview
-
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      ENV_NAME: ${{ vars.ENV_NAME }}
-
-    steps:
-      - name: Print env
-        run : echo $ENV_NAME
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
       - name: Install Vercel CLI
         run: pnpm install --global vercel@latest
       - name: Pull Vercel Environment Information
