@@ -4,16 +4,10 @@ import classes from "./Main.module.css";
 import {
 	FetchingNewQuote,
 	NewQuoteFetched,
-	type Quote,
 	QuoteComponent,
 	QuoteErrorFetched,
 	RefreshQuoteButton,
 } from "./domains/quote";
-
-const emptyQuote: Quote = {
-	author: "",
-	content: "",
-};
 
 export async function Main(this: SeqflowFunctionContext) {
 	this.renderSync(
