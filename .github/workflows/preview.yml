@@ -57,10 +57,10 @@ jobs:
         run: npm install --global vercel@latest
       - name: Pull Vercel Environment Information
         working-directory: packages/website
-        run: vercel pull --yes --environment=preview
+        run: vercel pull --yes --environment=preview --token ${{ secrets.VERCEL_TOKEN }}
       - name: Build Project Artifacts
         working-directory: packages/website
         run: vercel build
       - name: Deploy Project Artifacts to Vercel
         working-directory: packages/website
-        run: vercel deploy --prebuilt
+        run: vercel deploy --prebuilt --token ${{ secrets.VERCEL_TOKEN }}
