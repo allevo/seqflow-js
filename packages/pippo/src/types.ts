@@ -3,6 +3,9 @@ import type { AppContext, SeqFlowComponentContext } from "./component";
 // biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
 export interface Domains {}
 
+// biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
+export interface ApplicationConfiguration {}
+
 export type OverwriteHtmlFor<X extends object> = "htmlFor" extends keyof X
 	? {
 			[K in keyof Omit<X, "htmlFor">]: X[K];
@@ -28,6 +31,13 @@ export type ComponentProps<X> = X &
 	Record<string, any> & {
 		children?: JSX.Element[];
 	};
+
+export type SeqflowComponent<T extends object> =
+	// support custom async element
+	| ((_: ComponentProps<T>, c: Contexts) => Promise<void>)
+	// support custom sync element
+	| ((_: ComponentProps<T>, c: Contexts) => void);
+
 export type Contexts = {
 	component: SeqFlowComponentContext;
 	app: AppContext;
@@ -37,10 +47,8 @@ declare global {
 		type ElementType =
 			// support basic html element
 			| string
-			// support custom async element
-			| ((_: ComponentProps<any>, c: Contexts) => Promise<void>)
-			// support custom sync element
-			| ((_: ComponentProps<any>, c: Contexts) => void)
+			// custom component
+			| SeqflowComponent<any>
 			// support fragment (`createDOMFragment`)
 			| symbol;
 
