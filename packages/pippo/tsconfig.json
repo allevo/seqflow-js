@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "lib": ["es2018", "dom"],
+        "jsx": "react",
+        "jsxFactory": "component.createDOMElement",
+        "jsxFragmentFactory": "component.createDOMFragment",
+        "strict": true,
+        "skipLibCheck": true,
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "rootDir": "./",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "outDir": "./dist",
+    },
+    "include": [
+        "./src/**/*",
+        "./tests/**/*",
+    ],
+}
