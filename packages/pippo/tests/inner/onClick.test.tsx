@@ -5,7 +5,7 @@ import { sleep } from "../test-utils";
 
 let component: SeqFlowComponentContext;
 let abortController: AbortController;
-let logs = []
+const logs = [];
 beforeEach(() => {
 	document.body.innerHTML = "";
 	abortController = new AbortController();
@@ -14,7 +14,7 @@ beforeEach(() => {
 			debug: (...args: any[]) => logs.push(args),
 			error: (...args: any[]) => logs.push(args),
 		},
-	},);
+	});
 });
 afterEach(() => {
 	abortController.abort();

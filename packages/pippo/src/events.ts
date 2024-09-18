@@ -1,4 +1,4 @@
-import { DomainEvent } from "./domains";
+import type { DomainEvent } from "./domains";
 import { NavigationEvent } from "./router";
 
 export type EventAsyncGenerator<T> = (
@@ -14,7 +14,7 @@ const wakeupEventName = "wakeup";
 export const WAKEUP_EVENT = new Event(wakeupEventName);
 
 export function createAbortableEventAsyncGenerator<E extends Event>(
-    et: EventTarget,
+	et: EventTarget,
 	eventType: string,
 	options: {
 		preventDefault?: boolean;
@@ -23,35 +23,35 @@ export function createAbortableEventAsyncGenerator<E extends Event>(
 		fn?: (ev: E) => boolean | undefined;
 	},
 ): EventAsyncGenerator<E> {
-    async function* iterOnEvents(abortController: AbortController) {
+	async function* iterOnEvents(abortController: AbortController) {
 		// If already aborted, throw immediately
 		abortController.signal.throwIfAborted();
 
-        // When the abort contoller is aborted, we dispatch the WAKEUP_EVENT
-        // So, in the next loop, the promise will be resolved and
-        // in the next iteration, the loop will check if the controller is aborted
-        // and throw an error
-        abortController.signal.addEventListener(
-            "abort",
-            () => {
-                abortController.signal.dispatchEvent(WAKEUP_EVENT);
-            },
-            {
-                once: true,
-            },
-        );
+		// When the abort contoller is aborted, we dispatch the WAKEUP_EVENT
+		// So, in the next loop, the promise will be resolved and
+		// in the next iteration, the loop will check if the controller is aborted
+		// and throw an error
+		abortController.signal.addEventListener(
+			"abort",
+			() => {
+				abortController.signal.dispatchEvent(WAKEUP_EVENT);
+			},
+			{
+				once: true,
+			},
+		);
 
 		const queue: E[] = [];
 		et.addEventListener(
 			eventType,
 			(event) => {
-                // This run synchronously a function
-                // The function can call the event.preventDefault() method under conditions
+				// This run synchronously a function
+				// The function can call the event.preventDefault() method under conditions
 				if (options.fn) {
 					const ret = options.fn(event as E);
-                    if (ret === true) {
-                        return;
-                    }
+					if (ret === true) {
+						return;
+					}
 				}
 
 				if (options.preventDefault) {
@@ -71,12 +71,12 @@ export function createAbortableEventAsyncGenerator<E extends Event>(
 			},
 		);
 
-        // In this loop, we wait for the event to be dispatched
-        // The queue is filled with the events, so we can yield them
-        // Anyway, when there are no events, we wait for the WAKEUP_EVENT
-        // WAKEUP_EVENT is dispatched when:
-        // - the abort controller is aborted
-        // - an new event is added to the queue is dispatched
+		// In this loop, we wait for the event to be dispatched
+		// The queue is filled with the events, so we can yield them
+		// Anyway, when there are no events, we wait for the WAKEUP_EVENT
+		// WAKEUP_EVENT is dispatched when:
+		// - the abort controller is aborted
+		// - an new event is added to the queue is dispatched
 		while (true) {
 			abortController.signal.throwIfAborted();
 
@@ -87,14 +87,10 @@ export function createAbortableEventAsyncGenerator<E extends Event>(
 				}
 			} else {
 				await new Promise<Event>((resolve) => {
-                    abortController.signal.addEventListener(
-                        WAKEUP_EVENT.type,
-                        resolve,
-                        {
-                            once: true,
-                        },
-                    );
-                });
+					abortController.signal.addEventListener(WAKEUP_EVENT.type, resolve, {
+						once: true,
+					});
+				});
 			}
 		}
 	}
@@ -102,19 +98,20 @@ export function createAbortableEventAsyncGenerator<E extends Event>(
 	return iterOnEvents;
 }
 
-
-export async function* combineEventAsyncGenerators<Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[]>(
+export async function* combineEventAsyncGenerators<
+	Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[],
+>(
 	abortController: AbortController,
 	...fns: Fns
 ): AsyncGenerator<GetYieldType<Fns[number]>> {
-    if (fns.length === 0) {
-        throw new Error('No generator functions provided');
-    }
+	if (fns.length === 0) {
+		throw new Error("No generator functions provided");
+	}
 
 	const combineEventAsyncGeneratorAbortController = new AbortController();
 
-    // This is the case when we have only one generator
-    // This is the simple case, we just return the generator
+	// This is the case when we have only one generator
+	// This is the simple case, we just return the generator
 	if (fns.length === 1) {
 		abortController.signal.addEventListener("abort", (r) => {
 			combineEventAsyncGeneratorAbortController.abort(r);
@@ -122,29 +119,35 @@ export async function* combineEventAsyncGenerators<Fns extends EventAsyncGenerat
 		const g = fns[0](combineEventAsyncGeneratorAbortController);
 		for await (const e of g) {
 			yield e;
-            /* v8 ignore next 4 */
+			/* v8 ignore next 4 */
 		}
-        // unreachable
-        return;
+		// unreachable
+		return;
 	}
 
-    abortController.signal.addEventListener("abort", (r) => {
-        combineEventAsyncGeneratorAbortController.signal.dispatchEvent(WAKEUP_EVENT);
-        combineEventAsyncGeneratorAbortController.abort(r);
-    });
+	abortController.signal.addEventListener("abort", (r) => {
+		combineEventAsyncGeneratorAbortController.signal.dispatchEvent(
+			WAKEUP_EVENT,
+		);
+		combineEventAsyncGeneratorAbortController.abort(r);
+	});
 
 	const queue: unknown[] = [];
 	Promise.all(
 		fns.map((fn) => {
 			return (async () => {
-                try {
-                    for await (const value of fn(combineEventAsyncGeneratorAbortController)) {
-                        queue.push(value);
-                        combineEventAsyncGeneratorAbortController.signal.dispatchEvent(WAKEUP_EVENT);
-                    }
-                } catch (e) {
-                    // ignore error
-                }
+				try {
+					for await (const value of fn(
+						combineEventAsyncGeneratorAbortController,
+					)) {
+						queue.push(value);
+						combineEventAsyncGeneratorAbortController.signal.dispatchEvent(
+							WAKEUP_EVENT,
+						);
+					}
+				} catch (e) {
+					// ignore error
+				}
 			})();
 		}),
 	);
@@ -182,7 +185,7 @@ export function createCustomEventAsyncGenerator<
 		abortController.signal.throwIfAborted();
 		abortController.signal.addEventListener("abort", () => {
 			pipeAbortController.abort();
-            pipeAbortController.signal.dispatchEvent(WAKEUP_EVENT);
+			pipeAbortController.signal.dispatchEvent(WAKEUP_EVENT);
 		});
 
 		while (true) {
@@ -216,23 +219,25 @@ export function createCustomEventAsyncGenerator<
 }
 
 export function domEvent<K extends keyof HTMLElementEventMap>(
-    el: HTMLElement | SVGElement | MathMLElement,
+	el: HTMLElement | SVGElement | MathMLElement,
 	eventType: K | (string & {}),
 	options: {
 		preventDefault?: boolean;
 		stopPropagation?: boolean;
 		stopImmediatePropagation?: boolean;
-        fn?: (ev: HTMLElementEventMap[K]) => boolean | undefined;
+		fn?: (ev: HTMLElementEventMap[K]) => boolean | undefined;
 	},
 ): EventAsyncGenerator<HTMLElementEventMap[K]> {
 	return createAbortableEventAsyncGenerator(el, eventType, options);
 }
 
-export function domainEvent<EventType extends string, DetailType, BEE extends typeof DomainEvent<Inner, DetailType>, Inner extends string & EventType = EventType>(
-    eventTarget: EventTarget,
-    b: BEE,
-): EventAsyncGenerator<InstanceType<BEE>> {
-    return createAbortableEventAsyncGenerator(eventTarget, b.t, {
+export function domainEvent<
+	EventType extends string,
+	DetailType,
+	BEE extends typeof DomainEvent<Inner, DetailType>,
+	Inner extends string & EventType = EventType,
+>(eventTarget: EventTarget, b: BEE): EventAsyncGenerator<InstanceType<BEE>> {
+	return createAbortableEventAsyncGenerator(eventTarget, b.t, {
 		preventDefault: false,
 	});
 }
@@ -240,7 +245,11 @@ export function domainEvent<EventType extends string, DetailType, BEE extends ty
 export function navigationEvent(
 	eventTarget: EventTarget,
 ): EventAsyncGenerator<NavigationEvent> {
-	return createAbortableEventAsyncGenerator(eventTarget, NavigationEvent.eventType, {
-		preventDefault: false,
-	});
+	return createAbortableEventAsyncGenerator(
+		eventTarget,
+		NavigationEvent.eventType,
+		{
+			preventDefault: false,
+		},
+	);
 }

@@ -1,6 +1,5 @@
-
 export class NavigationEvent extends Event {
-	static eventType = 'navigation' as const
+	static eventType = "navigation" as const;
 
 	constructor(public path: string) {
 		super(NavigationEvent.eventType);

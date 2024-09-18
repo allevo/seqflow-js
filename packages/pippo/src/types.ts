@@ -1,4 +1,4 @@
-import { AppContext, SeqFlowComponentContext } from './component';
+import type { AppContext, SeqFlowComponentContext } from "./component";
 
 // biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
 export interface Domains {}
@@ -13,7 +13,9 @@ export type OverwriteHtmlFor<X extends object> = "htmlFor" extends keyof X
 
 export type ElementProperty<X extends object> = OverwriteHtmlFor<
 	{
-		[K in keyof Omit<X, 'key' | "className" | "style">]: X[K] extends object ? never : X[K];
+		[K in keyof Omit<X, "key" | "className" | "style">]: X[K] extends object
+			? never
+			: X[K];
 	} & {
 		key?: string;
 		style?: Partial<CSSStyleDeclaration> | string;

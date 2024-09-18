@@ -9,7 +9,7 @@ import type { Domains } from "./types";
  * - `static` property helps
  * - `string & {}` helps
  * - `EventType extends string, Inner extends string & EventType = EventType` helps a lot
- * 
+ *
  * We want to create the following developer experience:
  * ```ts
  * const CounterChangedEvent = createDomainEventClass('counter', 'changed')
@@ -20,28 +20,34 @@ import type { Domains } from "./types";
  *   // ev is well defined & typed by typescript
  * }
  * ```
- * 
+ *
  * I'm not a typescript guru, but the following functions/types work.
  * There're tests on types, so if you touch it, make sure the test suite is green
- * 
+ *
  */
 
-
-export class DomainEvent<EventType extends string, DetailType, Inner extends string & EventType = EventType> extends Event implements CustomEvent {
+export class DomainEvent<
+		EventType extends string,
+		DetailType,
+		Inner extends string & EventType = EventType,
+	>
+	extends Event
+	implements CustomEvent
+{
 	detail: DetailType;
 
-	// This `static` property is required because 
+	// This `static` property is required because
 	// @ts-ignore
 	static t: Inner;
 
 	constructor(
 		d: DetailType,
 		// @ts-expect-error
-		type: Inner = ''
+		type: Inner = "",
 	) {
 		super(type, {
 			bubbles: false,
-		})
+		});
 		this.detail = d;
 	}
 
@@ -51,15 +57,16 @@ export class DomainEvent<EventType extends string, DetailType, Inner extends str
 	}
 }
 
-export type GetDataType<T> = T extends DomainEvent<'', infer R>
+export type GetDataType<T> = T extends DomainEvent<"", infer R>
 	? R
 	: "T is not a DomainEvent";
 export type GetArrayOf<T> = () => T[];
 
-export function createDomainEventClass<DetailType extends unknown, EventType extends string, Inner extends string & EventType = EventType>(
-	domainName: keyof Domains,
-	type: Inner,
-) {
+export function createDomainEventClass<
+	DetailType,
+	EventType extends string,
+	Inner extends string & EventType = EventType,
+>(domainName: keyof Domains, type: Inner) {
 	class CustomBusinessEvent extends DomainEvent<Inner, DetailType> {
 		static domainName = domainName;
 		static t: Inner = type;

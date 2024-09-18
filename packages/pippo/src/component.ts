@@ -1,6 +1,5 @@
-import { ElementProperty } from ".";
-import { EventAsyncGenerator } from "./events";
-
+import type { ElementProperty } from ".";
+import type { EventAsyncGenerator } from "./events";
 
 function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 	element: X,
@@ -114,7 +113,7 @@ export class AppContext {
 
 export class SeqFlowComponentContext {
 	// children: components or elements with onClick
-	private c: { key: string; el: Element, mounted: boolean }[] = [];
+	private c: { key: string; el: Element; mounted: boolean }[] = [];
 
 	constructor(
 		// mount point
@@ -156,7 +155,10 @@ export class SeqFlowComponentContext {
 						throw new Error(`Unknown namespace: ${namespace}`);
 				}
 			} else {
-				el = applyProps(document.createElement(tagNameOrComponentFunction), prop);
+				el = applyProps(
+					document.createElement(tagNameOrComponentFunction),
+					prop,
+				);
 			}
 		} else if (typeof tagNameOrComponentFunction === "symbol") {
 			// It is a fragment
@@ -275,7 +277,7 @@ export class SeqFlowComponentContext {
 			});
 		}
 
-		if (typeof tagNameOrComponentFunction !== 'function') {
+		if (typeof tagNameOrComponentFunction !== "function") {
 			addChildren(el, children, this.app);
 		}
 
@@ -303,7 +305,7 @@ export class SeqFlowComponentContext {
 			if (c.mounted) {
 				this.ac.signal.dispatchEvent(new Event(`abort-component-${c.key}`));
 			}
-			return !c.mounted
+			return !c.mounted;
 		});
 
 		// This means we want to remove all children
@@ -372,9 +374,7 @@ export class SeqFlowComponentContext {
 			throw new Error("replaceChild: wrapper not found");
 		}
 
-		this.ac.signal.dispatchEvent(
-			new Event(`abort-component-${key}`),
-		);
+		this.ac.signal.dispatchEvent(new Event(`abort-component-${key}`));
 
 		// Remove the old child from the array, and replace it with the new one
 		const [oldChild] = this.c.splice(oldChildIndex, 1);
@@ -404,8 +404,6 @@ export class SeqFlowComponentContext {
 
 		wrapper.replaceWith(a as Node);
 	}
-
-
 }
 // @ts-ignore
 SeqFlowComponentContext.prototype.createDOMFragment =

@@ -1,12 +1,12 @@
 import { screen, waitFor } from "@testing-library/dom";
 import { afterEach, beforeEach, expect, test } from "vitest";
+import { domEvent } from "../../src/events";
 import { OverwriteHtmlFor, SeqFlowComponentContext } from "../../src/index";
 import { sleep } from "../test-utils";
-import { domEvent } from "../../src/events";
 
 let component: SeqFlowComponentContext;
 let abortController: AbortController;
-let logs: any[] = []
+const logs: any[] = [];
 beforeEach(() => {
 	document.body.innerHTML = "";
 	abortController = new AbortController();
@@ -15,7 +15,7 @@ beforeEach(() => {
 			debug: (...args: any[]) => logs.push(args),
 			error: (...args: any[]) => logs.push(args),
 		},
-	},);
+	});
 });
 afterEach(() => {
 	abortController.abort();
@@ -30,14 +30,14 @@ test("domEvent: click button", async () => {
 	);
 
 	let clickCount = 0;
-	const p = (async() => {
-		const events = domEvent(component._el, 'click', {});
+	const p = (async () => {
+		const events = domEvent(component._el, "click", {});
 		for await (const _ of events(abortController)) {
 			clickCount++;
 		}
-	})()
+	})();
 
-	const button = await screen.findByText(/Button/i)
+	const button = await screen.findByText(/Button/i);
 
 	expect(clickCount).toBe(0);
 	button.click();
@@ -67,30 +67,36 @@ test("domEvent: stopPropagation", async () => {
 		</button>,
 	);
 	let bodyClickCount = 0;
-	document.body.addEventListener('click', (_) => {
-		bodyClickCount++;
-	}, {
-		signal: abortController.signal,
-	});
+	document.body.addEventListener(
+		"click",
+		(_) => {
+			bodyClickCount++;
+		},
+		{
+			signal: abortController.signal,
+		},
+	);
 
 	const innerAbortController = new AbortController();
 
 	let buttonClickCount = 0;
-	const buttonClickPromise = (async() => {
-		const events = domEvent(component.getChild('div1'), 'click', { stopPropagation: true });
+	const buttonClickPromise = (async () => {
+		const events = domEvent(component.getChild("div1"), "click", {
+			stopPropagation: true,
+		});
 		for await (const _ of events(innerAbortController)) {
 			buttonClickCount++;
 		}
-	})()
-	let componentClickCount = 0
-	const componentClickPromise = (async() => {
-		const events = domEvent(component._el, 'click', {});
+	})();
+	let componentClickCount = 0;
+	const componentClickPromise = (async () => {
+		const events = domEvent(component._el, "click", {});
 		for await (const _ of events(innerAbortController)) {
 			componentClickCount++;
 		}
-	})()
+	})();
 
-	const button = await screen.findByText(/Button/i)
+	const button = await screen.findByText(/Button/i);
 
 	expect(buttonClickCount).toBe(0);
 	expect(componentClickCount).toBe(0);
@@ -119,7 +125,6 @@ test("domEvent: stopPropagation", async () => {
 	expect(bodyClickCount).toBe(1);
 });
 
-
 // stop immediate propagation means:
 // I will execute the current handler registed on the current element
 // I will not execute the remain handlers and the handles registered on the parent elements
@@ -131,30 +136,36 @@ test("domEvent: stopImmediatePropagation", async () => {
 		</button>,
 	);
 	let bodyClickCount = 0;
-	document.body.addEventListener('click', (_) => {
-		bodyClickCount++;
-	}, {
-		signal: abortController.signal,
-	});
+	document.body.addEventListener(
+		"click",
+		(_) => {
+			bodyClickCount++;
+		},
+		{
+			signal: abortController.signal,
+		},
+	);
 
 	const innerAbortController = new AbortController();
 
 	let buttonClickCount = 0;
-	const buttonClickPromise = (async() => {
-		const events = domEvent(component.getChild('div1'), 'click', { stopImmediatePropagation: true });
+	const buttonClickPromise = (async () => {
+		const events = domEvent(component.getChild("div1"), "click", {
+			stopImmediatePropagation: true,
+		});
 		for await (const _ of events(innerAbortController)) {
 			buttonClickCount++;
 		}
-	})()
-	let buttonClickCount2 = 0
-	const componentClickPromise = (async() => {
-		const events = domEvent(component.getChild('div1'), 'click', {});
+	})();
+	let buttonClickCount2 = 0;
+	const componentClickPromise = (async () => {
+		const events = domEvent(component.getChild("div1"), "click", {});
 		for await (const _ of events(innerAbortController)) {
 			buttonClickCount2++;
 		}
-	})()
+	})();
 
-	const button = await screen.findByText(/Button/i)
+	const button = await screen.findByText(/Button/i);
 
 	expect(buttonClickCount).toBe(0);
 	expect(buttonClickCount2).toBe(0);
@@ -195,21 +206,23 @@ test("domEvent: prevent default", async () => {
 	const innerAbortController = new AbortController();
 
 	let buttonClickCount = 0;
-	const buttonClickPromise = (async() => {
-		const events = domEvent(component.getChild('submitButton'), 'click', { preventDefault: true });
+	const buttonClickPromise = (async () => {
+		const events = domEvent(component.getChild("submitButton"), "click", {
+			preventDefault: true,
+		});
 		for await (const _ of events(innerAbortController)) {
 			buttonClickCount++;
 		}
-	})()
-	let submitCount = 0
-	const componentClickPromise = (async() => {
-		const events = domEvent(component.getChild('form'), 'submit', {});
+	})();
+	let submitCount = 0;
+	const componentClickPromise = (async () => {
+		const events = domEvent(component.getChild("form"), "submit", {});
 		for await (const _ of events(innerAbortController)) {
 			submitCount++;
 		}
-	})()
+	})();
 
-	const button = await screen.findByText(/Button/i)
+	const button = await screen.findByText(/Button/i);
 
 	expect(buttonClickCount).toBe(0);
 	expect(submitCount).toBe(0);

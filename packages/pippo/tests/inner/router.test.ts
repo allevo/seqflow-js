@@ -1,14 +1,16 @@
 import { screen, waitFor } from "@testing-library/dom";
 import { afterEach, beforeEach, expect, test } from "vitest";
-import {
-	SeqFlowComponentContext,
-} from "../../src/index";
-import { BrowserRouter, InMemoryRouter, NavigationEvent } from "../../src/router";
 import { navigationEvent } from "../../src/events";
+import { SeqFlowComponentContext } from "../../src/index";
+import {
+	BrowserRouter,
+	InMemoryRouter,
+	type NavigationEvent,
+} from "../../src/router";
 
 let component: SeqFlowComponentContext;
 let abortController: AbortController;
-let logs: any[] = []
+const logs: any[] = [];
 beforeEach(() => {
 	document.body.innerHTML = "";
 	abortController = new AbortController();
@@ -24,72 +26,71 @@ afterEach(() => {
 });
 
 test("router: InMemoryRouter navgation & events", async () => {
-	const abortController = new AbortController()
+	const abortController = new AbortController();
 	const eventTarget = new EventTarget();
-	const router = new InMemoryRouter(eventTarget, '/')
+	const router = new InMemoryRouter(eventTarget, "/");
 
-	router.install()
+	router.install();
 
-	const events: NavigationEvent[] = []
-	const p = async function() {
+	const events: NavigationEvent[] = [];
+	const p = (async () => {
 		for await (const ev of navigationEvent(eventTarget)(abortController)) {
-			events.push(ev)
+			events.push(ev);
 		}
-	}()
+	})();
 
-	expect(router.segments).toEqual([''])
+	expect(router.segments).toEqual([""]);
 
-	router.navigate('/foo')
-	expect(router.segments).toEqual(['foo'])
+	router.navigate("/foo");
+	expect(router.segments).toEqual(["foo"]);
 
-	router.navigate('/foo/bar/baz')
-	expect(router.segments).toEqual(['foo', 'bar', 'baz'])
+	router.navigate("/foo/bar/baz");
+	expect(router.segments).toEqual(["foo", "bar", "baz"]);
 
-	router.back()
-	expect(router.segments).toEqual(['foo'])
+	router.back();
+	expect(router.segments).toEqual(["foo"]);
 
-	router.back()
-	expect(router.segments).toEqual([''])
+	router.back();
+	expect(router.segments).toEqual([""]);
 
-	router.back()
-	expect(router.segments).toEqual([''])
+	router.back();
+	expect(router.segments).toEqual([""]);
 
 	setTimeout(() => {
-		abortController.abort()
+		abortController.abort();
 	}, 10);
 
-	await expect(p).rejects.toThrow()
+	await expect(p).rejects.toThrow();
 
-	expect(events.map(e => e.path)).toEqual([
-		'/foo',
-		'/foo/bar/baz',
-		'/foo',
-		'/',
-	])
+	expect(events.map((e) => e.path)).toEqual([
+		"/foo",
+		"/foo/bar/baz",
+		"/foo",
+		"/",
+	]);
 });
 
-test('router: BrowserRouter', async () => {
-	const abortController = new AbortController()
+test("router: BrowserRouter", async () => {
+	const abortController = new AbortController();
 	const eventTarget = new EventTarget();
-	const router = new BrowserRouter(eventTarget)
+	const router = new BrowserRouter(eventTarget);
 
-	router.install()
+	router.install();
 
-	const events: NavigationEvent[] = []
-	const p = async function() {
+	const events: NavigationEvent[] = [];
+	const p = (async () => {
 		for await (const ev of navigationEvent(eventTarget)(abortController)) {
-			events.push(ev)
+			events.push(ev);
 		}
-	}()
+	})();
 
+	expect(router.segments).toEqual([""]);
 
-	expect(router.segments).toEqual([''])
+	router.navigate("/foo");
+	expect(router.segments).toEqual(["foo"]);
 
-	router.navigate('/foo')
-	expect(router.segments).toEqual(['foo'])
-
-	router.navigate('/foo/bar/baz')
-	await waitFor(() => expect(router.segments).toEqual(['foo', 'bar', 'baz']))
+	router.navigate("/foo/bar/baz");
+	await waitFor(() => expect(router.segments).toEqual(["foo", "bar", "baz"]));
 
 	// https://github.com/jsdom/jsdom/issues/1565
 	// Back api in JSDOM is not working as expected
@@ -106,16 +107,17 @@ test('router: BrowserRouter', async () => {
 	*/
 
 	setTimeout(() => {
-		abortController.abort()
+		abortController.abort();
 	}, 10);
 
-	await expect(p).rejects.toThrow()
+	await expect(p).rejects.toThrow();
 
-
-	await waitFor(() => expect(events.map(e => e.path)).toEqual([
-		'/foo',
-		'/foo/bar/baz',
-		// '/foo',
-		// '/',
-	]))
-})
+	await waitFor(() =>
+		expect(events.map((e) => e.path)).toEqual([
+			"/foo",
+			"/foo/bar/baz",
+			// '/foo',
+			// '/',
+		]),
+	);
+});

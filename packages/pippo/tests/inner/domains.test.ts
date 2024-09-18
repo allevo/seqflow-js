@@ -1,4 +1,3 @@
-
 import { expect, test } from "vitest";
 import { createDomainEventClass } from "../../src/domains";
 import { domainEvent } from "../../src/events";
@@ -13,9 +12,9 @@ test("createDomainEventClass", async () => {
 	expect(ev.type).toBe("my-event");
 });
 
-test('domainEvent: wait for events', async () => {
+test("domainEvent: wait for events", async () => {
 	const et = new EventTarget();
-	
+
 	const abortController = new AbortController();
 
 	const ev1 = new CounterChangedEvent({ before: 0, current: 5 });
@@ -29,7 +28,7 @@ test('domainEvent: wait for events', async () => {
 	setTimeout(() => {
 		abortController.abort();
 	}, 30);
-	
+
 	const events: CounterChangedEvent[] = [];
 	await expect(async () => {
 		const gen = domainEvent(et, CounterChangedEvent)(abortController);
