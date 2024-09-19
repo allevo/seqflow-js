@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/dom";
 import { type TaskContext, beforeEach, expect, test } from "vitest";
-import { type Contexts, start } from "../src/index";
+import { type ComponentProps, type Contexts, start } from "../src/index";
 import { CounterDomain } from "./test-utils";
 
 beforeEach(() => {
@@ -9,7 +9,7 @@ beforeEach(() => {
 
 test("the application starts", async (testContext) => {
 	let invokedCounter = 0;
-	async function App({}, { component }: Contexts) {
+	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
 		invokedCounter++;
 		component.renderSync(<div>App</div>);
 	}
@@ -32,10 +32,10 @@ test("the application starts", async (testContext) => {
 });
 
 test("render child", async (testContext) => {
-	async function Child({}, { component }: Contexts) {
+	async function Child(_: ComponentProps<unknown>, { component }: Contexts) {
 		component.renderSync(<div>Child</div>);
 	}
-	async function App({}, { component }: Contexts) {
+	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
 		component.renderSync(<Child />);
 	}
 	const abortController = start(

@@ -3,7 +3,11 @@ import type { EventAsyncGenerator } from "./events";
 
 function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 	element: X,
-	props: null | Record<string, any>,
+	props: Record<Exclude<string, "className" | "style" | "htmlFor">, unknown> & {
+		className?: ElementProperty<HTMLElement>["className"];
+		style?: ElementProperty<HTMLElement>["style"];
+		htmlFor?: ElementProperty<HTMLLabelElement>["htmlFor"];
+	},
 ): X {
 	if (props === null) {
 		return element;
@@ -20,11 +24,13 @@ function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 		}
 
 		if (key === "className") {
-			const v: NonNullable<ElementProperty<HTMLElement>["className"]> = value;
+			const v: NonNullable<ElementProperty<HTMLElement>["className"]> =
+				value as NonNullable<(typeof props)["className"]>;
 			const classes = Array.isArray(v) ? v : [...v.split(" ")];
 			element.classList.add(...classes);
 		} else if (key === "style") {
-			const s: NonNullable<ElementProperty<HTMLElement>["style"]> = value;
+			const s: NonNullable<ElementProperty<HTMLElement>["style"]> =
+				value as NonNullable<(typeof props)["style"]>;
 			if (typeof s === "string") {
 				element.setAttribute("style", s);
 			} else {
@@ -37,11 +43,10 @@ function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 			}
 		} else if (key === "htmlFor") {
 			const h: NonNullable<ElementProperty<HTMLLabelElement>["htmlFor"]> =
-				value;
+				value as NonNullable<(typeof props)["htmlFor"]>;
 			(element as HTMLLabelElement).htmlFor = h;
 		} else {
-			const typeValue = typeof value;
-			switch (typeValue) {
+			switch (typeof value) {
 				case "boolean":
 					if (value) {
 						element.setAttribute(key, "");
@@ -55,7 +60,6 @@ function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 				case "string":
 					element.setAttribute(key, value);
 					break;
-				case "function":
 				default:
 					break;
 			}
@@ -128,10 +132,11 @@ export class SeqFlowComponentContext {
 
 	createDOMElement(
 		tagNameOrComponentFunction: JSX.ElementType,
-		prop: null | {},
+		p: null | Record<string, unknown>,
 		...children: (string | number | null | undefined | JSX.Element)[]
 	): JSX.Element {
-		let el;
+		const props = p || {};
+		let el: HTMLElement | SVGElement | MathMLElement | DocumentFragment;
 		if (typeof tagNameOrComponentFunction === "string") {
 			if (tagNameOrComponentFunction.includes(":")) {
 				const [namespace, tagName] = tagNameOrComponentFunction.split(":");
@@ -139,7 +144,7 @@ export class SeqFlowComponentContext {
 					case "svg":
 						el = applyProps(
 							document.createElementNS("http://www.w3.org/2000/svg", tagName),
-							prop,
+							props,
 						);
 						break;
 					case "math":
@@ -148,7 +153,7 @@ export class SeqFlowComponentContext {
 								"http://www.w3.org/1998/Math/MathML",
 								tagName,
 							),
-							prop,
+							props,
 						);
 						break;
 					default:
@@ -157,7 +162,7 @@ export class SeqFlowComponentContext {
 			} else {
 				el = applyProps(
 					document.createElement(tagNameOrComponentFunction),
-					prop,
+					props,
 				);
 			}
 		} else if (typeof tagNameOrComponentFunction === "symbol") {
@@ -182,16 +187,15 @@ export class SeqFlowComponentContext {
 				childAbortController.abort(reason);
 			});
 
-			prop = prop || {};
-			// @ts-expect-error
-			prop.key = prop && "key" in prop ? (prop.key as string) : generateId();
+			props.key =
+				props && "key" in props ? (props.key as string) : generateId();
 
 			const componentName = tagNameOrComponentFunction.name;
-			let output;
+			let output: void | Promise<void> = undefined;
 			try {
 				output = tagNameOrComponentFunction(
 					{
-						...prop,
+						...props,
 						children,
 					},
 					{ component: childComponentContext, app: this.app },
@@ -201,7 +205,7 @@ export class SeqFlowComponentContext {
 				this.app.log.error({
 					message: "Component throws an error",
 					data: {
-						componentOption: prop,
+						componentOption: props,
 						componentName,
 						errorMessage: err.message,
 						error: err,
@@ -215,7 +219,7 @@ export class SeqFlowComponentContext {
 						this.app.log.debug({
 							message: "Component rendering ended",
 							data: {
-								componentOption: prop,
+								componentOption: props,
 								componentName: componentName,
 							},
 						});
@@ -224,7 +228,7 @@ export class SeqFlowComponentContext {
 						this.app.log.error({
 							message: "Component throws an error",
 							data: {
-								componentOption: prop,
+								componentOption: props,
 								componentName,
 								errorMessage: e.message,
 								error: e,
@@ -237,7 +241,7 @@ export class SeqFlowComponentContext {
 				this.app.log.debug({
 					message: "Component rendering ended",
 					data: {
-						componentOption: prop,
+						componentOption: props,
 						componentName: componentName,
 					},
 				});
@@ -246,8 +250,8 @@ export class SeqFlowComponentContext {
 			throw new Error("Unknown type");
 		}
 
-		if (prop && "key" in prop && !(el instanceof DocumentFragment)) {
-			const key = prop.key as string;
+		if (props && "key" in props && !(el instanceof DocumentFragment)) {
+			const key = props.key as string;
 			this.c.push({
 				key: key,
 				el,
@@ -255,11 +259,11 @@ export class SeqFlowComponentContext {
 			});
 		}
 
-		if (prop && "onClick" in prop && el instanceof HTMLElement) {
-			const onClick = prop.onClick as NonNullable<
+		if (props && "onClick" in props && el instanceof HTMLElement) {
+			const onClick = props.onClick as Required<
 				ElementProperty<HTMLElement>
 			>["onClick"];
-			const k = "key" in prop ? (prop.key as string) : generateId();
+			const k = "key" in props ? (props.key as string) : generateId();
 			const elAbortController = new AbortController();
 			this.ac.signal.addEventListener("abort", () => {
 				elAbortController.abort();
@@ -272,7 +276,7 @@ export class SeqFlowComponentContext {
 				el,
 				mounted: false,
 			});
-			el.addEventListener("click", onClick!, {
+			el.addEventListener("click", onClick, {
 				signal: elAbortController.signal,
 			});
 		}
@@ -312,24 +316,25 @@ export class SeqFlowComponentContext {
 		// keep the only the wrapper
 		if (element === null || element === undefined) {
 			return;
-		} else {
-			switch (typeof element) {
-				case "string":
-				case "number":
-					this._el.appendChild(document.createTextNode(element.toString()));
-					break;
-				case "object":
-					if (!(element instanceof Node)) {
-						this.app.log.error({
-							message: "renderSync: invalid element",
-							data: { element },
-						});
-						break;
-					}
-				default:
+		}
+		switch (typeof element) {
+			case "string":
+			case "number":
+				this._el.appendChild(document.createTextNode(element.toString()));
+				break;
+			case "object":
+				if (element instanceof Node) {
 					this._el.appendChild(element as Node);
 					break;
-			}
+				}
+				this.app.log.error({
+					message: "renderSync: invalid element",
+					data: { element },
+				});
+				break;
+			default:
+				this._el.appendChild(element as Node);
+				break;
 		}
 
 		// Set the mounted flag to true for all the remain children

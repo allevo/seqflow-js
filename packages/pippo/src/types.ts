@@ -28,7 +28,7 @@ export type ElementProperty<X extends object> = OverwriteHtmlFor<
 >;
 
 export type ComponentProps<X> = X &
-	Record<string, any> & {
+	Record<Exclude<string, "children">, unknown> & {
 		children?: JSX.Element[];
 	};
 
@@ -48,6 +48,7 @@ declare global {
 			// support basic html element
 			| string
 			// custom component
+			// biome-ignore lint/suspicious/noExplicitAny: JSX supports badly generic components
 			| SeqflowComponent<any>
 			// support fragment (`createDOMFragment`)
 			| symbol;
@@ -81,7 +82,7 @@ declare global {
 		}
 
 		interface ElementAttributesProperty {
-			props: {};
+			props: unknown;
 			_: Contexts;
 		}
 	}

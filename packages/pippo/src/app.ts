@@ -37,9 +37,9 @@ export type StartConfiguration<Domains extends object> = Omit<
 			config: Readonly<ApplicationConfiguration>,
 		) => Domains[K];
 	};
-} & ({} extends SeqflowAppContext<Domains>["config"] // If the ApplicationConfiguration is empty,
+} & (object extends SeqflowAppContext<Domains>["config"] // If the ApplicationConfiguration is empty,
 		? // we allow to not pass it
-			{}
+			object
 		: // otherwise we require it
 			{ config: SeqflowAppContext<Domains>["config"] });
 
@@ -96,13 +96,13 @@ function applyDefault<Domains extends object>(
 	return {
 		log: configuration.log as SeqflowAppContext<Domains>["log"],
 		config: configuration.config,
-		router: configuration.router!,
+		router: configuration.router,
 		domains,
 	};
 }
 
 export function start<
-	T extends object,
+	T extends Record<string, unknown>,
 	MainComponent extends SeqflowComponent<T>,
 >(
 	root: HTMLElement,

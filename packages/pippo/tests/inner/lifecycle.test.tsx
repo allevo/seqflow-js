@@ -30,7 +30,11 @@ test("lifecicle", async () => {
 		clickCount++;
 	}
 	async function Button(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync(<button onClick={clicked}>Button</button>);
+		component.renderSync(
+			<button type="button" onClick={clicked}>
+				Button
+			</button>,
+		);
 	}
 	async function A(_: ComponentProps<unknown>, { component }: Contexts) {
 		component.renderSync(<Button />);

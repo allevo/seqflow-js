@@ -109,11 +109,13 @@ test("child: replaceChild should unmount all the current components and their li
 
 	component.renderSync(
 		<MyComponent1 key="spot">
-			<div onClick={incrementCounter}>Click me</div>
+			<button type="button" onClick={incrementCounter}>
+				Click me
+			</button>
 		</MyComponent1>,
 	);
 	expect(document.body.innerHTML).toBe(
-		'<div><div data-component="my-component-1"><div>Click me</div></div></div>',
+		'<div><div data-component="my-component-1"><button type="button">Click me</button></div></div>',
 	);
 
 	const firstDiv = await screen.findByText(/Click me/i);
@@ -123,7 +125,9 @@ test("child: replaceChild should unmount all the current components and their li
 
 	component.replaceChild("spot", () => (
 		<MyComponent2 key="spot">
-			<div onClick={incrementCounter}>Click me</div>
+			<button type="button" onClick={incrementCounter}>
+				Click me
+			</button>
 		</MyComponent2>
 	));
 
@@ -154,11 +158,13 @@ test("child: renderSync should unmount all the current components and their list
 
 	component.renderSync(
 		<MyComponent1 key="spot">
-			<div onClick={incrementCounter}>Click me</div>
+			<button type="button" onClick={incrementCounter}>
+				Click me
+			</button>
 		</MyComponent1>,
 	);
 	expect(document.body.innerHTML).toBe(
-		'<div><div data-component="my-component-1"><div>Click me</div></div></div>',
+		'<div><div data-component="my-component-1"><button type="button">Click me</button></div></div>',
 	);
 
 	const firstDiv = await screen.findByText(/Click me/i);

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "unit": "vitest --run  --coverage && tsc -p types/tsconfig.json",
-    "biome:check": "biome check --apply src tests",
+    "biome:check": "biome check --apply src tests types",
     "build": "vite build -c vite.config.js"
   },
   "devDependencies": {
