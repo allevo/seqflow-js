@@ -4,8 +4,7 @@ import {
 	type Contexts,
 	SeqFlowComponentContext,
 } from "../../src/index";
-import { InMemoryRouter } from "../../src/router";
-import { CounterDomain, createAppForInnerTest } from "../test-utils";
+import { createAppForInnerTest } from "../test-utils";
 
 let component: SeqFlowComponentContext;
 let abortController: AbortController;

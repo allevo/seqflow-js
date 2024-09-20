@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/dom";
+import { waitFor } from "@testing-library/dom";
 import { afterEach, beforeEach, expect, test } from "vitest";
 import { navigationEvent } from "../../src/events";
 import { SeqFlowComponentContext } from "../../src/index";
@@ -7,7 +7,7 @@ import {
 	InMemoryRouter,
 	type NavigationEvent,
 } from "../../src/router";
-import { CounterDomain, createAppForInnerTest } from "../test-utils";
+import { createAppForInnerTest } from "../test-utils";
 
 let component: SeqFlowComponentContext;
 let abortController: AbortController;
