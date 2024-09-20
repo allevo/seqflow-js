@@ -17,6 +17,10 @@ export interface Router {
 	 */
 	readonly segments: string[];
 	/**
+	 * Returns the current pathname.
+	 */
+	getCurrentPathname(): string;
+	/**
 	 * Navigates back in the history.
 	 */
 	back(): void;
@@ -63,6 +67,10 @@ export class BrowserRouter implements Router {
 		// URL starts with a slash, so the first element is always an empty string
 		segments.shift();
 		return segments;
+	}
+
+	public getCurrentPathname(): string {
+		return window.location.pathname;
 	}
 }
 
@@ -114,5 +122,9 @@ export class InMemoryRouter implements Router {
 		if (last) {
 			this.eventTarget.dispatchEvent(new NavigationEvent(last.path));
 		}
+	}
+
+	getCurrentPathname(): string {
+		return this.history[this.history.length - 1].path;
 	}
 }

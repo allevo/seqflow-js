@@ -5,7 +5,9 @@ import {
 	combineEventAsyncGenerators,
 	domEvent,
 	domainEvent,
+	navigationEvent,
 } from "./events";
+import { NavigationEvent } from "./router";
 
 function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 	element: X,
@@ -455,6 +457,10 @@ export class SeqFlowComponentContext {
 	>(domainEventClass: BEE): EventAsyncGenerator<InstanceType<BEE>> {
 		const et = this.app.getDomainEventTarget(domainEventClass.domainName);
 		return domainEvent(et, domainEventClass);
+	}
+
+	navigationEvent(): EventAsyncGenerator<NavigationEvent> {
+		return navigationEvent(this.app.router.getEventTarget());
 	}
 }
 // @ts-ignore

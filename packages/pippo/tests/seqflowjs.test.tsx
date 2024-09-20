@@ -440,3 +440,48 @@ test("listen domain event", async (testContext) => {
 
 	await waitFor(() => screen.getByText("Counter: 2"));
 });
+
+test("listen navigation event", async (testContext) => {
+	async function AnotherPageLink(
+		_: ComponentProps<unknown>,
+		{ component, app }: Contexts,
+	) {
+		component.renderSync(
+			<a href="/another-page">Go to another page</a>,
+		);
+
+		const events = component.waitEvents(component.domEvent(component._el, "click", { preventDefault: true }));
+		for await (const _ of events) {
+			app.router.navigate("/another-page");
+		}
+	}
+	async function App(
+		_: ComponentProps<unknown>,
+		{ component, app }: Contexts,
+	) {
+		component.renderSync(
+			<div>
+				<AnotherPageLink />
+				<span key="current-path">Path: {app.router.getCurrentPathname()}</span>
+			</div>,
+		);
+
+		const counterSpan = component.getChild("current-path");
+		const events = component.waitEvents(
+			component.navigationEvent(),
+		);
+		for await (const ev of events) {
+			counterSpan.textContent = `Path: ${ev.path}`;
+		}
+	}
+
+	startTestApp(testContext, App);
+
+	await waitFor(() => screen.getByText("Path: /"));
+
+	const navigationLink = await screen.findByRole("link");
+
+	navigationLink.click();
+
+	await waitFor(() => screen.getByText("Path: /another-page"));
+});
