@@ -7,6 +7,7 @@ import {
 	InMemoryRouter,
 	type NavigationEvent,
 } from "../../src/router";
+import { CounterDomain } from "../test-utils";
 
 let component: SeqFlowComponentContext;
 let abortController: AbortController;
@@ -17,8 +18,14 @@ beforeEach(() => {
 	component = new SeqFlowComponentContext(document.body, abortController, {
 		log: {
 			debug: (...args: any[]) => logs.push(args),
+			info: (...args: any[]) => logs.push(args),
 			error: (...args: any[]) => logs.push(args),
 		},
+		config: {},
+		domains: {
+			counter: new CounterDomain(new EventTarget()),
+		},
+		router: new InMemoryRouter(new EventTarget(), "/"),
 	});
 });
 afterEach(() => {
@@ -31,6 +38,8 @@ test("router: InMemoryRouter navgation & events", async () => {
 	const router = new InMemoryRouter(eventTarget, "/");
 
 	router.install();
+
+	expect(router.getEventTarget()).equal(eventTarget);
 
 	const events: NavigationEvent[] = [];
 	const p = (async () => {
@@ -76,6 +85,8 @@ test("router: BrowserRouter", async () => {
 	const router = new BrowserRouter(eventTarget);
 
 	router.install();
+
+	expect(router.getEventTarget()).equal(eventTarget);
 
 	const events: NavigationEvent[] = [];
 	const p = (async () => {

@@ -1,4 +1,5 @@
-import type { AppContext, SeqFlowComponentContext } from "./component";
+import type { SeqflowAppContext } from ".";
+import type { SeqFlowComponentContext } from "./component";
 
 // biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
 export interface Domains {}
@@ -40,7 +41,7 @@ export type SeqflowComponent<T extends object> =
 
 export type Contexts = {
 	component: SeqFlowComponentContext;
-	app: AppContext;
+	app: SeqflowAppContext<Domains>;
 };
 declare global {
 	namespace JSX {

@@ -1,3 +1,5 @@
+import type { TaskContext } from "vitest";
+import { type SeqflowComponent, start } from "../src";
 import { createDomainEventClass } from "../src/domains";
 
 export async function sleep(ms: number) {
@@ -52,4 +54,30 @@ declare module "../src/types" {
 	interface Domains {
 		counter: CounterDomain;
 	}
+}
+
+export function startTestApp(
+	testContext: TaskContext<any>,
+	App: SeqflowComponent<any>,
+) {
+	const abortController = start(
+		document.body,
+		App,
+		{},
+		{
+			domains: {
+				counter: (et) => new CounterDomain(et),
+			},
+		},
+	);
+	abortOnTestFinished(testContext, abortController);
+}
+
+function abortOnTestFinished(
+	testContext: TaskContext<any>,
+	abortController: AbortController,
+) {
+	testContext.onTestFinished(() => {
+		abortController.abort();
+	});
 }

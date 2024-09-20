@@ -1,5 +1,9 @@
-import type { ElementProperty } from ".";
-import type { EventAsyncGenerator } from "./events";
+import type { Domains, ElementProperty, SeqflowAppContext } from ".";
+import {
+	type EventAsyncGenerator,
+	combineEventAsyncGenerators,
+	domEvent,
+} from "./events";
 
 function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 	element: X,
@@ -9,10 +13,6 @@ function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 		htmlFor?: ElementProperty<HTMLLabelElement>["htmlFor"];
 	},
 ): X {
-	if (props === null) {
-		return element;
-	}
-
 	const keys = Object.keys(props);
 	const keysLength = keys.length;
 	for (let i = 0; i < keysLength; i++) {
@@ -60,8 +60,6 @@ function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 				case "string":
 					element.setAttribute(key, value);
 					break;
-				default:
-					break;
 			}
 		}
 	}
@@ -72,7 +70,7 @@ function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 function addChildren(
 	el: HTMLElement | SVGAElement | MathMLElement | DocumentFragment,
 	children: (string | number | null | undefined | JSX.Element)[],
-	appContext: AppContext,
+	appContext: SeqflowAppContext<Domains>,
 ) {
 	// @ts-ignore
 	const c = children.flat(Number.POSITIVE_INFINITY);
@@ -108,12 +106,12 @@ type GetYieldType<A extends EventAsyncGenerator<unknown>> = Exclude<
 	IteratorReturnResult<unknown>
 >["value"];
 
-export class AppContext {
-	log = {
-		debug: console.log,
-		error: console.error,
-	};
-}
+export type DomEventOption = {
+	preventDefault?: boolean;
+	stopPropagation?: boolean;
+	stopImmediatePropagation?: boolean;
+	fn?: (ev: Event) => boolean | undefined;
+};
 
 export class SeqFlowComponentContext {
 	// children: components or elements with onClick
@@ -124,7 +122,7 @@ export class SeqFlowComponentContext {
 		public _el: HTMLElement | SVGElement | MathMLElement,
 		// abort controller
 		private ac: AbortController,
-		private app: AppContext,
+		private app: SeqflowAppContext<Domains>,
 	) {}
 
 	// @ts-ignore
@@ -327,13 +325,18 @@ export class SeqFlowComponentContext {
 					this._el.appendChild(element as Node);
 					break;
 				}
+				// TODO: we should throw an error or ignore it?
 				this.app.log.error({
 					message: "renderSync: invalid element",
 					data: { element },
 				});
 				break;
 			default:
-				this._el.appendChild(element as Node);
+				// TODO: we should throw an error or ignore it?
+				this.app.log.error({
+					message: "renderSync: invalid element",
+					data: { element },
+				});
 				break;
 		}
 
@@ -354,6 +357,7 @@ export class SeqFlowComponentContext {
 		}
 		return child;
 	}
+
 	findChild<E extends HTMLElement = HTMLElement>(key: string): E | null {
 		const child = this.c.find((c) => c.key === key);
 		if (child) {
@@ -408,6 +412,37 @@ export class SeqFlowComponentContext {
 		}
 
 		wrapper.replaceWith(a as Node);
+	}
+
+	async *waitEvents<
+		Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[],
+	>(...fns: Fns): AsyncGenerator<GetYieldType<Fns[number]>> {
+		for await (const ev of combineEventAsyncGenerators(this.ac, ...fns)) {
+			yield ev;
+		}
+	}
+
+	domEvent<K extends keyof HTMLElementEventMap>(
+		keyOrElement: string | JSX.Element,
+		eventType: K | (string & {}),
+		option: DomEventOption = {},
+	): EventAsyncGenerator<HTMLElementEventMap[K]> {
+		let el: HTMLElement | SVGElement | MathMLElement;
+		if (typeof keyOrElement === "string") {
+			el = this.getChild(keyOrElement);
+		} else {
+			if (keyOrElement instanceof DocumentFragment) {
+				throw new Error('Cannot attach event to DocumentFragment');
+			}
+			el = keyOrElement;
+		}
+
+		return domEvent(el, eventType, {
+			preventDefault: option.preventDefault,
+			stopPropagation: option.stopPropagation,
+			stopImmediatePropagation: option.stopImmediatePropagation,
+			fn: option.fn,
+		});
 	}
 }
 // @ts-ignore

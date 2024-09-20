@@ -1,7 +1,7 @@
-import { waitFor } from "@testing-library/dom";
-import { type TaskContext, beforeEach, expect, test } from "vitest";
-import { type ComponentProps, type Contexts, start } from "../src/index";
-import { CounterDomain } from "./test-utils";
+import { screen, waitFor } from "@testing-library/dom";
+import { beforeEach, expect, test } from "vitest";
+import type { ComponentProps, Contexts } from "../src/index";
+import { startTestApp } from "./test-utils";
 
 beforeEach(() => {
 	document.body.innerHTML = "";
@@ -13,17 +13,7 @@ test("the application starts", async (testContext) => {
 		invokedCounter++;
 		component.renderSync(<div>App</div>);
 	}
-	const abortController = start(
-		document.body,
-		App,
-		{},
-		{
-			domains: {
-				counter: (et) => new CounterDomain(et),
-			},
-		},
-	);
-	abortOnTestFinished(testContext, abortController);
+	startTestApp(testContext, App);
 
 	await waitFor(() =>
 		expect(document.body.innerHTML).toBe("<div><div>App</div></div>"),
@@ -38,17 +28,7 @@ test("render child", async (testContext) => {
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
 		component.renderSync(<Child />);
 	}
-	const abortController = start(
-		document.body,
-		App,
-		{},
-		{
-			domains: {
-				counter: (et) => new CounterDomain(et),
-			},
-		},
-	);
-	abortOnTestFinished(testContext, abortController);
+	startTestApp(testContext, App);
 
 	await waitFor(() =>
 		expect(document.body.innerHTML).toBe(
@@ -57,11 +37,276 @@ test("render child", async (testContext) => {
 	);
 });
 
-function abortOnTestFinished(
-	testContext: TaskContext<any>,
-	abortController: AbortController,
-) {
-	testContext.onTestFinished(() => {
-		abortController.abort();
-	});
-}
+test("pass props to child", async (testContext) => {
+	async function Child(
+		{ text }: ComponentProps<{ text: string }>,
+		{ component }: Contexts,
+	) {
+		component.renderSync(<div>{text}</div>);
+	}
+	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
+		component.renderSync(<Child text="From parent" />);
+	}
+	startTestApp(testContext, App);
+
+	await waitFor(() =>
+		expect(document.body.innerHTML).toBe(
+			"<div><div><div>From parent</div></div></div>",
+		),
+	);
+});
+
+test("listen dom throws on DocumentFragment", async (testContext) => {
+	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
+		const incrementButton = (
+			<>
+				<button type="button">Increment</button>
+			</>
+		);
+
+		component.renderSync(
+			incrementButton
+		);
+		
+		await expect(async () => {
+			await component.domEvent(incrementButton, "click")(new AbortController()).next();
+		}).rejects.toThrowError("Cannot attach event to DocumentFragment");
+
+		component.renderSync(
+			'Ok'
+		);
+	}
+	startTestApp(testContext, App);
+
+	await waitFor(() =>
+		expect(document.body.innerHTML).toBe(
+			"<div>Ok</div>",
+		),
+	);
+});
+
+test("listen dom event using key", async (testContext) => {
+	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
+		let counter = 0;
+		component.renderSync(
+			<div>
+				<button key="button" type="button">
+					Increment
+				</button>
+				<span key="counter">Counter: 0</span>
+			</div>,
+		);
+
+		const counterSpan = component.getChild("counter");
+		const events = component.waitEvents(component.domEvent("button", "click"));
+		for await (const _ of events) {
+			counter += 1;
+			counterSpan.textContent = `Counter: ${counter.toString()}`;
+		}
+	}
+	startTestApp(testContext, Counter);
+
+	const incrementButton = await screen.findByRole("button");
+
+	incrementButton.click();
+
+	await waitFor(() => screen.getByText("Counter: 1"));
+
+	incrementButton.click();
+
+	await waitFor(() => screen.getByText("Counter: 2"));
+});
+
+test("listen dom event using element", async (testContext) => {
+	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
+		let counter = 0;
+
+		const incrementButton = <button type="button">Increment</button>;
+
+		component.renderSync(
+			<div>
+				{incrementButton}
+				<span key="counter">Counter: 0</span>
+			</div>,
+		);
+
+		const counterSpan = component.getChild("counter");
+		const events = component.waitEvents(
+			component.domEvent(incrementButton, "click"),
+		);
+		for await (const _ of events) {
+			counter += 1;
+			counterSpan.textContent = `Counter: ${counter.toString()}`;
+		}
+	}
+	startTestApp(testContext, Counter);
+
+	const incrementButton = await screen.findByRole("button");
+
+	incrementButton.click();
+
+	await waitFor(() => screen.getByText("Counter: 1"));
+
+	incrementButton.click();
+
+	await waitFor(() => screen.getByText("Counter: 2"));
+});
+
+test("listen more dom events", async (testContext) => {
+	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
+		let counter = 0;
+
+		component.renderSync(
+			<div>
+				<button key="button1" type="button">
+					Button1
+				</button>
+				<button key="button2" type="button">
+					Button2
+				</button>
+				<button key="button3" type="button">
+					Button3
+				</button>
+				<span key="counter">Counter: 0</span>
+			</div>,
+		);
+
+		const counterSpan = component.getChild("counter");
+		const events = component.waitEvents(
+			component.domEvent("button1", "click"),
+			component.domEvent("button2", "click"),
+			component.domEvent("button3", "click"),
+		);
+		for await (const _ of events) {
+			counter += 1;
+			counterSpan.textContent = `Counter: ${counter.toString()}`;
+		}
+	}
+
+	startTestApp(testContext, Counter);
+
+	const button1 = await screen.findByText(/button1/i);
+	const button2 = await screen.findByText(/button2/i);
+	const button3 = await screen.findByText(/button3/i);
+
+	button1.click();
+
+	await waitFor(() => screen.getByText("Counter: 1"));
+
+	button2.click();
+
+	await waitFor(() => screen.getByText("Counter: 2"));
+
+	button3.click();
+
+	await waitFor(() => screen.getByText("Counter: 3"));
+});
+
+test("switch on who fire event", async (testContext) => {
+	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
+		let counter = 0;
+
+		component.renderSync(
+			<div>
+				<button key="increase-by-1" type="button">
+					Increase by 1
+				</button>
+				<button key="increase-by-2" type="button">
+					Increase by 2
+				</button>
+				<button key="increase-by-3" type="button">
+					Increase by 3
+				</button>
+				<span key="counter">Counter: 0</span>
+			</div>,
+		);
+
+		const counterSpan = component.getChild("counter");
+		const events = component.waitEvents(
+			component.domEvent("increase-by-1", "click"),
+			component.domEvent("increase-by-2", "click"),
+			component.domEvent("increase-by-3", "click"),
+		);
+		const increase1Button = component.getChild("increase-by-1");
+		const increase2Button = component.getChild("increase-by-2");
+		const increase3Button = component.getChild("increase-by-3");
+		for await (const ev of events) {
+			if (!(ev.target instanceof Element)) {
+				continue;
+			}
+
+			switch (true) {
+				case increase1Button.contains(ev.target):
+					counter += 1;
+					break;
+				case increase2Button.contains(ev.target):
+					counter += 2;
+					break;
+				case increase3Button.contains(ev.target):
+					counter += 3;
+					break;
+			}
+
+			counterSpan.textContent = `Counter: ${counter.toString()}`;
+		}
+	}
+
+	startTestApp(testContext, Counter);
+
+	const increase1Button = await screen.findByText(/Increase by 1/i);
+	const increase2Button = await screen.findByText(/Increase by 2/i);
+	const increase3Button = await screen.findByText(/Increase by 3/i);
+
+	increase1Button.click();
+
+	await waitFor(() => screen.getByText("Counter: 1"));
+
+	increase2Button.click();
+
+	await waitFor(() => screen.getByText("Counter: 3"));
+
+	increase3Button.click();
+
+	await waitFor(() => screen.getByText("Counter: 6"));
+});
+
+test("prevent default", async (testContext) => {
+	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
+		let counter = 0;
+
+		component.renderSync(
+			<form key="increment-form">
+				<span key="counter">Counter: 0</span>
+				<button key="submit-button" type="submit">
+					Submit
+				</button>
+			</form>,
+		);
+
+		const counterSpan = component.getChild("counter");
+		const events = component.waitEvents(
+			component.domEvent("submit-button", "click", { preventDefault: true }),
+			component.domEvent("increment-form", "submit"),
+		);
+		for await (const ev of events) {
+			if (ev instanceof SubmitEvent) {
+				// this is never triggered because the "click" event is prevented
+				throw new Error("Kaboom");
+			}
+			counter += 1;
+			counterSpan.textContent = `Counter: ${counter.toString()}`;
+		}
+	}
+
+	startTestApp(testContext, Counter);
+
+	const submitButton = await screen.findByText("Submit");
+
+	submitButton.click();
+
+	await waitFor(() => screen.getByText("Counter: 1"));
+
+	submitButton.click();
+
+	await waitFor(() => screen.getByText("Counter: 2"));
+});

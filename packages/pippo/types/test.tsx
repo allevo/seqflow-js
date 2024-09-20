@@ -7,17 +7,25 @@ import {
 	domainEvent,
 } from "../src/events";
 import {
-	type AppContext,
 	type ComponentProps,
 	type Contexts,
+	type Domains,
 	SeqFlowComponentContext,
+	type SeqflowAppContext,
 } from "../src/index";
+import { InMemoryRouter } from "../src/router";
+import { CounterDomain } from "../tests/test-utils";
 
 const component = new SeqFlowComponentContext(
 	document.createElement("div"),
 	new AbortController(),
 	{
 		log: console,
+		config: {},
+		domains: {
+			counter: new CounterDomain(new EventTarget()),
+		},
+		router: new InMemoryRouter(new EventTarget(), "/"),
 	},
 );
 
@@ -77,7 +85,7 @@ async function MyComponent(
 ) {
 	expectType<number | undefined>(pippo);
 	expectType<SeqFlowComponentContext>(component);
-	expectType<AppContext>(app);
+	expectType<SeqflowAppContext<Domains>>(app);
 }
 expectType<JSX.ElementType>(MyComponent);
 
@@ -155,12 +163,6 @@ const g = createCustomEventAsyncGenerator<number>();
 expectType<Parameters<typeof g.push>[0]>(5);
 g.push(5);
 expectType<AsyncGenerator<number>>(g(new AbortController()));
-
-declare module "../src/types" {
-	interface Domains {
-		counter: string;
-	}
-}
 
 const myEvent = new DomainEvent(undefined);
 expectType<DomainEvent<"myDomainName", undefined>>(myEvent);

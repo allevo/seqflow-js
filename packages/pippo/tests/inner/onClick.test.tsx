@@ -1,7 +1,8 @@
 import { screen, waitFor } from "@testing-library/dom";
 import { afterEach, beforeEach, expect, test } from "vitest";
 import { SeqFlowComponentContext } from "../../src/index";
-import { sleep } from "../test-utils";
+import { CounterDomain, sleep } from "../test-utils";
+import { InMemoryRouter } from "../../src/router";
 
 let component: SeqFlowComponentContext;
 let abortController: AbortController;
@@ -12,8 +13,14 @@ beforeEach(() => {
 	component = new SeqFlowComponentContext(document.body, abortController, {
 		log: {
 			debug: (...args: any[]) => logs.push(args),
+			info: (...args: any[]) => logs.push(args),
 			error: (...args: any[]) => logs.push(args),
 		},
+		config: {},
+		domains: {
+			counter: new CounterDomain(new EventTarget()),
+		},
+		router: new InMemoryRouter(new EventTarget(), "/"),
 	});
 });
 afterEach(() => {

@@ -4,6 +4,8 @@ import {
 	type Contexts,
 	SeqFlowComponentContext,
 } from "../../src/index";
+import { CounterDomain } from "../test-utils";
+import { InMemoryRouter } from "../../src/router";
 
 let component: SeqFlowComponentContext;
 let abortController: AbortController;
@@ -14,30 +16,36 @@ beforeEach(() => {
 	component = new SeqFlowComponentContext(document.body, abortController, {
 		log: {
 			debug: (...args: any[]) => logs.push(args),
+			info: (...args: any[]) => logs.push(args),
 			error: (...args: any[]) => logs.push(args),
 		},
+		config: {},
+		domains: {
+			counter: new CounterDomain(new EventTarget()),
+		},
+		router: new InMemoryRouter(new EventTarget(), "/"),
 	});
 });
 afterEach(() => {
 	abortController.abort();
 });
 
-test("render: text", async () => {
+test("render: text", () => {
 	component.renderSync("foo");
 
 	expect(document.body.innerHTML).toBe("foo");
 });
-test("render: text encoded", async () => {
+test("render: text encoded", () => {
 	component.renderSync("<div></div>");
 
 	expect(document.body.innerHTML).toBe("&lt;div&gt;&lt;/div&gt;");
 });
-test("render: child", async () => {
+test("render: child", () => {
 	component.renderSync(<div />);
 
 	expect(document.body.innerHTML).toBe("<div></div>");
 });
-test("render: child child", async () => {
+test("render: child child", () => {
 	component.renderSync(
 		<div>
 			<div />
@@ -46,30 +54,30 @@ test("render: child child", async () => {
 
 	expect(document.body.innerHTML).toBe("<div><div></div></div>");
 });
-test('render: "data-*" properties are forwarded to div', async () => {
+test('render: "data-*" properties are forwarded to div', () => {
 	component.renderSync(<div data-foo="bar" />);
 
 	expect(document.body.innerHTML).toBe('<div data-foo="bar"></div>');
 });
-test("render: className can be string or array of string", async () => {
+test("render: className can be string or array of string", () => {
 	component.renderSync(<div className={"foo bar"} />);
 	expect(document.body.innerHTML).toBe('<div class="foo bar"></div>');
 
 	component.renderSync(<div className={["foo", "bar"]} />);
 	expect(document.body.innerHTML).toBe('<div class="foo bar"></div>');
 });
-test("render: htmlFor is string", async () => {
+test("render: htmlFor is string", () => {
 	component.renderSync(<label htmlFor="foo_bar" />);
 	expect(document.body.innerHTML).toBe('<label for="foo_bar"></label>');
 });
-test("render: style can be string or object", async () => {
+test("render: style can be string or object", () => {
 	component.renderSync(<div style={"background: red;"} />);
 	expect(document.body.innerHTML).toBe('<div style="background: red;"></div>');
 
 	component.renderSync(<div style={{ background: "red" }} />);
 	expect(document.body.innerHTML).toBe('<div style="background: red;"></div>');
 });
-test("render: fragment", async () => {
+test("render: fragment", () => {
 	component.renderSync(
 		<>
 			<div />
@@ -77,7 +85,7 @@ test("render: fragment", async () => {
 	);
 	expect(document.body.innerHTML).toBe("<div></div>");
 });
-test("render: component", async () => {
+test("render: component", () => {
 	async function MyComponent(
 		_: ComponentProps<unknown>,
 		{ component, app }: Contexts,
@@ -90,46 +98,46 @@ test("render: component", async () => {
 	expect(document.body.innerHTML).toBe("<div>foo</div>");
 });
 
-test("render: number", async () => {
+test("render: number", () => {
 	component.renderSync(4);
 
 	expect(document.body.innerHTML).toBe("4");
 });
-test("render: child number", async () => {
+test("render: child number", () => {
 	component.renderSync(<div>{4}</div>);
 
 	expect(document.body.innerHTML).toBe("<div>4</div>");
 });
-test("render: undefined", async () => {
+test("render: undefined", () => {
 	component.renderSync(undefined);
 
 	expect(document.body.innerHTML).toBe("");
 });
-test("render: child undefined", async () => {
+test("render: child undefined", () => {
 	component.renderSync(<div>{undefined}</div>);
 
 	expect(document.body.innerHTML).toBe("<div></div>");
 });
-test("render: object", async () => {
+test("render: object", () => {
 	// @ts-ignore
 	component.renderSync({ foo: "bar" });
 
 	expect(document.body.innerHTML).toBe("");
 });
-test("render: child object", async () => {
+test("render: child object", () => {
 	// @ts-ignore
 	component.renderSync(<div>{{ foo: "bar" }}</div>);
 
 	expect(document.body.innerHTML).toBe("<div></div>");
 });
-test("render: fragment", async () => {
+test("render: fragment", () => {
 	// biome-ignore lint/complexity/noUselessFragments: test
 	component.renderSync(<>{4}</>);
 
 	expect(document.body.innerHTML).toBe("4");
 });
 
-test("render: svg", async () => {
+test("render: svg", () => {
 	component.renderSync(
 		<svg:svg role="img" aria-label="foo">
 			{/* @ts-ignore */}
@@ -142,7 +150,7 @@ test("render: svg", async () => {
 	expect(svg).instanceOf(SVGElement);
 });
 
-test("render: math", async () => {
+test("render: math", () => {
 	component.renderSync(
 		<math:math>
 			<math:mfrac>
@@ -160,33 +168,33 @@ test("render: math", async () => {
 	// This should be MathMLElement, but it's not available in JSDOM :(
 	expect(math).instanceOf(Element);
 });
-test("render: unknown namespace math", async () => {
+test("render: unknown namespace math", () => {
 	expect(() => {
 		// @ts-ignore
 		<foo:foo />;
 	}).toThrowError("Unknown namespace: foo");
 });
-test("render: wrong symbol", async () => {
+test("render: wrong symbol", () => {
 	expect(() => {
 		component.createDOMElement(Symbol("foo"), null);
 	}).toThrowError("Unrecognize symbol: expected only createDOMFragment symbol");
 });
 
-test("render: attr null & underfined", async () => {
+test("render: attr null & underfined", () => {
 	component.renderSync(
 		<div data-1={"1"} data-null={null} data-undefined={undefined} />,
 	);
 
 	expect(document.body.innerHTML).toBe('<div data-1="1"></div>');
 });
-test("render: attr bool", async () => {
+test("render: attr bool", () => {
 	component.renderSync(
 		<div data-1={"1"} data-true={true} data-false={false} />,
 	);
 
 	expect(document.body.innerHTML).toBe('<div data-1="1" data-true=""></div>');
 });
-test("render: attr number", async () => {
+test("render: attr number", () => {
 	component.renderSync(
 		<div data-1={"1"} data-0={0} data-10={10} data-20={-20} />,
 	);
@@ -195,18 +203,18 @@ test("render: attr number", async () => {
 		'<div data-1="1" data-0="0" data-10="10" data-20="-20"></div>',
 	);
 });
-test("render: fn", async () => {
+test("render: fn", () => {
 	component.renderSync(<div data-1={"1"} data-fn={() => {}} />);
 
 	expect(document.body.innerHTML).toBe('<div data-1="1"></div>');
 });
-test("render: symbol", async () => {
+test("render: symbol", () => {
 	component.renderSync(<div data-1={"1"} data-symbol={Symbol.for("foo")} />);
 
 	expect(document.body.innerHTML).toBe('<div data-1="1"></div>');
 });
 
-test("render: sync throw", async () => {
+test("render: sync throw", () => {
 	function MyComponent() {
 		throw new Error("foo");
 	}
@@ -214,7 +222,7 @@ test("render: sync throw", async () => {
 
 	expect(document.body.innerHTML).toBe("<div></div>");
 });
-test("render: async throw", async () => {
+test("render: async throw", () => {
 	async function MyComponent() {
 		throw new Error("foo");
 	}
@@ -222,7 +230,7 @@ test("render: async throw", async () => {
 
 	expect(document.body.innerHTML).toBe("<div></div>");
 });
-test("render: {} throw", async () => {
+test("render: {} throw", () => {
 	expect(() => {
 		component.createDOMElement({} as any, null);
 	}).toThrowError("Unknown type");
