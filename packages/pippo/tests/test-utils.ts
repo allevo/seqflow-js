@@ -1,6 +1,12 @@
 import type { TaskContext } from "vitest";
-import { type SeqflowComponent, start } from "../src";
+import {
+	type Domains,
+	SeqflowAppContext,
+	type SeqflowComponent,
+	start,
+} from "../src";
 import { createDomainEventClass } from "../src/domains";
+import { InMemoryRouter } from "../src/router";
 
 export async function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -80,4 +86,23 @@ function abortOnTestFinished(
 	testContext.onTestFinished(() => {
 		abortController.abort();
 	});
+}
+
+export function createAppForInnerTest(logs: any[]): SeqflowAppContext<Domains> {
+	const counterEventTarget = new EventTarget();
+	return new SeqflowAppContext<Domains>(
+		{
+			debug: (...args: any[]) => logs.push(args),
+			info: (...args: any[]) => logs.push(args),
+			error: (...args: any[]) => logs.push(args),
+		},
+		{},
+		{
+			counter: new CounterDomain(new EventTarget()),
+		},
+		new InMemoryRouter(new EventTarget(), "/"),
+		{
+			counter: counterEventTarget,
+		},
+	);
 }

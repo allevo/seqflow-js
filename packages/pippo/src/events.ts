@@ -23,6 +23,7 @@ export function createAbortableEventAsyncGenerator<E extends Event>(
 		fn?: (ev: E) => boolean | undefined;
 	},
 ): EventAsyncGenerator<E> {
+	// @ts-ignore
 	async function* iterOnEvents(abortController: AbortController) {
 		// If already aborted, throw immediately
 		abortController.signal.throwIfAborted();

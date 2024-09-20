@@ -40,6 +40,8 @@ export class DomainEvent<
 	// @ts-ignore
 	static t: Inner;
 
+	static domainName: keyof Domains;
+
 	constructor(
 		d: DetailType,
 		// @ts-expect-error

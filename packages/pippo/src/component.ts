@@ -1,8 +1,10 @@
 import type { Domains, ElementProperty, SeqflowAppContext } from ".";
+import type { DomainEvent } from "./domains";
 import {
 	type EventAsyncGenerator,
 	combineEventAsyncGenerators,
 	domEvent,
+	domainEvent,
 } from "./events";
 
 function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
@@ -432,7 +434,7 @@ export class SeqFlowComponentContext {
 			el = this.getChild(keyOrElement);
 		} else {
 			if (keyOrElement instanceof DocumentFragment) {
-				throw new Error('Cannot attach event to DocumentFragment');
+				throw new Error("Cannot attach event to DocumentFragment");
 			}
 			el = keyOrElement;
 		}
@@ -443,6 +445,16 @@ export class SeqFlowComponentContext {
 			stopImmediatePropagation: option.stopImmediatePropagation,
 			fn: option.fn,
 		});
+	}
+
+	domainEvent<
+		EventType extends string,
+		DetailType,
+		BEE extends typeof DomainEvent<Inner, DetailType>,
+		Inner extends string & EventType = EventType,
+	>(domainEventClass: BEE): EventAsyncGenerator<InstanceType<BEE>> {
+		const et = this.app.getDomainEventTarget(domainEventClass.domainName);
+		return domainEvent(et, domainEventClass);
 	}
 }
 // @ts-ignore

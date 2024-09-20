@@ -7,7 +7,7 @@ import {
 	InMemoryRouter,
 	type NavigationEvent,
 } from "../../src/router";
-import { CounterDomain } from "../test-utils";
+import { CounterDomain, createAppForInnerTest } from "../test-utils";
 
 let component: SeqFlowComponentContext;
 let abortController: AbortController;
@@ -15,18 +15,11 @@ const logs: any[] = [];
 beforeEach(() => {
 	document.body.innerHTML = "";
 	abortController = new AbortController();
-	component = new SeqFlowComponentContext(document.body, abortController, {
-		log: {
-			debug: (...args: any[]) => logs.push(args),
-			info: (...args: any[]) => logs.push(args),
-			error: (...args: any[]) => logs.push(args),
-		},
-		config: {},
-		domains: {
-			counter: new CounterDomain(new EventTarget()),
-		},
-		router: new InMemoryRouter(new EventTarget(), "/"),
-	});
+	component = new SeqFlowComponentContext(
+		document.body,
+		abortController,
+		createAppForInnerTest(logs),
+	);
 });
 afterEach(() => {
 	abortController.abort();

@@ -13,20 +13,12 @@ import {
 	SeqFlowComponentContext,
 	type SeqflowAppContext,
 } from "../src/index";
-import { InMemoryRouter } from "../src/router";
-import { CounterDomain } from "../tests/test-utils";
+import { createAppForInnerTest } from "../tests/test-utils";
 
 const component = new SeqFlowComponentContext(
 	document.createElement("div"),
 	new AbortController(),
-	{
-		log: console,
-		config: {},
-		domains: {
-			counter: new CounterDomain(new EventTarget()),
-		},
-		router: new InMemoryRouter(new EventTarget(), "/"),
-	},
+	createAppForInnerTest([]),
 );
 
 expectType<JSX.Element>(<button type="button" />);

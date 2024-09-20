@@ -1,7 +1,7 @@
 import { screen, waitFor } from "@testing-library/dom";
 import { beforeEach, expect, test } from "vitest";
 import type { ComponentProps, Contexts } from "../src/index";
-import { startTestApp } from "./test-utils";
+import { CounterChangedEvent, sleep, startTestApp } from "./test-utils";
 
 beforeEach(() => {
 	document.body.innerHTML = "";
@@ -64,25 +64,22 @@ test("listen dom throws on DocumentFragment", async (testContext) => {
 			</>
 		);
 
-		component.renderSync(
-			incrementButton
-		);
-		
+		component.renderSync(incrementButton);
+
 		await expect(async () => {
-			await component.domEvent(incrementButton, "click")(new AbortController()).next();
+			await component
+				.domEvent(
+					incrementButton,
+					"click",
+				)(new AbortController())
+				.next();
 		}).rejects.toThrowError("Cannot attach event to DocumentFragment");
 
-		component.renderSync(
-			'Ok'
-		);
+		component.renderSync("Ok");
 	}
 	startTestApp(testContext, App);
 
-	await waitFor(() =>
-		expect(document.body.innerHTML).toBe(
-			"<div>Ok</div>",
-		),
-	);
+	await waitFor(() => expect(document.body.innerHTML).toBe("<div>Ok</div>"));
 });
 
 test("listen dom event using key", async (testContext) => {
@@ -307,6 +304,139 @@ test("prevent default", async (testContext) => {
 	await waitFor(() => screen.getByText("Counter: 1"));
 
 	submitButton.click();
+
+	await waitFor(() => screen.getByText("Counter: 2"));
+});
+
+test("stop propagation", async (testContext) => {
+	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
+		let counter = 0;
+
+		component.renderSync(
+			<div key="wrapper">
+				<button key="button" type="button">
+					Click me
+				</button>
+				<span key="counter">Counter: 0</span>
+			</div>,
+		);
+
+		const counterSpan = component.getChild("counter");
+		const events = component.waitEvents(
+			component.domEvent("button", "click", { stopPropagation: true }),
+			component.domEvent("button", "click"),
+			component.domEvent("wrapper", "click"),
+		);
+		for await (const _ of events) {
+			counter += 1;
+			counterSpan.textContent = `Counter: ${counter.toString()}`;
+		}
+	}
+
+	startTestApp(testContext, Counter);
+
+	const button = await screen.findByText("Click me");
+
+	button.click();
+
+	await waitFor(() => screen.getByText("Counter: 2"));
+
+	button.click();
+
+	await waitFor(() => screen.getByText("Counter: 4"));
+
+	await sleep(100);
+
+	await waitFor(() => screen.getByText("Counter: 4"));
+});
+
+test("stop immediate propagation", async (testContext) => {
+	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
+		let counter = 0;
+
+		component.renderSync(
+			<div key="wrapper">
+				<button key="button" type="button">
+					Click me
+				</button>
+				<span key="counter">Counter: 0</span>
+			</div>,
+		);
+
+		const counterSpan = component.getChild("counter");
+		const events = component.waitEvents(
+			component.domEvent("button", "click"),
+			component.domEvent("button", "click", { stopImmediatePropagation: true }),
+			component.domEvent("button", "click"),
+			component.domEvent("wrapper", "click"),
+		);
+		for await (const _ of events) {
+			counter += 1;
+			counterSpan.textContent = `Counter: ${counter.toString()}`;
+		}
+	}
+
+	startTestApp(testContext, Counter);
+
+	const button = await screen.findByText("Click me");
+
+	button.click();
+
+	await waitFor(() => screen.getByText("Counter: 2"));
+
+	button.click();
+
+	await waitFor(() => screen.getByText("Counter: 4"));
+
+	await sleep(100);
+
+	await waitFor(() => screen.getByText("Counter: 4"));
+});
+
+test("listen domain event", async (testContext) => {
+	async function IncrementCounterButton(
+		_: ComponentProps<unknown>,
+		{ component, app }: Contexts,
+	) {
+		component.renderSync(
+			<button key="button" type="button">
+				Increment
+			</button>,
+		);
+
+		const events = component.waitEvents(component.domEvent("button", "click"));
+		for await (const _ of events) {
+			app.domains.counter.applyDelta(1);
+		}
+	}
+	async function Counter(
+		_: ComponentProps<unknown>,
+		{ component, app }: Contexts,
+	) {
+		component.renderSync(
+			<div>
+				<IncrementCounterButton />
+				<span key="counter">Counter: 0</span>
+			</div>,
+		);
+
+		const counterSpan = component.getChild("counter");
+		const events = component.waitEvents(
+			component.domainEvent(CounterChangedEvent),
+		);
+		for await (const _ of events) {
+			counterSpan.textContent = `Counter: ${app.domains.counter.getCount()}`;
+		}
+	}
+	startTestApp(testContext, Counter);
+
+	const incrementButton = await screen.findByRole("button");
+
+	incrementButton.click();
+
+	await waitFor(() => screen.getByText("Counter: 1"));
+
+	incrementButton.click();
 
 	await waitFor(() => screen.getByText("Counter: 2"));
 });

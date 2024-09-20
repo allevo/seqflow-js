@@ -16,11 +16,18 @@ export interface LogFunction {
 	debug: (l: Log) => void;
 }
 
-export interface SeqflowAppContext<Domains> {
-	log: LogFunction;
-	config: ApplicationConfiguration;
-	domains: Domains;
-	router: Router;
+export class SeqflowAppContext<Domains> {
+	constructor(
+		public log: LogFunction,
+		public config: Readonly<ApplicationConfiguration>,
+		public domains: Readonly<Domains>,
+		public router: Readonly<Router>,
+		private domainEventTargets: { [K in keyof Domains]: EventTarget },
+	) {}
+
+	getDomainEventTarget(domainName: keyof Domains): EventTarget {
+		return this.domainEventTargets[domainName];
+	}
 }
 
 export type StartConfiguration<Domains extends object> = Omit<
@@ -83,7 +90,7 @@ function applyDefault<Domains extends object>(
 		domainEventTargets[domainName] = new EventTarget();
 	}
 	// Then all domains
-	const domains = {} as SeqflowAppContext<Domains>["domains"];
+	const domains = {} as Domains;
 	for (const domainName of domainNames) {
 		const domainFunction = domainsFuctions[domainName];
 		domains[domainName] = domainFunction(
@@ -93,12 +100,13 @@ function applyDefault<Domains extends object>(
 		);
 	}
 
-	return {
-		log: configuration.log as SeqflowAppContext<Domains>["log"],
-		config: configuration.config,
-		router: configuration.router,
+	return new SeqflowAppContext(
+		configuration.log as SeqflowAppContext<Domains>["log"],
+		configuration.config,
 		domains,
-	};
+		configuration.router,
+		domainEventTargets,
+	);
 }
 
 export function start<
