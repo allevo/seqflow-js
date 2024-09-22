@@ -39,7 +39,14 @@
 				"noExplicitAny": "off"
 			  },
 			  "complexity": {
-				"noUselessFragments": "off"
+				"noUselessFragments": "off",
+				"noUselessLoneBlockStatements": "off"
+			  },
+			  "a11y": {
+				"all": false
+			  },
+			  "style": {
+				"useSelfClosingElements": "off"
 			  }
 			}
 		  }
