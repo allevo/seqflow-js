@@ -85,9 +85,7 @@ expectType<JSX.ElementType>(async ({ children }) => {
 	expectType<JSX.Element[]>(children);
 });
 
-// biome-ignore lint/complexity/noUselessFragments: test
 expectType<JSX.Element>(<></>);
-// biome-ignore lint/complexity/noUselessFragments: test
 expectType<JSX.Element>(<>{"A"}</>);
 expectType<JSX.Element>(
 	<>

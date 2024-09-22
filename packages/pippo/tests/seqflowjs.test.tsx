@@ -446,19 +446,16 @@ test("listen navigation event", async (testContext) => {
 		_: ComponentProps<unknown>,
 		{ component, app }: Contexts,
 	) {
-		component.renderSync(
-			<a href="/another-page">Go to another page</a>,
-		);
+		component.renderSync(<a href="/another-page">Go to another page</a>);
 
-		const events = component.waitEvents(component.domEvent(component._el, "click", { preventDefault: true }));
+		const events = component.waitEvents(
+			component.domEvent(component._el, "click", { preventDefault: true }),
+		);
 		for await (const _ of events) {
 			app.router.navigate("/another-page");
 		}
 	}
-	async function App(
-		_: ComponentProps<unknown>,
-		{ component, app }: Contexts,
-	) {
+	async function App(_: ComponentProps<unknown>, { component, app }: Contexts) {
 		component.renderSync(
 			<div>
 				<AnotherPageLink />
@@ -467,9 +464,7 @@ test("listen navigation event", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("current-path");
-		const events = component.waitEvents(
-			component.navigationEvent(),
-		);
+		const events = component.waitEvents(component.navigationEvent());
 		for await (const ev of events) {
 			counterSpan.textContent = `Path: ${ev.path}`;
 		}

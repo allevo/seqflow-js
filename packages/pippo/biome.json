@@ -37,6 +37,9 @@
 			"rules": {
 			  "suspicious": {
 				"noExplicitAny": "off"
+			  },
+			  "complexity": {
+				"noUselessFragments": "off"
 			  }
 			}
 		  }

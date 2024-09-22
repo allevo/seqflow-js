@@ -1,4 +1,9 @@
-import type { Domains, ElementProperty, SeqflowAppContext } from ".";
+import type {
+	Domains,
+	ElementProperty,
+	SeqflowAppContext,
+	SeqflowComponent,
+} from ".";
 import type { DomainEvent } from "./domains";
 import {
 	type EventAsyncGenerator,
@@ -7,7 +12,7 @@ import {
 	domainEvent,
 	navigationEvent,
 } from "./events";
-import { NavigationEvent } from "./router";
+import type { NavigationEvent } from "./router";
 
 function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 	element: X,
@@ -117,6 +122,8 @@ export type DomEventOption = {
 	fn?: (ev: Event) => boolean | undefined;
 };
 
+const DEFAULT_TAG_NAME = () => "div";
+
 export class SeqFlowComponentContext {
 	// children: components or elements with onClick
 	private c: { key: string; el: Element; mounted: boolean }[] = [];
@@ -177,7 +184,10 @@ export class SeqFlowComponentContext {
 				);
 			}
 		} else if (tagNameOrComponentFunction instanceof Function) {
-			el = document.createElement("div");
+			const tagName =
+				(tagNameOrComponentFunction as SeqflowComponent<object>).tagName ??
+				DEFAULT_TAG_NAME;
+			el = document.createElement(tagName(props));
 			const childAbortController = new AbortController();
 			const childComponentContext = new SeqFlowComponentContext(
 				el,
@@ -326,7 +336,7 @@ export class SeqFlowComponentContext {
 				break;
 			case "object":
 				if (element instanceof Node) {
-					this._el.appendChild(element as Node);
+					this._el.appendChild(element);
 					break;
 				}
 				// TODO: we should throw an error or ignore it?

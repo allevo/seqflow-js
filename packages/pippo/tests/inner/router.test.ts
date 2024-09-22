@@ -41,21 +41,27 @@ test("router: InMemoryRouter navgation & events", async () => {
 		}
 	})();
 
+	expect(router.getCurrentPathname()).equal("/");
 	expect(router.segments).toEqual([""]);
 
 	router.navigate("/foo");
+	expect(router.getCurrentPathname()).equal("/foo");
 	expect(router.segments).toEqual(["foo"]);
 
 	router.navigate("/foo/bar/baz");
+	expect(router.getCurrentPathname()).equal("/foo/bar/baz");
 	expect(router.segments).toEqual(["foo", "bar", "baz"]);
 
 	router.back();
+	expect(router.getCurrentPathname()).equal("/foo");
 	expect(router.segments).toEqual(["foo"]);
 
 	router.back();
+	expect(router.getCurrentPathname()).equal("/");
 	expect(router.segments).toEqual([""]);
 
 	router.back();
+	expect(router.getCurrentPathname()).equal("/");
 	expect(router.segments).toEqual([""]);
 
 	setTimeout(() => {

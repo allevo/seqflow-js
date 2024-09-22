@@ -35,9 +35,14 @@ export type ComponentProps<X> = X &
 
 export type SeqflowComponent<T extends object> =
 	// support custom async element
-	| ((_: ComponentProps<T>, c: Contexts) => Promise<void>)
-	// support custom sync element
-	| ((_: ComponentProps<T>, c: Contexts) => void);
+	(
+		| ((_: ComponentProps<T>, c: Contexts) => Promise<void>)
+		// support custom sync element
+		| ((_: ComponentProps<T>, c: Contexts) => void)
+	) & {
+		// We let the developer to customize the wrapper tag
+		tagName?: (props: T) => keyof HTMLElementTagNameMap | (string & {});
+	};
 
 export type Contexts = {
 	component: SeqFlowComponentContext;

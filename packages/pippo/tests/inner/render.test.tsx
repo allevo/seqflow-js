@@ -123,7 +123,6 @@ test("render: child object", () => {
 	expect(document.body.innerHTML).toBe("<div></div>");
 });
 test("render: fragment", () => {
-	// biome-ignore lint/complexity/noUselessFragments: test
 	component.renderSync(<>{4}</>);
 
 	expect(document.body.innerHTML).toBe("4");
@@ -226,4 +225,17 @@ test("render: {} throw", () => {
 	expect(() => {
 		component.createDOMElement({} as any, null);
 	}).toThrowError("Unknown type");
+});
+test("renderSync: () => {} is ignored", () => {
+	component.renderSync("foo");
+	expect(document.body.innerHTML).toBe("foo");
+	component.renderSync((() => {}) as any);
+	expect(document.body.innerHTML).toBe("");
+});
+
+test("renderSync: <>Foo</>", () => {
+	component.renderSync("foo");
+	expect(document.body.innerHTML).toBe("foo");
+	component.renderSync(<>{"foo"}</>);
+	expect(document.body.innerHTML).toBe("foo");
 });
