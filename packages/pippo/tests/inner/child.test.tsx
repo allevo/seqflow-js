@@ -86,6 +86,18 @@ test("child: render children", async () => {
 		'<div><div parent="true"><div data-foo="bar"><div key="div1">A</div></div></div></div>',
 	);
 });
+test("child: render children with id", async () => {
+	function MyComponent(
+		{ children }: ComponentProps<unknown>,
+		{ component }: Contexts,
+	) {}
+	component.renderSync(
+		<MyComponent id="foo" />
+	);
+	expect(document.body.innerHTML).toBe(
+		'<div id="foo"></div>',
+	);
+});
 
 test("child: replaceChild should unmount all the current components and their listeners", async () => {
 	function MyComponent1(

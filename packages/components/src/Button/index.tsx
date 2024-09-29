@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export type ButtonComponent = HTMLElement & {
 	transition: (state: {
@@ -39,7 +39,6 @@ export interface ButtonPropsType {
 }
 
 export async function Button(
-	this: SeqflowFunctionContext,
 	{
 		color,
 		active,
@@ -52,7 +51,8 @@ export async function Button(
 		type,
 		shape,
 		children,
-	}: SeqflowFunctionData<ButtonPropsType>,
+	}: ComponentProps<ButtonPropsType>,
+	{ component }: Contexts,
 ) {
 	const classNames = ["btn"];
 	if (color) {
@@ -96,7 +96,7 @@ export async function Button(
 		classNames.push(`btn-${shape}`);
 	}
 
-	const el = this._el as ButtonComponent;
+	const el = component._el as ButtonComponent;
 	el.classList.add(...classNames);
 	el.setAttribute("type", type ?? "button");
 
@@ -110,8 +110,8 @@ export async function Button(
 			return c;
 		});
 	}
-	this._el.setAttribute("aria-live", "polite");
-	this.renderSync(
+	component._el.setAttribute("aria-live", "polite");
+	component.renderSync(
 		<>
 			<span
 				className="loading loading-spinner"
@@ -138,22 +138,22 @@ export async function Button(
 		el.removeAttribute("disabled");
 	};
 	const makeLoading = () => {
-		const loader = this.getChild("loading");
+		const loader = component.getChild("loading");
 		loader.style.display = "inherit";
-		const loadingText = this.getChild("loading-text");
+		const loadingText = component.getChild("loading-text");
 		loadingText.style.display = "inherit";
-		this._el.setAttribute("aria-busy", "true");
+		component._el.setAttribute("aria-busy", "true");
 	};
 	const removeLoading = () => {
-		const loader = this.getChild("loading");
+		const loader = component.getChild("loading");
 		loader.style.display = "none";
-		const loadingText = this.getChild("loading-text");
+		const loadingText = component.getChild("loading-text");
 		loadingText.style.display = "none";
-		this._el.removeAttribute("aria-busy");
+		component._el.removeAttribute("aria-busy");
 	};
 
 	const previousChildren: HTMLElement[] | undefined = Array.from(
-		this._el.childNodes,
+		component._el.childNodes,
 	).filter((child) => {
 		if (child instanceof Text) {
 			return true;

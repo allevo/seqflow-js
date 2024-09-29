@@ -51,6 +51,11 @@ test('render: "data-*" properties are forwarded to div', () => {
 
 	expect(document.body.innerHTML).toBe('<div data-foo="bar"></div>');
 });
+test('render: "data-*" properties are forwarded to div', () => {
+	component.renderSync(<div id="foo" />);
+
+	expect(document.body.innerHTML).toBe('<div id="foo"></div>');
+});
 test("render: className can be string or array of string", () => {
 	component.renderSync(<div className={"foo bar"} />);
 	expect(document.body.innerHTML).toBe('<div class="foo bar"></div>');

@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export interface BadgePropsType {
 	color?:
@@ -16,8 +16,8 @@ export interface BadgePropsType {
 }
 
 export async function Badge(
-	this: SeqflowFunctionContext,
-	{ color, size, children }: SeqflowFunctionData<BadgePropsType>,
+	{ color, size, children }: ComponentProps<BadgePropsType>,
+	{ component, app }: Contexts,
 ) {
 	const classNames = ["badge"];
 	if (color) {
@@ -44,16 +44,16 @@ export async function Badge(
 		*/
 		classNames.push(`badge-${size}`);
 	}
-	this._el.classList.add(...classNames);
+	component._el.classList.add(...classNames);
 
-	this._el.setAttribute("aria-live", "polite");
+	component._el.setAttribute("aria-live", "polite");
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Badge component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }

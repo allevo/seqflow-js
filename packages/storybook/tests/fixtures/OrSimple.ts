@@ -1,10 +1,10 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 export interface OrPropsType {
 	/** the label */
 	label: string | number | boolean;
 }
 export async function Or(
-	this: SeqflowFunctionContext,
 	_: OrPropsType,
+	c: Contexts,
 ) { }

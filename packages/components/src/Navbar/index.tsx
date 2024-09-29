@@ -1,71 +1,71 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export async function Navbar(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
 	const classes = ["navbar"];
-	this._el.classList.add(...classes);
+	component._el.classList.add(...classes);
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Navbar component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 export async function NavbarStart(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
 	const classes = ["navbar-start"];
-	this._el.classList.add(...classes);
+	component._el.classList.add(...classes);
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "NavbarStart component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 export async function NavbarCenter(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
 	const classes = ["navbar-center"];
-	this._el.classList.add(...classes);
+	component._el.classList.add(...classes);
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "NavbarCenter component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 export async function NavbarEnd(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
 	const classes = ["navbar-end"];
-	this._el.classList.add(...classes);
+	component._el.classList.add(...classes);
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "NavbarEnd component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 Navbar.Start = NavbarStart;

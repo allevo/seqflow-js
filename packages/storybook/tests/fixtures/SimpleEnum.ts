@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 export interface SimpleEnumPropsType {
 	strings?: "neutral" | "primary" | "secondary" | "accent" | "ghost" | "link";
@@ -7,8 +7,8 @@ export interface SimpleEnumPropsType {
 }
 
 export async function SimpleEnum(
-	this: SeqflowFunctionContext,
 	_: SimpleEnumPropsType,
+	c: Contexts,
 ) {
 	
 }

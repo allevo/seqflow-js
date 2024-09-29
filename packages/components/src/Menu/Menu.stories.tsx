@@ -1,11 +1,11 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { Menu, MenuPropsType } from ".";
 
 async function MenuStory(
-	this: SeqflowFunctionContext,
-	{ children, ...props }: SeqflowFunctionData<MenuPropsType>,
+	{ children, ...props }: ComponentProps<MenuPropsType>,
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<Menu {...props} className={"w-56"}>
 			<Menu.Item>
 				<a href="/#">Item 1</a>
@@ -14,7 +14,9 @@ async function MenuStory(
 			</Menu.Item>
 		</Menu>,
 	);
-	const events = this.waitEvents(this.domEvent("click", { el: this._el }));
+	const events = component.waitEvents(
+		component.domEvent(component._el, "click"),
+	);
 	for await (const ev of events) {
 	}
 }

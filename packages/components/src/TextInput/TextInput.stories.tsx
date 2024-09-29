@@ -1,6 +1,6 @@
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
-import type { SeqflowFunctionContext } from "seqflow-js";
+import type {} from "@seqflow/seqflow";
 import type { StoryFn } from "seqflow-js-storybook";
 import { TextInput, type TextInputComponent } from ".";
 import { FormField, type FormFieldComponent } from "../FormField";
@@ -15,7 +15,7 @@ export default {
 	},
 };
 
-export const Typing: StoryFn<unknown> = {
+export const Typing: StoryFn<object> = {
 	play: async ({ canvasElement }) => {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		const canvas = within(canvasElement);
@@ -28,7 +28,7 @@ export const Typing: StoryFn<unknown> = {
 	},
 };
 
-export const SetError: StoryFn<unknown> = {
+export const SetError: StoryFn<object> = {
 	play: async ({ canvasElement }) => {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		const canvas = within(canvasElement);
@@ -46,9 +46,9 @@ export const SetError: StoryFn<unknown> = {
 	},
 };
 
-export const SetErrorWithFormField: StoryFn<unknown> = {
-	component: async function (this: SeqflowFunctionContext) {
-		this.renderSync(
+export const SetErrorWithFormField: StoryFn<object> = {
+	component: async (_, { component }) => {
+		component.renderSync(
 			<FormField label="username">
 				<TextInput
 					withBorder

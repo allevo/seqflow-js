@@ -132,7 +132,7 @@ export class SeqFlowComponentContext {
 		// mount point
 		public _el: HTMLElement | SVGElement | MathMLElement,
 		// abort controller
-		private ac: AbortController,
+		public ac: AbortController,
 		private app: SeqflowAppContext<Domains>,
 	) {}
 
@@ -293,6 +293,10 @@ export class SeqFlowComponentContext {
 			});
 		}
 
+		if (props && "id" in props && el instanceof Element) {
+			el.id = props.id as string;
+		}
+
 		if (typeof tagNameOrComponentFunction !== "function") {
 			addChildren(el, children, this.app);
 		}
@@ -300,7 +304,7 @@ export class SeqFlowComponentContext {
 		return el;
 	}
 
-	renderSync(element: string | number | null | undefined | JSX.Element) {
+	renderSync(element: string | number | null | undefined | JSX.Element | JSX.Element[]) {
 		// Remove all the content previoursly rendered
 		this._el.innerHTML = "";
 
@@ -335,6 +339,16 @@ export class SeqFlowComponentContext {
 				this._el.appendChild(document.createTextNode(element.toString()));
 				break;
 			case "object":
+				if (Array.isArray(element)) {
+					for (const e of element.flat(Number.POSITIVE_INFINITY)) {
+						if (typeof e === "string" || typeof e === "number") {
+							this._el.appendChild(document.createTextNode(`${e}`));
+							continue;
+						}
+						this._el.appendChild(e);
+					}
+					break;
+				}
 				if (element instanceof Node) {
 					this._el.appendChild(element);
 					break;

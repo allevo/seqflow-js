@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import type { Contexts } from "@seqflow/seqflow";
 
 export interface DividerPropsType {
 	/** The text */
@@ -6,12 +6,12 @@ export interface DividerPropsType {
 }
 
 export async function Divider(
-	this: SeqflowFunctionContext,
 	{ label }: DividerPropsType,
+	{ component }: Contexts,
 ) {
-	this._el.classList.add("divider");
+	component._el.classList.add("divider");
 
 	if (label) {
-		this._el.textContent = label;
+		component._el.textContent = label;
 	}
 }

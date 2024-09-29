@@ -1,6 +1,6 @@
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import type { StoryFn } from "seqflow-js-storybook";
 import { Form, type FormComponent } from ".";
 import { Button } from "../Button";
@@ -9,10 +9,10 @@ import { NumberInput } from "../NumberInput";
 import { TextInput } from "../TextInput";
 
 async function FormExample(
-	this: SeqflowFunctionContext,
-	props: SeqflowFunctionData<undefined>,
+	props: ComponentProps<undefined>,
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<Form>
 			<FormField id="username-label" label="username">
 				<TextInput
@@ -35,8 +35,8 @@ async function FormExample(
 		</Form>,
 	);
 
-	const events = this.waitEvents(
-		this.domEvent("submit", { el: this._el, preventDefault: true }),
+	const events = component.waitEvents(
+		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const ev of events) {
 		console.log("SUBMITTED!", new FormData(ev.target as HTMLFormElement));
@@ -54,8 +54,8 @@ export default {
 
 export const Empty = {};
 
-async function RequiredNumberInputForm(this: SeqflowFunctionContext) {
-	this.renderSync(
+async function RequiredNumberInputForm(_: unknown, { component }: Contexts) {
+	component.renderSync(
 		<>
 			<Form>
 				<FormField label={"Choose a value"}>
@@ -69,13 +69,13 @@ async function RequiredNumberInputForm(this: SeqflowFunctionContext) {
 		</>,
 	);
 
-	const events = this.waitEvents(
-		this.domEvent("submit", { el: this._el, preventDefault: true }),
+	const events = component.waitEvents(
+		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const _ of events) {
-		const input = this.getChild<HTMLInputElement>("number");
+		const input = component.getChild<HTMLInputElement>("number");
 		const value = input.valueAsNumber;
-		const showNumber = this.getChild<HTMLSpanElement>("show-number");
+		const showNumber = component.getChild<HTMLSpanElement>("show-number");
 		showNumber.textContent = `value: ${value}`;
 	}
 }
@@ -121,8 +121,8 @@ export const NumberInputStory: StoryFn = {
 	},
 };
 
-async function RequiredTextInputForm(this: SeqflowFunctionContext) {
-	this.renderSync(
+async function RequiredTextInputForm(_: unknown, { component }: Contexts) {
+	component.renderSync(
 		<>
 			<Form>
 				<FormField label={"Choose a value"}>
@@ -136,13 +136,13 @@ async function RequiredTextInputForm(this: SeqflowFunctionContext) {
 		</>,
 	);
 
-	const events = this.waitEvents(
-		this.domEvent("submit", { el: this._el, preventDefault: true }),
+	const events = component.waitEvents(
+		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const _ of events) {
-		const input = this.getChild<HTMLInputElement>("text");
+		const input = component.getChild<HTMLInputElement>("text");
 		const value = input.value;
-		const showText = this.getChild<HTMLSpanElement>("show-text");
+		const showText = component.getChild<HTMLSpanElement>("show-text");
 		showText.textContent = `value: ${value}`;
 	}
 }
@@ -190,8 +190,8 @@ export const TextInputStory: StoryFn = {
 	},
 };
 
-async function AsyncSubmitionForm(this: SeqflowFunctionContext) {
-	this.renderSync(
+async function AsyncSubmitionForm(_: unknown, { component }: Contexts) {
+	component.renderSync(
 		<>
 			<Form key="form">
 				<FormField label={"Choose a value"}>
@@ -205,15 +205,15 @@ async function AsyncSubmitionForm(this: SeqflowFunctionContext) {
 		</>,
 	);
 
-	const form = this.getChild<FormComponent>("form");
+	const form = component.getChild<FormComponent>("form");
 
-	const events = this.waitEvents(
-		this.domEvent("submit", { el: this._el, preventDefault: true }),
+	const events = component.waitEvents(
+		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const _ of events) {
-		const input = this.getChild<HTMLInputElement>("text");
+		const input = component.getChild<HTMLInputElement>("text");
 		const value = input.value;
-		const showText = this.getChild<HTMLSpanElement>("show-text");
+		const showText = component.getChild<HTMLSpanElement>("show-text");
 
 		// Simulate an async operation
 		await form.runAsync(async () => {

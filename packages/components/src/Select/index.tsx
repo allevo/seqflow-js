@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export interface SelectPropsType {
 	name?: string;
@@ -18,7 +18,6 @@ export interface SelectPropsType {
 }
 
 export async function Select(
-	this: SeqflowFunctionContext,
 	{
 		size,
 		bordered,
@@ -27,7 +26,8 @@ export async function Select(
 		name,
 		disabled,
 		required,
-	}: SeqflowFunctionData<SelectPropsType>,
+	}: ComponentProps<SelectPropsType>,
+	{ component, app }: Contexts,
 ) {
 	const classes = ["select"];
 	if (bordered === true) {
@@ -51,26 +51,26 @@ export async function Select(
 		// select-error
 		classes.push(`select-${color}`);
 	}
-	this._el.classList.add(...classes);
+	component._el.classList.add(...classes);
 
 	if (name) {
-		this._el.setAttribute("name", name);
+		component._el.setAttribute("name", name);
 	}
 	if (disabled === true) {
-		this._el.setAttribute("disabled", "");
+		component._el.setAttribute("disabled", "");
 	}
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Select component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 
 	if (required) {
-		this._el.setAttribute("required", "");
+		component._el.setAttribute("required", "");
 	}
 }
 Select.tagName = () => "select";
