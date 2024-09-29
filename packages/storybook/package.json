@@ -48,7 +48,7 @@
     "@types/node": "^18.0.0",
     "biome": "^0.3.3",
     "depcheck": "^1.4.7",
-    "seqflow-js": "workspace:*",
+    "@seqflow/seqflow": "workspace:*",
     "ts-dedent": "^2.2.0",
     "tsx": "^4.7.1",
     "typescript": "^5.4.2",

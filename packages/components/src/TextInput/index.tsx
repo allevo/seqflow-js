@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import type { Contexts } from "@seqflow/seqflow";
 
 export type TextInputComponent = HTMLInputElement & {
 	setError: (message: string) => void;
@@ -27,7 +27,6 @@ export interface TextInputPropsType {
 }
 
 export async function TextInput(
-	this: SeqflowFunctionContext,
 	{
 		name,
 		placeholder,
@@ -39,6 +38,7 @@ export async function TextInput(
 		required,
 		validationFunction,
 	}: TextInputPropsType,
+	{ component }: Contexts,
 ) {
 	const classNames = ["input"];
 	if (withBorder === true) {
@@ -55,9 +55,9 @@ export async function TextInput(
 		// input-ghost
 		classNames.push(`input-${color}`);
 	}
-	this._el.classList.add(...classNames);
+	component._el.classList.add(...classNames);
 
-	const el = this._el as TextInputComponent;
+	const el = component._el as TextInputComponent;
 	if (type) {
 		el.type = type;
 	} else {
@@ -91,7 +91,7 @@ export async function TextInput(
 		}
 	};
 
-	const ev = this.waitEvents(this.domEvent("input", { el: this._el }));
+	const ev = component.waitEvents(component.domEvent(component._el, "input"));
 	for await (const _ of ev) {
 		if (validationFunction) {
 			const error = validationFunction(el.value);

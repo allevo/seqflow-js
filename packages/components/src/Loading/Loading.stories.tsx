@@ -1,6 +1,6 @@
 import { expect, userEvent, within } from "@storybook/test";
 
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 import { StoryFn } from "seqflow-js-storybook";
 import { Loading } from ".";
 
@@ -12,8 +12,8 @@ export default {
 
 export const Empty = {};
 
-export const Types: StoryFn = async function OR(this: SeqflowFunctionContext) {
-	this.renderSync(
+export const Types: StoryFn = async function OR(_, { component }: Contexts) {
+	component.renderSync(
 		<div
 			style={{
 				display: "grid",
@@ -39,8 +39,8 @@ export const Types: StoryFn = async function OR(this: SeqflowFunctionContext) {
 	);
 };
 
-export const Sizes: StoryFn = async function OR(this: SeqflowFunctionContext) {
-	this.renderSync(
+export const Sizes: StoryFn = async function OR(_, { component }: Contexts) {
+	component.renderSync(
 		<div
 			style={{
 				display: "grid",

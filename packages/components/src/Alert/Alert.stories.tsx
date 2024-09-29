@@ -1,14 +1,14 @@
 import { expect, userEvent, within } from "@storybook/test";
 
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import type { StoryFn } from "seqflow-js-storybook";
 import { Alert, type AlertPropsType } from ".";
 
 async function AlertStory(
-	this: SeqflowFunctionContext,
-	props: SeqflowFunctionData<AlertPropsType>,
+	props: ComponentProps<AlertPropsType>,
+	{ component }: Contexts,
 ) {
-	this.renderSync(<Alert {...props}>This is an alert</Alert>);
+	component.renderSync(<Alert {...props}>This is an alert</Alert>);
 }
 // biome-ignore lint/suspicious/noExplicitAny: storybook
 AlertStory.__storybook = (Alert as any).__storybook;
@@ -24,8 +24,8 @@ export default {
 
 export const Empty = {};
 
-export const AllAlert: StoryFn = async function (this: SeqflowFunctionContext) {
-	this.renderSync(
+export const AllAlert: StoryFn = async (_, { component }: Contexts) => {
+	component.renderSync(
 		<>
 			<div
 				style={{

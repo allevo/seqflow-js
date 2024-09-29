@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import type { StoryFn } from "seqflow-js-storybook";
 import { Navbar } from ".";
 import { Button } from "../Button";
@@ -6,8 +6,8 @@ import { Dropdown } from "../Dropdown";
 import { Link } from "../Link";
 import { Menu } from "../Menu";
 
-async function NavbarStory(this: SeqflowFunctionContext) {
-	this.renderSync(
+async function NavbarStory(_: unknown, { component }: Contexts) {
+	component.renderSync(
 		<Navbar className={["bg-base-100", "shadow-md"]}>
 			<Button color="ghost" className="text-xl">
 				SeqflowJS
@@ -28,11 +28,11 @@ export default {
 
 export const Empty = {};
 
-export const NavbarWithStartCenterEnd: StoryFn = async function (
-	this: SeqflowFunctionContext,
-	_: SeqflowFunctionData<unknown>,
-) {
-	this.renderSync(
+export const NavbarWithStartCenterEnd: StoryFn = async (
+	_,
+	{ component }: Contexts,
+) => {
+	component.renderSync(
 		<Navbar className={"bg-base-100"}>
 			<Navbar.Start>
 				<Button color="ghost" shape="circle" className="text-xl">
@@ -53,11 +53,11 @@ export const NavbarWithStartCenterEnd: StoryFn = async function (
 	);
 };
 
-export const NavbarResponsive: StoryFn = async function (
-	this: SeqflowFunctionContext,
-	_: SeqflowFunctionData<unknown>,
-) {
-	this.renderSync(
+export const NavbarResponsive: StoryFn = async (
+	_: ComponentProps<unknown>,
+	{ component }: Contexts,
+) => {
+	component.renderSync(
 		<Navbar className={"bg-base-100"}>
 			<Navbar.Start>
 				<Dropdown label={"X"} className={["lg:hidden"]}>
@@ -126,14 +126,14 @@ export const NavbarResponsive: StoryFn = async function (
 		</Navbar>,
 	);
 
-	const events = this.waitEvents(
-		this.domEvent("click", {
-			el: this._el,
+	const events = component.waitEvents(
+		component.domEvent(component._el, "click", {
 			fn: (e) => {
 				if (e.target instanceof HTMLElement && e.target.closest("a")) {
 					e.preventDefault();
 					e.stopPropagation();
 				}
+				return true;
 			},
 		}),
 	);
@@ -143,8 +143,8 @@ export const NavbarResponsive: StoryFn = async function (
 };
 
 export const WithDropdownAndLinkStory: StoryFn =
-	async function WithDropdownAndLinkStory(this: SeqflowFunctionContext) {
-		this.renderSync(
+	async function WithDropdownAndLinkStory(_, { component }: Contexts) {
+		component.renderSync(
 			<Navbar>
 				<Navbar.Start>SeqFlowJS</Navbar.Start>
 				<Navbar.Center>
@@ -199,14 +199,14 @@ export const WithDropdownAndLinkStory: StoryFn =
 			</Navbar>,
 		);
 
-		const events = this.waitEvents(
-			this.domEvent("click", {
-				el: this._el,
+		const events = component.waitEvents(
+			component.domEvent(component._el, "click", {
 				fn: (e) => {
 					if (e.target instanceof HTMLElement && e.target.closest("a")) {
 						e.preventDefault();
 						e.stopPropagation();
 					}
+					return true;
 				},
 			}),
 		);

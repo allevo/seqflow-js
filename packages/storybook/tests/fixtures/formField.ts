@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export interface FormFieldPropsType {
 	label: string | JSX.Element;
@@ -7,7 +7,7 @@ export interface FormFieldPropsType {
 }
 
 export async function FormField(
-	this: SeqflowFunctionContext,
-	{}: SeqflowFunctionData<FormFieldPropsType>,
+	{}: ComponentProps<FormFieldPropsType>,
+	c: Contexts,
 ) {
 }

@@ -1,15 +1,15 @@
 import { expect, userEvent, within } from "@storybook/test";
 
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import type { StoryFn } from "seqflow-js-storybook";
 import { FormField, type FormFieldComponent, type FormFieldPropsType } from ".";
 import { TextInput } from "../TextInput";
 
 async function FormFieldExample(
-	this: SeqflowFunctionContext,
-	props: SeqflowFunctionData<FormFieldPropsType>,
+	props: ComponentProps<FormFieldPropsType>,
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<FormField id="username-label" {...props}>
 			<TextInput
 				id="username"
@@ -35,10 +35,8 @@ export default {
 
 export const Empty = {};
 
-export const WithError: StoryFn = async function (
-	this: SeqflowFunctionContext,
-) {
-	this.renderSync(
+export const WithError: StoryFn = async (_, { component }: Contexts) => {
+	component.renderSync(
 		<FormField label="Username" errorMessage="Username is required">
 			<TextInput name="username" placeholder="Insert username" />
 		</FormField>,

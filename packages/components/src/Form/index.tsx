@@ -1,22 +1,22 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import type { ButtonComponent } from "../Button";
 
 export type FormComponent = HTMLFormElement & {
-	runAsync: <T>(fn: (this: SeqflowFunctionContext) => Promise<T>) => Promise<T>;
+	runAsync: <T>(fn: (c: Contexts) => Promise<T>) => Promise<T>;
 };
 
 export async function Form(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Form component must have children",
 		});
 		return;
 	}
 
-	const form = this._el as HTMLFormElement;
+	const form = component._el as HTMLFormElement;
 	form.noValidate = true;
 
 	form.addEventListener(
@@ -29,14 +29,14 @@ export async function Form(
 			}
 		},
 		{
-			signal: this.abortController.signal,
+			signal: component.ac.signal,
 		},
 	);
-	this.renderSync(children);
+	component.renderSync(children);
 
-	const el = this._el as FormComponent;
+	const el = component._el as FormComponent;
 	el.runAsync = async (fn) => {
-		const button = this._el.querySelector("button[type=submit]");
+		const button = component._el.querySelector("button[type=submit]");
 		if (
 			button &&
 			button instanceof HTMLButtonElement &&
@@ -49,7 +49,7 @@ export async function Form(
 				replaceText: "Loading...",
 			});
 			try {
-				return await fn.call(this);
+				return await fn({ component, app });
 			} finally {
 				b.transition({
 					disabled: false,
@@ -58,7 +58,7 @@ export async function Form(
 				});
 			}
 		} else {
-			return await fn.call(this);
+			return await fn({ component, app });
 		}
 	};
 }

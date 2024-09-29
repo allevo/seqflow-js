@@ -1,6 +1,6 @@
 import { expect, userEvent, within } from "@storybook/test";
 
-import type { SeqflowFunctionContext } from "seqflow-js";
+import type { Contexts } from "@seqflow/seqflow";
 import type { StoryFn } from "seqflow-js-storybook";
 import { Dropdown, type DropdownPropsType } from ".";
 import { Button } from "../Button";
@@ -9,11 +9,11 @@ import { Menu } from "../Menu";
 import { Navbar } from "../Navbar";
 
 async function DropdownStory(
-	this: SeqflowFunctionContext,
 	props: DropdownPropsType,
+	{ component }: Contexts,
 ) {
-	this._el.classList.add(...["pt-48", "pl-48"]);
-	this.renderSync(
+	component._el.classList.add(...["pt-48", "pl-48"]);
+	component.renderSync(
 		<Dropdown {...props}>
 			<Menu direction="vertical" size="md" className={["w-56", "shadow-md"]}>
 				<Menu.Item>

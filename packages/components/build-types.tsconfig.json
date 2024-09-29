@@ -11,8 +11,8 @@
         "module": "ES6",
         "moduleResolution": "node",
         "jsx": "react",
-        "jsxFactory": "this.createDOMElement",
-        "jsxFragmentFactory": "this.createDOMFragment"
+        "jsxFactory": "component.createDOMElement",
+        "jsxFragmentFactory": "component.createDOMFragment"
     },
     "include": [
       "src/**/*.tsx"

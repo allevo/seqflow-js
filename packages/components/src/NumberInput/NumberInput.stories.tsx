@@ -15,7 +15,7 @@ export default {
 	},
 };
 
-export const Typing: StoryFn<unknown> = {
+export const Typing: StoryFn<object> = {
 	play: async ({ canvasElement }) => {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		const canvas = within(canvasElement);

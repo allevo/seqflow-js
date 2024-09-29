@@ -1,4 +1,4 @@
-import type { SeqflowFunction, SeqflowFunctionContext } from "seqflow-js";
+import type { Contexts } from "@seqflow/seqflow";
 import type { StoryFn } from "seqflow-js-storybook";
 import { Divider } from ".";
 
@@ -11,9 +11,10 @@ export default {
 export const Empty = {};
 
 export const WithoutText: StoryFn = async function OR(
-	this: SeqflowFunctionContext,
+	_: unknown,
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<div className="flex w-full flex-col border-opacity-50">
 			<div className="card bg-base-300 rounded-box grid h-20 place-items-center">
 				content
@@ -27,9 +28,10 @@ export const WithoutText: StoryFn = async function OR(
 };
 
 export const WithText: StoryFn = async function OR(
-	this: SeqflowFunctionContext,
+	_: unknown,
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<div className="flex w-full flex-col border-opacity-50">
 			<div className="card bg-base-300 rounded-box grid h-20 place-items-center">
 				content

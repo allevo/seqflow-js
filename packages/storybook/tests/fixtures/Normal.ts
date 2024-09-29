@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 export interface NormalPropsType {
 	/** The text */
@@ -10,8 +10,8 @@ export interface NormalPropsType {
 }
 
 export async function Normal(
-	this: SeqflowFunctionContext,
 	_: NormalPropsType,
+	c: Contexts,
 ) {
 	
 }

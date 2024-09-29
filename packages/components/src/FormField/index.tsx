@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import "./index.css";
 
 export type FormFieldComponent = HTMLLabelElement & {
@@ -17,43 +17,40 @@ function generateId() {
 }
 
 export async function FormField(
-	this: SeqflowFunctionContext,
-	{
-		children,
-		label,
-		errorMessage,
-		hint,
-	}: SeqflowFunctionData<FormFieldPropsType>,
+	{ children, label, errorMessage, hint }: ComponentProps<FormFieldPropsType>,
+	{ component, app }: Contexts,
 ) {
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Form component must have children",
 		});
 		return;
 	}
 	if (!Array.isArray(children)) {
-		this.app.log.error({
+		app.log.error({
 			message: "Form component must have children",
 		});
 		return;
 	}
 	if (!children.length) {
-		this.app.log.error({
+		app.log.error({
 			message: "Form component must have children",
 		});
 		return;
 	}
 	const input = children.find(
-		(child) => child.tagName === "INPUT" || child.tagName === "SELECT",
-	);
+		(child) =>
+			child instanceof HTMLElement &&
+			(child.tagName === "INPUT" || child.tagName === "SELECT"),
+	) as HTMLInputElement | HTMLSelectElement;
 	if (!input) {
-		this.app.log.error({
+		app.log.error({
 			message: "Form component must have an input child",
 		});
 		return;
 	}
 
-	this._el.classList.add("form-control");
+	component._el.classList.add("form-control");
 
 	const describedBy = generateId();
 	const top = (
@@ -78,7 +75,7 @@ export async function FormField(
 		</div>
 	);
 
-	this.renderSync(
+	component.renderSync(
 		<>
 			{top}
 			{children}
@@ -86,9 +83,9 @@ export async function FormField(
 		</>,
 	);
 
-	const el = this._el as FormFieldComponent;
+	const el = component._el as FormFieldComponent;
 
-	const textErrorSpan = this.getChild<HTMLSpanElement>("text-error");
+	const textErrorSpan = component.getChild<HTMLSpanElement>("text-error");
 
 	el.setError = (textError: string) => {
 		textErrorSpan.textContent = textError;
@@ -104,9 +101,9 @@ export async function FormField(
 	}
 
 	if (input instanceof HTMLInputElement) {
-		const events = this.waitEvents(
-			this.domEvent("valid", { el: input }),
-			this.domEvent("invalid", { el: input }),
+		const events = component.waitEvents(
+			component.domEvent(input, "valid"),
+			component.domEvent(input, "invalid"),
 		);
 		for await (const ev of events) {
 			if (ev.type === "invalid") {
