@@ -60,6 +60,10 @@ declare module "../src/types" {
 	interface Domains {
 		counter: CounterDomain;
 	}
+
+	interface ApplicationConfiguration {
+		foo: string;
+	}
 }
 
 export function startTestApp(
@@ -73,6 +77,9 @@ export function startTestApp(
 		{
 			domains: {
 				counter: (et) => new CounterDomain(et),
+			},
+			config: {
+				foo: "bar",
 			},
 		},
 	);
@@ -96,7 +103,9 @@ export function createAppForInnerTest(logs: any[]): SeqflowAppContext<Domains> {
 			info: (...args: any[]) => logs.push(args),
 			error: (...args: any[]) => logs.push(args),
 		},
-		{},
+		{
+			foo: "bar",
+		},
 		{
 			counter: new CounterDomain(new EventTarget()),
 		},

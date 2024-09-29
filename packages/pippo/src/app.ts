@@ -10,15 +10,16 @@ export interface Log {
 	message: string;
 	data?: unknown;
 }
-export interface LogFunction {
-	info: (l: Log) => void;
-	error: (l: Log) => void;
-	debug: (l: Log) => void;
+export type LogFunction = (l: Log) => void;
+export interface LogFunctions {
+	info: LogFunction;
+	error: LogFunction;
+	debug: LogFunction;
 }
 
 export class SeqflowAppContext<Domains> {
 	constructor(
-		public log: LogFunction,
+		public log: LogFunctions,
 		public config: Readonly<ApplicationConfiguration>,
 		public domains: Readonly<Domains>,
 		public router: Readonly<Router>,
@@ -75,7 +76,7 @@ function applyDefault<Domains extends object>(
 	}
 
 	if (configuration.config === undefined) {
-		configuration.config = {};
+		configuration.config = {} as Readonly<ApplicationConfiguration>;
 	}
 
 	// Build domains...
