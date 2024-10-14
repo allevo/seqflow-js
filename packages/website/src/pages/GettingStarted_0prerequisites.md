@@ -35,7 +35,7 @@ Before we start, let's install the dependencies. Run the command `pnpm install` 
 Let's start the application and see the result. Run the command `pnpm start`.<br />
 Open your browser and go to <a title="localhost" target="_blank" href="http://localhost:5173">http://localhost:5173</a>. You should see a blank page with the text "Hi!".
 
-## Conclusion
+## Conclusion
 
 In this tutorial, we have learned how to create a simple application using SeqFlow and how to run it locally.
 

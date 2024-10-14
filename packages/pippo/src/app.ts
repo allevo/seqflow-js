@@ -17,18 +17,32 @@ export interface LogFunctions {
 	debug: LogFunction;
 }
 
+type DomainNames = keyof Domains;
+
+type DomainEventTargets = Record<keyof Domains, EventTarget>;
+
 export class SeqflowAppContext<Domains> {
 	constructor(
 		public log: LogFunctions,
 		public config: Readonly<ApplicationConfiguration>,
 		public domains: Readonly<Domains>,
 		public router: Readonly<Router>,
-		private domainEventTargets: { [K in keyof Domains]: EventTarget },
+		private domainEventTargets: DomainEventTargets,
 	) {}
 
 	getDomainEventTarget(domainName: keyof Domains): EventTarget {
-		return this.domainEventTargets[domainName];
+		return this.domainEventTargets[domainName as keyof DomainEventTargets];
 	}
+}
+
+type DomainCreators = {
+	[K in keyof Domains]: (
+		eventTarget: EventTarget,
+		applicationDomainTargets: Readonly<{
+			[D in keyof Domains]: EventTarget;
+		}>,
+		config: Readonly<ApplicationConfiguration>,
+	) => Domains[K];
 }
 
 export type StartConfiguration<Domains extends object> = Omit<
@@ -36,22 +50,19 @@ export type StartConfiguration<Domains extends object> = Omit<
 	"log" | "domains" | "configuration"
 > & {
 	log?: Partial<SeqflowAppContext<Domains>["log"]>;
-	domains: {
-		[K in keyof Domains]: (
-			eventTarget: EventTarget,
-			applicationDomainTargets: Readonly<{
-				[D in keyof Domains]: EventTarget;
-			}>,
-			config: Readonly<ApplicationConfiguration>,
-		) => Domains[K];
-	};
 } & (object extends SeqflowAppContext<Domains>["config"] // If the ApplicationConfiguration is empty,
 		? // we allow to not pass it
 			object
 		: // otherwise we require it
-			{ config: SeqflowAppContext<Domains>["config"] });
+			{ config: SeqflowAppContext<Domains>["config"] }) &
+	(
+		object extends SeqflowAppContext<Domains>["domains"] // If the Domains is empty,
+		? // we allow to not pass it
+			{ domains?: DomainCreators; }
+			: { domains: DomainCreators; }
+	);
 
-function applyDefault<Domains extends object>(
+function applyDefault(
 	configuration: StartConfiguration<Domains>,
 ): SeqflowAppContext<Domains> {
 	function noop() {}
@@ -81,24 +92,30 @@ function applyDefault<Domains extends object>(
 
 	// Build domains...
 	// First all event targets
-	const domainsFuctions =
-		configuration.domains || ({} as StartConfiguration<Domains>["domains"]);
+	const domainsFuctions: DomainCreators =
+		configuration.domains ?? ({} as DomainCreators);
 	const domainNames = Object.keys(
 		domainsFuctions,
-	) as unknown as (keyof Domains)[];
-	const domainEventTargets = {} as Record<keyof Domains, EventTarget>;
+	) as DomainNames[];
+	const domainEventTargets = {} as Record<string, EventTarget>;
 	for (const domainName of domainNames) {
 		domainEventTargets[domainName] = new EventTarget();
 	}
 	// Then all domains
 	const domains = {} as Domains;
 	for (const domainName of domainNames) {
-		const domainFunction = domainsFuctions[domainName];
+		const domainFunction = domainsFuctions[domainName] as (
+			eventTarget: EventTarget,
+			applicationDomainTargets: Readonly<{
+				[D in keyof Domains]: EventTarget;
+			}>,
+			config: Readonly<ApplicationConfiguration>,
+		) => unknown;
 		domains[domainName] = domainFunction(
 			domainEventTargets[domainName],
-			domainEventTargets,
+			domainEventTargets as DomainEventTargets,
 			configuration.config,
-		);
+		) as Domains[keyof Domains];
 	}
 
 	return new SeqflowAppContext(
@@ -106,7 +123,7 @@ function applyDefault<Domains extends object>(
 		configuration.config,
 		domains,
 		configuration.router,
-		domainEventTargets,
+		domainEventTargets as DomainEventTargets,
 	);
 }
 

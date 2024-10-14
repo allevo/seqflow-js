@@ -5,6 +5,7 @@
   "main": "./dist/index.js",
   "types": "./dist/src/index.d.ts",
   "scripts": {
+    "test": "pnpm run unit",
     "unit": "vitest --run  --coverage && tsc -p types/tsconfig.json",
     "biome:check": "biome check --apply src tests types",
     "build": "vite build -c vite.config.js"

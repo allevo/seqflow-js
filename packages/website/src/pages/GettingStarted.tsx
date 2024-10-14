@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 import { ContentWithToc } from "../components/ContentWithToc";
 import * as main from "./GettingStarted.md";
 import * as prerequisites from "./GettingStarted_0prerequisites.md";
@@ -8,10 +8,10 @@ import * as refreshQuote from "./GettingStarted_3refreshQuote.md";
 import * as configuration from "./GettingStarted_4configuration.md";
 import * as test from "./GettingStarted_5test.md";
 
-export async function GettingStarted(this: SeqflowFunctionContext) {
-	const segments = this.app.router.segments;
+export async function GettingStarted({}, {component, app}: Contexts) {
+	const segments = app.router.segments;
 	if (segments.length === 1) {
-		this.renderSync(
+		component.renderSync(
 			<div id="getting-started">
 				<ContentWithToc
 					toc={main.toc}
@@ -26,67 +26,67 @@ export async function GettingStarted(this: SeqflowFunctionContext) {
 	const segment = segments[1];
 	switch (segment) {
 		case "prerequisites":
-			this.renderSync(
+			component.renderSync(
 				<div id="getting-started">
 					<ContentWithToc
 						toc={prerequisites.toc}
 						html={prerequisites.html}
-						title="Getting started - prerequisites"
+						title="Prerequisites"
 					/>
 				</div>,
 			);
 			return;
 		case "fetch-data":
-			this.renderSync(
+			component.renderSync(
 				<div id="getting-started">
 					<ContentWithToc
 						toc={fetchData.toc}
 						html={fetchData.html}
-						title="Getting started - fetch data"
+						title="Fetch data"
 					/>
 				</div>,
 			);
 			return;
 		case "split-components":
-			this.renderSync(
+			component.renderSync(
 				<div id="getting-started">
 					<ContentWithToc
 						toc={splitComponents.toc}
 						html={splitComponents.html}
-						title="Getting started - split into components"
+						title="Split into components"
 					/>
 				</div>,
 			);
 			return;
 		case "refresh-quote":
-			this.renderSync(
+			component.renderSync(
 				<div id="getting-started">
 					<ContentWithToc
 						toc={refreshQuote.toc}
 						html={refreshQuote.html}
-						title="Getting started - refresh quote"
+						title="Refresh quote"
 					/>
 				</div>,
 			);
 			return;
 		case "configuration":
-			this.renderSync(
+			component.renderSync(
 				<div id="getting-started">
 					<ContentWithToc
 						toc={configuration.toc}
 						html={configuration.html}
-						title="Getting started - configuration"
+						title="Configuration"
 					/>
 				</div>,
 			);
 			return;
 		case "test":
-			this.renderSync(
+			component.renderSync(
 				<div id="getting-started">
 					<ContentWithToc
 						toc={test.toc}
 						html={test.html}
-						title="Getting started - test"
+						title="Write a test"
 					/>
 				</div>,
 			);

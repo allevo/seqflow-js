@@ -33,23 +33,9 @@ function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 		}
 
 		if (key === "className") {
-			const v: NonNullable<ElementProperty<HTMLElement>["className"]> =
-				value as NonNullable<(typeof props)["className"]>;
-			const classes = Array.isArray(v) ? v : [...v.split(" ")];
-			element.classList.add(...classes);
+			continue
 		} else if (key === "style") {
-			const s: NonNullable<ElementProperty<HTMLElement>["style"]> =
-				value as NonNullable<(typeof props)["style"]>;
-			if (typeof s === "string") {
-				element.setAttribute("style", s);
-			} else {
-				for (const styleKey in s) {
-					const value = s[styleKey];
-					if (value) {
-						element.style[styleKey] = value;
-					}
-				}
-			}
+			continue
 		} else if (key === "htmlFor") {
 			const h: NonNullable<ElementProperty<HTMLLabelElement>["htmlFor"]> =
 				value as NonNullable<(typeof props)["htmlFor"]>;
@@ -295,6 +281,25 @@ export class SeqFlowComponentContext {
 
 		if (props && "id" in props && el instanceof Element) {
 			el.id = props.id as string;
+		}
+		if (props && "style" in props && el instanceof HTMLElement) {
+			const style = props.style as string | Partial<CSSStyleDeclaration>;
+			if (typeof style === "string") {
+				el.setAttribute("style", style);
+			} else {
+				for (const styleKey in style) {
+					const value = style[styleKey];
+					if (value) {
+						el.style[styleKey] = value;
+					}
+				}
+			}
+		}
+		if (props && "className" in props && el instanceof HTMLElement) {
+			const v: NonNullable<JSX.IntrinsicAttributes['className']> =
+				props.className as NonNullable<JSX.IntrinsicAttributes['className']>;
+			const classes = Array.isArray(v) ? v : [...v.split(" ")];
+			el.classList.add(...classes.filter(Boolean));
 		}
 
 		if (typeof tagNameOrComponentFunction !== "function") {

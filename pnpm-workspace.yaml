@@ -1,5 +1,5 @@
 packages:
-  - 'examples/*'
+  - '!examples/*'
   - 'packages/*'
   - '!examples/gen-ai'
   - '!examples/orama-search-box'

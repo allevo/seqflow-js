@@ -74,6 +74,16 @@ test("render: style can be string or object", () => {
 	component.renderSync(<div style={{ background: "red" }} />);
 	expect(document.body.innerHTML).toBe('<div style="background: red;"></div>');
 });
+test("render: style in component", () => {
+	async function MyComponent(
+		_: ComponentProps<unknown>,
+		{ component, app }: Contexts,
+	) {
+		component.renderSync(<span>WOW</span>);
+	}
+	component.renderSync(<MyComponent style={"background: red;"} />);
+	expect(document.body.innerHTML).toBe('<div style="background: red;"><span>WOW</span></div>');
+});
 test("render: fragment", () => {
 	component.renderSync(
 		<>

@@ -150,10 +150,8 @@ export const toc = ${JSON.stringify(toc)}
 }
 
 function generateAllPages(): Plugin {
-	
-
 	return {
-		name: 'aaa',
+		name: 'generate-all-pages',
 		enforce: "post" as const,
 		async generateBundle(this: vite.Rollup.PluginContext,
 			options: vite.Rollup.NormalizedOutputOptions,
@@ -290,43 +288,6 @@ function generateAllPages(): Plugin {
 			}
 
 			server.close()
-
-			// purgeCss brokes the css
-			// we should investivate why
-
-			/*
-			const cssFilesKeys = Object.keys(bundle).filter((k) => k.endsWith('.css'))
-			if (cssFilesKeys.length !== 1) {
-				throw new Error('Expected one css file')
-			}
-			const cssContent = bundle[cssFilesKeys[0]].source.toString()
-
-			const htmlFiles = Object.keys(bundle).filter((k) => k.endsWith('.html'))
-			const htmlFilesContent: string[] = htmlFiles.map((k) => bundle[k].source.toString())
-				// .map((html) => {
-				// 	return html
-				// 	.replace(/<html .*>/, '')
-				// 	.replace('</html>', '')
-				// 	.replace('</html>', '')
-				// 	.replace('</head>', '')
-				// 	.replace('<head>', '')
-				// })
-				// .join('')
-			const c: RawContent[] = htmlFilesContent.map(t => ({ raw: t, extension: 'html' }))
-
-			const purgeCss = new PurgeCSS()
-
-			const start = Date.now()
-			const r = await purgeCss.purge({
-				content: c,
-				css: [{ raw: cssContent }],
-			})
-			console.log('Time', Date.now() - start)
-			console.log('r', r)
-
-			bundle[cssFilesKeys[0]].source = r[0].css
-			*/
-
 		}
 	}
 }

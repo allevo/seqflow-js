@@ -85,6 +85,8 @@ declare global {
 		interface IntrinsicAttributes {
 			id?: string;
 			key?: string;
+			className?: string | string[];
+			style?: Partial<CSSStyleDeclaration> | string;
 		}
 
 		interface ElementAttributesProperty {

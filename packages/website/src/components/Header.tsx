@@ -1,8 +1,8 @@
-import { SeqflowFunctionContext } from "seqflow-js";
-import { Button, Dropdown, Link, Menu, Navbar } from "seqflow-js-components";
+import { Button, Dropdown, Link, Menu, Navbar } from "@seqflow/components";
 import githubLogoAsString from "../public/images/github.svg";
 import logoAsString from "../public/images/logo.svg";
 import classes from "./Header.module.css";
+import { Contexts } from "@seqflow/seqflow";
 
 function getSvg(html: string, style: Partial<HTMLElement["style"]> = {}) {
 	const div = document.createElement("div");
@@ -14,13 +14,13 @@ function getSvg(html: string, style: Partial<HTMLElement["style"]> = {}) {
 	return svg;
 }
 
-export async function Header(this: SeqflowFunctionContext) {
-	this._el.style.backgroundColor = "#2b3035";
+export async function Header({}, { component }: Contexts) {
+	component._el.style.backgroundColor = "#2b3035";
 	const svg = getSvg(logoAsString(30, 30));
 	const githubLogo = getSvg(githubLogoAsString(30, 30));
 	githubLogo.style.fill = "currentColor";
 
-	const getItems = () => {
+	const getExamples = () => {
 		return (
 			<>
 				<Menu.SubMenuItem>
@@ -71,7 +71,7 @@ export async function Header(this: SeqflowFunctionContext) {
 		</Button>
 	);
 
-	this.renderSync(
+	component.renderSync(
 		<Navbar className={"shadow-md"}>
 			<Navbar.Start>
 				<Dropdown label={b} className={["lg:hidden", classes.submenu]}>
@@ -81,17 +81,31 @@ export async function Header(this: SeqflowFunctionContext) {
 						className={["w-80", "shadow-md"]}
 					>
 						<Menu.Item>
-							<Button className={"justify-start"} color="ghost">
-								This is a button link
-							</Button>
-						</Menu.Item>
-						<Menu.Item>
-							<Link className={"justify-start"} href="#" showAsButton="ghost">
-								This is a link
+							<Link
+								showAsButton="ghost"
+								href="/getting-started"
+								id="getting-started-link"
+								className="justify-start"
+							>
+								Getting started
 							</Link>
 						</Menu.Item>
 						<Menu.Item>
-							<Menu.SubMenu label="Examples">{getItems()}</Menu.SubMenu>
+							<Link showAsButton="ghost" href="/why" id="why-link">
+								Why
+							</Link>
+						</Menu.Item>
+						<Menu.Item>
+							<Link
+								showAsButton="ghost"
+								href="/api-reference"
+								id="api-reference-link"
+							>
+								Api Reference
+							</Link>
+						</Menu.Item>
+						<Menu.Item>
+							<Menu.SubMenu label="Examples">{getExamples()}</Menu.SubMenu>
 						</Menu.Item>
 					</Menu>
 				</Dropdown>
@@ -132,7 +146,7 @@ export async function Header(this: SeqflowFunctionContext) {
 					</Menu.Item>
 					<Menu.Item>
 						<Menu.SubMenu className={classes.submenu} label="Examples">
-							{getItems()}
+							{getExamples()}
 						</Menu.SubMenu>
 					</Menu.Item>
 				</Menu>

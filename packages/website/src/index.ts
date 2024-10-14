@@ -1,13 +1,8 @@
-import "@fortawesome/fontawesome-svg-core/styles.css";
-import { start } from "seqflow-js";
-import "seqflow-js-components/style.css";
+import { start } from "@seqflow/seqflow";
 import { Main } from "./Main";
+import '@seqflow/components/style.css'
 import "./index.css";
 
-start(document.getElementById("root")!, Main, undefined, {
-	log: {
-		error: (l) => console.error(l),
-		info: (l) => console.info(l),
-		debug: (l) => console.debug(l),
-	},
+start(document.getElementById("root")!, Main, {}, {
+	// log: console,
 });

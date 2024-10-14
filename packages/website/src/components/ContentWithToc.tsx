@@ -4,16 +4,16 @@ import "prismjs/components/prism-tsx";
 import "prismjs/components/prism-typescript";
 import "prismjs/plugins/toolbar/prism-toolbar.css";
 import "prismjs/themes/prism-twilight.css";
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 import classes from "./ContentWithToc.module.css";
 
 // The order of the following imports are important.
-// So, we need to keep the empty line between them.
+// So, we have to keep the empty line between them, otherwise the linter will complain.
 
 import "prismjs/plugins/toolbar/prism-toolbar";
 
 import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard";
-import { Prose } from "seqflow-js-components";
+import { Divider, Prose } from "@seqflow/components";
 
 export interface Toc {
 	title: string;
@@ -29,39 +29,47 @@ function getElementFromString(string: string) {
 }
 
 export async function ContentWithToc(
-	this: SeqflowFunctionContext,
 	data: { toc: Toc[]; html: string; title: string },
+	{ component }: Contexts,
 ) {
+	component._el.style.marginTop = '20px';
+
 	const { toc, html } = data;
 	if (toc.length > 0) {
-		this._el.classList.add(classes.top);
+		component._el.classList.add(classes.top);
 	}
+
+	const titleSlug = data.title.toLowerCase().replace(/ /g, '-')
 
 	const aside =
 		toc.length > 0 ? (
 			<>
 				<aside>
 					<ul className="list-group">
+						<li className={["list-group-item", classes['level-1']]}>
+							<a href={`#${titleSlug}`}>{data.title}</a>
+						</li>
 						{toc.map((t) => (
-							<li className={`list-group-item ${classes[`level-${t.level}`]}`}>
-								<a className="" href={`#${t.slug}`}>
+							<li className={["list-group-item", classes[`level-${t.level}`]]}>
+								<a href={`#${t.slug}`}>
 									{t.title}
 								</a>
 							</li>
 						))}
 					</ul>
+					<Divider className={classes.divider}/>
 				</aside>
 			</>
 		) : (
 			<></>
 		);
 
-	this.renderSync(
+	component.renderSync(
 		<>
 			{aside}
-			<main style="grid-area: main; order: 1 !important; overflow-x: hidden; padding-bottom: 30px; padding-right: 15px;">
-				<Prose className={[classes.content, "m-auto"]}>
-					<h1>{data.title}</h1>
+			<main>
+				<Prose className={"m-auto"}>
+					<h1 id={titleSlug}>{data.title}</h1>
 					{...getElementFromString(html)}
 				</Prose>
 			</main>
