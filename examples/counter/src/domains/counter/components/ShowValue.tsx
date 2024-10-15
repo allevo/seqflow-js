@@ -1,7 +1,7 @@
 import { Contexts } from "@seqflow/seqflow";
 import { CounterChanged } from "../Counter";
 
-export async function ShowValue({}, { component, app }: Contexts) {
+export async function ShowValue(_: unknown, { component, app }: Contexts) {
 	component._el.setAttribute("aria-live", "polite");
 
 	component.renderSync(`${app.domains.counter.get()}`);

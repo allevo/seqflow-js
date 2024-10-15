@@ -2,7 +2,10 @@ import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { Button, Form, FormField, NumberInput } from "seqflow-js-components";
 import classes from "./SetCounterValue.module.css";
 
-export async function SetCounterValue(_: unknown, { component, app }: Contexts) {
+export async function SetCounterValue(
+	_: unknown,
+	{ component, app }: Contexts,
+) {
 	component.renderSync(
 		<Form key="form" className={[classes.wrapper, "a"]}>
 			<FormField label={"Choose a value"} className={"w-full max-w-xs"}>

@@ -1,10 +1,13 @@
 import { createDomainEventClass } from "@seqflow/seqflow";
 
-export const CounterChanged = createDomainEventClass<{
-	beforeValue: number;
-	delta: number;
-	currentValue: number;
-}, 'changed'>("counter", "changed");
+export const CounterChanged = createDomainEventClass<
+	{
+		beforeValue: number;
+		delta: number;
+		currentValue: number;
+	},
+	"changed"
+>("counter", "changed");
 
 export class CounterDomain {
 	private counter: number;

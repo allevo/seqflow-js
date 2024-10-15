@@ -7,7 +7,7 @@ import {
 	ShowValue,
 } from "./domains/counter";
 
-export async function Main({}, { component }: Contexts) {
+export async function Main(_: unknown, { component }: Contexts) {
 	component.renderSync(
 		<Card
 			compact
