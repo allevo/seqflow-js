@@ -1,5 +1,5 @@
+import "@seqflow/components/style.css";
 import { start } from "@seqflow/seqflow";
-import "seqflow-js-components/style.css";
 import { Main } from "./Main";
 import { CounterDomain } from "./domains/counter/Counter";
 import "./index.css";

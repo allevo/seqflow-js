@@ -49,6 +49,61 @@ importers:
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
+      serve:
+        specifier: ^14.2.3
+        version: 14.2.3
+      tailwindcss:
+        specifier: ^3.4.6
+        version: 3.4.6
+      vite:
+        specifier: ^5.4.2
+        version: 5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1)
+      vite-plugin-checker:
+        specifier: ^0.7.2
+        version: 0.7.2(@biomejs/biome@1.5.3)(meow@9.0.0)(typescript@5.4.2)(vite@5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1))
+      vitest:
+        specifier: ^1.2.2
+        version: 1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1)
+
+  examples/empty:
+    dependencies:
+      '@seqflow/components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      '@seqflow/seqflow':
+        specifier: workspace:*
+        version: link:../../packages/pippo
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 1.5.3
+        version: 1.5.3
+      '@tailwindcss/typography':
+        specifier: ^0.5.13
+        version: 0.5.13(tailwindcss@3.4.6)
+      '@testing-library/dom':
+        specifier: ^9.3.4
+        version: 9.3.4
+      '@testing-library/jest-dom':
+        specifier: ^6.5.0
+        version: 6.5.0
+      '@types/css-modules':
+        specifier: ^1.0.5
+        version: 1.0.5
+      daisyui:
+        specifier: ^4.12.10
+        version: 4.12.10(postcss@8.4.39)
+      depcheck:
+        specifier: ^1.4.7
+        version: 1.4.7
+      jsdom:
+        specifier: ^24.0.0
+        version: 24.0.0
+      npm-run-all:
+        specifier: ^4.1.5
+        version: 4.1.5
+      serve:
+        specifier: ^14.2.3
+        version: 14.2.3
       tailwindcss:
         specifier: ^3.4.6
         version: 3.4.6
@@ -427,6 +482,9 @@ packages:
 
   '@adobe/css-tools@4.3.3':
     resolution: {integrity: sha512-rE0Pygv0sEZ4vBWHlAgJLGDU7Pm8xoO6p3wsEceb7GYAjScrOHpEo8KK/eVkAcnSM+slAEtXjA2JpdjLp4fJQQ==}
+
+  '@adobe/css-tools@4.4.0':
+    resolution: {integrity: sha512-Ff9+ksdQQB3rMncgqDK78uLznstjyfIf2Arnh22pW8kBpLs6rpKDwgnZT46hin5Hl1WzazzK64DOrhSwYpS7bQ==}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -2356,6 +2414,10 @@ packages:
         optional: true
       vitest:
         optional: true
+
+  '@testing-library/jest-dom@6.5.0':
+    resolution: {integrity: sha512-xGGHpBXYSHUUr6XsKBfs85TWlYKpTc37cSBBVrXcib2MkHLboWlkClhWF37JKlDb9KEq3dHs+f2xR7XJEWGBxA==}
+    engines: {node: '>=14', npm: '>=6', yarn: '>=1'}
 
   '@testing-library/user-event@14.5.2':
     resolution: {integrity: sha512-YAh82Wh4TIrxYLmfGcixwD18oIjyC1pFQC2Y01F2lzV2HTMiYrI0nze0FD0ocB//CKS/7jIUgae+adPqxK5yCQ==}
@@ -7129,6 +7191,8 @@ snapshots:
 
   '@adobe/css-tools@4.3.3': {}
 
+  '@adobe/css-tools@4.4.0': {}
+
   '@alloc/quick-lru@5.2.0': {}
 
   '@ampproject/remapping@2.3.0':
@@ -7221,7 +7285,7 @@ snapshots:
       '@babel/core': 7.24.7
       '@babel/helper-compilation-targets': 7.24.7
       '@babel/helper-plugin-utils': 7.24.7
-      debug: 4.3.4
+      debug: 4.3.7
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -9395,6 +9459,16 @@ snapshots:
       jest: 29.7.0(@types/node@20.12.7)(babel-plugin-macros@3.1.0)
       vitest: 1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1)
 
+  '@testing-library/jest-dom@6.5.0':
+    dependencies:
+      '@adobe/css-tools': 4.4.0
+      aria-query: 5.3.0
+      chalk: 3.0.0
+      css.escape: 1.5.1
+      dom-accessibility-api: 0.6.3
+      lodash: 4.17.21
+      redent: 3.0.0
+
   '@testing-library/user-event@14.5.2(@testing-library/dom@10.1.0)':
     dependencies:
       '@testing-library/dom': 10.1.0
@@ -10653,6 +10727,15 @@ snapshots:
     transitivePeerDependencies:
       - postcss
 
+  daisyui@4.12.10(postcss@8.4.39):
+    dependencies:
+      css-selector-tokenizer: 0.8.0
+      culori: 3.3.0
+      picocolors: 1.0.0
+      postcss-js: 4.0.1(postcss@8.4.39)
+    transitivePeerDependencies:
+      - postcss
+
   dashdash@1.14.1:
     dependencies:
       assert-plus: 1.0.0
@@ -11341,7 +11424,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       commander: 5.1.0
-      debug: 4.3.4
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
@@ -12022,7 +12105,7 @@ snapshots:
 
   istanbul-lib-source-maps@4.0.1:
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.7
       istanbul-lib-coverage: 3.2.2
       source-map: 0.6.1
     transitivePeerDependencies:
@@ -15030,7 +15113,7 @@ snapshots:
     dependencies:
       chalk: 2.4.2
       commander: 3.0.2
-      debug: 4.3.4
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 

@@ -3,7 +3,7 @@ import { Button, Form, FormField, NumberInput } from "seqflow-js-components";
 import classes from "./SetCounterValue.module.css";
 
 export async function SetCounterValue(
-	_: unknown,
+	_: ComponentProps<unknown>,
 	{ component, app }: Contexts,
 ) {
 	component.renderSync(
