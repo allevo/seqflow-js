@@ -8,4 +8,4 @@ packages:
   - 'examples/empty'
   - '!examples/gen-ai'
   - '!examples/orama-search-box'
-  - '!examples/random-quote'
+  - 'examples/random-quote'

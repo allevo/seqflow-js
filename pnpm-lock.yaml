@@ -91,7 +91,7 @@ importers:
         version: 1.0.5
       daisyui:
         specifier: ^4.12.10
-        version: 4.12.10(postcss@8.4.39)
+        version: 4.12.10(postcss@8.4.47)
       depcheck:
         specifier: ^1.4.7
         version: 1.4.7
@@ -116,6 +116,52 @@ importers:
       vitest:
         specifier: ^1.2.2
         version: 1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(less@4.2.0)(terser@5.31.1)
+
+  examples/random-quote:
+    dependencies:
+      '@seqflow/components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      '@seqflow/seqflow':
+        specifier: workspace:*
+        version: link:../../packages/pippo
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 1.5.3
+        version: 1.5.3
+      '@testing-library/dom':
+        specifier: ^9.3.4
+        version: 9.3.4
+      '@testing-library/jest-dom':
+        specifier: ^6.5.0
+        version: 6.5.0
+      '@types/css-modules':
+        specifier: ^1.0.5
+        version: 1.0.5
+      daisyui:
+        specifier: ^4.12.10
+        version: 4.12.10(postcss@8.4.47)
+      msw:
+        specifier: ^2.2.1
+        version: 2.2.1(typescript@5.3.3)
+      npm-run-all:
+        specifier: ^4.1.5
+        version: 4.1.5
+      serve:
+        specifier: ^14.2.3
+        version: 14.2.3
+      tailwindcss:
+        specifier: ^3.4.6
+        version: 3.4.6
+      vite:
+        specifier: ^5.4.2
+        version: 5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1)
+      vite-plugin-checker:
+        specifier: ^0.7.2
+        version: 0.7.2(@biomejs/biome@1.5.3)(meow@9.0.0)(typescript@5.3.3)(vite@5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1))
+      vitest:
+        specifier: ^1.2.2
+        version: 1.5.2(@types/node@20.12.7)(jsdom@25.0.1)(less@4.2.0)(terser@5.31.1)
 
   packages/components:
     dependencies:
@@ -10727,12 +10773,12 @@ snapshots:
     transitivePeerDependencies:
       - postcss
 
-  daisyui@4.12.10(postcss@8.4.39):
+  daisyui@4.12.10(postcss@8.4.47):
     dependencies:
       css-selector-tokenizer: 0.8.0
       culori: 3.3.0
       picocolors: 1.0.0
-      postcss-js: 4.0.1(postcss@8.4.39)
+      postcss-js: 4.0.1(postcss@8.4.47)
     transitivePeerDependencies:
       - postcss
 
@@ -12977,6 +13023,28 @@ snapshots:
 
   ms@2.1.3: {}
 
+  msw@2.2.1(typescript@5.3.3):
+    dependencies:
+      '@bundled-es-modules/cookie': 2.0.0
+      '@bundled-es-modules/statuses': 1.0.1
+      '@inquirer/confirm': 3.0.0
+      '@mswjs/cookies': 1.1.0
+      '@mswjs/interceptors': 0.25.16
+      '@open-draft/until': 2.1.0
+      '@types/cookie': 0.6.0
+      '@types/statuses': 2.0.4
+      chalk: 4.1.2
+      graphql: 16.8.1
+      headers-polyfill: 4.0.2
+      is-node-process: 1.2.0
+      outvariant: 1.4.2
+      path-to-regexp: 6.2.1
+      strict-event-emitter: 0.5.1
+      type-fest: 4.10.2
+      yargs: 17.7.2
+    optionalDependencies:
+      typescript: 5.3.3
+
   msw@2.2.1(typescript@5.4.2):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.0
@@ -13411,6 +13479,11 @@ snapshots:
     dependencies:
       camelcase-css: 2.0.1
       postcss: 8.4.39
+
+  postcss-js@4.0.1(postcss@8.4.47):
+    dependencies:
+      camelcase-css: 2.0.1
+      postcss: 8.4.47
 
   postcss-load-config@4.0.2(postcss@8.4.39):
     dependencies:
@@ -14712,6 +14785,28 @@ snapshots:
       - sugarss
       - supports-color
       - terser
+
+  vite-plugin-checker@0.7.2(@biomejs/biome@1.5.3)(meow@9.0.0)(typescript@5.3.3)(vite@5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1)):
+    dependencies:
+      '@babel/code-frame': 7.24.7
+      ansi-escapes: 4.3.2
+      chalk: 4.1.2
+      chokidar: 3.6.0
+      commander: 8.3.0
+      fast-glob: 3.3.2
+      fs-extra: 11.2.0
+      npm-run-path: 4.0.1
+      strip-ansi: 6.0.1
+      tiny-invariant: 1.3.3
+      vite: 5.4.2(@types/node@20.12.7)(less@4.2.0)(terser@5.31.1)
+      vscode-languageclient: 7.0.0
+      vscode-languageserver: 7.0.0
+      vscode-languageserver-textdocument: 1.0.12
+      vscode-uri: 3.0.8
+    optionalDependencies:
+      '@biomejs/biome': 1.5.3
+      meow: 9.0.0
+      typescript: 5.3.3
 
   vite-plugin-checker@0.7.2(@biomejs/biome@1.5.3)(meow@9.0.0)(typescript@5.4.2)(vite@5.4.2(@types/node@20.11.24)(less@4.2.0)(terser@5.31.1)):
     dependencies:

@@ -2,9 +2,9 @@ import { screen } from "@testing-library/dom";
 
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
+import { afterAll, afterEach, beforeAll, test } from "vitest";
 
-import { start } from "seqflow-js";
+import { start } from "@seqflow/seqflow";
 import { Main } from "../src/Main";
 import { QuoteDomain } from "../src/domains/quote";
 
@@ -25,7 +25,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 test("should render the quote and refresh it", async () => {
-	start(document.body, Main, undefined, {
+	start(document.body, Main, {}, {
 		config: {
 			api: {
 				// Route to the mock server
