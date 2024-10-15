@@ -1,13 +1,13 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 import { CounterChanged } from "../Counter";
 
-export async function ShowValue(this: SeqflowFunctionContext) {
-	this._el.setAttribute("aria-live", "polite");
+export async function ShowValue({}, { component, app }: Contexts) {
+	component._el.setAttribute("aria-live", "polite");
 
-	this.renderSync(`${this.app.domains.counter.get()}`);
+	component.renderSync(`${app.domains.counter.get()}`);
 
-	const events = this.waitEvents(this.domainEvent(CounterChanged));
+	const events = component.waitEvents(component.domainEvent(CounterChanged));
 	for await (const ev of events) {
-		this._el.textContent = `${ev.detail.currentValue}`;
+		component._el.textContent = `${ev.detail.currentValue}`;
 	}
 }

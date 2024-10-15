@@ -189,3 +189,19 @@ test("child: renderSync should unmount all the current components and their list
 	await sleep(100);
 	expect(counter).toBe(1);
 });
+
+test("child: className & style", async () => {
+	function MyComponent1(
+		{ }: ComponentProps<unknown>,
+		{ component }: Contexts,
+	) {
+		component.renderSync('foo');
+	}
+
+	component.renderSync(
+		<MyComponent1 className={'the-class-name'} style={{ height: '30px' }} />,
+	);
+	expect(document.body.innerHTML).toBe(
+		'<div style="height: 30px;" class="the-class-name">foo</div>',
+	);
+})

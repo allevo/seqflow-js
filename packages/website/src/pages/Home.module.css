@@ -67,9 +67,9 @@
         cursor: pointer;
         border-radius: 5px;
         padding: 10px;
-        text-align: end;
         display: flex;
         align-items: center;
+        justify-content: end;
 
         @media (max-width: 1020px) {
             text-align: center;

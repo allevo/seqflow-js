@@ -4,57 +4,6 @@ import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import * as Prism from "prismjs";
 import { ArrowSVG } from "../components/Arrow";
 
-function setupArrow() {
-	const el = document.querySelector("#chevron-down") as HTMLElement | undefined;
-
-	if (!el) {
-		console.error("Element not found");
-		return;
-	}
-
-	if (
-		"IntersectionObserver" in window &&
-		"IntersectionObserverEntry" in window &&
-		"intersectionRatio" in window.IntersectionObserverEntry.prototype
-	) {
-		const anchors = document.querySelectorAll(".arrow-anchor");
-		const map = new Map<Element, boolean>();
-		anchors.forEach(anchor => map.set(anchor, true));
-
-		const observer = new IntersectionObserver(entries => {
-			for (const {target} of entries) {
-				map.set(target, entries[0].isIntersecting);
-			}
-
-			const isVisible = Array.from(map.values()).some(v => v);
-			if (isVisible) {
-				el.style.display = "flex";
-			} else {
-				el.style.display = "none";
-			}
-		});
-		
-		anchors.forEach(anchor => observer.observe(anchor));
-	}
-
-	const secondSection = document.querySelector("#second-screen")
-	const thirdSection = document.querySelector("#third-screen")
-	el.addEventListener("click", () => {
-		let element
-
-		if ((secondSection?.getClientRects()[0].top || 0) <= 64) {
-			element = thirdSection
-		} else {
-			element = secondSection
-		}
-		element?.scrollIntoView({
-			behavior: "smooth",
-			block: "end",
-		})
-	});
-}
-
-
 export async function Home({}, {component}: Contexts) {
 	const script = createScript(`
 ${setupArrow.toString()}
@@ -105,7 +54,7 @@ function Examples({}, { component }: Contexts) {
 			<Tabs.TabContent>
 				<Code code={EXAMPLES_COUNTER_CODE} />
 			</Tabs.TabContent>
-			<Tabs.TabHeader label="Fetch Random Quote" defaultChecked />
+			<Tabs.TabHeader label="Fetch Random Quote" />
 			<Tabs.TabContent>
 				<Code code={EXAMPLES_COUNTER_CODE} />
 			</Tabs.TabContent>
@@ -116,7 +65,7 @@ function Examples({}, { component }: Contexts) {
 function SeqFlowHero({}, { component }: Contexts) {
 	component.renderSync(
 		<Hero style={{ backgroundColor: '#060606' }}>
-			<Hero.Content style={{ height: 'max(calc(100vh - 64px), 400px)'}} className={"text-center"}>
+			<Hero.Content style={{ minHeight: 'max(calc(100vh - 64px), 400px)'}} className={"text-center"}>
 				<div className={"max-w-5xl"}>
 					<p className="text-2xl">
 						SeqFlowJS
@@ -237,6 +186,7 @@ function Features({}, { component }: Contexts) {
 function createScript(code: string) {
 	const script = document.createElement("script");
 	script.textContent = code;
+	script.dataset['keep'] = 'true';
 
 	return script
 }
@@ -253,6 +203,7 @@ function handleFeatureOver() {
 		}
 		radio.checked = true;
 	}
+
 	radios.forEach(radio => {
 		// @ts-ignore
 		radio.addEventListener('mouseenter', onOver);
@@ -268,6 +219,57 @@ function Code({ code }: ComponentProps<{ code: string }>, { component }: Context
 	)
 }
 Code.tagName = () => "pre";
+
+function setupArrow() {
+	const el = document.querySelector("#chevron-down") as HTMLElement | undefined;
+
+	if (!el) {
+		console.error("Element not found");
+		return;
+	}
+
+	if (
+		"IntersectionObserver" in window &&
+		"IntersectionObserverEntry" in window &&
+		"intersectionRatio" in window.IntersectionObserverEntry.prototype
+	) {
+		const anchors = document.querySelectorAll(".arrow-anchor");
+		const map = new Map<Element, boolean>();
+		anchors.forEach(anchor => map.set(anchor, true));
+
+		const observer = new IntersectionObserver(entries => {
+			for (const {target} of entries) {
+				map.set(target, entries[0].isIntersecting);
+			}
+
+			const isVisible = Array.from(map.values()).some(v => v);
+			if (isVisible) {
+				el.style.display = "flex";
+			} else {
+				el.style.display = "none";
+			}
+		});
+		
+		anchors.forEach(anchor => observer.observe(anchor));
+	}
+
+	const secondSection = document.querySelector("#second-screen")
+	const thirdSection = document.querySelector("#third-screen")
+	el.addEventListener("click", () => {
+		console.log('CLICKKKKKK')
+		let element
+
+		if ((secondSection?.getClientRects()[0].top || 0) <= 64) {
+			element = thirdSection
+		} else {
+			element = secondSection
+		}
+		element?.scrollIntoView({
+			behavior: "smooth",
+			block: "end",
+		})
+	});
+}
 
 const ASYNC_CLIENT_COMPONENT_CODE = `
 import { Contexts, ComponentProps } from "@seqflow/seqflow";

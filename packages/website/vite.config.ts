@@ -194,6 +194,7 @@ function generateAllPages(): Plugin {
 					path: '/',
 					filename: 'index.html'
 				},
+				/*
 				{
 					path: '/why',
 					filename: 'why.html'
@@ -234,6 +235,7 @@ function generateAllPages(): Plugin {
 					path: '/examples',
 					filename: 'examples.html'
 				}
+				*/
 			]
 			for (const page of pages) {
 				const dom = new JSDOM(htmlWithoutTypeModule, {
@@ -246,7 +248,12 @@ function generateAllPages(): Plugin {
 
 				const resultHtml = dom.serialize()
 				const resultHTMWithoutScripts = resultHtml
-					.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '')
+					.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, (match) => {
+						if (match.includes('data-keep="true"')) {
+							return match
+						}
+						return ''
+					})
 					.replace('<link rel="custom">', `
 <script type="module" defer src="/_vercel/insights/script.js"></script>
 <script type="module" defer src="/_vercel/speed-insights/script.js"></script>

@@ -1,10 +1,10 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { Button, Form, FormField, NumberInput } from "seqflow-js-components";
 import classes from "./SetCounterValue.module.css";
 
-export async function SetCounterValue(this: SeqflowFunctionContext) {
-	this.renderSync(
-		<Form className={[classes.wrapper, "a"]}>
+export async function SetCounterValue(_: unknown, { component, app }: Contexts) {
+	component.renderSync(
+		<Form key="form" className={[classes.wrapper, "a"]}>
 			<FormField label={"Choose a value"} className={"w-full max-w-xs"}>
 				<NumberInput required name="set-value" key="choose-value" />
 			</FormField>
@@ -19,12 +19,12 @@ export async function SetCounterValue(this: SeqflowFunctionContext) {
 		</Form>,
 	);
 
-	const events = this.waitEvents(
-		this.domEvent("submit", { el: this._el, preventDefault: true }),
+	const events = component.waitEvents(
+		component.domEvent("form", "submit", { preventDefault: true }),
 	);
 	for await (const _ of events) {
-		const input = this.getChild<HTMLInputElement>("choose-value");
+		const input = component.getChild<HTMLInputElement>("choose-value");
 		const value = input.valueAsNumber;
-		this.app.domains.counter.set(value);
+		app.domains.counter.set(value);
 	}
 }
