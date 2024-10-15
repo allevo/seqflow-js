@@ -1,12 +1,12 @@
 import { screen, waitFor } from "@testing-library/dom";
-import { start } from "seqflow-js";
+import { start } from "@seqflow/seqflow";
 import { expect, test } from "vitest";
 import { Counter, CounterDomain } from "../src/Counter";
 import { ExternalChangeValue } from "../src/external";
 
 test("should increment and decrement the counter", async () => {
 	const externalEventTarget = new EventTarget();
-	start(document.body, Counter, undefined, {
+	start(document.body, Counter, {}, {
 		domains: {
 			counter: (et) => new CounterDomain(et, externalEventTarget, 0),
 			external: () => externalEventTarget,

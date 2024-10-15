@@ -1,15 +1,16 @@
 import {
-	type SeqflowFunctionContext,
+	ComponentProps,
+	Contexts,
 	createDomainEventClass,
-} from "seqflow-js";
-import { Button, Card } from "seqflow-js-components";
+} from "@seqflow/seqflow";
+import { Button, Card } from "@seqflow/components";
 import classes from "./Counter.module.css";
 import { CHANGE_VALUE_EVENT_NAME, type ExternalChangeValue } from "./external";
 
 const CounterChanged = createDomainEventClass<{
 	delta: number;
 	counter: number;
-}>("counter", "changed");
+}, "changed">("counter", "changed");
 
 export class CounterDomain {
 	private counter: number;
@@ -47,25 +48,28 @@ export class CounterDomain {
 }
 
 async function ChangeCounterButton(
-	this: SeqflowFunctionContext,
-	data: { delta: number; text: string },
+	data: ComponentProps<{ delta: number; text: string }>,
+	{ component, app }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<Button key="button" type="button" color="primary">
 			{data.text}
 		</Button>,
 	);
-	const events = this.waitEvents(this.domEvent("click", { key: "button" }));
+	const events = component.waitEvents(component.domEvent("button", "click"));
 
 	for await (const _ of events) {
-		this.app.domains.counter.applyDelta(data.delta);
+		app.domains.counter.applyDelta(data.delta);
 	}
 }
 
-export async function Counter(this: SeqflowFunctionContext) {
-	this._el.classList.add(classes["counter-card"]);
+export async function Counter(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
+	component._el.classList.add(classes["counter-card"]);
 
-	this.renderSync(
+	component.renderSync(
 		<Card
 			compact
 			className={"m-auto w-96 bg-slate-900 text-slate-200 mt-6"}
@@ -75,7 +79,7 @@ export async function Counter(this: SeqflowFunctionContext) {
 				<div className={classes.buttons}>
 					<ChangeCounterButton delta={-1} text="Decrement" />
 					<div className={classes.counter} key={"counter"}>
-						{this.app.domains.counter.get()}
+						{app.domains.counter.get()}
 					</div>
 					<ChangeCounterButton delta={1} text="Increment" />
 				</div>
@@ -83,8 +87,8 @@ export async function Counter(this: SeqflowFunctionContext) {
 		</Card>,
 	);
 
-	const events = this.waitEvents(this.domainEvent(CounterChanged));
+	const events = component.waitEvents(component.domainEvent(CounterChanged));
 	for await (const ev of events) {
-		this.getChild("counter").textContent = `${ev.detail.counter}`;
+		component.getChild("counter").textContent = `${ev.detail.counter}`;
 	}
 }

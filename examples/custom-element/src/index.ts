@@ -1,8 +1,8 @@
-import { start } from "seqflow-js";
+import { debugEventTarget, start } from "@seqflow/seqflow";
 import { Counter, CounterDomain } from "./Counter";
 import { ExternalChangeValue } from "./external";
 
-import "seqflow-js-components/style.css";
+import "@seqflow/components/style.css";
 import "./index.css";
 
 declare global {
@@ -37,7 +37,7 @@ class CounterElement extends HTMLElement {
 		// Start the Seqflow app
 		// Even if `ShadowRoot` is not a `HTMLElement`, we can cast it to `HTMLElement` to make TypeScript happy.
 		// It works anyway.
-		this.abortController = start(div, Counter, undefined, {
+		this.abortController = start(div, Counter, {}, {
 			log: {
 				error: (l) => {
 					throw l;
@@ -48,7 +48,7 @@ class CounterElement extends HTMLElement {
 			domains: {
 				// Create the Counter domain with the initial value and the external event target
 				counter: (et) =>
-					new CounterDomain(et, this.externalEventTarget, initialValue),
+					new CounterDomain(debugEventTarget(et), this.externalEventTarget, initialValue),
 				// `external` domain is a fake domain and used only to ntofy attribute changes
 				external: () => this.externalEventTarget,
 			},
@@ -77,7 +77,7 @@ class CounterElement extends HTMLElement {
 	}
 }
 
-declare module "seqflow-js" {
+declare module "@seqflow/seqflow" {
 	interface Domains {
 		counter: CounterDomain;
 		external: EventTarget;

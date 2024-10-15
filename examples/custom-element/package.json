@@ -28,7 +28,7 @@
     "vitest": "^1.2.2"
   },
   "dependencies": {
-    "seqflow-js": "workspace:*",
-    "seqflow-js-components": "workspace:*"
+    "@seqflow/seqflow": "workspace:*",
+    "@seqflow/components": "workspace:*"
   }
 }
