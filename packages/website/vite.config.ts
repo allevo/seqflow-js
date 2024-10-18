@@ -194,7 +194,6 @@ function generateAllPages(): Plugin {
 					path: '/',
 					filename: 'index.html'
 				},
-				/*
 				{
 					path: '/why',
 					filename: 'why.html'
@@ -235,7 +234,6 @@ function generateAllPages(): Plugin {
 					path: '/examples',
 					filename: 'examples.html'
 				}
-				*/
 			]
 			for (const page of pages) {
 				const dom = new JSDOM(htmlWithoutTypeModule, {

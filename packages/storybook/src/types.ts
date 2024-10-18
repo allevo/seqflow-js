@@ -25,7 +25,7 @@ export interface SeqFlowJSRenderer extends WebRenderer {
 }
 
 export interface Parameters {
-  renderer: 'seqflow-js-storybook';
+  renderer: '@seqflow/storybook';
   docs?: {
     story: { inline: boolean };
     extractArgTypes?: ArgTypesExtractor;

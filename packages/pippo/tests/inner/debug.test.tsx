@@ -1,11 +1,8 @@
 import { expect, test } from "vitest";
-import {
-	debugEventTarget
-} from "../../src/index";
-
+import { debugEventTarget } from "../../src/index";
 
 test("debugEventTarget", () => {
-	const events: Event[] = []
+	const events: Event[] = [];
 	const et = debugEventTarget(new EventTarget(), (ev) => events.push(ev));
 
 	const ev1 = new Event("foo");

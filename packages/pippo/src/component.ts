@@ -33,10 +33,13 @@ function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 		}
 
 		if (key === "className") {
-			continue
-		} else if (key === "style") {
-			continue
-		} else if (key === "htmlFor") {
+			continue;
+		}
+		if (key === "style") {
+			continue;
+		}
+
+		if (key === "htmlFor") {
 			const h: NonNullable<ElementProperty<HTMLLabelElement>["htmlFor"]> =
 				value as NonNullable<(typeof props)["htmlFor"]>;
 			(element as HTMLLabelElement).htmlFor = h;
@@ -296,8 +299,7 @@ export class SeqFlowComponentContext {
 			}
 		}
 		if (props && "className" in props && el instanceof HTMLElement) {
-			const v =
-				props.className as JSX.IntrinsicAttributes['className'];
+			const v = props.className as JSX.IntrinsicAttributes["className"];
 			if (v) {
 				const classes = Array.isArray(v) ? v : [...v.split(" ")];
 				el.classList.add(...classes.filter(Boolean));
@@ -311,7 +313,9 @@ export class SeqFlowComponentContext {
 		return el;
 	}
 
-	renderSync(element: string | number | null | undefined | JSX.Element | JSX.Element[]) {
+	renderSync(
+		element: string | number | null | undefined | JSX.Element | JSX.Element[],
+	) {
 		// Remove all the content previoursly rendered
 		this._el.innerHTML = "";
 

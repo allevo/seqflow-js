@@ -1,7 +1,7 @@
 import type { ComponentProps, Contexts } from "@seqflow/seqflow";
-import { Tabs, TabsProps } from ".";
-import { StoryFn } from "seqflow-js-storybook";
+import { StoryFn } from "@seqflow/storybook";
 import { expect, userEvent, waitFor, within } from "@storybook/test";
+import { Tabs, TabsProps } from ".";
 
 async function TabsExample(
 	props: ComponentProps<TabsProps>,
@@ -10,14 +10,10 @@ async function TabsExample(
 	component.renderSync(
 		<Tabs {...props}>
 			<Tabs.TabHeader defaultChecked label="Tab 1" />
-			<Tabs.TabContent className={'p-10'}>
-				Tab content 1
-			</Tabs.TabContent>
+			<Tabs.TabContent className={"p-10"}>Tab content 1</Tabs.TabContent>
 
 			<Tabs.TabHeader label="Tab 2" />
-			<Tabs.TabContent className={'p-2'}>
-				Tab content 2
-			</Tabs.TabContent>
+			<Tabs.TabContent className={"p-2"}>Tab content 2</Tabs.TabContent>
 		</Tabs>,
 	);
 }
@@ -34,7 +30,6 @@ export default {
 
 export const Empty = {};
 
-
 export const SwitchBetweenTabs: StoryFn = {
 	component: TabsExample,
 	play: async ({ canvasElement }) => {
@@ -42,10 +37,10 @@ export const SwitchBetweenTabs: StoryFn = {
 
 		const firstTab = canvas.getByRole("tab", {
 			name: "Tab 1",
-		})
+		});
 		const secondTab = canvas.getByRole("tab", {
 			name: "Tab 2",
-		})
+		});
 
 		const firstContent = await canvas.findByText("Tab content 1");
 		const secondContent = await canvas.findByText("Tab content 2");

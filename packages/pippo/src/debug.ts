@@ -1,5 +1,7 @@
-
-export function debugEventTarget(et: EventTarget, log: (_: Event) => void = console.log): EventTarget {
+export function debugEventTarget(
+	et: EventTarget,
+	log: (_: Event) => void = console.log,
+): EventTarget {
 	const oldAddEventListener = et.addEventListener;
 	et.addEventListener = (
 		type: string,

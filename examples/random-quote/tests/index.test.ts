@@ -25,17 +25,22 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 test("should render the quote and refresh it", async () => {
-	start(document.body, Main, {}, {
-		config: {
-			api: {
-				// Route to the mock server
-				baseUrl: "",
+	start(
+		document.body,
+		Main,
+		{},
+		{
+			config: {
+				api: {
+					// Route to the mock server
+					baseUrl: "",
+				},
+			},
+			domains: {
+				quotes: (et, _, config) => new QuoteDomain(et, config.api.baseUrl),
 			},
 		},
-		domains: {
-			quotes: (et, _, config) => new QuoteDomain(et, config.api.baseUrl),
-		},
-	});
+	);
 
 	await screen.findByText("Click the button to read a quote");
 

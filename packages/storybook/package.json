@@ -1,5 +1,5 @@
 {
-  "name": "seqflow-js-storybook",
+  "name": "@seqflow/storybook",
   "version": "1.0.0",
   "type": "module",
   "description": "Storybook for SeqFlow JS and Vite.",

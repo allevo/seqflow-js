@@ -1,6 +1,6 @@
 import { Card } from "@seqflow/components";
-import classes from "./Main.module.css";
 import { ComponentProps, Contexts } from "@seqflow/seqflow";
+import classes from "./Main.module.css";
 
 export async function Main(
 	_: ComponentProps<unknown>,

@@ -15,14 +15,12 @@ export async function Footer(
 		return;
 	}
 
-	const classes = ['footer']
+	const classes = ["footer"];
 	if (center) {
-		classes.push('footer-center');
+		classes.push("footer-center");
 	}
-	component._el.classList.add(...classes)
+	component._el.classList.add(...classes);
 
-	component.renderSync(
-		children
-	);
+	component.renderSync(children);
 }
 Footer.tagName = () => "footer";

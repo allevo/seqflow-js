@@ -1,14 +1,17 @@
-import { Contexts } from '@seqflow/seqflow';
-import classes from './Arrow.module.css'
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
+import classes from "./Arrow.module.css";
 
-export function ArrowSVG({}, { component }: Contexts) {
-	const arrowSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+export function ArrowSVG(_: ComponentProps<unknown>, { component }: Contexts) {
+	const arrowSVG = document.createElementNS(
+		"http://www.w3.org/2000/svg",
+		"svg",
+	);
 	arrowSVG.id = "chevron-down";
 	const a = 128;
-	arrowSVG.setAttribute("viewBox", `0 0 24 24`);
-	arrowSVG.classList.add(classes['down-arrow']);
+	arrowSVG.setAttribute("viewBox", "0 0 24 24");
+	arrowSVG.classList.add(classes["down-arrow"]);
 
-	arrowSVG.setAttribute("width",  "48");
+	arrowSVG.setAttribute("width", "48");
 	arrowSVG.setAttribute("height", "48");
 	// arrowSVG.setAttribute("viewBox", "0 0 24 24");
 	arrowSVG.setAttribute("fill", "none");
@@ -23,5 +26,5 @@ export function ArrowSVG({}, { component }: Contexts) {
 	polyline.setAttribute("points", "6 9 12 15 18 9");
 	arrowSVG.appendChild(polyline);
 
-    component._el.appendChild(arrowSVG);
+	component._el.appendChild(arrowSVG);
 }

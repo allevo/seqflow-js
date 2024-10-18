@@ -1,16 +1,19 @@
+import { Button, Card } from "@seqflow/components";
 import {
 	ComponentProps,
 	Contexts,
 	createDomainEventClass,
 } from "@seqflow/seqflow";
-import { Button, Card } from "@seqflow/components";
 import classes from "./Counter.module.css";
 import { CHANGE_VALUE_EVENT_NAME, type ExternalChangeValue } from "./external";
 
-const CounterChanged = createDomainEventClass<{
-	delta: number;
-	counter: number;
-}, "changed">("counter", "changed");
+const CounterChanged = createDomainEventClass<
+	{
+		delta: number;
+		counter: number;
+	},
+	"changed"
+>("counter", "changed");
 
 export class CounterDomain {
 	private counter: number;

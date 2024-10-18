@@ -1,7 +1,7 @@
 import { expect, userEvent, within } from "@storybook/test";
 
 import { Contexts } from "@seqflow/seqflow";
-import { StoryFn } from "seqflow-js-storybook";
+import { StoryFn } from "@seqflow/storybook";
 import { Loading } from ".";
 
 export default {

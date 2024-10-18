@@ -21,7 +21,7 @@ export async function Tabs(
 	component._el.role = "tablist";
 	component._el.classList.add("tabs", "tabs-bordered");
 
-	let tabCounter = 0
+	let tabCounter = 0;
 	for (const el of children) {
 		if (el instanceof HTMLInputElement) {
 			if (el.type === "radio") {
@@ -39,12 +39,12 @@ export async function Tabs(
 	}
 
 	if (tabFullWidth) {
-		component._el.style.gridTemplateColumns = new Array(tabCounter).fill("1fr").join(" ");
+		component._el.style.gridTemplateColumns = new Array(tabCounter)
+			.fill("1fr")
+			.join(" ");
 	}
 
-	component.renderSync(
-		children
-	);
+	component.renderSync(children);
 }
 Tabs.tagName = () => "div";
 
@@ -53,7 +53,10 @@ export interface TabHeaderProps {
 	defaultChecked?: boolean;
 }
 
-export async function TabHeader({ label, defaultChecked }: ComponentProps<TabHeaderProps>, { component, app }: Contexts) {
+export async function TabHeader(
+	{ label, defaultChecked }: ComponentProps<TabHeaderProps>,
+	{ component, app }: Contexts,
+) {
 	const input = component._el as HTMLInputElement;
 	input.type = "radio";
 	input.role = "tab";
@@ -67,12 +70,14 @@ export async function TabHeader({ label, defaultChecked }: ComponentProps<TabHea
 TabHeader.tagName = () => "input";
 Tabs.TabHeader = TabHeader;
 
-export async function TabContent({ children }: ComponentProps<unknown>, { component, app }: Contexts) {
+export async function TabContent(
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
 	component._el.classList.add("tab-content");
 	component._el.role = "tabpanel";
 
 	component.renderSync(children);
-
 }
 Tabs.TabContent = TabContent;
 

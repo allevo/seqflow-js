@@ -91,12 +91,8 @@ test("child: render children with id", async () => {
 		{ children }: ComponentProps<unknown>,
 		{ component }: Contexts,
 	) {}
-	component.renderSync(
-		<MyComponent id="foo" />
-	);
-	expect(document.body.innerHTML).toBe(
-		'<div id="foo"></div>',
-	);
+	component.renderSync(<MyComponent id="foo" />);
+	expect(document.body.innerHTML).toBe('<div id="foo"></div>');
 });
 
 test("child: replaceChild should unmount all the current components and their listeners", async () => {
@@ -191,17 +187,14 @@ test("child: renderSync should unmount all the current components and their list
 });
 
 test("child: className & style", async () => {
-	function MyComponent1(
-		{ }: ComponentProps<unknown>,
-		{ component }: Contexts,
-	) {
-		component.renderSync('foo');
+	function MyComponent1(_: ComponentProps<unknown>, { component }: Contexts) {
+		component.renderSync("foo");
 	}
 
 	component.renderSync(
-		<MyComponent1 className={'the-class-name'} style={{ height: '30px' }} />,
+		<MyComponent1 className={"the-class-name"} style={{ height: "30px" }} />,
 	);
 	expect(document.body.innerHTML).toBe(
 		'<div style="height: 30px;" class="the-class-name">foo</div>',
 	);
-})
+});

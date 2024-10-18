@@ -37,22 +37,31 @@ class CounterElement extends HTMLElement {
 		// Start the Seqflow app
 		// Even if `ShadowRoot` is not a `HTMLElement`, we can cast it to `HTMLElement` to make TypeScript happy.
 		// It works anyway.
-		this.abortController = start(div, Counter, {}, {
-			log: {
-				error: (l) => {
-					throw l;
+		this.abortController = start(
+			div,
+			Counter,
+			{},
+			{
+				log: {
+					error: (l) => {
+						throw l;
+					},
+					info: (l) => console.info(l),
+					debug: (l) => console.debug(l),
 				},
-				info: (l) => console.info(l),
-				debug: (l) => console.debug(l),
+				domains: {
+					// Create the Counter domain with the initial value and the external event target
+					counter: (et) =>
+						new CounterDomain(
+							debugEventTarget(et),
+							this.externalEventTarget,
+							initialValue,
+						),
+					// `external` domain is a fake domain and used only to ntofy attribute changes
+					external: () => this.externalEventTarget,
+				},
 			},
-			domains: {
-				// Create the Counter domain with the initial value and the external event target
-				counter: (et) =>
-					new CounterDomain(debugEventTarget(et), this.externalEventTarget, initialValue),
-				// `external` domain is a fake domain and used only to ntofy attribute changes
-				external: () => this.externalEventTarget,
-			},
-		});
+		);
 	}
 
 	// We want to be notified when the `value` attribute changes

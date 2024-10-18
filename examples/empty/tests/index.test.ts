@@ -1,5 +1,5 @@
-import { screen } from "@testing-library/dom";
 import { start } from "@seqflow/seqflow";
+import { screen } from "@testing-library/dom";
 import { expect, test } from "vitest";
 import { Main } from "../src/Main";
 

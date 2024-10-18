@@ -1,6 +1,6 @@
 import { expect, userEvent, within } from "@storybook/test";
 
-import type { StoryFn } from "seqflow-js-storybook";
+import type { StoryFn } from "@seqflow/storybook";
 import { NumberInput } from ".";
 
 export default {

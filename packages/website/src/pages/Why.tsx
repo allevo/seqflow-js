@@ -1,8 +1,8 @@
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { ContentWithToc } from "../components/ContentWithToc";
 import { html, toc } from "./Why.md";
-import { Contexts } from "@seqflow/seqflow";
 
-export async function Why({}, {component}: Contexts) {
+export async function Why(_: ComponentProps<unknown>, { component }: Contexts) {
 	component.renderSync(
 		<div id="why">
 			<ContentWithToc toc={toc} html={html} title="Why SeqFlow?" />

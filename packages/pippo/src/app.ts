@@ -43,7 +43,7 @@ type DomainCreators = {
 		}>,
 		config: Readonly<ApplicationConfiguration>,
 	) => Domains[K];
-}
+};
 
 export type StartConfiguration<Domains extends object> = Omit<
 	Partial<SeqflowAppContext<Domains>>,
@@ -55,12 +55,10 @@ export type StartConfiguration<Domains extends object> = Omit<
 			object
 		: // otherwise we require it
 			{ config: SeqflowAppContext<Domains>["config"] }) &
-	(
-		object extends SeqflowAppContext<Domains>["domains"] // If the Domains is empty,
+	(object extends SeqflowAppContext<Domains>["domains"] // If the Domains is empty,
 		? // we allow to not pass it
-			{ domains?: DomainCreators; }
-			: { domains: DomainCreators; }
-	);
+			{ domains?: DomainCreators }
+		: { domains: DomainCreators });
 
 function applyDefault(
 	configuration: StartConfiguration<Domains>,
@@ -94,9 +92,7 @@ function applyDefault(
 	// First all event targets
 	const domainsFuctions: DomainCreators =
 		configuration.domains ?? ({} as DomainCreators);
-	const domainNames = Object.keys(
-		domainsFuctions,
-	) as DomainNames[];
+	const domainNames = Object.keys(domainsFuctions) as DomainNames[];
 	const domainEventTargets = {} as Record<string, EventTarget>;
 	for (const domainName of domainNames) {
 		domainEventTargets[domainName] = new EventTarget();

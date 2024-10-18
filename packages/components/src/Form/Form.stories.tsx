@@ -1,7 +1,7 @@
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 import type { ComponentProps, Contexts } from "@seqflow/seqflow";
-import type { StoryFn } from "seqflow-js-storybook";
+import type { StoryFn } from "@seqflow/storybook";
 import { Form, type FormComponent } from ".";
 import { Button } from "../Button";
 import { FormField } from "../FormField";

@@ -1,8 +1,8 @@
 import { Button, Dropdown, Link, Menu, Navbar } from "@seqflow/components";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import githubLogoAsString from "../public/images/github.svg";
 import logoAsString from "../public/images/logo.svg";
 import classes from "./Header.module.css";
-import { Contexts } from "@seqflow/seqflow";
 
 function getSvg(html: string, style: Partial<HTMLElement["style"]> = {}) {
 	const div = document.createElement("div");
@@ -14,7 +14,10 @@ function getSvg(html: string, style: Partial<HTMLElement["style"]> = {}) {
 	return svg;
 }
 
-export async function Header({}, { component }: Contexts) {
+export async function Header(
+	_: ComponentProps<unknown>,
+	{ component }: Contexts,
+) {
 	component._el.style.backgroundColor = "#2b3035";
 	const svg = getSvg(logoAsString(30, 30));
 	const githubLogo = getSvg(githubLogoAsString(30, 30));

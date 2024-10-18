@@ -8,7 +8,10 @@ async function FooterExample(
 	component.renderSync(
 		<Footer {...props}>
 			<aside>
-				<p>Copyright © {new Date().getFullYear()} - All right reserved by ACME Industries Ltd</p>
+				<p>
+					Copyright © {new Date().getFullYear()} - All right reserved by ACME
+					Industries Ltd
+				</p>
 			</aside>
 		</Footer>,
 	);

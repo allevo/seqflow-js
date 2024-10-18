@@ -1,4 +1,4 @@
-import { Contexts } from "@seqflow/seqflow";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { ContentWithToc } from "../components/ContentWithToc";
 import * as main from "./GettingStarted.md";
 import * as prerequisites from "./GettingStarted_0prerequisites.md";
@@ -8,7 +8,10 @@ import * as refreshQuote from "./GettingStarted_3refreshQuote.md";
 import * as configuration from "./GettingStarted_4configuration.md";
 import * as test from "./GettingStarted_5test.md";
 
-export async function GettingStarted({}, {component, app}: Contexts) {
+export async function GettingStarted(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
 	const segments = app.router.segments;
 	if (segments.length === 1) {
 		component.renderSync(

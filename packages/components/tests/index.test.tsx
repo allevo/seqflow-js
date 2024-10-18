@@ -16,6 +16,6 @@ test("should increment and decrement the counter", async () => {
 	);
 
 	expect(document.body.innerHTML).toBe(
-		'<div><button class="btn" type="button" aria-live="polite"><span class="loading loading-spinner" key="loading" style="display: none;"></span><span key="loading-text" style="display: none;">Loading...</span><span>Button</span></button></div>',
+		'<div><button class="btn" type="button" aria-live="polite"><span key="loading" style="display: none;" class="loading loading-spinner"></span><span key="loading-text" style="display: none;">Loading...</span><span>Button</span></button></div>',
 	);
 });

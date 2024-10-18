@@ -1,5 +1,5 @@
 import type { Contexts } from "@seqflow/seqflow";
-import type { StoryFn } from "seqflow-js-storybook";
+import type { StoryFn } from "@seqflow/storybook";
 import { Divider } from ".";
 
 export default {

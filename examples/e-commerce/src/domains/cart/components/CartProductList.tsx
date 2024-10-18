@@ -48,8 +48,6 @@ export async function CartProductList(
 	data: { cart: Cart },
 	{ component, app }: Contexts,
 ) {
-	console.log("AAAAAAAAA");
-
 	if (data.cart.products.length === 0) {
 		component.renderSync(<EmptyCart />);
 		return;

@@ -1,7 +1,7 @@
 import { expect, userEvent, within } from "@storybook/test";
 
 import type { Contexts } from "@seqflow/seqflow";
-import type { StoryFn } from "seqflow-js-storybook";
+import type { StoryFn } from "@seqflow/storybook";
 import { Badge } from ".";
 
 export default {
