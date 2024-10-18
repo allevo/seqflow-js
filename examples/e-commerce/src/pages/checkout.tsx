@@ -1,9 +1,12 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 
-export async function Checkout(this: SeqflowFunctionContext) {
-	this.app.domains.cart.checkout();
+export async function Checkout(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
+	app.domains.cart.checkout();
 
-	this.renderSync(
+	component.renderSync(
 		<>
 			<p>Well done!</p>
 			<a key="go-home" href="/">
@@ -12,9 +15,9 @@ export async function Checkout(this: SeqflowFunctionContext) {
 		</>,
 	);
 
-	const events = this.waitEvents(this.domEvent("click", { key: "go-home" }));
+	const events = component.waitEvents(component.domEvent("go-home", "click"));
 	for await (const ev of events) {
 		ev.preventDefault();
-		this.app.router.navigate("/");
+		app.router.navigate("/");
 	}
 }

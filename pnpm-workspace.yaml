@@ -1,9 +1,5 @@
 packages:
   - 'packages/*'
+  - 'examples/*'
   - '!examples/gen-ai'
   - '!examples/orama-search-box'
-  - 'examples/counter'
-  - 'examples/custom-element'
-  - '!examples/e-commerce'
-  - 'examples/empty'
-  - 'examples/random-quote'

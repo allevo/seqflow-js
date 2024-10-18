@@ -254,3 +254,50 @@ test("renderSync: <>Foo</>", () => {
 	component.renderSync(<>{"foo"}</>);
 	expect(document.body.innerHTML).toBe("foo");
 });
+
+test("renderSync: <Foo className={undefined} style={undefined} />", () => {
+	async function Foo(
+		_: ComponentProps<unknown>,
+		{ component }: Contexts,
+	) {
+		component.renderSync('Foo');
+	}
+
+	component.renderSync(<Foo className={undefined} />);
+	expect(document.body.innerHTML).toBe("<div>Foo</div>");
+
+	document.body.innerHTML = '';
+
+	component.renderSync(<Foo className={null as unknown as undefined} />);
+	expect(document.body.innerHTML).toBe("<div>Foo</div>");
+
+	document.body.innerHTML = '';
+
+	component.renderSync(<Foo style={undefined} />);
+	expect(document.body.innerHTML).toBe("<div>Foo</div>");
+
+	document.body.innerHTML = '';
+
+	component.renderSync(<Foo style={null as unknown as undefined} />);
+	expect(document.body.innerHTML).toBe("<div>Foo</div>");
+});
+
+test("renderSync: <div className={undefined} style={undefined} />", () => {
+	component.renderSync(<div className={undefined}>Foo</div>);
+	expect(document.body.innerHTML).toBe("<div>Foo</div>");
+
+	document.body.innerHTML = '';
+
+	component.renderSync(<div className={null as unknown as undefined}>Foo</div>);
+	expect(document.body.innerHTML).toBe("<div>Foo</div>");
+
+	document.body.innerHTML = '';
+
+	component.renderSync(<div style={undefined}>Foo</div>);
+	expect(document.body.innerHTML).toBe("<div>Foo</div>");
+
+	document.body.innerHTML = '';
+
+	component.renderSync(<div style={null as unknown as undefined}>Foo</div>);
+	expect(document.body.innerHTML).toBe("<div>Foo</div>");
+});

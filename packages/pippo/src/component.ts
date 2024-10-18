@@ -296,10 +296,12 @@ export class SeqFlowComponentContext {
 			}
 		}
 		if (props && "className" in props && el instanceof HTMLElement) {
-			const v: NonNullable<JSX.IntrinsicAttributes['className']> =
-				props.className as NonNullable<JSX.IntrinsicAttributes['className']>;
-			const classes = Array.isArray(v) ? v : [...v.split(" ")];
-			el.classList.add(...classes.filter(Boolean));
+			const v =
+				props.className as JSX.IntrinsicAttributes['className'];
+			if (v) {
+				const classes = Array.isArray(v) ? v : [...v.split(" ")];
+				el.classList.add(...classes.filter(Boolean));
+			}
 		}
 
 		if (typeof tagNameOrComponentFunction !== "function") {

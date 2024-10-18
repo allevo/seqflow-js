@@ -1,4 +1,4 @@
-import { NavigationEvent, type SeqflowFunctionContext } from "seqflow-js";
+import { ComponentProps, Contexts, NavigationEvent } from "@seqflow/seqflow";
 import { Header } from "./components/Header";
 import { components } from "./domains/cart";
 import type { UserType } from "./domains/user";
@@ -11,8 +11,8 @@ import { Logout } from "./pages/logout";
 import { Profile } from "./pages/profile";
 import classes from "./router.module.css";
 
-async function NotFound(this: SeqflowFunctionContext) {
-	this.renderSync(
+async function NotFound(_: ComponentProps<unknown>, { component }: Contexts) {
+	component.renderSync(
 		<div>
 			<h1>404</h1>
 			<p>Not found</p>
@@ -41,10 +41,13 @@ function getComponent(path: string) {
 	}
 }
 
-export async function Router(this: SeqflowFunctionContext) {
-	const user: UserType | undefined = await this.app.domains.user.getUser();
+export async function Router(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
+	const user: UserType | undefined = await app.domains.user.getUser();
 	const Component = getComponent(window.location.pathname);
-	this.renderSync(
+	component.renderSync(
 		<div id={classes.app}>
 			<Header user={user} className={"header"} />
 			<Component key="main" className={classes.main} />
@@ -52,15 +55,18 @@ export async function Router(this: SeqflowFunctionContext) {
 		</div>,
 	);
 
-	const events = this.waitEvents(this.navigationEvent());
+	const events = component.waitEvents(component.navigationEvent());
 	for await (const ev of events) {
 		if (ev instanceof NavigationEvent) {
-			this.replaceChild("main", () => {
+			component.replaceChild("main", () => {
 				const Component = getComponent(ev.path);
 				return <Component key="main" className={classes.main} />;
 			});
 		} else {
-			console.error("Unknown event", ev);
+			app.log.error({
+				message: "Unknown event",
+				data: { event: ev },
+			});
 		}
 	}
 }

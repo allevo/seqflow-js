@@ -1,17 +1,17 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
-import { Button } from "seqflow-js-components";
+import { Button } from "@seqflow/components";
+import type { Contexts } from "@seqflow/seqflow";
 import type { Product } from "../../product";
 import classes from "./AddToCart.module.css";
 
 export async function AddToCart(
-	this: SeqflowFunctionContext,
 	data: { product: Product },
+	{ component, app }: Contexts,
 ) {
-	const initCount = this.app.domains.cart.getProductCount(data.product.id);
+	const initCount = app.domains.cart.getProductCount(data.product.id);
 
-	this._el.style.width = "100px";
+	component._el.style.width = "100px";
 
-	this.renderSync(
+	component.renderSync(
 		<>
 			<Button
 				className={[classes.firstAddToCart, "w-full"]}
@@ -50,11 +50,11 @@ export async function AddToCart(
 		</>,
 	);
 
-	const firstAddToCart = this.getChild("first-add-to-cart");
-	const secondAddToCart = this.getChild("second-add-to-cart");
-	const removeFromCart = this.getChild("remove-from-cart");
-	const otherAddToCartWrapper = this.getChild("other-add-to-cart-wrapper");
-	const counter = this.getChild("counter");
+	const firstAddToCart = component.getChild("first-add-to-cart");
+	const secondAddToCart = component.getChild("second-add-to-cart");
+	const removeFromCart = component.getChild("remove-from-cart");
+	const otherAddToCartWrapper = component.getChild("other-add-to-cart-wrapper");
+	const counter = component.getChild("counter");
 
 	if (initCount > 0) {
 		counter.textContent = `${initCount}`;
@@ -66,23 +66,21 @@ export async function AddToCart(
 		otherAddToCartWrapper.classList.remove(classes.show);
 	}
 
-	const events = this.waitEvents(
-		this.domEvent("click", {
-			el: this._el,
-		}),
+	const events = component.waitEvents(
+		component.domEvent(component._el, "click"),
 	);
 	for await (const ev of events) {
 		const target = ev.target as HTMLElement;
 		switch (true) {
 			case firstAddToCart.contains(target): {
-				const c = this.app.domains.cart.addToCart({ product: data.product });
+				const c = app.domains.cart.addToCart({ product: data.product });
 				counter.textContent = `${c}`;
 				otherAddToCartWrapper.classList.add(classes.show);
 				firstAddToCart.classList.remove(classes.show);
 				break;
 			}
 			case removeFromCart.contains(target): {
-				const remain = this.app.domains.cart.removeFromCart({
+				const remain = app.domains.cart.removeFromCart({
 					product: data.product,
 				});
 				counter.textContent = `${remain}`;
@@ -93,7 +91,7 @@ export async function AddToCart(
 				break;
 			}
 			case secondAddToCart.contains(target): {
-				const c = this.app.domains.cart.addToCart({ product: data.product });
+				const c = app.domains.cart.addToCart({ product: data.product });
 				counter.textContent = `${c}`;
 				break;
 			}

@@ -1,4 +1,4 @@
-import type { ApplicationConfiguration } from "seqflow-js";
+import type { ApplicationConfiguration } from "@seqflow/seqflow";
 
 export class ProductDomain {
 	constructor(private applicationConfig: Readonly<ApplicationConfiguration>) {}
