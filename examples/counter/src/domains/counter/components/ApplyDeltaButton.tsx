@@ -1,5 +1,5 @@
 import { ComponentProps, Contexts } from "@seqflow/seqflow";
-import { Button } from "seqflow-js-components";
+import { Button } from "@seqflow/components";
 
 export async function ApplyDeltaButton(
 	{ delta, label }: ComponentProps<{ delta: number; label: string }>,

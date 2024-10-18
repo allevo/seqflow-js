@@ -1,5 +1,5 @@
 import { ComponentProps, Contexts } from "@seqflow/seqflow";
-import { Prose } from "seqflow-js-components";
+import { Prose } from "@seqflow/components";
 import type { Quote } from "../QuoteDomain";
 import classes from "./Quote.module.css";
 

@@ -1,5 +1,5 @@
 import { ComponentProps, Contexts } from "@seqflow/seqflow";
-import { Button, Form, FormField, NumberInput } from "seqflow-js-components";
+import { Button, Form, FormField, NumberInput } from "@seqflow/components";
 import classes from "./SetCounterValue.module.css";
 
 export async function SetCounterValue(
