@@ -17,7 +17,7 @@ const extractArgTypes: ArgTypesExtractor = (component) => {
 }
 
 export const parameters: Parameters = {
-  renderer: 'seqflow-js-storybook',
+  renderer: '@seqflow/storybook',
   docs: {
     story: { inline: true },
     extractArgTypes,

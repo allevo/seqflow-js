@@ -1,16 +1,21 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { components } from "../domains/product";
 
-async function Loading(this: SeqflowFunctionContext) {
-	this.renderSync(<div>Loading...</div>);
+async function Loading(_: ComponentProps<unknown>, { component }: Contexts) {
+	component.renderSync(<div>Loading...</div>);
 }
 
-export async function Home(this: SeqflowFunctionContext) {
-	this.renderSync(<Loading />);
+export async function Home(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
+	component.renderSync(<Loading />);
 
-	const categories = await this.app.domains.product.fetchProductsCategories(
-		this.abortController.signal,
+	const categories = await app.domains.product.fetchProductsCategories(
+		component.ac.signal,
 	);
 
-	this.renderSync(<components.ProductCategoryList categories={categories} />);
+	component.renderSync(
+		<components.ProductCategoryList categories={categories} />,
+	);
 }

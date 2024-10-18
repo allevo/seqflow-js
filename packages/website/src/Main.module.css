@@ -1,0 +1,15 @@
+
+
+.wrapper {
+	@apply flex flex-col min-h-screen;
+}
+
+#main {
+	@apply flex-grow overflow-y-auto relative;
+}
+
+.header {
+	position: sticky;
+	top: 0px;
+	z-index: 50;
+}

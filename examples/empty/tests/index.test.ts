@@ -1,10 +1,10 @@
+import { start } from "@seqflow/seqflow";
 import { screen } from "@testing-library/dom";
-import { start } from "seqflow-js";
 import { expect, test } from "vitest";
 import { Main } from "../src/Main";
 
 test("should increment and decrement the counter", async () => {
-	start(document.body, Main, undefined, {});
+	start(document.body, Main, {}, {});
 
 	const el = await screen.findAllByText(/empty/i);
 

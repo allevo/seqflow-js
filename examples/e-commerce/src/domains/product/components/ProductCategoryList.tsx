@@ -1,14 +1,14 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
-import { Card } from "seqflow-js-components";
+import { Card } from "@seqflow/components";
+import type { Contexts } from "@seqflow/seqflow";
 import { CardList } from "../../../components/CardList";
 import type { ProductCategory } from "../ProductDomain";
 import classes from "./ProductCategoryList.module.css";
 
 async function CategoryItem(
-	this: SeqflowFunctionContext,
 	data: ProductCategory,
+	{ component, app }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<a className={classes.categoryAnchor} href={`/category/${data.name}`}>
 			<Card compact className={["image-full", classes.card]}>
 				<figure>
@@ -27,22 +27,21 @@ async function CategoryItem(
 		</a>,
 	);
 
-	const events = this.waitEvents(
-		this.domEvent("click", {
-			el: this._el,
+	const events = component.waitEvents(
+		component.domEvent(component._el, "click", {
 			preventDefault: true,
 		}),
 	);
 	for await (const ev of events) {
-		this.app.router.navigate(`/category/${data.name}`);
+		app.router.navigate(`/category/${data.name}`);
 	}
 }
 
 export async function ProductCategoryList(
-	this: SeqflowFunctionContext,
 	data: { categories: ProductCategory[] },
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<div className={classes.productList}>
 			<CardList
 				prefix="category"

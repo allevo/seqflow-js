@@ -1,11 +1,11 @@
-import { screen, waitFor } from "@testing-library/dom";
+import { screen } from "@testing-library/dom";
 
 import userEvent from "@testing-library/user-event";
 
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
-import { InMemoryRouter, start } from "seqflow-js";
+import { InMemoryRouter, start } from "@seqflow/seqflow";
 import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
 import { Main } from "../src/Main";
 import { CartDomain } from "../src/domains/cart";
@@ -123,26 +123,31 @@ afterAll(() => server.close());
 
 test("The user should buy products", async () => {
 	const router = new InMemoryRouter(new EventTarget(), "/");
-	start(document.body, Main, undefined, {
-		domains: {
-			user: (eventTarget, _, config) => {
-				return new UserDomain(eventTarget, config);
+	start(
+		document.body,
+		Main,
+		{},
+		{
+			domains: {
+				user: (eventTarget, _, config) => {
+					return new UserDomain(eventTarget, config);
+				},
+				cart: (eventTarget, _, config) => {
+					return new CartDomain(eventTarget);
+				},
+				product: (_1, _, config) => {
+					return new ProductDomain(config);
+				},
 			},
-			cart: (eventTarget, _, config) => {
-				return new CartDomain(eventTarget);
-			},
-			product: (_1, _, config) => {
-				return new ProductDomain(config);
+			// log: console,
+			router,
+			config: {
+				api: {
+					baseUrl: "",
+				},
 			},
 		},
-		// log: console,
-		router,
-		config: {
-			api: {
-				baseUrl: "",
-			},
-		},
-	});
+	);
 
 	const electronicsCategory = await screen.findByText(/electronics/i);
 	electronicsCategory.click();

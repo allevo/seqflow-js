@@ -2,8 +2,8 @@
     "compilerOptions": {
         "lib": ["es2015", "dom"],
         "jsx": "react",
-        "jsxFactory": "this.createDOMElement",
-        "jsxFragmentFactory": "this.createDOMFragment",
+        "jsxFactory": "component.createDOMElement",
+        "jsxFragmentFactory": "component.createDOMFragment",
         "strict": true,
         "skipLibCheck": true,
         "target": "ES2020",
@@ -13,12 +13,10 @@
         "forceConsistentCasingInFileNames": true,
         "rootDir": "./",
         "resolveJsonModule": true,
-        "isolatedModules": true,
-        "types": ["@testing-library/jest-dom"],
+        "isolatedModules": true
     },
     "include": [
         "./src/**/*",
-        "./tests/**/*",
-        "./node_modules/@types/**/*.d.ts"
+        "./tests/**/*"
     ],
 }

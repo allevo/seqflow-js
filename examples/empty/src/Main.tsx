@@ -1,9 +1,12 @@
-import { type SeqflowFunctionContext } from "seqflow-js";
-import { Card } from "seqflow-js-components";
+import { Card } from "@seqflow/components";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import classes from "./Main.module.css";
 
-export async function Main(this: SeqflowFunctionContext) {
-	this.renderSync(
+export async function Main(
+	_: ComponentProps<unknown>,
+	{ component }: Contexts,
+) {
+	component.renderSync(
 		<Card className={classes["card-wrapper"]}>
 			<Card.Body>
 				<Card.Title level={1}>Empty example</Card.Title>

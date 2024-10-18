@@ -1,5 +1,5 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
-import { Button, Navbar } from "seqflow-js-components";
+import { Button, Navbar } from "@seqflow/components";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { CartBadge } from "../domains/cart/components/CartBadge";
 import type { UserType } from "../domains/user";
 import { UserProfileBadge } from "../domains/user/components/UserProfileBadge";
@@ -8,10 +8,10 @@ import classes from "./Header.module.css";
 import icon from "./icon.png";
 
 export async function Header(
-	this: SeqflowFunctionContext,
-	data: { user?: UserType },
+	data: ComponentProps<{ user?: UserType }>,
+	{ component, app }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<Navbar className={classes.header}>
 			<Navbar.Start>
 				<a href="/">
@@ -35,28 +35,31 @@ export async function Header(
 
 	const user: UserType | undefined = data.user;
 	const className = user ? classes.logged : classes.unlogged;
-	this._el.classList.add(className);
+	component._el.classList.add(className);
 
-	const events = this.waitEvents(
-		this.domainEvent(UserLoggedEvent),
-		this.domainEvent(UserLoggedOutEvent),
-		this.domEvent("click", {
-			el: this._el,
+	const events = component.waitEvents(
+		component.domainEvent(UserLoggedEvent),
+		component.domainEvent(UserLoggedOutEvent),
+		component.domEvent(component._el, "click", {
 			preventDefault: true,
 		}),
 	);
 
 	for await (const ev of events) {
 		if (ev instanceof UserLoggedEvent) {
-			this._el.classList.add(classes.logged);
-			this._el.classList.remove(classes.unlogged);
+			component._el.classList.add(classes.logged);
+			component._el.classList.remove(classes.unlogged);
 		} else if (ev instanceof UserLoggedOutEvent) {
-			this._el.classList.add(classes.unlogged);
-			this._el.classList.remove(classes.logged);
-		} else if (this.getChild("sign-in").contains(ev.target as HTMLElement)) {
-			this.app.router.navigate("/login");
-		} else if (this.getChild("store-logo").contains(ev.target as HTMLElement)) {
-			this.app.router.navigate("/");
+			component._el.classList.add(classes.unlogged);
+			component._el.classList.remove(classes.logged);
+		} else if (
+			component.getChild("sign-in").contains(ev.target as HTMLElement)
+		) {
+			app.router.navigate("/login");
+		} else if (
+			component.getChild("store-logo").contains(ev.target as HTMLElement)
+		) {
+			app.router.navigate("/");
 		}
 	}
 }

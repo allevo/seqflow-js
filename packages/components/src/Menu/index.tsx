@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export interface MenuPropsType {
 	direction?: "horizontal" | "vertical";
@@ -6,17 +6,17 @@ export interface MenuPropsType {
 }
 
 export async function Menu(
-	this: SeqflowFunctionContext,
-	{ direction, children, size }: SeqflowFunctionData<MenuPropsType>,
+	{ direction, children, size }: ComponentProps<MenuPropsType>,
+	{ component, app }: Contexts,
 ) {
-	this._el.classList.add(...["menu", "rounded-box"]);
+	component._el.classList.add(...["menu", "rounded-box"]);
 
 	if (direction) {
 		/*
 		menu-horizontal
 		menu-vertical
 		*/
-		this._el.classList.add(`menu-${direction}`);
+		component._el.classList.add(`menu-${direction}`);
 	}
 	if (size) {
 		/*
@@ -25,32 +25,32 @@ export async function Menu(
 		menu-md
 		menu-lg
 		*/
-		this._el.classList.add(`menu-${size}`);
+		component._el.classList.add(`menu-${size}`);
 	}
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Menu component must have children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 Menu.tagName = () => "ul";
 
 export async function MenuItem(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "MenuItem component must have children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 MenuItem.tagName = () => "li";
 
@@ -59,10 +59,10 @@ export interface SubMenuPropsType {
 }
 
 export async function SubMenu(
-	this: SeqflowFunctionContext,
-	{ label, children }: SeqflowFunctionData<SubMenuPropsType>,
+	{ label, children }: ComponentProps<SubMenuPropsType>,
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<>
 			<summary
 				className={["btn", "btn-ghost"]}
@@ -76,20 +76,20 @@ export async function SubMenu(
 }
 SubMenu.tagName = () => "details";
 export async function SubMenuItem(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "SubMenuItem component must have children",
 		});
 		return;
 	}
 
-	this._el.style.alignItems = "flex-start";
-	this._el.style.justifyContent = "flex-start";
+	component._el.style.alignItems = "flex-start";
+	component._el.style.justifyContent = "flex-start";
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 SubMenuItem.tagName = () => "li";
 

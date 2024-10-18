@@ -2,9 +2,9 @@ import { screen } from "@testing-library/dom";
 
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
+import { afterAll, afterEach, beforeAll, test } from "vitest";
 
-import { start } from "seqflow-js";
+import { start } from "@seqflow/seqflow";
 import { Main } from "../src/Main";
 import { QuoteDomain } from "../src/domains/quote";
 
@@ -25,17 +25,22 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 test("should render the quote and refresh it", async () => {
-	start(document.body, Main, undefined, {
-		config: {
-			api: {
-				// Route to the mock server
-				baseUrl: "",
+	start(
+		document.body,
+		Main,
+		{},
+		{
+			config: {
+				api: {
+					// Route to the mock server
+					baseUrl: "",
+				},
+			},
+			domains: {
+				quotes: (et, _, config) => new QuoteDomain(et, config.api.baseUrl),
 			},
 		},
-		domains: {
-			quotes: (et, _, config) => new QuoteDomain(et, config.api.baseUrl),
-		},
-	});
+	);
 
 	await screen.findByText("Click the button to read a quote");
 

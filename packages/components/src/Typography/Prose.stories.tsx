@@ -1,12 +1,12 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
-import type { StoryFn } from "seqflow-js-storybook";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
+import type { StoryFn } from "@seqflow/storybook";
 import { Heading, HeadingProps, Prose } from ".";
 
 async function HeadingStory(
-	this: SeqflowFunctionContext,
-	{ children, ...props }: SeqflowFunctionData<HeadingProps>,
+	{ children, ...props }: ComponentProps<HeadingProps>,
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<Prose>
 			<Heading {...props}>Heading</Heading>
 			<p>
@@ -28,11 +28,11 @@ export default {
 	args: {},
 };
 
-export const Simple: StoryFn<{ label: string }> = async function (
-	this: SeqflowFunctionContext,
+export const Simple: StoryFn<{ label: string }> = async (
 	{ label },
-) {
-	this.renderSync(
+	{ component }: Contexts,
+) => {
+	component.renderSync(
 		<Prose>
 			<Heading>{label}</Heading>
 			<p>
@@ -45,11 +45,11 @@ export const Simple: StoryFn<{ label: string }> = async function (
 	);
 };
 
-export const MoreText: StoryFn<{ label: string }> = async function (
-	this: SeqflowFunctionContext,
+export const MoreText: StoryFn<{ label: string }> = async (
 	{ label },
-) {
-	this.renderSync(
+	{ component }: Contexts,
+) => {
+	component.renderSync(
 		<Prose className="m-auto">
 			<Heading>{label}</Heading>
 			<p>

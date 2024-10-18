@@ -1,4 +1,6 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Divider, Footer } from "@seqflow/components";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
+import classes from "./Main.module.css";
 import { Header } from "./components/Header";
 import { ApiReference } from "./pages/ApiReference";
 import { Example } from "./pages/Example";
@@ -21,20 +23,32 @@ function getComponent(path: string[]) {
 	}
 }
 
-export async function Main(this: SeqflowFunctionContext) {
-	const InitalComponent = getComponent(this.app.router.segments);
-	this.renderSync(
+export async function Main(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
+	component._el.classList.add(classes.wrapper);
+	const InitalComponent = getComponent(app.router.segments);
+	component.renderSync(
 		<>
-			<Header style={{ position: "sticky", top: "0px", zIndex: "50" }} />
-			<div id="main" className="flex-grow-1 overflow-y-auto relative">
+			<Header className={classes.header} />
+			<div id={classes.main}>
 				<InitalComponent key="main" />
 			</div>
+			<Footer center style="height: 100px; background-color: rgb(43, 48, 53);">
+				<aside>
+					<p>
+						Seqflow, Copyright © {new Date().getFullYear()} The Seqflow team,
+						Licensed under MIT
+					</p>
+				</aside>
+			</Footer>
 		</>,
 	);
 
-	const events = this.waitEvents(this.navigationEvent());
+	const events = component.waitEvents(component.navigationEvent());
 	for await (const _ of events) {
-		const Component = getComponent(this.app.router.segments);
-		this.replaceChild("main", () => <Component key="main" />);
+		const Component = getComponent(app.router.segments);
+		component.replaceChild("main", () => <Component key="main" />);
 	}
 }

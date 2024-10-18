@@ -1,12 +1,12 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
-import type { StoryFn } from "seqflow-js-storybook";
+import type { Contexts } from "@seqflow/seqflow";
+import type { StoryFn } from "@seqflow/storybook";
 import { type BubbleProps, ChatBubble, type ChatBubbleProps } from ".";
 
 async function ChatBubbleStory(
-	this: SeqflowFunctionContext,
 	props: ChatBubbleProps,
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<>
 			<ChatBubble {...props}>
 				<ChatBubble.Bubble>
@@ -35,9 +35,10 @@ export default {
 
 export const Empty = {};
 
-export const AllColors: StoryFn<unknown> = async function (
-	this: SeqflowFunctionContext,
-) {
+export const AllColors: StoryFn<object> = async (
+	_,
+	{ component }: Contexts,
+) => {
 	const colors: BubbleProps["color"][] = [
 		"primary",
 		"secondary",
@@ -58,5 +59,5 @@ export const AllColors: StoryFn<unknown> = async function (
 		);
 	}
 
-	this.renderSync(elements);
+	component.renderSync(elements);
 };

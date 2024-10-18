@@ -1,8 +1,11 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 
-export async function Logout(this: SeqflowFunctionContext) {
+export async function Logout(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
 	// blank
-	this.renderSync("");
-	await this.app.domains.user.logout();
-	this.app.router.navigate("/");
+	component.renderSync("");
+	await app.domains.user.logout();
+	app.router.navigate("/");
 }

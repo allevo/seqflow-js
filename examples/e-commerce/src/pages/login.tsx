@@ -1,4 +1,3 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
 import {
 	Button,
 	Card,
@@ -7,11 +6,15 @@ import {
 	FormField,
 	TextInput,
 	type TextInputComponent,
-} from "seqflow-js-components";
+} from "@seqflow/components";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import type { UserType } from "../domains/user";
 
-export async function Login(this: SeqflowFunctionContext) {
-	this.renderSync(
+export async function Login(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
+	component.renderSync(
 		<Form key="login-form">
 			<Card compact className={"m-auto w-96 bg-zinc-700"} shadow="md">
 				<Card.Body>
@@ -33,16 +36,16 @@ export async function Login(this: SeqflowFunctionContext) {
 		</Form>,
 	);
 
-	const usernameInput = this.getChild<TextInputComponent>("username");
-	const form = this.getChild<FormComponent>("login-form");
-	const events = this.waitEvents(
-		this.domEvent("submit", { el: form, preventDefault: true }),
+	const usernameInput = component.getChild<TextInputComponent>("username");
+	const form = component.getChild<FormComponent>("login-form");
+	const events = component.waitEvents(
+		component.domEvent("login-form", "submit", { preventDefault: true }),
 	);
 	let user: UserType | undefined;
 	for await (const _ of events) {
 		const username = usernameInput.value;
 		const user = await form.runAsync(async () => {
-			return await this.app.domains.user.login({ username });
+			return await app.domains.user.login({ username });
 		});
 
 		if (!user) {
@@ -53,10 +56,10 @@ export async function Login(this: SeqflowFunctionContext) {
 		break;
 	}
 
-	this.app.log.info({
+	app.log.info({
 		message: "User logged in",
 		data: { user },
 	});
 
-	this.app.router.navigate("/");
+	app.router.navigate("/");
 }

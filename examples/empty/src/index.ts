@@ -1,8 +1,13 @@
-import { start } from "seqflow-js";
-import "seqflow-js-components/style.css";
+import "@seqflow/components/style.css";
+import { start } from "@seqflow/seqflow";
 import { Main } from "./Main";
 import "./index.css";
 
-start(document.getElementById("root")!, Main, undefined, {
-	log: console,
-});
+start(
+	document.getElementById("root")!,
+	Main,
+	{},
+	{
+		log: console,
+	},
+);

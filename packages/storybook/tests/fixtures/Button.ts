@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 export interface ButtonPropsType {
 	/** The text */
@@ -22,8 +22,7 @@ export interface ButtonPropsType {
 }
 
 export async function Button(
-	this: SeqflowFunctionContext,
-	_: ButtonPropsType,
+	t: ButtonPropsType,
+	c: Contexts,
 ) {
-	
 }

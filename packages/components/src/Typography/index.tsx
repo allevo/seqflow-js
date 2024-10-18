@@ -1,17 +1,17 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export async function Prose(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
-	this._el.classList.add("prose");
+	component._el.classList.add("prose");
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Prose component requires children",
 		});
 		return;
 	}
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 export interface HeadingProps {
@@ -20,17 +20,17 @@ export interface HeadingProps {
 }
 
 export async function Heading(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<HeadingProps>,
+	{ children }: ComponentProps<HeadingProps>,
+	{ component, app }: Contexts,
 ) {
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Heading component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 Heading.tagName = (props: HeadingProps) => {
 	return `h${props.level || 1}`;

@@ -38,7 +38,7 @@ const config = {
     builder: '@storybook/builder-vite', // 👈 The builder enabled here.
   },
   framework: {
-    name: getAbsolutePath("seqflow-js-storybook"),
+    name: getAbsolutePath("@seqflow/storybook"),
     options: {},
   },
 };

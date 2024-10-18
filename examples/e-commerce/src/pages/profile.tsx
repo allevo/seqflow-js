@@ -1,14 +1,17 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
-import { Card } from "seqflow-js-components";
+import { Card } from "@seqflow/components";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
-export async function Profile(this: SeqflowFunctionContext) {
-	const user = await this.app.domains.user.getUser();
+export async function Profile(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
+	const user = await app.domains.user.getUser();
 	if (!user) {
-		this.app.router.navigate("/login");
+		app.router.navigate("/login");
 		return;
 	}
 
-	this.renderSync(
+	component.renderSync(
 		<Card compact shadow="md" className={"m-auto !w-96 bg-zinc-700"}>
 			<Card.Body>
 				<Card.Title level={2}>Profile</Card.Title>

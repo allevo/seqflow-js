@@ -1,5 +1,5 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
-import { Card, Divider, Loading, Prose } from "seqflow-js-components";
+import { Card, Divider, Loading, Prose } from "@seqflow/components";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import classes from "./Main.module.css";
 import {
 	FetchingNewQuote,
@@ -9,8 +9,11 @@ import {
 	RefreshQuoteButton,
 } from "./domains/quote";
 
-export async function Main(this: SeqflowFunctionContext) {
-	this.renderSync(
+export async function Main(
+	_: ComponentProps<unknown>,
+	{ component }: Contexts,
+) {
+	component.renderSync(
 		<Card className={[classes.main]} compact shadow="xl">
 			<Card.Body>
 				<div key="loading" />
@@ -25,19 +28,19 @@ export async function Main(this: SeqflowFunctionContext) {
 		</Card>,
 	);
 
-	const events = this.waitEvents(
-		this.domainEvent(FetchingNewQuote),
-		this.domainEvent(NewQuoteFetched),
-		this.domainEvent(QuoteErrorFetched),
+	const events = component.waitEvents(
+		component.domainEvent(FetchingNewQuote),
+		component.domainEvent(NewQuoteFetched),
+		component.domainEvent(QuoteErrorFetched),
 	);
 	for await (const ev of events) {
 		if (ev instanceof FetchingNewQuote) {
-			this.replaceChild("loading", () => (
+			component.replaceChild("loading", () => (
 				<Loading className={classes.loading} key="loading" />
 			));
-			this.getChild("quote").classList.add(classes.hide);
+			component.getChild("quote").classList.add(classes.hide);
 		} else if (ev instanceof NewQuoteFetched) {
-			this.replaceChild("quote", () => {
+			component.replaceChild("quote", () => {
 				return (
 					<QuoteComponent
 						key="quote"
@@ -46,16 +49,16 @@ export async function Main(this: SeqflowFunctionContext) {
 					/>
 				);
 			});
-			this.replaceChild("loading", () => <div key="loading" />);
+			component.replaceChild("loading", () => <div key="loading" />);
 		} else if (ev instanceof QuoteErrorFetched) {
-			this.replaceChild("quote", () => {
+			component.replaceChild("quote", () => {
 				return (
 					<div key="quote" className={classes.quote}>
 						{ev.detail}
 					</div>
 				);
 			});
-			this.replaceChild("loading", () => <div key="loading" />);
+			component.replaceChild("loading", () => <div key="loading" />);
 		}
 	}
 }

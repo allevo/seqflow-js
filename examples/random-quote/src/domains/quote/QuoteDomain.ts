@@ -1,22 +1,22 @@
-import { createDomainEventClass } from "seqflow-js";
+import { createDomainEventClass } from "@seqflow/seqflow";
 
 export interface Quote {
 	content: string;
 	author: string;
 }
 
-export const FetchingNewQuote = createDomainEventClass<unknown>(
-	"quotes",
-	"fetching-new-quote",
-);
-export const NewQuoteFetched = createDomainEventClass<Quote>(
-	"quotes",
-	"new-quote-fetched",
-);
-export const QuoteErrorFetched = createDomainEventClass<string>(
-	"quotes",
-	"quote-error-fetched",
-);
+export const FetchingNewQuote = createDomainEventClass<
+	unknown,
+	"fetching-new-quote"
+>("quotes", "fetching-new-quote");
+export const NewQuoteFetched = createDomainEventClass<
+	Quote,
+	"new-quote-fetched"
+>("quotes", "new-quote-fetched");
+export const QuoteErrorFetched = createDomainEventClass<
+	string,
+	"quote-error-fetched"
+>("quotes", "quote-error-fetched");
 
 export class QuoteDomain {
 	constructor(
