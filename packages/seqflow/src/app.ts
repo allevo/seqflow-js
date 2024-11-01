@@ -50,22 +50,27 @@ type DomainCreators = {
 	) => Domains[K];
 };
 
-export type StartConfiguration<Domains extends object> = Omit<
-	Partial<SeqflowAppContext<Domains>>,
-	"log" | "domains" | "configuration"
-> & {
-	log?: Partial<SeqflowAppContext<Domains>["log"]>;
-} & (object extends SeqflowAppContext<Domains>["config"] // If the ApplicationConfiguration is empty,
-		? // we allow to not pass it
-			object
-		: // otherwise we require it
-			{ config: SeqflowAppContext<Domains>["config"] }) &
-	(object extends SeqflowAppContext<Domains>["domains"] // If the Domains is empty,
-		? // we allow to not pass it
-			{ domains?: DomainCreators }
-		: { domains: DomainCreators }) & {
-		plugins?: SeqflowPlugin[];
-	};
+export type StartConfiguration<Domains extends object> = {
+	log?: Partial<LogFunctions>;
+	plugins?: SeqflowPlugin[];
+	router?: Router;
+	idGenerator?: IdGenerator;
+} & (object extends ApplicationConfiguration
+	? {
+			config?: unknown;
+		}
+	: // If the ApplicationConfiguration is empty, we allow to not pass it
+		{
+			config: ApplicationConfiguration;
+		}) &
+	(object extends Domains
+		? {
+				domains?: unknown;
+			}
+		: // If the Domains is empty, we allow to not pass it
+			{ domains: DomainCreators });
+
+const DEFAULT_ID_GENERATOR = () => Math.random().toString(36).slice(2);
 
 function createApp(
 	configuration: StartConfiguration<Domains>,
@@ -124,18 +129,18 @@ function createApp(
 		domains[domainName] = domainFunction(
 			domainEventTargets[domainName],
 			domainEventTargets as DomainEventTargets,
-			configuration.config,
+			configuration.config as Readonly<ApplicationConfiguration>,
 		) as Domains[keyof Domains];
 	}
 
 	return new SeqflowAppContext(
 		configuration.log as SeqflowAppContext<Domains>["log"],
-		configuration.config,
+		configuration.config as Readonly<ApplicationConfiguration>,
 		domains,
 		configuration.router,
 		domainEventTargets as DomainEventTargets,
 		pluginManager,
-		configuration.idGenerator || (() => Math.random().toString(36).slice(2)),
+		configuration.idGenerator || DEFAULT_ID_GENERATOR,
 	);
 }
 
@@ -154,11 +159,7 @@ export function start<
 
 	app.router.install();
 
-	const comp = new SeqFlowComponentContext(
-		root,
-		appAbortController,
-		app,
-	);
+	const comp = new SeqFlowComponentContext(root, appAbortController, app);
 
 	root.appendChild(comp.createDOMElement(mainComponent, data));
 
