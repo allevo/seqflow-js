@@ -3,3 +3,5 @@ packages:
   - 'examples/*'
   - '!examples/gen-ai'
   - '!examples/orama-search-box'
+  - '!tools/*'
+  - '!apps'

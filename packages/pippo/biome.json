@@ -46,7 +46,8 @@
 				"all": false
 			  },
 			  "style": {
-				"useSelfClosingElements": "off"
+				"useSelfClosingElements": "off",
+				"noNonNullAssertion": "off"
 			  }
 			}
 		  }

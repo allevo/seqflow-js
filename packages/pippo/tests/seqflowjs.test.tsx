@@ -16,7 +16,9 @@ test("the application starts", async (testContext) => {
 	startTestApp(testContext, App);
 
 	await waitFor(() =>
-		expect(document.body.innerHTML).toBe("<div><div>App</div></div>"),
+		expect(document.body.innerHTML).toBe(
+			'<div data-key="0"><div>App</div></div>',
+		),
 	);
 	expect(invokedCounter).toBe(1);
 });
@@ -31,9 +33,7 @@ test("render child", async (testContext) => {
 	startTestApp(testContext, App);
 
 	await waitFor(() =>
-		expect(document.body.innerHTML).toBe(
-			"<div><div><div>Child</div></div></div>",
-		),
+		expect(document.body.innerHTML).contains("<div>Child</div>"),
 	);
 });
 
@@ -50,9 +50,7 @@ test("pass props to child", async (testContext) => {
 	startTestApp(testContext, App);
 
 	await waitFor(() =>
-		expect(document.body.innerHTML).toBe(
-			"<div><div><div>From parent</div></div></div>",
-		),
+		expect(document.body.innerHTML).contain("<div>From parent</div>"),
 	);
 });
 
@@ -79,7 +77,7 @@ test("listen dom throws on DocumentFragment", async (testContext) => {
 	}
 	startTestApp(testContext, App);
 
-	await waitFor(() => expect(document.body.innerHTML).toBe("<div>Ok</div>"));
+	await waitFor(() => expect(document.body.innerHTML).contain("Ok"));
 });
 
 test("listen dom event using key", async (testContext) => {

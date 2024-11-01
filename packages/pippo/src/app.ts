@@ -4,6 +4,7 @@ import {
 	SeqFlowComponentContext,
 	type SeqflowComponent,
 } from ".";
+import { type SeqflowPlugin, SeqflowPluginManager } from "./plugin";
 import { BrowserRouter, type Router } from "./router";
 
 export interface Log {
@@ -19,7 +20,7 @@ export interface LogFunctions {
 
 type DomainNames = keyof Domains;
 
-type DomainEventTargets = Record<keyof Domains, EventTarget>;
+export type DomainEventTargets = Record<keyof Domains, EventTarget>;
 
 export class SeqflowAppContext<Domains> {
 	constructor(
@@ -28,6 +29,9 @@ export class SeqflowAppContext<Domains> {
 		public domains: Readonly<Domains>,
 		public router: Readonly<Router>,
 		private domainEventTargets: DomainEventTargets,
+		public pluginManager: SeqflowPluginManager,
+		public idGenerator: () => string = () =>
+			Math.random().toString(36).slice(2),
 	) {}
 
 	getDomainEventTarget(domainName: keyof Domains): EventTarget {
@@ -58,7 +62,9 @@ export type StartConfiguration<Domains extends object> = Omit<
 	(object extends SeqflowAppContext<Domains>["domains"] // If the Domains is empty,
 		? // we allow to not pass it
 			{ domains?: DomainCreators }
-		: { domains: DomainCreators });
+		: { domains: DomainCreators }) & {
+		plugins?: SeqflowPlugin[];
+	};
 
 function applyDefault(
 	configuration: StartConfiguration<Domains>,
@@ -88,6 +94,8 @@ function applyDefault(
 		configuration.config = {} as Readonly<ApplicationConfiguration>;
 	}
 
+	const pluginManager = new SeqflowPluginManager(configuration.plugins ?? []);
+
 	// Build domains...
 	// First all event targets
 	const domainsFuctions: DomainCreators =
@@ -97,6 +105,11 @@ function applyDefault(
 	for (const domainName of domainNames) {
 		domainEventTargets[domainName] = new EventTarget();
 	}
+
+	pluginManager.onDomainEventTargetsCreated(
+		domainEventTargets as DomainEventTargets,
+	);
+
 	// Then all domains
 	const domains = {} as Domains;
 	for (const domainName of domainNames) {
@@ -120,6 +133,8 @@ function applyDefault(
 		domains,
 		configuration.router,
 		domainEventTargets as DomainEventTargets,
+		pluginManager,
+		configuration.idGenerator || (() => Math.random().toString(36).slice(2)),
 	);
 }
 

@@ -6,6 +6,7 @@ import {
 	start,
 } from "../src";
 import { createDomainEventClass } from "../src/domains";
+import { type SeqflowPlugin, SeqflowPluginManager } from "../src/plugin";
 import { InMemoryRouter } from "../src/router";
 
 export async function sleep(ms: number) {
@@ -69,21 +70,23 @@ declare module "../src/types" {
 export function startTestApp(
 	testContext: TaskContext<any>,
 	App: SeqflowComponent<any>,
+	appProps: Record<string, unknown> = {},
+	plugins: SeqflowPlugin[] = [],
 ) {
-	const abortController = start(
-		document.body,
-		App,
-		{},
-		{
-			domains: {
-				counter: (et) => new CounterDomain(et),
-			},
-			config: {
-				foo: "bar",
-			},
+	let i = 0;
+	const abortController = start(document.body, App, appProps, {
+		domains: {
+			counter: (et) => new CounterDomain(et),
 		},
-	);
+		config: {
+			foo: "bar",
+		},
+		plugins,
+		idGenerator: () => `${i++}`,
+	});
 	abortOnTestFinished(testContext, abortController);
+
+	return abortController;
 }
 
 function abortOnTestFinished(
@@ -97,6 +100,7 @@ function abortOnTestFinished(
 
 export function createAppForInnerTest(logs: any[]): SeqflowAppContext<Domains> {
 	const counterEventTarget = new EventTarget();
+	let i = 0;
 	return new SeqflowAppContext<Domains>(
 		{
 			debug: (...args: any[]) => logs.push(args),
@@ -113,5 +117,7 @@ export function createAppForInnerTest(logs: any[]): SeqflowAppContext<Domains> {
 		{
 			counter: counterEventTarget,
 		},
+		new SeqflowPluginManager([]),
+		() => `${i++}`,
 	);
 }

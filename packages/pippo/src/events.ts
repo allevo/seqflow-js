@@ -114,9 +114,15 @@ export async function* combineEventAsyncGenerators<
 	// This is the case when we have only one generator
 	// This is the simple case, we just return the generator
 	if (fns.length === 1) {
-		abortController.signal.addEventListener("abort", (r) => {
-			combineEventAsyncGeneratorAbortController.abort(r);
-		});
+		abortController.signal.addEventListener(
+			"abort",
+			(r) => {
+				combineEventAsyncGeneratorAbortController.abort(r);
+			},
+			{
+				once: true,
+			},
+		);
 		const g = fns[0](combineEventAsyncGeneratorAbortController);
 		for await (const e of g) {
 			yield e;
@@ -126,12 +132,14 @@ export async function* combineEventAsyncGenerators<
 		return;
 	}
 
-	abortController.signal.addEventListener("abort", (r) => {
+	const onAbort = (e: Event) => {
 		combineEventAsyncGeneratorAbortController.signal.dispatchEvent(
 			WAKEUP_EVENT,
 		);
-		combineEventAsyncGeneratorAbortController.abort(r);
-	});
+		combineEventAsyncGeneratorAbortController.abort(e);
+		abortController.signal.removeEventListener("abort", onAbort);
+	};
+	abortController.signal.addEventListener("abort", onAbort);
 
 	const queue: unknown[] = [];
 	Promise.all(

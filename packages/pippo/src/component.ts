@@ -1,4 +1,5 @@
 import type {
+	Contexts,
 	Domains,
 	ElementProperty,
 	SeqflowAppContext,
@@ -13,6 +14,12 @@ import {
 	navigationEvent,
 } from "./events";
 import type { NavigationEvent } from "./router";
+
+class ReplaceChildComponentEvent extends Event {
+	constructor(public key: string) {
+		super(`replace-component-${key}`);
+	}
+}
 
 function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 	element: X,
@@ -36,6 +43,9 @@ function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 			continue;
 		}
 		if (key === "style") {
+			continue;
+		}
+		if (key === "key") {
 			continue;
 		}
 
@@ -93,10 +103,6 @@ function addChildren(
 				break;
 		}
 	}
-}
-
-function generateId() {
-	return Math.random().toString(36).slice(2);
 }
 
 type GetYieldType<A extends EventAsyncGenerator<unknown>> = Exclude<
@@ -173,6 +179,7 @@ export class SeqFlowComponentContext {
 				);
 			}
 		} else if (tagNameOrComponentFunction instanceof Function) {
+			// Create wrapper element
 			const tagName =
 				(tagNameOrComponentFunction as SeqflowComponent<object>).tagName ??
 				DEFAULT_TAG_NAME;
@@ -184,14 +191,46 @@ export class SeqFlowComponentContext {
 				this.app,
 			);
 
-			this.ac.signal.addEventListener("abort", (reason) => {
-				childAbortController.abort(reason);
-			});
-
 			props.key =
-				props && "key" in props ? (props.key as string) : generateId();
+				props && "key" in props
+					? (props.key as string)
+					: this.app.idGenerator();
+
+			// If the parent component (here `this` is the parent) is aborted
+			// we have to abort the child component
+			const onAbort = () => {
+				childAbortController.abort();
+				this.ac.signal.removeEventListener("abort", onAbort);
+				this.ac.signal.removeEventListener(
+					`replace-component-${props.key}`,
+					onReplaceChild,
+				);
+			};
+			this.ac.signal.addEventListener("abort", onAbort);
+
+			// When the parent component (here `this` is the parent) want to replace a child
+			// we have to abort the child component
+			const onReplaceChild = () => {
+				childAbortController.abort();
+				this.ac.signal.removeEventListener(
+					`replace-component-${props.key}`,
+					onReplaceChild,
+				);
+			};
+			this.ac.signal.addEventListener(
+				`replace-component-${props.key}`,
+				onReplaceChild,
+			);
 
 			const componentName = tagNameOrComponentFunction.name;
+
+			const contexts: Contexts = {
+				component: childComponentContext,
+				app: this.app,
+			};
+
+			this.app.pluginManager.onComponentCreated(contexts, props);
+
 			let output: void | Promise<void> = undefined;
 			try {
 				output = tagNameOrComponentFunction(
@@ -199,10 +238,14 @@ export class SeqFlowComponentContext {
 						...props,
 						children,
 					},
-					{ component: childComponentContext, app: this.app },
+					contexts,
 				);
 			} catch (e) {
 				const err = e as Error;
+				this.app.pluginManager.onComponentEnded(contexts, props, {
+					status: "error",
+					error: err,
+				});
 				this.app.log.error({
 					message: "Component throws an error",
 					data: {
@@ -217,6 +260,9 @@ export class SeqFlowComponentContext {
 			if (output instanceof Promise) {
 				output.then(
 					() => {
+						this.app.pluginManager.onComponentEnded(contexts, props, {
+							status: "success",
+						});
 						this.app.log.debug({
 							message: "Component rendering ended",
 							data: {
@@ -226,19 +272,41 @@ export class SeqFlowComponentContext {
 						});
 					},
 					(e) => {
-						this.app.log.error({
-							message: "Component throws an error",
-							data: {
-								componentOption: props,
-								componentName,
-								errorMessage: e.message,
+						// If the component is aborted, we don't have to log the error
+						// and we treat it as a success
+						if (childAbortController.signal.aborted) {
+							this.app.pluginManager.onComponentEnded(contexts, props, {
+								status: "success",
+							});
+							this.app.log.debug({
+								message: "Component rendering ended",
+								data: {
+									componentOption: props,
+									componentName: componentName,
+								},
+							});
+						} else {
+							this.app.pluginManager.onComponentEnded(contexts, props, {
+								status: "error",
 								error: e,
-								stack: e.stack,
-							},
-						});
+							});
+							this.app.log.error({
+								message: "Component throws an error",
+								data: {
+									componentOption: props,
+									componentName,
+									errorMessage: e.message,
+									error: e,
+									stack: e.stack,
+								},
+							});
+						}
 					},
 				);
 			} else {
+				this.app.pluginManager.onComponentEnded(contexts, props, {
+					status: "success",
+				});
 				this.app.log.debug({
 					message: "Component rendering ended",
 					data: {
@@ -251,6 +319,7 @@ export class SeqFlowComponentContext {
 			throw new Error("Unknown type");
 		}
 
+		// If the component has a key, we have to keep track of it to use `getChild` and `findChild` methods later
 		if (props && "key" in props && !(el instanceof DocumentFragment)) {
 			const key = props.key as string;
 			this.c.push({
@@ -258,20 +327,33 @@ export class SeqFlowComponentContext {
 				el,
 				mounted: false,
 			});
+			el.setAttribute("data-key", key);
 		}
 
+		// Automatic onClick event listener
 		if (props && "onClick" in props && el instanceof HTMLElement) {
 			const onClick = props.onClick as Required<
 				ElementProperty<HTMLElement>
 			>["onClick"];
-			const k = "key" in props ? (props.key as string) : generateId();
+			const k = "key" in props ? (props.key as string) : this.app.idGenerator();
 			const elAbortController = new AbortController();
-			this.ac.signal.addEventListener("abort", () => {
+			const onAbort = () => {
 				elAbortController.abort();
-			});
-			this.ac.signal.addEventListener(`abort-component-${k}`, () => {
+				this.ac.signal.removeEventListener("abort", onAbort);
+				this.ac.signal.removeEventListener(
+					`replace-component-${k}`,
+					onReplaceChild,
+				);
+			};
+			this.ac.signal.addEventListener("abort", onAbort);
+			const onReplaceChild = () => {
 				elAbortController.abort();
-			});
+				this.ac.signal.removeEventListener(
+					`replace-component-${k}`,
+					onReplaceChild,
+				);
+			};
+			this.ac.signal.addEventListener(`replace-component-${k}`, onReplaceChild);
 			this.c.push({
 				key: k,
 				el,
@@ -282,6 +364,7 @@ export class SeqFlowComponentContext {
 			});
 		}
 
+		// Set the id, style, className
 		if (props && "id" in props && el instanceof Element) {
 			el.id = props.id as string;
 		}
@@ -306,6 +389,8 @@ export class SeqFlowComponentContext {
 			}
 		}
 
+		// Add children only if the element is not a Component function
+		// In fact, we expect a Component function to add children itself using `children` prop
 		if (typeof tagNameOrComponentFunction !== "function") {
 			addChildren(el, children, this.app);
 		}
@@ -334,7 +419,7 @@ export class SeqFlowComponentContext {
 		// We want to keep only the new children, which are not yet mounted at this point
 		this.c = this.c.filter((c) => {
 			if (c.mounted) {
-				this.ac.signal.dispatchEvent(new Event(`abort-component-${c.key}`));
+				this.ac.signal.dispatchEvent(new ReplaceChildComponentEvent(c.key));
 			}
 			return !c.mounted;
 		});
@@ -422,7 +507,7 @@ export class SeqFlowComponentContext {
 			throw new Error("replaceChild: wrapper not found");
 		}
 
-		this.ac.signal.dispatchEvent(new Event(`abort-component-${key}`));
+		this.ac.signal.dispatchEvent(new ReplaceChildComponentEvent(key));
 
 		// Remove the old child from the array, and replace it with the new one
 		const [oldChild] = this.c.splice(oldChildIndex, 1);
@@ -438,7 +523,7 @@ export class SeqFlowComponentContext {
 					data: { parent: key, child: otherChild.key },
 				});
 				this.ac.signal.dispatchEvent(
-					new Event(`abort-component-${otherChild.key}`),
+					new ReplaceChildComponentEvent(otherChild.key),
 				);
 			}
 		}

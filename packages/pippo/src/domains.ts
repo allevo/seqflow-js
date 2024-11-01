@@ -34,7 +34,7 @@ export class DomainEvent<
 	extends Event
 	implements CustomEvent
 {
-	detail: DetailType;
+	public detail: DetailType;
 
 	// This `static` property is required because
 	// @ts-ignore

@@ -126,9 +126,7 @@ export async function CartProductList(
 		if (ev instanceof ChangeCartEvent) {
 			switch (ev.detail.action) {
 				case "remove-all-elements-of-a-product":
-					component._el
-						.querySelector(`li#cart-item-${ev.detail.product.id}`)
-						?.remove();
+					component.replaceChild(ev.detail.product.id, () => <></>);
 					break;
 				default:
 					app.log.error({
