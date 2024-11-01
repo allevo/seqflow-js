@@ -22,6 +22,8 @@ type DomainNames = keyof Domains;
 
 export type DomainEventTargets = Record<keyof Domains, EventTarget>;
 
+export type IdGenerator = () => string;
+
 export class SeqflowAppContext<Domains> {
 	constructor(
 		public log: LogFunctions,
@@ -30,8 +32,7 @@ export class SeqflowAppContext<Domains> {
 		public router: Readonly<Router>,
 		private domainEventTargets: DomainEventTargets,
 		public pluginManager: SeqflowPluginManager,
-		public idGenerator: () => string = () =>
-			Math.random().toString(36).slice(2),
+		public idGenerator: IdGenerator,
 	) {}
 
 	getDomainEventTarget(domainName: keyof Domains): EventTarget {
@@ -66,7 +67,7 @@ export type StartConfiguration<Domains extends object> = Omit<
 		plugins?: SeqflowPlugin[];
 	};
 
-function applyDefault(
+function createApp(
 	configuration: StartConfiguration<Domains>,
 ): SeqflowAppContext<Domains> {
 	function noop() {}
@@ -149,14 +150,14 @@ export function start<
 ): AbortController {
 	const appAbortController = new AbortController();
 
-	const appConfiguration = applyDefault(configuration);
+	const app = createApp(configuration);
 
-	appConfiguration.router.install();
+	app.router.install();
 
 	const comp = new SeqFlowComponentContext(
 		root,
 		appAbortController,
-		appConfiguration,
+		app,
 	);
 
 	root.appendChild(comp.createDOMElement(mainComponent, data));
