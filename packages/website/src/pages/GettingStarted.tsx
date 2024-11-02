@@ -19,7 +19,7 @@ export async function GettingStarted(
 				<ContentWithToc
 					toc={main.toc}
 					html={main.html}
-					title="Getting started"
+					title="Get started"
 				/>
 			</div>,
 		);

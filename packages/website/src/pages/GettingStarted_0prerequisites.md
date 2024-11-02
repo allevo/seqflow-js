@@ -1,4 +1,4 @@
-Welcome to SeqFlow getting started!
+Welcome to SeqFlow Get Started section!
 
 Here you can find the basic concept of the framework and how it can help your development. If you looking for a deep analysis about the reason, there's a dedicated page [here](/why "the reason of SeqFlow").
 

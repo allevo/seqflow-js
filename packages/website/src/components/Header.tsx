@@ -90,7 +90,7 @@ export async function Header(
 								id="getting-started-link"
 								className="justify-start"
 							>
-								Getting started
+								Get started
 							</Link>
 						</Menu.Item>
 						<Menu.Item>
@@ -130,7 +130,7 @@ export async function Header(
 							href="/getting-started"
 							id="getting-started-link"
 						>
-							Getting started
+							Get started
 						</Link>
 					</Menu.Item>
 					<Menu.Item>

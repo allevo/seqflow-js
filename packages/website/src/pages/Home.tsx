@@ -21,7 +21,7 @@ ${setupArrow.name}();
 		</div>,
 		<div id="second-screen" className={classes.screen}>
 			<Features />
-			<GettingStarted />
+			<GetStarted />
 		</div>,
 		<div
 			id="third-screen"
@@ -38,7 +38,7 @@ ${setupArrow.name}();
 				</p>
 			</div>
 			<Examples />
-			<GettingStarted />
+			<GetStarted />
 		</div>,
 		<div className={classes["arrow-wrapper"]}>
 			<ArrowSVG />
@@ -98,20 +98,20 @@ function SeqFlowHero(_: ComponentProps<unknown>, { component }: Contexts) {
 						Simplicity is <em>the</em> key
 					</Heading>
 					<Divider />
-					<GettingStarted />
+					<GetStarted />
 				</div>
 			</Hero.Content>
 		</Hero>,
 	);
 }
 
-function GettingStarted(
+function GetStarted(
 	_: ComponentProps<unknown>,
 	{ component, app }: Contexts,
 ) {
 	component.renderSync(
 		<Link href="/getting-started" showAsButton="primary">
-			Getting started
+			Get started
 		</Link>,
 	);
 }
