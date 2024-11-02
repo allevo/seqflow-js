@@ -125,7 +125,7 @@ async function createApp(config: Configuration) {
 	// Download and extract the template
 	const extractorRegex = new RegExp(`examples\/${config.type}\/`);
 	const res = await fetch(
-		"https://codeload.github.com/allevo/seqflow-js/tar.gz/main",
+		"https://codeload.github.com/allevo/seqflow-js/tar.gz/feat%2Fseqflow-rework",
 	);
 	const tarStream = Readable.fromWeb(
 		res.body as import("stream/web").ReadableStream,
@@ -141,7 +141,8 @@ async function createApp(config: Configuration) {
 	const packageJsonPath = path.join(config.absolutePath, "package.json");
 	const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
 	packageJson.name = config.projectName;
-	packageJson.dependencies["seqflow-js"] = "*";
+	packageJson.dependencies["@seqflow/seqflow"] = "*";
+	packageJson.dependencies["@seqflow/components"] = "*";
 	fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
 

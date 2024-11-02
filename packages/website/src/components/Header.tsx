@@ -98,7 +98,7 @@ export async function Header(
 								Why
 							</Link>
 						</Menu.Item>
-						<Menu.Item>
+						{/*<Menu.Item>
 							<Link
 								showAsButton="ghost"
 								href="/api-reference"
@@ -106,7 +106,7 @@ export async function Header(
 							>
 								Api Reference
 							</Link>
-						</Menu.Item>
+						</Menu.Item>*/}
 						<Menu.Item>
 							<Menu.SubMenu label="Examples">{getExamples()}</Menu.SubMenu>
 						</Menu.Item>
@@ -138,7 +138,7 @@ export async function Header(
 							Why
 						</Link>
 					</Menu.Item>
-					<Menu.Item>
+					{/*<Menu.Item>
 						<Link
 							showAsButton="ghost"
 							href="/api-reference"
@@ -146,7 +146,7 @@ export async function Header(
 						>
 							Api Reference
 						</Link>
-					</Menu.Item>
+					</Menu.Item>*/}
 					<Menu.Item>
 						<Menu.SubMenu className={classes.submenu} label="Examples">
 							{getExamples()}

@@ -16,6 +16,12 @@ importers:
         specifier: ^9.5.1
         version: 9.5.1
 
+  apps/quotes-api:
+    devDependencies:
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
+
   examples/counter:
     dependencies:
       '@seqflow/components':
@@ -184,6 +190,9 @@ importers:
       '@types/css-modules':
         specifier: ^1.0.5
         version: 1.0.5
+      autoprefixer:
+        specifier: ^10.4.2
+        version: 10.4.20(postcss@8.4.47)
       daisyui:
         specifier: ^4.12.10
         version: 4.12.14(postcss@8.4.47)
@@ -202,6 +211,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.6
         version: 3.4.14
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
       vite:
         specifier: ^5.4.2
         version: 5.4.10(@types/node@20.17.5)

@@ -4,6 +4,14 @@ Here you can find the basic concept of the framework and how it can help your de
 
 Are you looking for more complex examples? Check the <a href="/examples">examples page</a>.
 
+## Prerequisites
+
+Before we start, you need to have installed the following tools:
+- [Node.js](https://nodejs.org/en/download/)
+- [pnpm](https://pnpm.io/installation)
+
+You can still use `npm` or `yarn`, but we didn't test it with these tools. If you encounter any issues, <a target="_blank" href="https://github.com/allevo/seqflow-js/pulls">let us know</a>.
+
 ## Project creation
 The first step to start a new project is to create it using the CLI. The command is:
 ```sh
@@ -19,7 +27,8 @@ Opening the project folder, you may see some files and folders. The most importa
 - `src/index.css`: the main CSS file
 - `src/index.html`: the main HTML file
 - `src/index.ts`: the entrypoint file
-- `src/Main.tsx`: the parent component
+- `src/Main.module.css`: the CSS module file for Main component
+- `src/Main.tsx`: the Main component
 - `package.json`: the dependencies and devDependencies are fulfilled
 - `biome.json`: the project formatter configuration
 - `vite.config.js`: the Vite configuration file
@@ -33,7 +42,7 @@ For now, we will focus only on `src/Main.tsx` file. You can split the file conte
 Before we start, let's install the dependencies. Run the command `pnpm install` to install the dependencies.
 
 Let's start the application and see the result. Run the command `pnpm start`.<br />
-Open your browser and go to <a title="localhost" target="_blank" href="http://localhost:5173">http://localhost:5173</a>. You should see a blank page with the text "Hi!".
+Open your browser and go to <a title="localhost" target="_blank" href="http://localhost:5173">http://localhost:5173</a>. You should see a blank page with a text.
 
 ## Conclusion
 

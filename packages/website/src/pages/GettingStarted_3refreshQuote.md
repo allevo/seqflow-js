@@ -6,7 +6,7 @@ Our application works fine, but we force the user to refresh the page to see a n
 Let's start by replacing the `src/Main.tsx` file content with the following:
 
 ```tsx
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
 	author: string;
@@ -14,33 +14,40 @@ interface Quote {
 }
 
 async function getRandomQuote(): Promise<Quote> {
-	const res = await fetch("https://api.quotable.io/random")
+	const res = await fetch("https://quotes.seqflow.dev/api/quotes/random")
+	if (!res.ok) {
+		throw new Error("Failed to fetch quote");
+	}
 	return await res.json();
 }
 
-// This is the new component: it receives a quote and renders it
-async function Quote(this: SeqflowFunctionContext, { quote }: { quote: Quote }) {
-	this.renderSync(
+function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
+	component.renderSync(
 		<>
 			<div>{quote.content}</div>
 			<div>{quote.author}</div>
 		</>
 	);
 }
-
-async function Loading(this: SeqflowFunctionContext) {
-	this.renderSync(
+function Loading({}, { component }: Contexts) {
+	component.renderSync(
 		<p>Loading...</p>
 	);
 }
-async function ErrorMessage(this: SeqflowFunctionContext, data: { message: string }) {
-	this.renderSync(
-		<p>{data.message}</p>
-	);
+function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
+	if (data.error instanceof Error) {
+		component.renderSync(
+			<p>{data.error.message}</p>
+		);
+	} else {
+		component.renderSync(
+			<p>Unknown error</p>
+		);
+	}
 }
 
-export async function Main(this: SeqflowFunctionContext) {
-	this.renderSync(
+export async function Main({}, { component }: Contexts) {
+	component.renderSync(
 		<Loading />
 	);
 
@@ -48,26 +55,24 @@ export async function Main(this: SeqflowFunctionContext) {
 	try {
 		quote = await getRandomQuote();
 	} catch (error) {
-		this.renderSync(
-			<ErrorMessage message={error.message} />
+		component.renderSync(
+			<ErrorMessage error={error} />
 		);
 		return;
 	}
 
-	// create an interactive element: the button
-	const button = <button type='button'>Refresh</button>
-	this.renderSync(
+	component.renderSync(
 		<>
-			{ /* Render it */ }
-			{button}
 			{ /* NB: we added the key attribute here!! */ }
+			<button key="refresh-button" type='button'>Refresh</button>
+			{ /* NB: and also here!! */ }
 			<Quote key="quote" quote={quote} />
 		</>
 	);
 
 	// Create an async iterator to wait for the button click
-	const events = this.waitEvents(
-		this.domEvent('click', { el: button })
+	const events = component.waitEvents(
+		component.domEvent('refresh-button', 'click')
 	)
 	// Wait for the button click
 	for await (const _ of events) {
@@ -78,18 +83,20 @@ export async function Main(this: SeqflowFunctionContext) {
 		} catch (error) {
 			// This replace the hole content with the error message
 			this.renderSync(
-				<ErrorMessage message={error.message} />
+				<ErrorMessage error={error} />
 			);
 			return;
 		}
 		// Replace only the child with key "quote" with the new quote
-		this.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
+		component.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
 	}
 }
 ```
 
 In the above code, we added a button. We use it to wait for a click event and refresh the quote.
-The `Main` component renders the button and the Quote component tagging it with `key` attribute: SeqFlow tracks it internally, so it knows which component to replace when the button is clicked.
+The `Main` component renders a button and the Quote component tagging them with `key` attribute: SeqFlow tracks it internally, so it knows:
+- which component to replace when the quote is fetched;
+- the button to wait for the click event;
 
 After, the `Main` component waits for the button click event and replaces the Quote component with the new quote.
 
@@ -100,7 +107,7 @@ Anyway, we can improve the above code avoiding duplicated code. Let's see how.
 Let's start by replacing the `src/Main.tsx` file content with the following:
 
 ```tsx
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
 	author: string;
@@ -108,53 +115,61 @@ interface Quote {
 }
 
 async function getRandomQuote(): Promise<Quote> {
-	const res = await fetch("https://api.quotable.io/random")
+	const res = await fetch("https://quotes.seqflow.dev/api/quotes/random")
+	if (!res.ok) {
+		throw new Error("Failed to fetch quote");
+	}
 	return await res.json();
 }
 
-// This is the new component: it receives a quote and renders it
-async function Quote(this: SeqflowFunctionContext, { quote }: { quote: Quote }) {
-	this.renderSync(
+function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
+	component.renderSync(
 		<>
 			<div>{quote.content}</div>
 			<div>{quote.author}</div>
 		</>
 	);
 }
-
-async function Loading(this: SeqflowFunctionContext) {
-	this.renderSync(
+function Loading({}, { component }: Contexts) {
+	component.renderSync(
 		<p>Loading...</p>
 	);
 }
-async function ErrorMessage(this: SeqflowFunctionContext, data: { message: string }) {
-	this.renderSync(
-		<p>{data.message}</p>
-	);
+function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
+	if (data.error instanceof Error) {
+		component.renderSync(
+			<p>{data.error.message}</p>
+		);
+	} else {
+		component.renderSync(
+			<p>Unknown error</p>
+		);
+	}
 }
-async function Spot(this: SeqflowFunctionContext) {}
 
-export async function Main(this: SeqflowFunctionContext) {
+// New component to keep the place where the quote will be rendered
+function Spot() {}
+
+export async function Main({}, { component }: Contexts) {
 	// This async arrow function fetches a new quote and renders
 	// It use the key \`quote\` to replace the child with the loader or the new quote
 	const fetchAndRender = async () => {
-		this.replaceChild("quote", () => <Loading key="quote" />);
+		component.replaceChild("quote", () => <Loading key="quote" />);
 
 		let quote: Quote;
 		try {
 			quote = await getRandomQuote();
 		} catch (error) {
-			this.replaceChild("quote", () => <ErrorMessage key="quote" message={error.message} />);
+			component.replaceChild("quote", () => <ErrorMessage key="quote" error={error} />);
 			return;
 		}
-		this.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
+		component.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
 	}
 
-	const button = <button type='button'>Refresh</button>
 	// Render the structure of the html
-	this.renderSync(
+	component.renderSync(
 		<>
-			{button}
+			<button key="refresh-button" type='button'>Refresh</button>
 			<Spot key="quote" />
 		</>
 	);
@@ -162,8 +177,8 @@ export async function Main(this: SeqflowFunctionContext) {
 	// Fetch and render the quote
 	await fetchAndRender();
 
-	const events = this.waitEvents(
-		this.domEvent('click', { el: button })
+	const events = component.waitEvents(
+		component.domEvent('refresh-button', 'click')
 	)
 	for await (const _ of events) {
 		// Refresh the quote
@@ -176,10 +191,10 @@ In the above code, we created a new component called `Spot`. It is an empty comp
 
 ## Avoid double fetch
 
-The above code has a subtle bug: if the user clicks the button twice before the first fetch completes, the application will fetch the quote twice. Let's fix it using the below code:
+The above code has a subtle bug: if the user clicks the button twice before the first fetch is completed, the application will fetch the quote twice. Let's fix it using the below code:
 
 ```tsx
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
 	author: string;
@@ -187,70 +202,78 @@ interface Quote {
 }
 
 async function getRandomQuote(): Promise<Quote> {
-	const res = await fetch("https://api.quotable.io/random")
+	const res = await fetch("https://quotes.seqflow.dev/api/quotes/random")
+	if (!res.ok) {
+		throw new Error("Failed to fetch quote");
+	}
 	return await res.json();
 }
 
-async function Quote(this: SeqflowFunctionContext, { quote }: { quote: Quote }) {
-	this.renderSync(
+function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
+	component.renderSync(
 		<>
 			<div>{quote.content}</div>
 			<div>{quote.author}</div>
 		</>
 	);
 }
-
-async function Loading(this: SeqflowFunctionContext) {
-	this.renderSync(
+function Loading({}, { component }: Contexts) {
+	component.renderSync(
 		<p>Loading...</p>
 	);
 }
-async function ErrorMessage(this: SeqflowFunctionContext, data: { message: string }) {
-	this.renderSync(
-		<p>{data.message}</p>
-	);
+function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
+	if (data.error instanceof Error) {
+		component.renderSync(
+			<p>{data.error.message}</p>
+		);
+	} else {
+		component.renderSync(
+			<p>Unknown error</p>
+		);
+	}
 }
-async function Spot(this: SeqflowFunctionContext) {}
 
-export async function Main(this: SeqflowFunctionContext) {
+function Spot() {}
+
+export async function Main({}, { component }: Contexts) {
 	const fetchAndRender = async () => {
-		this.replaceChild("quote", () => <Loading key="quote" />);
+		component.replaceChild("quote", () => <Loading key="quote" />);
 
 		let quote: Quote;
 		try {
 			quote = await getRandomQuote();
 		} catch (error) {
-			this.replaceChild("quote", () => <ErrorMessage key="quote" message={error.message} />);
+			component.replaceChild("quote", () => <ErrorMessage key="quote" error={error} />);
 			return;
 		}
-		this.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
+		component.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
 	}
 
-	// SeqFlow JSX doesn't know which HTML element is rendered, so we need to cast it
-	const button = <button type='button'>Refresh</button> as HTMLButtonElement;
-	this.renderSync(
+	component.renderSync(
 		<>
-			{button}
+			<button key="refresh-button" type='button'>Refresh</button>
 			<Spot key="quote" />
 		</>
 	);
 
 	await fetchAndRender();
 
-	const events = this.waitEvents(
-		this.domEvent('click', { el: button })
+	const refreshButton = component.getChild('refresh-button') as HTMLButtonElement;
+	const events = component.waitEvents(
+		component.domEvent('refresh-button', 'click')
 	)
 	for await (const _ of events) {
-		// Disable the button: this prevents the element to be clicked twice
-		button.disabled = true;
+		// Disable the button while fetching the quote
+		refreshButton.disabled = true;
 		await fetchAndRender();
-		// Re-enable the button
-		button.disabled = false;
+		// Enable the button after fetching the quote
+		refreshButton.disabled = false;
 	}
 }
 ```
 
-When a JSX element is created in SeqFlow, the type is a real HTML element. So, Typescript doesn't understand which real element is. This is why we have to cast the button to `HTMLButtonElement`. With this cast, we can use the `disabled` attribute to disable the button while the quote is being fetched.
+You can refer to child elements using the `getChild` method. This is useful when you need to access the real HTML element and change its properties. Anyway, Typescript doesn't understand which real element is. This is why we have to cast the button to `HTMLButtonElement`. With this cast, we can use the `disabled` attribute to disable the button while the quote is being fetched.
 
 ## Conclusion
 

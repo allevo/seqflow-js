@@ -6,7 +6,7 @@ The quote application is a simple application that fetches a random quote from a
 Change the `src/Main.tsx` file content as the following:
 
 ```tsx
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
 	author: string;
@@ -15,17 +15,17 @@ interface Quote {
 
 // This is the function that fetches a random quote
 async function getRandomQuote(): Promise<Quote> {
-	const res = await fetch("https://api.quotable.io/random")
+	const res = await fetch("https://quotes.seqflow.dev/api/quotes/random")
 	return await res.json();
 }
 
 // This is the main component: this is an async function!
-export async function Main(this: SeqflowFunctionContext) {
+export async function Main({}, { component }: Contexts) {
 	// Fetch a random quote
 	const quote = await getRandomQuote();
 
 	// And show it
-	this.renderSync(
+	component.renderSync(
 		<>
 			<div>{quote.content}</div>
 			<div>{quote.author}</div>
@@ -36,14 +36,16 @@ export async function Main(this: SeqflowFunctionContext) {
 
 Let's see what we have.
 
-We defined the `getRandomQuote` function that fetches a random quote from the Quotable API. It is an async function that returns a promise with the quote.
+We defined the `getRandomQuote` function that fetches a random quote from an endpoint. It is an async function that returns a promise with the quote.
 
-The `Main` async function is responsible for invoking the `getRandomQuote` function and showing the quote.
+The `Main` async component is responsible for invoking the `getRandomQuote` function and showing the quote.
 Because the SeqFlow components are async functions, we can just use the `await` keyword to perform any asynchronous operations we want, such HTTP requests. This is a powerful feature that allows you to fetch data from an endpoint and render it in the browser without any state management.
 
-Every SeqFlow component is binded to a own context object that exposes some functions to interact with the DOM. In this case we want to render the quote, so we use the `this.renderSync` method to render the quote in the browser. As you can see, SeqFlow supports JSX syntax.
+Every SeqFlow component accepts as second parameter an own context object that exposes some functions to interact with the DOM. In this case we want to render the quote, so we use the `component.renderSync` method to render the quote in the browser. As you can see, SeqFlow supports JSX syntax.
 
-SeqFlow invokes your component once. If you want to update the component, you need to call the `this.renderSync` method again. But let's see where we can use this feature.
+SeqFlow invokes your component once. If you want to update the component, you need to call the `component.renderSync` method again or update the component partially with `component.replaceChild`.
+
+Run `pnpm start` and navigate to `http://localhost:5173` to see the quote.
 
 ## Handle loading and error states
 
@@ -51,7 +53,7 @@ Even if we thought API requests are always fast and successful, they are not. Le
 Let's do that. Replace the `src/Main.tsx` file content with the following:
 
 ```tsx
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
 	author: string;
@@ -59,13 +61,16 @@ interface Quote {
 }
 
 async function getRandomQuote(): Promise<Quote> {
-	const res = await fetch("https://api.quotable.io/random")
+	const res = await fetch("https://quotes.seqflow.dev/api/quotes/random")
+	if (!res.ok) {
+		throw new Error("Failed to fetch quote");
+	}
 	return await res.json();
 }
 
-export async function Main(this: SeqflowFunctionContext) {
+export async function Main({}, { component }: Contexts) {
 	// Render loading message
-	this.renderSync(
+	component.renderSync(
 		<p>Loading...</p>
 	);
 
@@ -75,14 +80,14 @@ export async function Main(this: SeqflowFunctionContext) {
 		quote = await getRandomQuote();
 	} catch (error) {
 		// In case of error, render error message
-		this.renderSync(
-			<p>Error: {error.message}</p>
+		component.renderSync(
+			<p>Error: {error}</p>
 		);
 		return;
 	}
 
 	// Replace loading message with quote
-	this.renderSync(
+	component.renderSync(
 		<div>
 			<div>{quote.content}</div>
 			<div>{quote.author}</div>

@@ -6,7 +6,7 @@ Our application is simple, but where is the reusability? Let's split the applica
 Let's start by creating a new component that will show the quote. Replace the `src/Main.tsx` file content with the following:
 
 ```tsx
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
 	author: string;
@@ -14,33 +14,43 @@ interface Quote {
 }
 
 async function getRandomQuote(): Promise<Quote> {
-	const res = await fetch("https://api.quotable.io/random")
+	const res = await fetch("https://quotes.seqflow.dev/api/quotes/random")
+	if (!res.ok) {
+		throw new Error("Failed to fetch quote");
+	}
 	return await res.json();
 }
 
 // This is the new component: it receives a quote and renders it
-async function Quote(this: SeqflowFunctionContext, { quote }: { quote: Quote }) {
-	this.renderSync(
+function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
+	component.renderSync(
 		<>
 			<div>{quote.content}</div>
 			<div>{quote.author}</div>
 		</>
 	);
 }
-
-async function Loading(this: SeqflowFunctionContext) {
-	this.renderSync(
+// The loading component
+function Loading({}, { component }: Contexts) {
+	component.renderSync(
 		<p>Loading...</p>
 	);
 }
-async function ErrorMessage(this: SeqflowFunctionContext, data: { message: string }) {
-	this.renderSync(
-		<p>{data.message}</p>
-	);
+// The error component
+function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
+	if (data.error instanceof Error) {
+		component.renderSync(
+			<p>{data.error.message}</p>
+		);
+	} else {
+		component.renderSync(
+			<p>Unknown error</p>
+		);
+	}
 }
 
-export async function Main(this: SeqflowFunctionContext) {
-	this.renderSync(
+export async function Main({}, { component }: Contexts) {
+	component.renderSync(
 		<Loading />
 	);
 
@@ -48,17 +58,21 @@ export async function Main(this: SeqflowFunctionContext) {
 	try {
 		quote = await getRandomQuote();
 	} catch (error) {
-		this.renderSync(
-			<ErrorMessage message={error.message} />
+		component.renderSync(
+			<ErrorMessage error={error} />
 		);
 		return;
 	}
 
-	this.renderSync(
+	component.renderSync(
 		<Quote quote={quote} />
 	);
 }
 ```
+
+As you can see, SeqFlow components can be created as sync or async functions that accepts two parameters:
+- the component properties;
+- the context object used to interact with the component.
 
 In the above code, we created:
 - a new component called `Loading` to show a loading message;
@@ -66,7 +80,6 @@ In the above code, we created:
 - a new component called `Quote` to show the quote;
 
 Finally, we updated the `Main` component accordingly.
-
 
 ## Conclusion
 

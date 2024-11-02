@@ -1,31 +1,27 @@
-Our application fully works now. But we can improve it putting the hard-coded URL as configuration. Let's do that.
+Our application fully works now. But we can improve it putting the hard-coded URL in configuration. Let's do that.
 
 ## Application configuration
 
 We have to define a configuration object that will hold the URL of the quote endpoint. Replace the `src/index.ts` file content with the following:
 
 ```ts
-import { start } from "seqflow-js";
+import { start } from "@seqflow/seqflow";
 import { Main } from "./Main";
 import "./index.css";
 
-start(document.getElementById("root"), Main, undefined, {
-	log: {
-		info: (l: Log) => console.info(l),
-		error: (l: Log) => console.error(l),
-		debug: (l: Log) => console.debug(l),
-	},
+start(document.getElementById("root")!, Main, {}, {
+	log: console,
 	// The configuration object
 	config: {
 		api: {
 			// The URL of the quote endpoint
-			baseUrl: "https://api.quotable.io",
+			baseUrl: "https://quotes.seqflow.dev",
 		},
 	}
 });
 
 // This is required to make typescript happy
-declare module "seqflow-js" {
+declare module "@seqflow/seqflow" {
 	interface ApplicationConfiguration {
 		api: {
 			baseUrl: string;
@@ -39,77 +35,86 @@ We defined a configuration object that holds the URL of the quote endpoint. We p
 Let's see how we can use this configuration object. Replace the `src/Main.tsx` file content with the following:
 
 ```tsx
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
 	author: string;
 	content: string;
 }
 
-// Use the \`baseUrl\`
 async function getRandomQuote(baseUrl: string): Promise<Quote> {
-	const res = await fetch(\`\${baseUrl}/random\`)
+	const res = await fetch(\`\${baseUrl}/api/quotes/random\`)
+	if (!res.ok) {
+		throw new Error("Failed to fetch quote");
+	}
 	return await res.json();
 }
 
-async function Quote(this: SeqflowFunctionContext, { quote }: { quote: Quote }) {
-	this.renderSync(
+function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
+	component.renderSync(
 		<>
 			<div>{quote.content}</div>
 			<div>{quote.author}</div>
 		</>
 	);
 }
-
-async function Loading(this: SeqflowFunctionContext) {
-	this.renderSync(
+function Loading({}, { component }: Contexts) {
+	component.renderSync(
 		<p>Loading...</p>
 	);
 }
-async function ErrorMessage(this: SeqflowFunctionContext, data: { message: string }) {
-	this.renderSync(
-		<p>{data.message}</p>
-	);
+function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
+	if (data.error instanceof Error) {
+		component.renderSync(
+			<p>{data.error.message}</p>
+		);
+	} else {
+		component.renderSync(
+			<p>Unknown error</p>
+		);
+	}
 }
-async function Spot(this: SeqflowFunctionContext) {}
 
-export async function Main(this: SeqflowFunctionContext) {
+function Spot() {}
+
+export async function Main({}, { component, app }: Contexts) {
 	const fetchAndRender = async () => {
-		this.replaceChild("quote", () => <Loading key="quote" />);
+		component.replaceChild("quote", () => <Loading key="quote" />);
 
 		let quote: Quote;
 		try {
-			// this.app.config is the configuration object
-			quote = await getRandomQuote(this.app.config.api.baseUrl);
+			quote = await getRandomQuote(app.config.api.baseUrl);
 		} catch (error) {
-			this.replaceChild("quote", () => <ErrorMessage key="quote" message={error.message} />);
+			component.replaceChild("quote", () => <ErrorMessage key="quote" error={error} />);
 			return;
 		}
-		this.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
+		component.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
 	}
 
-	const button = <button type='button'>Refresh</button> as HTMLButtonElement;
-	this.renderSync(
+	component.renderSync(
 		<>
-			{button}
+			<button key="refresh-button" type='button'>Refresh</button>
 			<Spot key="quote" />
 		</>
 	);
 
 	await fetchAndRender();
 
-	const events = this.waitEvents(
-		this.domEvent('click', { el: button })
+	const refreshButton = component.getChild('refresh-button') as HTMLButtonElement;
+	const events = component.waitEvents(
+		component.domEvent('refresh-button', 'click')
 	)
 	for await (const _ of events) {
-		button.disabled = true;
+		// Disable the button while fetching the quote
+		refreshButton.disabled = true;
 		await fetchAndRender();
-		button.disabled = false;
+		// Enable the button after fetching the quote
+		refreshButton.disabled = false;
 	}
 }
 ```
 
-We changed the `getRandomQuote` function to receive the `baseUrl` as an argument. We used the `this.app.config` object to access the configuration object.
+We changed the `getRandomQuote` function to receive the `baseUrl` as an argument. We used the `app.config` object to access the configuration object.
 
 ## Conclusion
 

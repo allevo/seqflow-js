@@ -13,7 +13,7 @@ start(
 		log: console,
 		config: {
 			api: {
-				baseUrl: "https://api.quotable.io",
+				baseUrl: "https://quotes.seqflow.dev/api/quotes",
 			},
 		},
 		domains: {

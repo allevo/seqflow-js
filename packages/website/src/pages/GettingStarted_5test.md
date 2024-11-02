@@ -31,9 +31,9 @@ import { screen } from "@testing-library/dom";
 
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
+import { afterAll, afterEach, beforeAll, test } from "vitest";
 
-import { start } from "seqflow-js";
+import { start } from "@seqflow/seqflow";
 import { Main } from "../src/Main";
 
 const quotes = [
@@ -43,7 +43,7 @@ const quotes = [
 
 let index = 0;
 const server = setupServer(
-	http.get("/random", () => {
+	http.get("/api/quotes/random", () => {
 		return HttpResponse.json(quotes[index++ % quotes.length]);
 	})
 );
@@ -53,12 +53,8 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 test("should render the quote and refresh it", async () => {
-	start(document.body, Main, undefined, {
-		// log: {
-		// 	info: (l: Log) => {};
-		// 	error: (l: Log) => {};
-		// 	debug: (l: Log) => {};
-		// },
+	start(document.body, Main, {}, {
+		// log: console,
 		config: {
 			api: {
 				// Route to the mock server
@@ -111,6 +107,8 @@ pnpm test
 ```
 
 The test should pass.
+
+Broadly speaking, you can run whole application inside a test environment and interact with it as if it was a real browser. This is possible because SeqFlow consumes less memory and CPU than other frameworks.
 
 ## Conclusion
 
