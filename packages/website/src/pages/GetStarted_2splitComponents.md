@@ -88,5 +88,5 @@ We split the application into multiple components.
 In the next guide, we will learn how to handle user interactions.
 
 :::next:::
-{"label": "Learn how to handle events", "next": "/getting-started/refresh-quote"}
+{"label": "Learn how to handle events", "next": "/get-started/refresh-quote"}
 :::end-next:::

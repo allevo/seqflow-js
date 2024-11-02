@@ -121,5 +121,5 @@ We changed the `getRandomQuote` function to receive the `baseUrl` as an argument
 Even if the configuration part is not commonly covered in tutorials, it's an essential part of any application. In this guide, we learned how to define a configuration object and how to use it in our application.
 
 :::next:::
-{"label": "Learn how to test the application", "next": "/getting-started/test"}
+{"label": "Learn how to test the application", "next": "/get-started/test"}
 :::end-next:::

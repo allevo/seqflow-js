@@ -110,7 +110,7 @@ function GetStarted(
 	{ component, app }: Contexts,
 ) {
 	component.renderSync(
-		<Link href="/getting-started" showAsButton="primary">
+		<Link href="/get-started" showAsButton="primary">
 			Get started
 		</Link>,
 	);

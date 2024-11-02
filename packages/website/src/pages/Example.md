@@ -4,7 +4,7 @@ In this page, we list the official examples in the main repository. Feel free to
 
 This examples is a good starting point to understand how SeqFlow works: it fetches a random quote from an API and shows it in the application. The user can click on the button to fetch a new quote.
 
-The Get Started tutorial is built on top of this example. The tutorial is available <a target="_blank" href="/getting-started">here</a>. The final code is available <a target="_blank" href="https://github.com/allevo/seqflow-js/tree/main/examples/random-quote">here</a>.
+The Get Started tutorial is built on top of this example. The tutorial is available <a target="_blank" href="/get-started">here</a>. The final code is available <a target="_blank" href="https://github.com/allevo/seqflow-js/tree/main/examples/random-quote">here</a>.
 
 In the tutorial, you will learn how to:
 - create a new SeqFlow application

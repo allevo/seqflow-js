@@ -86,8 +86,8 @@ export async function Header(
 						<Menu.Item>
 							<Link
 								showAsButton="ghost"
-								href="/getting-started"
-								id="getting-started-link"
+								href="/get-started"
+								id="get-started-link"
 								className="justify-start"
 							>
 								Get started
@@ -127,8 +127,8 @@ export async function Header(
 					<Menu.Item>
 						<Link
 							showAsButton="ghost"
-							href="/getting-started"
-							id="getting-started-link"
+							href="/get-started"
+							id="get-started-link"
 						>
 							Get started
 						</Link>

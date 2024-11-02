@@ -107,5 +107,5 @@ In this guide, we learned how to fetch data from an endpoint and render it using
 In the next guide, we will learn how to split the above code into multiple components to make it more maintainable.
 
 :::next:::
-{"label": "Learn how to split application into components", "next": "/getting-started/split-components"}
+{"label": "Learn how to split application into components", "next": "/get-started/split-components"}
 :::end-next:::

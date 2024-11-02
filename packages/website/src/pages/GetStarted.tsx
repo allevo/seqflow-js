@@ -1,21 +1,21 @@
 import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { ContentWithToc } from "../components/ContentWithToc";
-import * as main from "./GettingStarted.md";
-import * as prerequisites from "./GettingStarted_0prerequisites.md";
-import * as fetchData from "./GettingStarted_1fetchData.md";
-import * as splitComponents from "./GettingStarted_2splitComponents.md";
-import * as refreshQuote from "./GettingStarted_3refreshQuote.md";
-import * as configuration from "./GettingStarted_4configuration.md";
-import * as test from "./GettingStarted_5test.md";
+import * as main from "./GetStarted.md";
+import * as prerequisites from "./GetStarted_0prerequisites.md";
+import * as fetchData from "./GetStarted_1fetchData.md";
+import * as splitComponents from "./GetStarted_2splitComponents.md";
+import * as refreshQuote from "./GetStarted_3refreshQuote.md";
+import * as configuration from "./GetStarted_4configuration.md";
+import * as test from "./GetStarted_5test.md";
 
-export async function GettingStarted(
+export async function GetStarted(
 	_: ComponentProps<unknown>,
 	{ component, app }: Contexts,
 ) {
 	const segments = app.router.segments;
 	if (segments.length === 1) {
 		component.renderSync(
-			<div id="getting-started">
+			<div id="get-started">
 				<ContentWithToc
 					toc={main.toc}
 					html={main.html}
@@ -30,7 +30,7 @@ export async function GettingStarted(
 	switch (segment) {
 		case "prerequisites":
 			component.renderSync(
-				<div id="getting-started">
+				<div id="get-started">
 					<ContentWithToc
 						toc={prerequisites.toc}
 						html={prerequisites.html}
@@ -41,7 +41,7 @@ export async function GettingStarted(
 			return;
 		case "fetch-data":
 			component.renderSync(
-				<div id="getting-started">
+				<div id="get-started">
 					<ContentWithToc
 						toc={fetchData.toc}
 						html={fetchData.html}
@@ -52,7 +52,7 @@ export async function GettingStarted(
 			return;
 		case "split-components":
 			component.renderSync(
-				<div id="getting-started">
+				<div id="get-started">
 					<ContentWithToc
 						toc={splitComponents.toc}
 						html={splitComponents.html}
@@ -63,7 +63,7 @@ export async function GettingStarted(
 			return;
 		case "refresh-quote":
 			component.renderSync(
-				<div id="getting-started">
+				<div id="get-started">
 					<ContentWithToc
 						toc={refreshQuote.toc}
 						html={refreshQuote.html}
@@ -74,7 +74,7 @@ export async function GettingStarted(
 			return;
 		case "configuration":
 			component.renderSync(
-				<div id="getting-started">
+				<div id="get-started">
 					<ContentWithToc
 						toc={configuration.toc}
 						html={configuration.html}
@@ -85,7 +85,7 @@ export async function GettingStarted(
 			return;
 		case "test":
 			component.renderSync(
-				<div id="getting-started">
+				<div id="get-started">
 					<ContentWithToc
 						toc={test.toc}
 						html={test.html}

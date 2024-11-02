@@ -51,5 +51,5 @@ In this tutorial, we have learned how to create a simple application using SeqFl
 Anyways, we are not done yet. Let's move on: our goal is to write an application that shows random quote fetched from an endpoint.
 
 :::next:::
-{"label": "Learn how to fetch data", "next": "/getting-started/fetch-data"}
+{"label": "Learn how to fetch data", "next": "/get-started/fetch-data"}
 :::end-next:::

@@ -1,17 +1,17 @@
-import { Divider, Footer } from "@seqflow/components";
+import { Footer } from "@seqflow/components";
 import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import classes from "./Main.module.css";
 import { Header } from "./components/Header";
 import { ApiReference } from "./pages/ApiReference";
 import { Example } from "./pages/Example";
-import { GettingStarted } from "./pages/GettingStarted";
+import { GetStarted as GetStarted } from "./pages/GetStarted";
 import { Home } from "./pages/Home";
 import { Why } from "./pages/Why";
 
 function getComponent(path: string[]) {
 	switch (path[0]) {
-		case "getting-started":
-			return GettingStarted;
+		case "get-started":
+			return GetStarted;
 		case "why":
 			return Why;
 		case "api-reference":

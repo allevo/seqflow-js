@@ -280,5 +280,5 @@ You can refer to child elements using the `getChild` method. This is useful when
 In this tutorial, we have learned how to handle the click events and how to avoid double fetches. We also learned how to use the `key` attribute to track the components. Now, we have a fully functional application that shows a random quote and allows the user to refresh it by clicking a button!
 
 :::next:::
-{"label": "Learn how to configure the application", "next": "/getting-started/configuration"}
+{"label": "Learn how to configure the application", "next": "/get-started/configuration"}
 :::end-next:::

@@ -199,32 +199,32 @@ function generateAllPages(): Plugin {
 					filename: 'why.html'
 				},
 				{
-					path: '/getting-started',
-					filename: 'getting-started.html'
+					path: '/get-started',
+					filename: 'get-started.html'
 				},
 				{
-					path: '/getting-started/prerequisites',
-					filename: 'getting-started/prerequisites.html'
+					path: '/get-started/prerequisites',
+					filename: 'get-started/prerequisites.html'
 				},
 				{
-					path: '/getting-started/fetch-data',
-					filename: 'getting-started/fetch-data.html'
+					path: '/get-started/fetch-data',
+					filename: 'get-started/fetch-data.html'
 				},
 				{
-					path: '/getting-started/split-components',
-					filename: 'getting-started/split-components.html'
+					path: '/get-started/split-components',
+					filename: 'get-started/split-components.html'
 				},
 				{
-					path: '/getting-started/refresh-quote',
-					filename: 'getting-started/refresh-quote.html'
+					path: '/get-started/refresh-quote',
+					filename: 'get-started/refresh-quote.html'
 				},
 				{
-					path: '/getting-started/configuration',
-					filename: 'getting-started/configuration.html'
+					path: '/get-started/configuration',
+					filename: 'get-started/configuration.html'
 				},
 				{
-					path: '/getting-started/test',
-					filename: 'getting-started/test.html'
+					path: '/get-started/test',
+					filename: 'get-started/test.html'
 				},
 				{
 					path: '/api-reference',
