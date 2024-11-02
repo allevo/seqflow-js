@@ -16,11 +16,7 @@ export async function GetStarted(
 	if (segments.length === 1) {
 		component.renderSync(
 			<div id="get-started">
-				<ContentWithToc
-					toc={main.toc}
-					html={main.html}
-					title="Get started"
-				/>
+				<ContentWithToc toc={main.toc} html={main.html} title="Get started" />
 			</div>,
 		);
 		return;

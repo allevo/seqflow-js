@@ -4,7 +4,7 @@ import classes from "./Main.module.css";
 import { Header } from "./components/Header";
 import { ApiReference } from "./pages/ApiReference";
 import { Example } from "./pages/Example";
-import { GetStarted as GetStarted } from "./pages/GetStarted";
+import { GetStarted } from "./pages/GetStarted";
 import { Home } from "./pages/Home";
 import { Why } from "./pages/Why";
 

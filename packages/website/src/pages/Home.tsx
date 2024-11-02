@@ -105,10 +105,7 @@ function SeqFlowHero(_: ComponentProps<unknown>, { component }: Contexts) {
 	);
 }
 
-function GetStarted(
-	_: ComponentProps<unknown>,
-	{ component, app }: Contexts,
-) {
+function GetStarted(_: ComponentProps<unknown>, { component, app }: Contexts) {
 	component.renderSync(
 		<Link href="/get-started" showAsButton="primary">
 			Get started
