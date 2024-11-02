@@ -18,6 +18,7 @@ export async function CartTooltip(_: unknown, { component, app }: Contexts) {
 			className={[classes.cartTooltipLink]}
 			id="cart-tooltip-alert"
 			color="info"
+			key="cart-tooltip"
 		>
 			<a id="cart-tooltip-link" href="/cart">
 				Go to checkout
@@ -29,7 +30,7 @@ export async function CartTooltip(_: unknown, { component, app }: Contexts) {
 		component.domainEvent(ChangeCartEvent),
 		component.domainEvent(CheckoutEndedCartEvent),
 		component.navigationEvent(),
-		component.domEvent(component._el, "click", { preventDefault: true }),
+		component.domEvent("cart-tooltip", "click", { preventDefault: true }),
 	);
 	for await (const ev of events) {
 		switch (true) {

@@ -16,6 +16,7 @@ beforeEach(() => {
 		document.body,
 		abortController,
 		createAppForInnerTest(logs),
+		{ local: "root", global: "root" },
 	);
 });
 afterEach(() => {
@@ -83,7 +84,7 @@ test("render: style in component", () => {
 	}
 	component.renderSync(<MyComponent style={"background: red;"} />);
 	expect(document.body.innerHTML).toBe(
-		'<div data-key="0" style="background: red;"><span>WOW</span></div>',
+		'<div data-global-key="1" style="background: red;"><span>WOW</span></div>',
 	);
 });
 test("render: fragment", () => {
@@ -104,7 +105,7 @@ test("render: component", () => {
 
 	component.renderSync(<MyComponent />);
 
-	expect(document.body.innerHTML).toBe('<div data-key="0">foo</div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="1">foo</div>');
 });
 
 test("render: number", () => {
@@ -228,7 +229,7 @@ test("render: sync throw", () => {
 	}
 	component.renderSync(<MyComponent />);
 
-	expect(document.body.innerHTML).toBe('<div data-key="0"></div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="1"></div>');
 });
 test("render: async throw", () => {
 	async function MyComponent() {
@@ -236,7 +237,7 @@ test("render: async throw", () => {
 	}
 	component.renderSync(<MyComponent />);
 
-	expect(document.body.innerHTML).toBe('<div data-key="0"></div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="1"></div>');
 });
 test("render: {} throw", () => {
 	expect(() => {
@@ -263,22 +264,22 @@ test("renderSync: <Foo className={undefined} style={undefined} />", () => {
 	}
 
 	component.renderSync(<Foo className={undefined} />);
-	expect(document.body.innerHTML).toBe('<div data-key="0">Foo</div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="1">Foo</div>');
 
 	document.body.innerHTML = "";
 
 	component.renderSync(<Foo className={null as unknown as undefined} />);
-	expect(document.body.innerHTML).toBe('<div data-key="1">Foo</div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="3">Foo</div>');
 
 	document.body.innerHTML = "";
 
 	component.renderSync(<Foo style={undefined} />);
-	expect(document.body.innerHTML).toBe('<div data-key="2">Foo</div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="5">Foo</div>');
 
 	document.body.innerHTML = "";
 
 	component.renderSync(<Foo style={null as unknown as undefined} />);
-	expect(document.body.innerHTML).toBe('<div data-key="3">Foo</div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="7">Foo</div>');
 });
 
 test("renderSync: <div className={undefined} style={undefined} />", () => {

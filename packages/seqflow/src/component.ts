@@ -119,9 +119,18 @@ export type DomEventOption = {
 
 const DEFAULT_TAG_NAME = () => "div";
 
+export type KeyPair = {
+	local: string;
+	global: string;
+};
+
 export class SeqFlowComponentContext {
 	// children: components or elements with onClick
-	private c: { key: string; el: Element; mounted: boolean }[] = [];
+	private c: {
+		keyPair: KeyPair;
+		el: Element;
+		mounted: boolean;
+	}[] = [];
 
 	constructor(
 		// mount point
@@ -129,6 +138,7 @@ export class SeqFlowComponentContext {
 		// abort controller
 		public ac: AbortController,
 		private app: SeqflowAppContext<Domains>,
+		private keyPair: KeyPair,
 	) {}
 
 	// @ts-ignore
@@ -179,6 +189,11 @@ export class SeqFlowComponentContext {
 				);
 			}
 		} else if (tagNameOrComponentFunction instanceof Function) {
+			props.key =
+				props && "key" in props
+					? (props.key as string)
+					: this.app.idGenerator();
+
 			// Create wrapper element
 			const tagName =
 				(tagNameOrComponentFunction as SeqflowComponent<object>).tagName ??
@@ -189,12 +204,23 @@ export class SeqFlowComponentContext {
 				el,
 				childAbortController,
 				this.app,
+				{
+					local: props.key as string,
+					global: this.app.idGenerator(),
+				},
 			);
 
-			props.key =
-				props && "key" in props
-					? (props.key as string)
-					: this.app.idGenerator();
+			// Store the global key on the dom element
+			// so we can identify it later
+			el.dataset.globalKey = childComponentContext.keyPair.global;
+
+			// Set data-* attributes to element
+			for (const key in props) {
+				if (!key.startsWith("data-")) {
+					continue;
+				}
+				el.setAttribute(key, props[key] as string);
+			}
 
 			// If the parent component (here `this` is the parent) is aborted
 			// we have to abort the child component
@@ -229,7 +255,11 @@ export class SeqFlowComponentContext {
 				app: this.app,
 			};
 
-			this.app.pluginManager.onComponentCreated(contexts, props);
+			this.app.pluginManager.onComponentCreated(
+				contexts,
+				contexts.component.keyPair,
+				props,
+			);
 
 			let output: void | Promise<void> = undefined;
 			try {
@@ -242,10 +272,15 @@ export class SeqFlowComponentContext {
 				);
 			} catch (e) {
 				const err = e as Error;
-				this.app.pluginManager.onComponentEnded(contexts, props, {
-					status: "error",
-					error: err,
-				});
+				this.app.pluginManager.onComponentEnded(
+					contexts,
+					contexts.component.keyPair,
+					props,
+					{
+						status: "error",
+						error: err,
+					},
+				);
 				this.app.log.error({
 					message: "Component throws an error",
 					data: {
@@ -260,9 +295,14 @@ export class SeqFlowComponentContext {
 			if (output instanceof Promise) {
 				output.then(
 					() => {
-						this.app.pluginManager.onComponentEnded(contexts, props, {
-							status: "success",
-						});
+						this.app.pluginManager.onComponentEnded(
+							contexts,
+							contexts.component.keyPair,
+							props,
+							{
+								status: "success",
+							},
+						);
 						this.app.log.debug({
 							message: "Component rendering ended",
 							data: {
@@ -275,9 +315,14 @@ export class SeqFlowComponentContext {
 						// If the component is aborted, we don't have to log the error
 						// and we treat it as a success
 						if (childAbortController.signal.aborted) {
-							this.app.pluginManager.onComponentEnded(contexts, props, {
-								status: "success",
-							});
+							this.app.pluginManager.onComponentEnded(
+								contexts,
+								contexts.component.keyPair,
+								props,
+								{
+									status: "success",
+								},
+							);
 							this.app.log.debug({
 								message: "Component rendering ended",
 								data: {
@@ -286,10 +331,15 @@ export class SeqFlowComponentContext {
 								},
 							});
 						} else {
-							this.app.pluginManager.onComponentEnded(contexts, props, {
-								status: "error",
-								error: e,
-							});
+							this.app.pluginManager.onComponentEnded(
+								contexts,
+								contexts.component.keyPair,
+								props,
+								{
+									status: "error",
+									error: e,
+								},
+							);
 							this.app.log.error({
 								message: "Component throws an error",
 								data: {
@@ -304,9 +354,14 @@ export class SeqFlowComponentContext {
 					},
 				);
 			} else {
-				this.app.pluginManager.onComponentEnded(contexts, props, {
-					status: "success",
-				});
+				this.app.pluginManager.onComponentEnded(
+					contexts,
+					contexts.component.keyPair,
+					props,
+					{
+						status: "success",
+					},
+				);
 				this.app.log.debug({
 					message: "Component rendering ended",
 					data: {
@@ -322,12 +377,21 @@ export class SeqFlowComponentContext {
 		// If the component has a key, we have to keep track of it to use `getChild` and `findChild` methods later
 		if (props && "key" in props && !(el instanceof DocumentFragment)) {
 			const key = props.key as string;
+
+			let globalKey = el.dataset.globalKey;
+			if (!globalKey) {
+				globalKey = this.app.idGenerator();
+				el.dataset.globalKey = globalKey;
+			}
+
 			this.c.push({
-				key: key,
+				keyPair: {
+					local: key,
+					global: globalKey,
+				},
 				el,
 				mounted: false,
 			});
-			el.setAttribute("data-key", key);
 		}
 
 		// Automatic onClick event listener
@@ -335,13 +399,15 @@ export class SeqFlowComponentContext {
 			const onClick = props.onClick as Required<
 				ElementProperty<HTMLElement>
 			>["onClick"];
-			const k = "key" in props ? (props.key as string) : this.app.idGenerator();
+			const localKey =
+				"key" in props ? (props.key as string) : this.app.idGenerator();
+			const globalKey = this.app.idGenerator();
 			const elAbortController = new AbortController();
 			const onAbort = () => {
 				elAbortController.abort();
 				this.ac.signal.removeEventListener("abort", onAbort);
 				this.ac.signal.removeEventListener(
-					`replace-component-${k}`,
+					`replace-component-${localKey}`,
 					onReplaceChild,
 				);
 			};
@@ -349,13 +415,19 @@ export class SeqFlowComponentContext {
 			const onReplaceChild = () => {
 				elAbortController.abort();
 				this.ac.signal.removeEventListener(
-					`replace-component-${k}`,
+					`replace-component-${localKey}`,
 					onReplaceChild,
 				);
 			};
-			this.ac.signal.addEventListener(`replace-component-${k}`, onReplaceChild);
+			this.ac.signal.addEventListener(
+				`replace-component-${localKey}`,
+				onReplaceChild,
+			);
 			this.c.push({
-				key: k,
+				keyPair: {
+					local: localKey,
+					global: globalKey,
+				},
 				el,
 				mounted: false,
 			});
@@ -419,7 +491,9 @@ export class SeqFlowComponentContext {
 		// We want to keep only the new children, which are not yet mounted at this point
 		this.c = this.c.filter((c) => {
 			if (c.mounted) {
-				this.ac.signal.dispatchEvent(new ReplaceChildComponentEvent(c.key));
+				this.ac.signal.dispatchEvent(
+					new ReplaceChildComponentEvent(c.keyPair.local),
+				);
 			}
 			return !c.mounted;
 		});
@@ -483,7 +557,7 @@ export class SeqFlowComponentContext {
 	}
 
 	findChild<E extends HTMLElement = HTMLElement>(key: string): E | null {
-		const child = this.c.find((c) => c.key === key);
+		const child = this.c.find((c) => c.keyPair.local === key);
 		if (child) {
 			return child.el as E;
 		}
@@ -494,14 +568,14 @@ export class SeqFlowComponentContext {
 		key: string,
 		newChild: () => JSX.Element | Promise<JSX.Element>,
 	): void | Promise<void> {
-		const oldChildIndex = this.c.findIndex((c) => c.key === key);
+		const oldChildIndex = this.c.findIndex((c) => c.keyPair.local === key);
 		if (oldChildIndex < 0) {
 			this.app.log.error({
 				message: "replaceChild: wrapper not found",
 				data: {
 					key,
 					newChild,
-					availableKeys: this.c.map((c) => c.key),
+					availableKeys: this.c.map((c) => c.keyPair.local),
 				},
 			});
 			throw new Error("replaceChild: wrapper not found");
@@ -518,12 +592,8 @@ export class SeqFlowComponentContext {
 			// If we replace a child which contains another child,
 			// we have to abort the other child also
 			if (oldChild.el.contains(otherChild.el)) {
-				this.app.log.debug({
-					message: "replaceChild: wrapper contains other child",
-					data: { parent: key, child: otherChild.key },
-				});
 				this.ac.signal.dispatchEvent(
-					new ReplaceChildComponentEvent(otherChild.key),
+					new ReplaceChildComponentEvent(otherChild.keyPair.local),
 				);
 			}
 		}
@@ -560,6 +630,17 @@ export class SeqFlowComponentContext {
 			}
 			el = keyOrElement;
 		}
+
+		const globalChildKeyPair = this.c.find((c) => c.el === el)?.keyPair;
+		this.app.pluginManager.onComponentListening(
+			{
+				component: this,
+				app: this.app,
+			},
+			this.keyPair,
+			globalChildKeyPair,
+			eventType,
+		);
 
 		return domEvent(el, eventType, {
 			preventDefault: option.preventDefault,

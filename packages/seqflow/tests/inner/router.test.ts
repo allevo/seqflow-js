@@ -19,6 +19,7 @@ beforeEach(() => {
 		document.body,
 		abortController,
 		createAppForInnerTest(logs),
+		{ local: "root", global: "root" },
 	);
 });
 afterEach(() => {

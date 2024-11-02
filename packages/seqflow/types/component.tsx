@@ -12,6 +12,7 @@ const component = new SeqFlowComponentContext(
 	document.createElement("div"),
 	new AbortController(),
 	createAppForInnerTest([]),
+	{ local: "root", global: "root" },
 );
 
 // support cutom component

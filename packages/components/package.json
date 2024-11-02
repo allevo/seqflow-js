@@ -43,6 +43,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
     "@seqflow/storybook": "workspace:*",
+    "@seqflow/seqflow": "workspace:*",
     "@storybook/addon-a11y": "8.3.6",
     "@storybook/addon-essentials": "8.3.6",
     "@storybook/addon-interactions": "8.3.6",

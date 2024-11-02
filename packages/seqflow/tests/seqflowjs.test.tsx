@@ -17,7 +17,7 @@ test("the application starts", async (testContext) => {
 
 	await waitFor(() =>
 		expect(document.body.innerHTML).toBe(
-			'<div data-key="0"><div>App</div></div>',
+			'<div data-global-key="3"><div>App</div></div>',
 		),
 	);
 	expect(invokedCounter).toBe(1);

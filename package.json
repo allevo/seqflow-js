@@ -14,9 +14,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "turbo": "^1.12.4"
+    "turbo": "^2.2.3"
   },
   "devDependencies": {
-    "execa": "^8.0.1"
+    "execa": "^9.5.1"
   }
 }

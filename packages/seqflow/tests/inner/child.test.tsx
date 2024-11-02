@@ -17,6 +17,7 @@ beforeEach(() => {
 		document.body,
 		abortController,
 		createAppForInnerTest(logs),
+		{ local: "root", global: "root" },
 	);
 });
 afterEach(() => {
@@ -25,9 +26,9 @@ afterEach(() => {
 
 test("child: findChild", () => {
 	component.renderSync(<div key="div1" />);
-	expect(document.body.innerHTML).toBe('<div data-key="div1"></div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="0"></div>');
 
-	const a = document.querySelector("div[data-key=div1]");
+	const a = document.querySelector("div[data-global-key='0']");
 	const aa = component.findChild("div1");
 	expect(aa).toBe(a);
 
@@ -35,9 +36,9 @@ test("child: findChild", () => {
 });
 test("child: getChild", () => {
 	component.renderSync(<div key="div1" />);
-	expect(document.body.innerHTML).toBe('<div data-key="div1"></div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="0"></div>');
 
-	const a = document.querySelector("div[data-key=div1]");
+	const a = document.querySelector("div[data-global-key='0']");
 	const aa = component.getChild("div1");
 	expect(aa).toBe(a);
 
@@ -45,14 +46,14 @@ test("child: getChild", () => {
 });
 test("child: replaceChild", async () => {
 	component.renderSync(<div key="div1">A</div>);
-	expect(document.body.innerHTML).toBe('<div data-key="div1">A</div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="0">A</div>');
 
 	await component.replaceChild("div1", () => <div key="div1">B</div>);
-	expect(document.body.innerHTML).toBe('<div data-key="div1">B</div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="1">B</div>');
 });
 test("child: replaceChild - not found", async () => {
 	component.renderSync(<div key="div1">A</div>);
-	expect(document.body.innerHTML).toBe('<div data-key="div1">A</div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="0">A</div>');
 
 	expect(async () =>
 		component.replaceChild("foo", () => <div key="div1">B</div>),
@@ -60,12 +61,12 @@ test("child: replaceChild - not found", async () => {
 });
 test("child: replaceChild - async", async () => {
 	component.renderSync(<div key="div1">A</div>);
-	expect(document.body.innerHTML).toBe('<div data-key="div1">A</div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="0">A</div>');
 
 	await component.replaceChild("div1", async () => {
 		return <div key="div1">B</div>;
 	});
-	expect(document.body.innerHTML).toBe('<div data-key="div1">B</div>');
+	expect(document.body.innerHTML).toBe('<div data-global-key="1">B</div>');
 });
 test("child: render children", async () => {
 	function MyComponent(
@@ -83,7 +84,7 @@ test("child: render children", async () => {
 		</div>,
 	);
 	expect(document.body.innerHTML).toBe(
-		'<div><div parent="true" data-key="0"><div data-foo="bar"><div data-key="div1">A</div></div></div></div>',
+		'<div><div data-global-key="2" parent="true"><div data-foo="bar"><div data-global-key="0">A</div></div></div></div>',
 	);
 });
 test("child: render children with id", async () => {
@@ -92,7 +93,9 @@ test("child: render children with id", async () => {
 		{ component }: Contexts,
 	) {}
 	component.renderSync(<MyComponent id="foo" />);
-	expect(document.body.innerHTML).toBe('<div data-key="0" id="foo"></div>');
+	expect(document.body.innerHTML).toBe(
+		'<div data-global-key="1" id="foo"></div>',
+	);
 });
 test("child: replaceChild should unmount all the current components and their listeners", async () => {
 	function MyComponent1(
@@ -121,7 +124,7 @@ test("child: replaceChild should unmount all the current components and their li
 		</MyComponent1>,
 	);
 	expect(document.body.innerHTML).toBe(
-		'<div data-key="spot"><div data-component="my-component-1"><button type="button">Click me</button></div></div>',
+		'<div data-global-key="2"><div data-component="my-component-1"><button type="button">Click me</button></div></div>',
 	);
 
 	const firstDiv = await screen.findByText(/Click me/i);
@@ -169,7 +172,7 @@ test("child: renderSync should unmount all the current components and their list
 		</MyComponent1>,
 	);
 	expect(document.body.innerHTML).toBe(
-		'<div data-key="spot"><div data-component="my-component-1"><button type="button">Click me</button></div></div>',
+		'<div data-global-key="2"><div data-component="my-component-1"><button type="button">Click me</button></div></div>',
 	);
 
 	const firstDiv = await screen.findByText(/Click me/i);
@@ -192,6 +195,6 @@ test("child: className & style", async () => {
 		<MyComponent1 className={"the-class-name"} style={{ height: "30px" }} />,
 	);
 	expect(document.body.innerHTML).toBe(
-		'<div data-key="0" style="height: 30px;" class="the-class-name">foo</div>',
+		'<div data-global-key="1" style="height: 30px;" class="the-class-name">foo</div>',
 	);
 });

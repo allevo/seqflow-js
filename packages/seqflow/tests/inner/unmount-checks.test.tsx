@@ -380,18 +380,20 @@ test("track component lifecycle: replaceChild nested in div / nested component",
 
 function trackComponentLifecycle(arr: any[]): SeqflowPlugin {
 	return {
-		onComponentCreated(contexts, props) {
+		onComponentCreated(contexts, componentKeyPair, props) {
 			arr.push({
 				t: "onComponentCreated",
 				contexts,
+				componentKeyPair,
 				props,
 			});
 		},
-		onComponentEnded(contexts, props, result) {
+		onComponentEnded(contexts, componentKeyPair, props, result) {
 			arr.push({
 				t: "onComponentEnded",
-				props,
 				contexts,
+				componentKeyPair,
+				props,
 				result,
 			});
 		},

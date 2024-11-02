@@ -159,7 +159,10 @@ export function start<
 
 	app.router.install();
 
-	const comp = new SeqFlowComponentContext(root, appAbortController, app);
+	const comp = new SeqFlowComponentContext(root, appAbortController, app, {
+		local: app.idGenerator(),
+		global: app.idGenerator(),
+	});
 
 	root.appendChild(comp.createDOMElement(mainComponent, data));
 

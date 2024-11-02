@@ -1,5 +1,5 @@
 import "@seqflow/components/style.css";
-import { Contexts, start } from "@seqflow/seqflow";
+import { ComponentResult, Contexts, KeyPair, start } from "@seqflow/seqflow";
 import { SeqflowPlugin } from "@seqflow/seqflow";
 import { Main } from "./Main";
 import { CartDomain } from "./domains/cart";
@@ -34,53 +34,85 @@ start(
 );
 
 function sendToDevTools(): SeqflowPlugin {
-	type ComponentKey = string & { __componentKey: never };
 	const store = {
-		activeElement: new Set<ComponentKey>(),
+		activeElement: new Map<string, KeyPair>(),
 	};
-	function handleComponentCreated(key: ComponentKey) {
-		console.log("componentCreated", key);
-		store.activeElement.add(key);
+	function handleComponentCreated(keyPair: KeyPair) {
+		console.log("componentCreated", keyPair);
+		store.activeElement.set(keyPair.global, keyPair);
 		document.dispatchEvent(
-			new CustomEvent("componentCreated", { detail: { key } }),
+			new CustomEvent("componentCreated", { detail: { keyPair } }),
 		);
 	}
-	function handleComponentRemoved(key: ComponentKey) {
-		console.log("componentRemoved", key);
-		store.activeElement.delete(key);
+	function handleComponentRemoved(keyPair: KeyPair) {
+		console.log("componentRemoved", keyPair);
+		store.activeElement.delete(keyPair.global);
 		document.dispatchEvent(
-			new CustomEvent("componentRemoved", { detail: { key } }),
+			new CustomEvent("componentRemoved", { detail: { keyPair } }),
 		);
 	}
 	function sendAllToDevTools() {
 		console.log("sendAllToDevTools");
 		document.dispatchEvent(
 			new CustomEvent("allComponents", {
-				detail: { keys: Array.from(store.activeElement) },
+				detail: { keyPairs: Array.from(store.activeElement) },
+			}),
+		);
+	}
+	function handleComponentListening(
+		parentComponentKeyPair: KeyPair,
+		listenOnKeyPair: KeyPair | undefined,
+		eventName: string,
+	) {
+		console.log("handleComponentListening");
+		document.dispatchEvent(
+			new CustomEvent("componentListening", {
+				detail: { parentComponentKeyPair, listenOnKeyPair, eventName },
 			}),
 		);
 	}
 
 	document.addEventListener("pluginTabShown", (event) => {
 		console.log("pluginTabShown");
-		sendAllToDevTools();
+		// sendAllToDevTools();
 	});
 
 	return {
-		onDomainEventTargetsCreated: (ets) => {
-			sendAllToDevTools();
+		onDomainEventTargetsCreated: () => {
+			document.dispatchEvent(
+				new CustomEvent("allComponents", {
+					detail: { keyPairs: [] },
+				}),
+			);
 		},
-		onComponentCreated: (contexts: Contexts, props: unknown) => {
+		onComponentListening(
+			contexts: Contexts,
+			componentKeyPair: KeyPair,
+			listenOnKeyPair,
+			eventName: string,
+		) {
+			handleComponentListening(componentKeyPair, listenOnKeyPair, eventName);
+		},
+		onComponentCreated: (
+			contexts: Contexts,
+			componentKeyPair: KeyPair,
+			props: unknown,
+		) => {
 			if (typeof props !== "object" || props === null || !("key" in props)) {
 				return;
 			}
-			handleComponentCreated(props.key as ComponentKey);
+			handleComponentCreated(componentKeyPair);
 		},
-		onComponentEnded: (contexts: Contexts, props: unknown, result) => {
+		onComponentEnded: (
+			contexts: Contexts,
+			componentKeyPair: KeyPair,
+			props: unknown,
+			result: ComponentResult,
+		) => {
 			if (typeof props !== "object" || props === null || !("key" in props)) {
 				return;
 			}
-			handleComponentRemoved(props.key as ComponentKey);
+			handleComponentRemoved(componentKeyPair);
 		},
 	};
 }

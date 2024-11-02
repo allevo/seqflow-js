@@ -4,4 +4,4 @@ packages:
   - '!examples/gen-ai'
   - '!examples/orama-search-box'
   - '!tools/*'
-  - '!apps'
+  - '!apps/*'
