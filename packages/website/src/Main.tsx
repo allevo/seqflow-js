@@ -35,10 +35,10 @@ export async function Main(
 			<div id={classes.main}>
 				<InitalComponent key="main" />
 			</div>
-			<Footer center style="height: 100px; background-color: rgb(43, 48, 53);">
+			<Footer center style="height: 100px;">
 				<aside>
 					<p>
-						Seqflow, Copyright © {new Date().getFullYear()} The Seqflow team,
+						SeqFlow, Copyright © {new Date().getFullYear()} The SeqFlow team,
 						Licensed under MIT
 					</p>
 				</aside>

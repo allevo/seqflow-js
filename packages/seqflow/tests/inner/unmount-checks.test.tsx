@@ -1,7 +1,7 @@
 import { waitFor } from "@testing-library/dom";
 import { beforeEach, expect, test } from "vitest";
 import type { ComponentProps, Contexts } from "../../src/index";
-import type { SeqflowPlugin } from "../../src/plugin";
+import type { SeqFlowPlugin } from "../../src/plugin";
 import { sleep, startTestApp } from "../test-utils";
 
 beforeEach(() => {
@@ -378,7 +378,7 @@ test("track component lifecycle: replaceChild nested in div / nested component",
 	]);
 });
 
-function trackComponentLifecycle(arr: any[]): SeqflowPlugin {
+function trackComponentLifecycle(arr: any[]): SeqFlowPlugin {
 	return {
 		onComponentCreated(contexts, componentKeyPair, props) {
 			arr.push({

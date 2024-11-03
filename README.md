@@ -17,7 +17,7 @@ pnpm install seqflow-js
 ## Usage
 
 ```tsx
-import { SeqflowFunctionContext } from "seqflow-js";
+import { SeqlowFunctionContext } from "seqflow-js";
 
 interface Quote {
 	author: string;

@@ -1,11 +1,11 @@
-import { ComponentProps, Contexts, SeqflowComponent } from "@seqflow/seqflow";
+import { ComponentProps, Contexts, SeqFlowComponent } from "@seqflow/seqflow";
 import classes from "./CardList.module.css";
 
 export async function CardList<T extends { id: string }>(
 	data: ComponentProps<{
 		prefix: string;
 		items: T[];
-		Component: SeqflowComponent<T>;
+		Component: SeqFlowComponent<T>;
 	}>,
 	{ component }: Contexts,
 ) {

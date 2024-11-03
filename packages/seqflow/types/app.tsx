@@ -1,8 +1,8 @@
 import { expectType } from "tsd";
-import type { Contexts, LogFunction, SeqflowComponent } from "../src/index";
+import type { Contexts, LogFunction, SeqFlowComponent } from "../src/index";
 import type { CounterDomain } from "../tests/test-utils";
 
-const _: SeqflowComponent<object> = async (_, contexts: Contexts) => {
+const _: SeqFlowComponent<object> = async (_, contexts: Contexts) => {
 	// config
 	expectType<{ foo: string }>(contexts.app.config);
 	expectType<Readonly<{ foo: string }>>(contexts.app.config);

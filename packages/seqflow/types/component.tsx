@@ -4,7 +4,7 @@ import {
 	type Contexts,
 	type Domains,
 	SeqFlowComponentContext,
-	type SeqflowAppContext,
+	type SeqFlowAppContext,
 } from "../src/index";
 import { createAppForInnerTest } from "../tests/test-utils";
 
@@ -28,7 +28,7 @@ const component = new SeqFlowComponentContext(
 		// The component
 		expectType<SeqFlowComponentContext>(component);
 		// The app
-		expectType<SeqflowAppContext<Domains>>(app);
+		expectType<SeqFlowAppContext<Domains>>(app);
 	}
 
 	expectType<JSX.ElementType>(MyComponent);

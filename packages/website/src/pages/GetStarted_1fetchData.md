@@ -1,5 +1,5 @@
 
-The quote application is a simple application that fetches a random quote from an endpoint and shows it in the browser. We will use the [Quotable API](https://api.quotable.io/random) as the quote endpoint.
+The quote application is a simple application that fetches a random quote from an endpoint and shows it in the browser. We will use [this endpoint](https://quotes.seqflow.dev) for fetching the quote.
 
 ## Invoking an API
 

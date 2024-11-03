@@ -78,7 +78,7 @@ function Examples(_: ComponentProps<unknown>, { component }: Contexts) {
 			</Tabs.TabContent>
 			<Tabs.TabHeader label="Fetch Random Quote" />
 			<Tabs.TabContent>
-				<Code code={EXAMPLES_COUNTER_CODE} />
+				<Code code={EXAMPLES_RANDOM_QUOTE_CODE} />
 			</Tabs.TabContent>
 		</Tabs>,
 	);
@@ -460,4 +460,52 @@ export async function Counter(
   for await (const _ of events) {
     counterDiv.textContent = \`\${counter ++}\`;
   }
+}`.trim();
+
+const EXAMPLES_RANDOM_QUOTE_CODE = `
+// Imports
+import { Contexts } from "@seqflow/seqflow";
+import { Button, Loading } from "@seqflow/components";
+// Quote interface
+interface Quote {
+  author: string;
+  content: string;
+}
+// Pure function to fetch a random quote
+async function getRandomQuote(): Promise<Quote> {
+  const res = await fetch("https://quotes.seqflow.dev/api/quotes/random");
+  if (!res.ok) {
+    throw new Error("Failed to fetch quote");
+  }
+  return await res.json();
+}
+// RandomQuote component function
+export async function RandomQuote(
+  // component properties
+  { }: ComponentProps<unknown>,
+  // component context
+  { component }: Contexts
+) {
+  // Render
+  component.renderSync(
+    <Loading />
+  );
+
+  // Async invocation inside the component
+  let quote: Quote;
+  try {
+    quote = await getRandomQuote("https://api.quotable.io");
+  } catch (error) {
+	component.renderSync(
+	  <div>Error: {error.message}</div>
+	);
+	return;
+  }
+
+  component.renderSync(
+    <blockquote>
+      <p>{quote.content}</p>
+      <footer>{quote.author}</footer>
+    </blockquote>
+  );
 }`.trim();

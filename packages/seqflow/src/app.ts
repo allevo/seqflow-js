@@ -2,9 +2,9 @@ import {
 	type ApplicationConfiguration,
 	type Domains,
 	SeqFlowComponentContext,
-	type SeqflowComponent,
+	type SeqFlowComponent,
 } from ".";
-import { type SeqflowPlugin, SeqflowPluginManager } from "./plugin";
+import { type SeqFlowPlugin, SeqFlowPluginManager } from "./plugin";
 import { BrowserRouter, type Router } from "./router";
 
 export interface Log {
@@ -24,14 +24,14 @@ export type DomainEventTargets = Record<keyof Domains, EventTarget>;
 
 export type IdGenerator = () => string;
 
-export class SeqflowAppContext<Domains> {
+export class SeqFlowAppContext<Domains> {
 	constructor(
 		public log: LogFunctions,
 		public config: Readonly<ApplicationConfiguration>,
 		public domains: Readonly<Domains>,
 		public router: Readonly<Router>,
 		private domainEventTargets: DomainEventTargets,
-		public pluginManager: SeqflowPluginManager,
+		public pluginManager: SeqFlowPluginManager,
 		public idGenerator: IdGenerator,
 	) {}
 
@@ -52,7 +52,7 @@ type DomainCreators = {
 
 export type StartConfiguration<Domains extends object> = {
 	log?: Partial<LogFunctions>;
-	plugins?: SeqflowPlugin[];
+	plugins?: SeqFlowPlugin[];
 	router?: Router;
 	idGenerator?: IdGenerator;
 } & (object extends ApplicationConfiguration
@@ -74,7 +74,7 @@ const DEFAULT_ID_GENERATOR = () => Math.random().toString(36).slice(2);
 
 function createApp(
 	configuration: StartConfiguration<Domains>,
-): SeqflowAppContext<Domains> {
+): SeqFlowAppContext<Domains> {
 	function noop() {}
 
 	// The default router is BrowserRouter
@@ -100,7 +100,7 @@ function createApp(
 		configuration.config = {} as Readonly<ApplicationConfiguration>;
 	}
 
-	const pluginManager = new SeqflowPluginManager(configuration.plugins ?? []);
+	const pluginManager = new SeqFlowPluginManager(configuration.plugins ?? []);
 
 	// Build domains...
 	// First all event targets
@@ -133,8 +133,8 @@ function createApp(
 		) as Domains[keyof Domains];
 	}
 
-	return new SeqflowAppContext(
-		configuration.log as SeqflowAppContext<Domains>["log"],
+	return new SeqFlowAppContext(
+		configuration.log as SeqFlowAppContext<Domains>["log"],
 		configuration.config as Readonly<ApplicationConfiguration>,
 		domains,
 		configuration.router,
@@ -146,7 +146,7 @@ function createApp(
 
 export function start<
 	T extends Record<string, unknown>,
-	MainComponent extends SeqflowComponent<T>,
+	MainComponent extends SeqFlowComponent<T>,
 >(
 	root: HTMLElement,
 	mainComponent: MainComponent,

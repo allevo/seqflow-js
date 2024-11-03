@@ -2,8 +2,8 @@ import type {
 	Contexts,
 	Domains,
 	ElementProperty,
-	SeqflowAppContext,
-	SeqflowComponent,
+	SeqFlowAppContext,
+	SeqFlowComponent,
 } from ".";
 import type { DomainEvent } from "./domains";
 import {
@@ -78,7 +78,7 @@ function applyProps<X extends HTMLElement | SVGElement | MathMLElement>(
 function addChildren(
 	el: HTMLElement | SVGAElement | MathMLElement | DocumentFragment,
 	children: (string | number | null | undefined | JSX.Element)[],
-	appContext: SeqflowAppContext<Domains>,
+	appContext: SeqFlowAppContext<Domains>,
 ) {
 	// @ts-ignore
 	const c = children.flat(Number.POSITIVE_INFINITY);
@@ -137,7 +137,7 @@ export class SeqFlowComponentContext {
 		public _el: HTMLElement | SVGElement | MathMLElement,
 		// abort controller
 		public ac: AbortController,
-		private app: SeqflowAppContext<Domains>,
+		private app: SeqFlowAppContext<Domains>,
 		private keyPair: KeyPair,
 	) {}
 
@@ -196,7 +196,7 @@ export class SeqFlowComponentContext {
 
 			// Create wrapper element
 			const tagName =
-				(tagNameOrComponentFunction as SeqflowComponent<object>).tagName ??
+				(tagNameOrComponentFunction as SeqFlowComponent<object>).tagName ??
 				DEFAULT_TAG_NAME;
 			el = document.createElement(tagName(props));
 			const childAbortController = new AbortController();

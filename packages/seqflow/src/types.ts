@@ -1,4 +1,4 @@
-import type { SeqflowAppContext } from ".";
+import type { SeqFlowAppContext } from ".";
 import type { SeqFlowComponentContext } from "./component";
 
 // biome-ignore lint/suspicious/noEmptyInterface: This type is fulfilled by the user
@@ -33,7 +33,7 @@ export type ComponentProps<X> = X &
 		children?: JSX.Element[];
 	};
 
-export type SeqflowComponent<T extends object> =
+export type SeqFlowComponent<T extends object> =
 	// support custom async element
 	(
 		| ((_: ComponentProps<T>, c: Contexts) => Promise<void>)
@@ -46,7 +46,7 @@ export type SeqflowComponent<T extends object> =
 
 export type Contexts = {
 	component: SeqFlowComponentContext;
-	app: SeqflowAppContext<Domains>;
+	app: SeqFlowAppContext<Domains>;
 };
 declare global {
 	namespace JSX {
@@ -55,7 +55,7 @@ declare global {
 			| string
 			// custom component
 			// biome-ignore lint/suspicious/noExplicitAny: JSX supports badly generic components
-			| SeqflowComponent<any>
+			| SeqFlowComponent<any>
 			// support fragment (`createDOMFragment`)
 			| symbol;
 

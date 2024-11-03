@@ -10,7 +10,7 @@ async function NavbarStory(_: unknown, { component }: Contexts) {
 	component.renderSync(
 		<Navbar className={["bg-base-100", "shadow-md"]}>
 			<Button color="ghost" className="text-xl">
-				SeqflowJS
+				SeqFlowJS
 			</Button>
 		</Navbar>,
 	);
@@ -41,7 +41,7 @@ export const NavbarWithStartCenterEnd: StoryFn = async (
 			</Navbar.Start>
 			<Navbar.Center>
 				<Button color="ghost" className="text-xl">
-					SeqflowJS
+					SeqFlowJS
 				</Button>
 			</Navbar.Center>
 			<Navbar.End>

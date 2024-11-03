@@ -34,7 +34,7 @@ class CounterElement extends HTMLElement {
 		// Get the initial value from the attribute or default to 20
 		const initialValue = Number(this.getAttribute("value") || "20");
 
-		// Start the Seqflow app
+		// Start the SeqFlow app
 		// Even if `ShadowRoot` is not a `HTMLElement`, we can cast it to `HTMLElement` to make TypeScript happy.
 		// It works anyway.
 		this.abortController = start(

@@ -10,7 +10,7 @@ export type ComponentResult =
 			error?: Error;
 	  };
 
-export interface SeqflowPlugin {
+export interface SeqFlowPlugin {
 	onDomainEventTargetsCreated?: (ets: DomainEventTargets) => void;
 	onComponentCreated?: <T>(
 		contexts: Contexts,
@@ -31,14 +31,14 @@ export interface SeqflowPlugin {
 	) => void;
 }
 
-export class SeqflowPluginManager {
-	private foo: {
+export class SeqFlowPluginManager {
+	private fns: {
 		onDomainEventTargetsCreated: NonNullable<
-			SeqflowPlugin["onDomainEventTargetsCreated"]
+			SeqFlowPlugin["onDomainEventTargetsCreated"]
 		>[];
-		onComponentCreated: NonNullable<SeqflowPlugin["onComponentCreated"]>[];
-		onComponentListening: NonNullable<SeqflowPlugin["onComponentListening"]>[];
-		onComponentEnded: NonNullable<SeqflowPlugin["onComponentEnded"]>[];
+		onComponentCreated: NonNullable<SeqFlowPlugin["onComponentCreated"]>[];
+		onComponentListening: NonNullable<SeqFlowPlugin["onComponentListening"]>[];
+		onComponentEnded: NonNullable<SeqFlowPlugin["onComponentEnded"]>[];
 	} = {
 		onDomainEventTargetsCreated: [],
 		onComponentCreated: [],
@@ -46,27 +46,27 @@ export class SeqflowPluginManager {
 		onComponentEnded: [],
 	};
 
-	constructor(plugins: SeqflowPlugin[]) {
+	constructor(plugins: SeqFlowPlugin[]) {
 		for (const p of plugins) {
 			if (p.onDomainEventTargetsCreated) {
-				this.foo.onDomainEventTargetsCreated.push(
+				this.fns.onDomainEventTargetsCreated.push(
 					p.onDomainEventTargetsCreated.bind(p),
 				);
 			}
 			if (p.onComponentCreated) {
-				this.foo.onComponentCreated.push(p.onComponentCreated.bind(p));
+				this.fns.onComponentCreated.push(p.onComponentCreated.bind(p));
 			}
 			if (p.onComponentListening) {
-				this.foo.onComponentListening.push(p.onComponentListening.bind(p));
+				this.fns.onComponentListening.push(p.onComponentListening.bind(p));
 			}
 			if (p.onComponentEnded) {
-				this.foo.onComponentEnded.push(p.onComponentEnded.bind(p));
+				this.fns.onComponentEnded.push(p.onComponentEnded.bind(p));
 			}
 		}
 	}
 
 	onDomainEventTargetsCreated(ets: DomainEventTargets) {
-		for (const f of this.foo.onDomainEventTargetsCreated) {
+		for (const f of this.fns.onDomainEventTargetsCreated) {
 			f(ets);
 		}
 	}
@@ -76,7 +76,7 @@ export class SeqflowPluginManager {
 		componentKeyPair: KeyPair,
 		props: T,
 	) {
-		for (const f of this.foo.onComponentCreated) {
+		for (const f of this.fns.onComponentCreated) {
 			f(contexts, componentKeyPair, props);
 		}
 	}
@@ -87,7 +87,7 @@ export class SeqflowPluginManager {
 		props: T,
 		result: ComponentResult,
 	) {
-		for (const f of this.foo.onComponentEnded) {
+		for (const f of this.fns.onComponentEnded) {
 			f(contexts, componentKeyPair, props, result);
 		}
 	}
@@ -98,7 +98,7 @@ export class SeqflowPluginManager {
 		listenOnKeyPair: KeyPair | undefined,
 		eventName: string,
 	) {
-		for (const f of this.foo.onComponentListening) {
+		for (const f of this.fns.onComponentListening) {
 			f(contexts, componentKeyPair, listenOnKeyPair, eventName);
 		}
 	}

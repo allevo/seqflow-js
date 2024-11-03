@@ -1,6 +1,5 @@
 import "@seqflow/components/style.css";
 import { ComponentResult, Contexts, KeyPair, start } from "@seqflow/seqflow";
-import { SeqflowPlugin } from "@seqflow/seqflow";
 import { Main } from "./Main";
 import { CartDomain } from "./domains/cart";
 import { ProductDomain } from "./domains/product";

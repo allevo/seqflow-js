@@ -44,6 +44,10 @@
     }
 }
 
+.link:hover {
+    text-decoration: underline;
+}
+
 @media (min-width: 1300px) {
 	.top {
 		aside {

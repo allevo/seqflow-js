@@ -4,13 +4,13 @@ This function starts `SeqFlow` and renders the component into the DOM element.
 
 ```ts
 function start<
-	Component extends SeqflowFunction<FirstComponentData>,
+	Component extends SeqFlowFunction<FirstComponentData>,
 	FirstComponentData extends JSX.IntrinsicAttributes
 >(
 	root: HTMLElement,
 	firstComponent: Component,
 	componentOption: FirstComponentData | undefined,
-	seqflowConfiguration: Partial<SeqflowConfiguration>
+	seqflowConfiguration: Partial<SeqFlowConfiguration>
 ): AbortController;
 ```
 

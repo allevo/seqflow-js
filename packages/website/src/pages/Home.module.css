@@ -163,7 +163,7 @@
     }
 
     @media (max-width: 700px) {
-        height: 30vh !important;
+        /* height: 30vh !important; */
         display: block !important;
     }
 

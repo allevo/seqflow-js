@@ -69,7 +69,7 @@ export function renderToCanvas(
   } else if (Component) {
     if (!(Component instanceof AsyncFunction)) {
       console.error('Invalid component', Component);
-      throw new Error(`Invalid component: ${Component}. Expected AsyncFunction \`async function(this: SeqflowFunctionContext, args: any) { ... }\``);
+      throw new Error(`Invalid component: ${Component}. Expected AsyncFunction \`async function(args: any, { component }: Contexts) { ... }\``);
     }
     canvasElement.innerHTML = '';
 
