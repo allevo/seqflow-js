@@ -59,3 +59,36 @@ export const SwitchBetweenTabs: StoryFn = {
 		await waitFor(() => expect(secondContent).not.toBeVisible());
 	},
 };
+
+export const DefaultCheckedTabs: StoryFn = {
+	component: async function TabsExample(
+		props: ComponentProps<TabsProps>,
+		{ component }: Contexts,
+	) {
+		component.renderSync(
+			<Tabs {...props}>
+				<Tabs.TabHeader label="Tab 1" />
+				<Tabs.TabContent>Tab content 1</Tabs.TabContent>
+
+				<Tabs.TabHeader defaultChecked label="Tab 2" />
+				<Tabs.TabContent>Tab content 2</Tabs.TabContent>
+			</Tabs>,
+		);
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+
+		const firstTab = canvas.getByRole("tab", {
+			name: "Tab 1",
+		});
+		const secondTab = canvas.getByRole("tab", {
+			name: "Tab 2",
+		});
+
+		const firstContent = await canvas.findByText("Tab content 1");
+		const secondContent = await canvas.findByText("Tab content 2");
+
+		await waitFor(() => expect(secondContent).toBeVisible());
+		await waitFor(() => expect(firstContent).not.toBeVisible());
+	},
+};

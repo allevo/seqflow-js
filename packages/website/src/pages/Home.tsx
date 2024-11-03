@@ -349,7 +349,7 @@ async function MyComponent(
   { component }: Contexts
 ) {
   component.renderSync(
-	<button type="button" key="my-button">Click me</button>
+	<button key="my-button" type="button">Click me</button>
   );
 
   // create AsyncGenerator
@@ -374,7 +374,7 @@ async function MyComponent(
   let counter = 0;
 
   component.renderSync(
-	<button type="button" key="my-button">Click me</button>
+	<button key="my-button" type="button">Click me</button>
   );
 
   const events = component.waitEvents(
@@ -399,7 +399,7 @@ async function MyComponent(
 
   component.renderSync(
     <>
-      <button type="button" key="my-button">Click me</button>
+      <button key="my-button" type="button">Click me</button>
       <div key="counter">{counter}</div>
     </>
   );

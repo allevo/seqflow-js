@@ -62,6 +62,7 @@ export async function TabHeader(
 	input.role = "tab";
 	input.classList.add("tab");
 	if (defaultChecked) {
+		input.defaultChecked = true;
 		input.checked = true;
 	}
 
