@@ -3,8 +3,8 @@ import {
 	type ComponentProps,
 	type Contexts,
 	type Domains,
-	SeqFlowComponentContext,
 	type SeqFlowAppContext,
+	SeqFlowComponentContext,
 } from "../src/index";
 import { createAppForInnerTest } from "../tests/test-utils";
 

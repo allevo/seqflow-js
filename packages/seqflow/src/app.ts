@@ -1,8 +1,8 @@
 import {
 	type ApplicationConfiguration,
 	type Domains,
-	SeqFlowComponentContext,
 	type SeqFlowComponent,
+	SeqFlowComponentContext,
 } from ".";
 import { type SeqFlowPlugin, SeqFlowPluginManager } from "./plugin";
 import { BrowserRouter, type Router } from "./router";

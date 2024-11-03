@@ -47,11 +47,15 @@ export async function ContentWithToc(
 				<aside>
 					<ul className="list-group">
 						<li className={["list-group-item", classes["level-1"]]}>
-							<a className={classes.link} href={`#${titleSlug}`}>{data.title}</a>
+							<a className={classes.link} href={`#${titleSlug}`}>
+								{data.title}
+							</a>
 						</li>
 						{toc.map((t) => (
 							<li className={["list-group-item", classes[`level-${t.level}`]]}>
-								<a className={classes.link} href={`#${t.slug}`}>{t.title}</a>
+								<a className={classes.link} href={`#${t.slug}`}>
+									{t.title}
+								</a>
 							</li>
 						))}
 					</ul>
