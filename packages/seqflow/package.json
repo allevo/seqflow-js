@@ -1,5 +1,6 @@
 {
   "name": "@seqflow/seqflow",
+  "description": "SeqFlow is a modern web framework that is designed to be simple and easy to use. It optimizes the development process by providing a simple and easy-to-understand API. It is a good choice for those who want to create web applications without the complexity of other frameworks.",
   "version": "0.0.1-beta.19",
   "type": "module",
   "main": "./dist/index.js",
@@ -15,7 +16,8 @@
     "framework",
     "jsx",
     "typescript",
-    "tsx",
+    "web-component",
+    "web-components",
     "ui",
     "web",
     "library",
@@ -25,7 +27,14 @@
     "reactive",
     "modern"
   ],
-  "license": "ISC",
+  "homepage": "https://seqflow.dev",
+  "repository": "https://github.com/allevo/seqflow-js",
+  "bugs": "https://github.com/allevo/seqflow-js/issues",
+  "author": "Tommaso Allevi <tomallevi@gmail.com>",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "1.7.1",
     "@testing-library/dom": "^10.0.0",

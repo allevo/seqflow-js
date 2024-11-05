@@ -1,23 +1,19 @@
 # SeqFlow JS
 
-SeqFlowJS is a JavaScript library for creating and managing frontend workflows. The core ideas are:
-- Events over State Management
-- Simplicity over Complexity
-- Linearity over Complex Abstractions
-- Explicitness over Implicitiveness
+SeqFlow is a modern web framework that is designed to be simple and easy to use. It optimizes the development process by providing a simple and easy-to-understand API. It is a good choice for those who want to create web applications without the complexity of other frameworks.
 
 See the [documentation](https://seqflow.dev) for more information.
 
 ## Installation
 
 ```bash
-pnpm install seqflow-js
+pnpm install @seqflow/seqflow
 ```
 
 ## Usage
 
 ```tsx
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "seqflow-js";
 
 interface Quote {
 	author: string;
@@ -25,7 +21,7 @@ interface Quote {
 }
 
 async function getRandomQuote(): Promise<Quote> {
-	const res = await fetch("https://api.quotable.io/random")
+	const res = await fetch("https://quotes.seqflow.dev/api/quotes/random")
 	return await res.json();
 }
 
@@ -47,5 +43,9 @@ export async function Main(this: SeqflowFunctionContext) {
 	);
 }
 
-start(document.getElementById("root"), Main, undefined, {});
+start(document.getElementById("root"), Main, {}, {});
 ```
+
+## License
+
+SeqFlow JS is licensed under the MIT License.
