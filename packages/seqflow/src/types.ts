@@ -14,18 +14,27 @@ export type OverwriteHtmlFor<X extends object> = "htmlFor" extends keyof X
 			htmlFor?: string;
 		}
 	: X;
+export type OverwriteSandbox<X extends object> = "sandbox" extends keyof X
+	? {
+			[K in keyof Omit<X, "sandbox">]: X[K];
+		} & {
+			sandbox?: string;
+		}
+	: X;
 
-export type ElementProperty<X extends object> = OverwriteHtmlFor<
-	{
-		[K in keyof Omit<X, "key" | "className" | "style">]: X[K] extends object
-			? never
-			: X[K];
-	} & {
-		key?: string;
-		style?: Partial<CSSStyleDeclaration> | string;
-		className?: string | string[];
-		onClick?: (event: MouseEvent) => void;
-	}
+export type ElementProperty<X extends object> = OverwriteSandbox<
+	OverwriteHtmlFor<
+		{
+			[K in keyof Omit<X, "key" | "className" | "style">]: X[K] extends object
+				? never
+				: X[K];
+		} & {
+			key?: string;
+			style?: Partial<CSSStyleDeclaration> | string;
+			className?: string | string[];
+			onClick?: (event: MouseEvent) => void;
+		}
+	>
 >;
 
 export type ComponentProps<X> = X &

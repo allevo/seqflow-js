@@ -5,6 +5,7 @@ import {
 	type Domains,
 	type SeqFlowAppContext,
 	SeqFlowComponentContext,
+	createDomainEventClass,
 } from "../src/index";
 import { createAppForInnerTest } from "../tests/test-utils";
 
@@ -61,4 +62,37 @@ const component = new SeqFlowComponentContext(
 	expectType<JSX.ElementType>(async ({ children }: ComponentProps<unknown>) => {
 		expectType<JSX.Element[] | undefined>(children);
 	});
+}
+
+{
+	const MyDomainEventClass = createDomainEventClass<
+		{ value: number },
+		"my-event"
+	>("counter", "my-event");
+	type MyDomainEventClass = InstanceType<typeof MyDomainEventClass>;
+
+	const ev = new MyDomainEventClass({ value: 5 });
+	const detail: {
+		value: number;
+	} = ev.detail;
+	const events = component.waitEvents(
+		component.domainEvent(MyDomainEventClass),
+	);
+	for await (const ev of events) {
+		const detail: {
+			value: number;
+		} = ev.detail;
+		const v = detail.value;
+		const eventType: "my-event" = ev.t;
+		// @ts-expect-error: Type '"another-event-type"' is not assignable to type '"my-event"'.ts(2322)
+		const eventType2: "another-event-type" = ev.t;
+	}
+
+	const events2 = component.waitEvents(
+		component.domainEvent(MyDomainEventClass),
+		component.domEvent(document.body, "click"),
+	);
+	for await (const ev of events2) {
+		const e: MyDomainEventClass | MouseEvent = ev;
+	}
 }

@@ -86,6 +86,9 @@ importers:
       '@biomejs/biome':
         specifier: 1.5.3
         version: 1.5.3
+      '@tailwindcss/typography':
+        specifier: ^0.5.15
+        version: 0.5.15(tailwindcss@3.4.14)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -95,12 +98,18 @@ importers:
       '@types/css-modules':
         specifier: ^1.0.5
         version: 1.0.5
+      autoprefixer:
+        specifier: ^10.4.2
+        version: 10.4.20(postcss@8.4.47)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
       serve:
         specifier: ^14.2.3
         version: 14.2.4
+      tailwindcss:
+        specifier: ^3.4.6
+        version: 3.4.14
       typescript:
         specifier: ^5.4.2
         version: 5.6.3

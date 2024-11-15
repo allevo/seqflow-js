@@ -13,6 +13,7 @@ export * from "./FormField/index.js";
 export * from "./Loading/index.js";
 export * from "./Hero/index.js";
 export * from "./Menu/index.js";
+export * from "./Modal/index.js";
 export * from "./Navbar/index.js";
 export * from "./NumberInput/index.js";
 export * from "./Link/index.js";
