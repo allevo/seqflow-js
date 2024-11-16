@@ -43,6 +43,7 @@ const templateChoices = [
 interface Configuration {
 	absolutePath: string;
 	projectName: string;
+	branch: string;
 	type: TemplateType;
 }
 
@@ -64,6 +65,9 @@ function parseArguments(args: string[]): Partial<Configuration> {
 		} else if (arg === "--template" || arg === "-t") {
 			configurationFromCMD.type = args[i + 1] as TemplateType;
 			i += 2;
+		} else if (arg === "--branch" || arg === "-b") {
+			configurationFromCMD.branch = args[i + 1];
+			i += 2;
 		} else {
 			throw new Error(
 				`Unknown option: ${arg}. Allowed options are: --path, --name, --template.`,
@@ -76,6 +80,7 @@ function parseArguments(args: string[]): Partial<Configuration> {
 
 async function collectInformation({
 	type,
+	branch,
 }: Partial<Configuration>): Promise<Configuration> {
 	const questions: PromptObject[] = [
 		{
@@ -104,6 +109,7 @@ async function collectInformation({
 		type: response.type || type,
 		absolutePath,
 		projectName,
+		branch: branch || 'main',
 	};
 }
 
@@ -125,8 +131,12 @@ async function createApp(config: Configuration) {
 	// Download and extract the template
 	const extractorRegex = new RegExp(`examples\/${config.type}\/`);
 	const res = await fetch(
-		"https://codeload.github.com/allevo/seqflow-js/tar.gz/feat%2Fseqflow-rework",
+		`https://codeload.github.com/allevo/seqflow-js/tar.gz/${encodeURIComponent(config.branch)}`,
 	);
+	if (!res.ok) {
+		console.log(config)
+		throw new Error(`Failed to download the template: ${res.statusText}`);
+	}
 	const tarStream = Readable.fromWeb(
 		res.body as import("stream/web").ReadableStream,
 	);

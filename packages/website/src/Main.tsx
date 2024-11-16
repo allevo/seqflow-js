@@ -2,7 +2,6 @@ import { Footer } from "@seqflow/components";
 import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import classes from "./Main.module.css";
 import { Header } from "./components/Header";
-import { ApiReference } from "./pages/ApiReference";
 import { Example } from "./pages/Example";
 import { GetStarted } from "./pages/GetStarted";
 import { Home } from "./pages/Home";
@@ -14,8 +13,6 @@ function getComponent(path: string[]) {
 			return GetStarted;
 		case "why":
 			return Why;
-		case "api-reference":
-			return ApiReference;
 		case "examples":
 			return Example;
 		default:

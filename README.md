@@ -1,6 +1,6 @@
 # SeqFlow JS
 
-SeqFlow is a modern web framework that is designed to be simple and easy to use. It optimizes the development process by providing a simple and easy-to-understand API. It is a good choice for those who want to create web applications without the complexity of other frameworks.
+This framework i a lightweight, domain-driven front-end framework designed to simplify web application development, reduce complexity, and enhance user experience with an event-driven architecture.
 
 See the [documentation](https://seqflow.dev) for more information.
 
