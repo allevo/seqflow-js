@@ -11,7 +11,7 @@
     "biome:check": "biome check --apply src tests",
     "start": "vite -c vite.config.js",
     "build": "vite build --emptyOutDir -c vite.config.js",
-    "depcheck": "depcheck --ignores @types/css-modules .",
+    "depcheck": "depcheck --ignores @types/css-modules,autoprefixer,typescript .",
     "serve:static": "serve dist"
   },
   "keywords": [],

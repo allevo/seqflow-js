@@ -1,5 +1,5 @@
 {
-  "name": "create-seqflow",
+  "name": "@seqflow/create-seqflow",
   "version": "1.0.0",
   "description": "SeqFlow CLI",
   "main": "dist/index.js",

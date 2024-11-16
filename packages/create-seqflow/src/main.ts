@@ -68,9 +68,21 @@ function parseArguments(args: string[]): Partial<Configuration> {
 		} else if (arg === "--branch" || arg === "-b") {
 			configurationFromCMD.branch = args[i + 1];
 			i += 2;
+		} else if (arg === "--help" || arg === "-h") {
+			console.log(`
+Usage: create-seqflow [options]
+
+Options:
+  --path, -p     The destination path of the project
+  --name, -n     The name of the project
+  --template, -t The template to use
+  --branch, -b   The branch to use
+  --help, -h     Display this help message
+`);
+			process.exit(0);
 		} else {
 			throw new Error(
-				`Unknown option: ${arg}. Allowed options are: --path, --name, --template.`,
+				`Unknown option: ${arg}. Allowed options are: --path, --name, --template, --branch.`,
 			);
 		}
 	}
@@ -153,6 +165,9 @@ async function createApp(config: Configuration) {
 	packageJson.name = config.projectName;
 	packageJson.dependencies["@seqflow/seqflow"] = "*";
 	packageJson.dependencies["@seqflow/components"] = "*";
+
+	console.log(JSON.stringify(packageJson, null, 2))
+
 	fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
 
