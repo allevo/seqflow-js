@@ -93,7 +93,7 @@ export async function Main({}, { component, app }: Contexts) {
 
 		let quote: Quote;
 		try {
-			// Use `app.config.api.baseUrl` to get the URL
+			// Use \`app.config.api.baseUrl\` to get the URL
 			quote = await getRandomQuote(app.config.api.baseUrl);
 		} catch (error) {
 			component.replaceChild("quote", () => <ErrorMessage key="quote" error={error} />);

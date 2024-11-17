@@ -65,11 +65,24 @@ export async function Link(
 		underline,
 		children,
 		showAsButton,
+		target,
 	}: ComponentProps<LinkPropsType>,
 	{ component, app }: Contexts,
 ) {
 	if (showAsButton) {
 		component._el.classList.add("btn");
+		/*
+		btn-neutral
+		btn-primary
+		btn-secondary
+		btn-accent
+		btn-ghost
+		btn-link
+		btn-info
+		btn-success
+		btn-warning
+		btn-error
+		*/
 		component._el.classList.add(`btn-${showAsButton}`);
 	} else {
 		component._el.classList.add("link");
@@ -93,6 +106,9 @@ export async function Link(
 	}
 	if (rel) {
 		component._el.setAttribute("rel", rel);
+	}
+	if (target) {
+		component._el.setAttribute("target", target);
 	}
 
 	if (!children) {
