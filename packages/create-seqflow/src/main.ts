@@ -121,7 +121,7 @@ async function collectInformation({
 		type: response.type || type,
 		absolutePath,
 		projectName,
-		branch: branch || 'main',
+		branch: branch || "main",
 	};
 }
 
@@ -143,10 +143,12 @@ async function createApp(config: Configuration) {
 	// Download and extract the template
 	const extractorRegex = new RegExp(`examples\/${config.type}\/`);
 	const res = await fetch(
-		`https://codeload.github.com/allevo/seqflow-js/tar.gz/${encodeURIComponent(config.branch)}`,
+		`https://codeload.github.com/allevo/seqflow-js/tar.gz/${encodeURIComponent(
+			config.branch,
+		)}`,
 	);
 	if (!res.ok) {
-		console.log(config)
+		console.log(config);
 		throw new Error(`Failed to download the template: ${res.statusText}`);
 	}
 	const tarStream = Readable.fromWeb(
@@ -166,7 +168,7 @@ async function createApp(config: Configuration) {
 	packageJson.dependencies["@seqflow/seqflow"] = "*";
 	packageJson.dependencies["@seqflow/components"] = "*";
 
-	console.log(JSON.stringify(packageJson, null, 2))
+	console.log(JSON.stringify(packageJson, null, 2));
 
 	fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }

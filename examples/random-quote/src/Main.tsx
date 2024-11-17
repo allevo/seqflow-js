@@ -1,4 +1,5 @@
 import { Contexts } from "@seqflow/seqflow";
+import classes from "./Main.module.css";
 import {
 	FetchingNewQuote,
 	NewQuoteFetched,
@@ -6,7 +7,6 @@ import {
 	QuoteErrorFetched,
 	RefreshQuoteButton,
 } from "./domains/quote";
-import classes from './Main.module.css'
 
 function Loading({}, { component }: Contexts) {
 	component.renderSync(<p>Loading...</p>);
@@ -38,12 +38,18 @@ export async function Main({}, { component }: Contexts) {
 	for await (const ev of events) {
 		switch (true) {
 			case ev instanceof FetchingNewQuote: {
-				component.replaceChild("quote", () => <Loading className={classes.quote} key="quote" />);
+				component.replaceChild("quote", () => (
+					<Loading className={classes.quote} key="quote" />
+				));
 				break;
 			}
 			case ev instanceof NewQuoteFetched: {
 				component.replaceChild("quote", () => (
-					<QuoteComponent className={classes.quote} key="quote" quote={ev.detail} />
+					<QuoteComponent
+						className={classes.quote}
+						key="quote"
+						quote={ev.detail}
+					/>
 				));
 				break;
 			}

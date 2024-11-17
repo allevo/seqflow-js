@@ -47,7 +47,7 @@ test("should render the quote and refresh it", async () => {
 	await screen.findByText(new RegExp(quotes[0].author, "i"));
 
 	// When the user clicks the refresh button, the quote should change
-	const button = await screen.findByText("Refresh quote")
+	const button = await screen.findByText("Refresh quote");
 	button.click();
 
 	// And the second quote should be displayed

@@ -60,5 +60,5 @@ async function getRandomQuote(baseUrl: string): Promise<Quote> {
 	return {
 		content: body.content,
 		author: body.author,
-	}
+	};
 }
