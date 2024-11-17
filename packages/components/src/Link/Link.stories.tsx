@@ -1,11 +1,11 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { Link, type LinkPropsType } from ".";
 
 async function LinkStory(
-	this: SeqflowFunctionContext,
-	{ children, ...props }: SeqflowFunctionData<LinkPropsType>,
+	{ children, ...props }: ComponentProps<LinkPropsType>,
+	{ component }: Contexts,
 ) {
-	this.renderSync(<Link {...props}>This is a link</Link>);
+	component.renderSync(<Link {...props}>This is a link</Link>);
 }
 // biome-ignore lint/suspicious/noExplicitAny: storybook
 LinkStory.__storybook = (Link as any).__storybook;
@@ -20,10 +20,10 @@ export default {
 export const Empty = {};
 
 export const AllLinks = async function AllLinks(
-	this: SeqflowFunctionContext,
-	_: SeqflowFunctionData<unknown>,
+	_: ComponentProps<unknown>,
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<div>
 			<Link href="https://seqflow.dev">Link</Link>
 			<Link showAsButton="primary" href="https://seqflow.dev">

@@ -4,7 +4,7 @@ import { dedent } from 'ts-dedent';
 import { simulatePageLoad, simulateDOMContentLoaded } from '@storybook/preview-api';
 import type { RenderContext } from '@storybook/types';
 import type { SeqFlowJSRenderer } from './types';
-import { SeqflowFunctionContext, start } from 'seqflow-js';
+import { Contexts, start } from '@seqflow/seqflow';
 import { Component } from '@storybook/docs-tools';
 
 const { Node } = global;
@@ -69,7 +69,7 @@ export function renderToCanvas(
   } else if (Component) {
     if (!(Component instanceof AsyncFunction)) {
       console.error('Invalid component', Component);
-      throw new Error(`Invalid component: ${Component}. Expected AsyncFunction \`async function(this: SeqflowFunctionContext, args: any) { ... }\``);
+      throw new Error(`Invalid component: ${Component}. Expected AsyncFunction \`async function(args: any, { component }: Contexts) { ... }\``);
     }
     canvasElement.innerHTML = '';
 
@@ -84,15 +84,16 @@ export function renderToCanvas(
   
 }
 
-async function App(this: SeqflowFunctionContext, { component, args }: any) {
-  const r: Element = this.createDOMElement(component, args) as Element;
-  this.renderSync(r as any);
+async function App({ component: comp, args }: any, { component }: Contexts) {
+  const r: Element = component.createDOMElement(comp, args) as Element;
+  component.renderSync(r as any);
 }
 
 export function buildComponent(component: any, args: any) {
   const root = document.createElement('div');
   start(root, App, { component, args }, {
-    log: console
+    log: console,
+    domains: {},
   });
   return root;
 }

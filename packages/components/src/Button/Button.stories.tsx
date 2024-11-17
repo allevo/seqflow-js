@@ -1,14 +1,11 @@
 import { expect, userEvent, within } from "@storybook/test";
 
-import type { SeqflowFunctionContext } from "seqflow-js";
-import type { StoryFn } from "seqflow-js-storybook";
+import type { Contexts } from "@seqflow/seqflow";
+import type { StoryFn } from "@seqflow/storybook";
 import { Button, type ButtonComponent, type ButtonPropsType } from ".";
 
-async function ButtonStory(
-	this: SeqflowFunctionContext,
-	props: ButtonPropsType,
-) {
-	this.renderSync(<Button {...props}>The button text</Button>);
+async function ButtonStory(props: ButtonPropsType, { component }: Contexts) {
+	component.renderSync(<Button {...props}>The button text</Button>);
 }
 // biome-ignore lint/suspicious/noExplicitAny: storybook
 ButtonStory.__storybook = (Button as any).__storybook;
@@ -45,8 +42,8 @@ export const DisableButton: StoryFn = {
 };
 
 export const TrasitionButton: StoryFn = {
-	component: async function (this: SeqflowFunctionContext) {
-		this.renderSync(<Button>The button text</Button>);
+	component: async (_, { component }: Contexts) => {
+		component.renderSync(<Button>The button text</Button>);
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -57,19 +54,18 @@ export const TrasitionButton: StoryFn = {
 
 		buttonComponent.transition({
 			loading: true,
+			loadingText: "Custom loading message...",
 			disabled: true,
-			replaceText: "Loading...",
 		});
 
 		expect(buttonComponent).toHaveAttribute("disabled");
-		expect(buttonComponent).toHaveTextContent("Loading...");
+		expect(buttonComponent).toHaveTextContent("Custom loading message...");
 
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 
 		buttonComponent.transition({
 			loading: false,
 			disabled: false,
-			replaceText: "__previous__",
 		});
 
 		expect(buttonComponent).not.toHaveAttribute("disabled");
@@ -77,10 +73,8 @@ export const TrasitionButton: StoryFn = {
 	},
 };
 
-export const AllButtons: StoryFn = async function (
-	this: SeqflowFunctionContext,
-) {
-	this.renderSync(
+export const AllButtons: StoryFn = async (_, { component }: Contexts) => {
+	component.renderSync(
 		<>
 			<div
 				style={{

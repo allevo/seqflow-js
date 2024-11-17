@@ -1,6 +1,6 @@
 import { expect, userEvent, within } from "@storybook/test";
 
-import type { StoryFn } from "seqflow-js-storybook";
+import type { StoryFn } from "@seqflow/storybook";
 import { NumberInput } from ".";
 
 export default {
@@ -15,7 +15,7 @@ export default {
 	},
 };
 
-export const Typing: StoryFn<unknown> = {
+export const Typing: StoryFn<object> = {
 	play: async ({ canvasElement }) => {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		const canvas = within(canvasElement);

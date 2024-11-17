@@ -1,5 +1,5 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
-import { Card, Divider } from "seqflow-js-components";
+import { Card, Divider } from "@seqflow/components";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import classes from "./Main.module.css";
 import {
 	ApplyDeltaButton,
@@ -7,8 +7,11 @@ import {
 	ShowValue,
 } from "./domains/counter";
 
-export async function Main(this: SeqflowFunctionContext) {
-	this.renderSync(
+export async function Main(
+	_: ComponentProps<unknown>,
+	{ component }: Contexts,
+) {
+	component.renderSync(
 		<Card
 			compact
 			className={"m-auto w-96 bg-slate-900 text-slate-200 mt-6"}

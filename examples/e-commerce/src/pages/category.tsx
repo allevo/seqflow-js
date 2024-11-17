@@ -1,27 +1,30 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { CardList } from "../components/CardList";
 import { components } from "../domains/product";
 
-async function Loading(this: SeqflowFunctionContext) {
-	this.renderSync(<div>Loading...</div>);
+async function Loading(_: ComponentProps<unknown>, { component }: Contexts) {
+	component.renderSync(<div>Loading...</div>);
 }
 
-export async function Category(this: SeqflowFunctionContext) {
-	this.renderSync(<Loading />);
+export async function Category(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
+	component.renderSync(<Loading />);
 
-	const categoryId = this.app.router.segments.pop();
+	const categoryId = app.router.segments.pop();
 
 	if (!categoryId) {
-		this.app.router.navigate("/");
+		app.router.navigate("/");
 		return;
 	}
 
-	const products = await this.app.domains.product.fetchProductsByCategory(
+	const products = await app.domains.product.fetchProductsByCategory(
 		{ categoryId },
-		this.abortController.signal,
+		component.ac.signal,
 	);
 
-	this.renderSync(
+	component.renderSync(
 		<CardList
 			prefix="category"
 			items={products}

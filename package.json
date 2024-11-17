@@ -1,22 +1,29 @@
 {
-  "name": "seqflow-js-root",
-  "version": "0.0.1-beta.1",
-  "description": "",
+  "name": "seqflow-root",
+  "version": "unpublished",
+  "description": "SeqFlow: A lightweight, domain-driven front-end framework designed to simplify web application development, reduce complexity, and enhance user experience with an event-driven architecture.",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "turbo run --concurrency=1 --log-order=stream build",
-    "test": "turbo run --concurrency=1 --log-order=stream test",
+    "build": "turbo run --log-order=stream build",
+    "test": "turbo run --log-order=stream test",
     "biome:check": "turbo run biome:check",
     "postinstall": "rm -rf node_modules/@types/react && rm -rf node_modules/.pnpm/@types+react*"
   },
   "keywords": [],
-  "author": "",
+  "homepage": "https://seqflow.dev",
+  "repository": "https://github.com/allevo/seqflow-js",
+  "bugs": "https://github.com/allevo/seqflow-js/issues",
+  "author": "Tommaso Allevi <tomallevi@gmail.com>",
+  "engines": {
+    "node": ">=20.11.1"
+  },
   "license": "MIT",
   "dependencies": {
-    "turbo": "^1.12.4"
+    "turbo": "^2.2.3"
   },
   "devDependencies": {
-    "execa": "^8.0.1"
-  }
+    "execa": "^9.5.1"
+  },
+  "packageManager": "pnpm@9.9.0"
 }

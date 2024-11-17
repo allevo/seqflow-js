@@ -1,0 +1,53 @@
+{
+  "name": "@seqflow/seqflow",
+  "description": "SeqFlow: A lightweight, domain-driven front-end framework designed to simplify web application development, reduce complexity, and enhance user experience with an event-driven architecture.",
+  "version": "0.0.1-beta.19",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/src/index.d.ts",
+  "scripts": {
+    "test": "pnpm run unit",
+    "unit": "vitest --run  --coverage && tsc -p types/tsconfig.json",
+    "biome:check": "biome check --apply src tests types",
+    "build": "vite build -c vite.config.js"
+  },
+  "keywords": [
+    "seqflow",
+    "framework",
+    "jsx",
+    "typescript",
+    "web-component",
+    "web-components",
+    "ui",
+    "web",
+    "library",
+    "router",
+    "state",
+    "management",
+    "reactive",
+    "modern"
+  ],
+  "homepage": "https://seqflow.dev",
+  "repository": "https://github.com/allevo/seqflow-js",
+  "bugs": "https://github.com/allevo/seqflow-js/issues",
+  "author": "Tommaso Allevi <tomallevi@gmail.com>",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@biomejs/biome": "1.7.1",
+    "@testing-library/dom": "^10.0.0",
+    "@vitest/coverage-v8": "^2.0.5",
+    "depcheck": "^1.4.7",
+    "jsdom": "^25.0.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.6.3",
+    "tsd": "^0.31.2",
+    "tsx": "^4.7.1",
+    "vite": "^5.4.2",
+    "vite-plugin-checker": "^0.8.0",
+    "vite-plugin-dts": "^4.2.1",
+    "vitest": "^2.0.5"
+  }
+}

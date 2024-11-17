@@ -1,7 +1,7 @@
 import type { StorybookConfig as StorybookConfigBase, WebRenderer, ArgsStoryFn, Args, AnnotatedStoryFn, PlayFunctionContext, StoryContext } from '@storybook/types';
 import type { StorybookConfigVite, BuilderOptions } from '@storybook/builder-vite';
 import { ArgTypesExtractor } from '@storybook/docs-tools';
-import { SeqflowFunction } from 'seqflow-js';
+import { SeqFlowComponent } from '@seqflow/seqflow';
 
 export type FrameworkOptions = {
   builder?: BuilderOptions;
@@ -20,12 +20,12 @@ export type StorybookConfig = Omit<
 
 export type StoryFnHtmlReturnType = Promise<void>;
 export interface SeqFlowJSRenderer extends WebRenderer {
-  component: SeqflowFunction<unknown>;
+  component: SeqFlowComponent<object>;
   storyResult: StoryFnHtmlReturnType;
 }
 
 export interface Parameters {
-  renderer: 'seqflow-js-storybook';
+  renderer: '@seqflow/storybook';
   docs?: {
     story: { inline: boolean };
     extractArgTypes?: ArgTypesExtractor;
@@ -38,8 +38,8 @@ export interface Parameters {
   };
 }
 
-export type StoryFn<TArgs = Args> = SeqflowFunction<TArgs> | {
+export type StoryFn<TArgs extends object = Args> = SeqFlowComponent<TArgs> | {
   play: (context: StoryContext<SeqFlowJSRenderer, TArgs>) => Promise<void> | void;
-  component?: SeqflowFunction<TArgs>,
+  component?: SeqFlowComponent<TArgs>,
   args?: TArgs;
 }

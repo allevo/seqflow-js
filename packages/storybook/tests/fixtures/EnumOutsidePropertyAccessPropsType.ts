@@ -1,4 +1,4 @@
-import { SeqflowFunctionContext } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 interface Foo {
 	strings?: "neutral" | "primary" | "secondary" | "accent" | "ghost" | "link";
@@ -13,6 +13,6 @@ export interface EnumOutsidePropertyAccessPropsType {
 }
 
 export async function EnumOutsidePropertyAccess(
-	this: SeqflowFunctionContext,
 	_: EnumOutsidePropertyAccessPropsType,
+	c: Contexts,
 ) { }

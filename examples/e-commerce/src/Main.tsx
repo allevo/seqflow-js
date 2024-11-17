@@ -1,16 +1,19 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import type { CartDomain } from "./domains/cart";
 import type { ProductDomain } from "./domains/product";
 import type { UserDomain } from "./domains/user";
 import { Router } from "./router";
 
-export async function Main(this: SeqflowFunctionContext) {
-	await this.app.domains.user.restoreUser();
+export async function Main(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
+	await app.domains.user.restoreUser();
 
-	this.renderSync(<Router />);
+	component.renderSync(<Router />);
 }
 
-declare module "seqflow-js" {
+declare module "@seqflow/seqflow" {
 	interface Domains {
 		user: UserDomain;
 		cart: CartDomain;

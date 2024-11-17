@@ -1,12 +1,12 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import type { Contexts } from "@seqflow/seqflow";
 
 export interface WithFunctionAsPropType {
 	fn: () => void;
 }
 
 export async function WithFunctionAsProp(
-	this: SeqflowFunctionContext,
 	_: WithFunctionAsPropType,
+	c: Contexts,
 ) {
 	
 }

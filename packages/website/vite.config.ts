@@ -150,10 +150,8 @@ export const toc = ${JSON.stringify(toc)}
 }
 
 function generateAllPages(): Plugin {
-	
-
 	return {
-		name: 'aaa',
+		name: 'generate-all-pages',
 		enforce: "post" as const,
 		async generateBundle(this: vite.Rollup.PluginContext,
 			options: vite.Rollup.NormalizedOutputOptions,
@@ -201,32 +199,32 @@ function generateAllPages(): Plugin {
 					filename: 'why.html'
 				},
 				{
-					path: '/getting-started',
-					filename: 'getting-started.html'
+					path: '/get-started',
+					filename: 'get-started.html'
 				},
 				{
-					path: '/getting-started/prerequisites',
-					filename: 'getting-started/prerequisites.html'
+					path: '/get-started/prerequisites',
+					filename: 'get-started/prerequisites.html'
 				},
 				{
-					path: '/getting-started/fetch-data',
-					filename: 'getting-started/fetch-data.html'
+					path: '/get-started/fetch-data',
+					filename: 'get-started/fetch-data.html'
 				},
 				{
-					path: '/getting-started/split-components',
-					filename: 'getting-started/split-components.html'
+					path: '/get-started/split-components',
+					filename: 'get-started/split-components.html'
 				},
 				{
-					path: '/getting-started/refresh-quote',
-					filename: 'getting-started/refresh-quote.html'
+					path: '/get-started/refresh-quote',
+					filename: 'get-started/refresh-quote.html'
 				},
 				{
-					path: '/getting-started/configuration',
-					filename: 'getting-started/configuration.html'
+					path: '/get-started/configuration',
+					filename: 'get-started/configuration.html'
 				},
 				{
-					path: '/getting-started/test',
-					filename: 'getting-started/test.html'
+					path: '/get-started/test',
+					filename: 'get-started/test.html'
 				},
 				{
 					path: '/api-reference',
@@ -248,7 +246,12 @@ function generateAllPages(): Plugin {
 
 				const resultHtml = dom.serialize()
 				const resultHTMWithoutScripts = resultHtml
-					.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '')
+					.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, (match) => {
+						if (match.includes('data-keep="true"')) {
+							return match
+						}
+						return ''
+					})
 					.replace('<link rel="custom">', `
 <script type="module" defer src="/_vercel/insights/script.js"></script>
 <script type="module" defer src="/_vercel/speed-insights/script.js"></script>
@@ -290,43 +293,6 @@ function generateAllPages(): Plugin {
 			}
 
 			server.close()
-
-			// purgeCss brokes the css
-			// we should investivate why
-
-			/*
-			const cssFilesKeys = Object.keys(bundle).filter((k) => k.endsWith('.css'))
-			if (cssFilesKeys.length !== 1) {
-				throw new Error('Expected one css file')
-			}
-			const cssContent = bundle[cssFilesKeys[0]].source.toString()
-
-			const htmlFiles = Object.keys(bundle).filter((k) => k.endsWith('.html'))
-			const htmlFilesContent: string[] = htmlFiles.map((k) => bundle[k].source.toString())
-				// .map((html) => {
-				// 	return html
-				// 	.replace(/<html .*>/, '')
-				// 	.replace('</html>', '')
-				// 	.replace('</html>', '')
-				// 	.replace('</head>', '')
-				// 	.replace('<head>', '')
-				// })
-				// .join('')
-			const c: RawContent[] = htmlFilesContent.map(t => ({ raw: t, extension: 'html' }))
-
-			const purgeCss = new PurgeCSS()
-
-			const start = Date.now()
-			const r = await purgeCss.purge({
-				content: c,
-				css: [{ raw: cssContent }],
-			})
-			console.log('Time', Date.now() - start)
-			console.log('r', r)
-
-			bundle[cssFilesKeys[0]].source = r[0].css
-			*/
-
 		}
 	}
 }

@@ -11,7 +11,8 @@
     "biome:check": "biome check --apply src tests",
     "start": "vite -c vite.config.js",
     "build": "vite build --emptyOutDir -c vite.config.js",
-    "depcheck": "depcheck --ignores @types/css-modules ."
+    "depcheck": "depcheck --ignores @types/css-modules,autoprefixer,typescript .",
+    "serve:static": "serve dist"
   },
   "keywords": [],
   "author": "",
@@ -22,16 +23,19 @@
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.4.2",
     "@types/css-modules": "^1.0.5",
+    "autoprefixer": "^10.4.2",
     "depcheck": "^1.4.7",
     "jsdom": "^24.0.0",
     "npm-run-all": "^4.1.5",
+    "serve": "^14.2.3",
     "tailwindcss": "^3.4.6",
+    "typescript": "^5.4.2",
     "vite": "^5.4.2",
     "vite-plugin-checker": "^0.7.2",
     "vitest": "^1.2.2"
   },
   "dependencies": {
-    "seqflow-js": "workspace:*",
-    "seqflow-js-components": "workspace:*"
+    "@seqflow/components": "workspace:*",
+    "@seqflow/seqflow": "workspace:*"
   }
 }

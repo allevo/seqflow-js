@@ -1,10 +1,10 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export type ButtonComponent = HTMLElement & {
 	transition: (state: {
 		disabled?: boolean;
 		loading?: boolean;
-		replaceText?: ("__previous__" & {}) | string;
+		loadingText?: string;
 	}) => void;
 };
 
@@ -39,7 +39,6 @@ export interface ButtonPropsType {
 }
 
 export async function Button(
-	this: SeqflowFunctionContext,
 	{
 		color,
 		active,
@@ -52,7 +51,8 @@ export async function Button(
 		type,
 		shape,
 		children,
-	}: SeqflowFunctionData<ButtonPropsType>,
+	}: ComponentProps<ButtonPropsType>,
+	{ component }: Contexts,
 ) {
 	const classNames = ["btn"];
 	if (color) {
@@ -96,11 +96,9 @@ export async function Button(
 		classNames.push(`btn-${shape}`);
 	}
 
-	const el = this._el as ButtonComponent;
+	const el = component._el as ButtonComponent;
 	el.classList.add(...classNames);
 	el.setAttribute("type", type ?? "button");
-
-	const loaderStyle = loading ? { display: "inherit" } : { display: "none" };
 
 	if (Array.isArray(children)) {
 		children = children.map((c) => {
@@ -110,18 +108,17 @@ export async function Button(
 			return c;
 		});
 	}
-	this._el.setAttribute("aria-live", "polite");
-	this.renderSync(
+	component._el.setAttribute("aria-live", "polite");
+	component.renderSync(
 		<>
 			<span
-				className="loading loading-spinner"
-				key="loading"
-				style={loaderStyle}
-			/>
-			<span key="loading-text" style={loaderStyle}>
-				Loading...
+				key="l"
+				style={{ alignItems: "center", gap: "10px", display: "none" }}
+			>
+				<span className="loading loading-spinner" key="loading-spinner" />
+				<span key="loading-text" />
 			</span>
-			{children}
+			<span key="c">{children}</span>
 		</>,
 	);
 
@@ -130,43 +127,25 @@ export async function Button(
 		el.setAttribute("disabled", "disabled");
 	};
 
-	if (disabled) {
-		disable();
-	}
 	const enable = () => {
 		el.classList.remove("btn-disabled");
 		el.removeAttribute("disabled");
 	};
-	const makeLoading = () => {
-		const loader = this.getChild("loading");
-		loader.style.display = "inherit";
-		const loadingText = this.getChild("loading-text");
-		loadingText.style.display = "inherit";
-		this._el.setAttribute("aria-busy", "true");
+	const makeLoading = (loadingText: string) => {
+		component.getChild("l").style.display = "inherit";
+		component.getChild("loading-text").textContent = loadingText;
+		component.getChild("c").style.display = "none";
+		component._el.setAttribute("aria-busy", "true");
 	};
 	const removeLoading = () => {
-		const loader = this.getChild("loading");
-		loader.style.display = "none";
-		const loadingText = this.getChild("loading-text");
-		loadingText.style.display = "none";
-		this._el.removeAttribute("aria-busy");
+		component.getChild("l").style.display = "none";
+		component.getChild("c").style.display = "inherit";
+		component._el.removeAttribute("aria-busy");
 	};
-
-	const previousChildren: HTMLElement[] | undefined = Array.from(
-		this._el.childNodes,
-	).filter((child) => {
-		if (child instanceof Text) {
-			return true;
-		}
-		if (!(child instanceof HTMLElement)) {
-			return false;
-		}
-		const k = child.getAttribute("key");
-		return k !== "loading" && k !== "loading-text";
-	}) as HTMLElement[];
 
 	el.transition = (state: {
 		disabled?: boolean;
+		loadingText?: string;
 		loading?: boolean;
 		replaceText?: string;
 	}) => {
@@ -176,21 +155,17 @@ export async function Button(
 			enable();
 		}
 		if (state.loading) {
-			makeLoading();
+			makeLoading(state.loadingText || "Loading...");
 		} else if (state.loading === false) {
 			removeLoading();
 		}
-		if (state.replaceText && previousChildren) {
-			if (state.replaceText === "__previous__") {
-				for (const c of previousChildren) {
-					c.style.display = "inherit";
-				}
-			} else {
-				for (const c of previousChildren) {
-					c.style.display = "none";
-				}
-			}
-		}
 	};
+
+	if (disabled) {
+		disable();
+	}
+	if (loading) {
+		makeLoading("Loading...");
+	}
 }
 Button.tagName = () => "button";

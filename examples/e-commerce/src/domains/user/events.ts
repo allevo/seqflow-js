@@ -1,13 +1,13 @@
-import { createDomainEventClass } from "seqflow-js";
+import { createDomainEventClass } from "@seqflow/seqflow";
 import type { UserType } from "./UserDomain";
 
-export const UserLoggedEvent = createDomainEventClass<UserType>(
+export const UserLoggedEvent = createDomainEventClass<UserType, "userLoggedIn">(
 	"user",
 	"userLoggedIn",
 );
 export type UserLoggedEvent = InstanceType<typeof UserLoggedEvent>;
 
-export const UserLoggedOutEvent = createDomainEventClass<null>(
+export const UserLoggedOutEvent = createDomainEventClass(
 	"user",
 	"userLoggedOut",
 );

@@ -1,5 +1,5 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
-import { Button } from "seqflow-js-components";
+import { Button } from "@seqflow/components";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { UserLoggedEvent, UserLoggedOutEvent } from "../events";
 import classes from "./user-profile-badge.module.css";
 
@@ -8,8 +8,11 @@ function getProfileUrl(user: { username: string }, size: number) {
 }
 
 const size = 40;
-export async function UserProfileBadge(this: SeqflowFunctionContext) {
-	const user = (await this.app.domains.user.getUser()) || {
+export async function UserProfileBadge(
+	_: ComponentProps<unknown>,
+	{ component, app }: Contexts,
+) {
+	const user = (await app.domains.user.getUser()) || {
 		username: "Guest",
 	};
 
@@ -26,9 +29,9 @@ export async function UserProfileBadge(this: SeqflowFunctionContext) {
 				</li>
 			</ol>
 		</div>
-	);
+	) as HTMLDivElement;
 
-	this.renderSync(
+	component.renderSync(
 		<Button color="link" className={classes.logoWrapper}>
 			<img
 				key="logo"
@@ -44,17 +47,17 @@ export async function UserProfileBadge(this: SeqflowFunctionContext) {
 		</Button>,
 	);
 
-	const profilePicture = this.getChild("logo") as HTMLImageElement;
-	const events = this.waitEvents(
-		this.domainEvent(UserLoggedEvent),
-		this.domainEvent(UserLoggedOutEvent),
-		this.domEvent("click", { el: this._el }),
-		this.domEvent("mouseover", { el: this._el }),
-		this.domEvent("mouseout", { el: this._el }),
+	const profilePicture = component.getChild("logo") as HTMLImageElement;
+	const events = component.waitEvents(
+		component.domainEvent(UserLoggedEvent),
+		component.domainEvent(UserLoggedOutEvent),
+		component.domEvent(component._el, "click"),
+		component.domEvent(component._el, "mouseover"),
+		component.domEvent(component._el, "mouseout"),
 	);
 	for await (const ev of events) {
 		if (ev instanceof UserLoggedEvent || ev instanceof UserLoggedOutEvent) {
-			const user = (await this.app.domains.user.getUser()) || {
+			const user = (await app.domains.user.getUser()) || {
 				username: "Guest",
 			};
 			profilePicture.src = getProfileUrl(user, size);
@@ -63,9 +66,9 @@ export async function UserProfileBadge(this: SeqflowFunctionContext) {
 
 			if (ev.target instanceof HTMLAnchorElement) {
 				const url = new URL(ev.target.href);
-				this.app.router.navigate(url.pathname);
+				app.router.navigate(url.pathname);
 			} else if (ev.target instanceof HTMLImageElement) {
-				this.app.router.navigate("/profile");
+				app.router.navigate("/profile");
 			}
 		} else if (ev.type === "mouseover") {
 			profileHeaderMenu.classList.add(classes.show);

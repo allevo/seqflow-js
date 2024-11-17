@@ -1,6 +1,6 @@
 import { defineConfig, PluginOption } from "vite";
 import { resolve } from 'path'
-import * as p from "seqflow-js-storybook/vite-plugin";
+import * as p from "@seqflow/storybook/vite-plugin";
 
 import dts from 'vite-plugin-dts'
 

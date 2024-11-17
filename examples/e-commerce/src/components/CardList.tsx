@@ -1,15 +1,15 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import { ComponentProps, Contexts, SeqFlowComponent } from "@seqflow/seqflow";
 import classes from "./CardList.module.css";
 
 export async function CardList<T extends { id: string }>(
-	this: SeqflowFunctionContext,
-	data: {
+	data: ComponentProps<{
 		prefix: string;
 		items: T[];
-		Component: (p: T) => Promise<void>;
-	},
+		Component: SeqFlowComponent<T>;
+	}>,
+	{ component }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<ol className={classes.wrapper}>
 			{data.items.map((item) => (
 				<li

@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export interface DropdownPropsType {
 	label?: string | JSX.Element;
@@ -16,8 +16,8 @@ export interface DropdownPropsType {
 }
 
 export async function Dropdown(
-	this: SeqflowFunctionContext,
-	{ label, openOn, align, children }: SeqflowFunctionData<DropdownPropsType>,
+	{ label, openOn, align, children }: ComponentProps<DropdownPropsType>,
+	{ component, app }: Contexts,
 ) {
 	console.log("......");
 	console.log(label);
@@ -36,10 +36,10 @@ export async function Dropdown(
 		*/
 		classes.push(...align.split("-").map((a) => `dropdown-${a}`));
 	}
-	this._el.classList.add(...classes);
+	component._el.classList.add(...classes);
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Dropdown component must have children",
 		});
 		return;
@@ -47,6 +47,9 @@ export async function Dropdown(
 
 	if (Array.isArray(children)) {
 		for (const child of children) {
+			if (child instanceof DocumentFragment) {
+				continue;
+			}
 			child.classList.add("dropdown-content");
 			child.classList.add("z-[90]");
 		}
@@ -62,7 +65,7 @@ export async function Dropdown(
 			label
 		);
 
-	this.renderSync(
+	component.renderSync(
 		<>
 			{btn}
 			{/*<Button color="ghost" className="rounded-btn">{label}</Button>*/}

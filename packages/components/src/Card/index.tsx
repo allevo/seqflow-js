@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export interface CardProps {
 	compact?: boolean;
@@ -7,8 +7,8 @@ export interface CardProps {
 }
 
 export async function Card(
-	this: SeqflowFunctionContext,
-	{ children, compact, side, shadow }: SeqflowFunctionData<CardProps>,
+	{ children, compact, side, shadow }: ComponentProps<CardProps>,
+	{ component, app }: Contexts,
 ) {
 	const classes = ["card"];
 	if (compact) {
@@ -25,31 +25,31 @@ export async function Card(
 		// shadow-2xl
 		classes.push(`shadow-${shadow}`);
 	}
-	this._el.classList.add(...classes);
+	component._el.classList.add(...classes);
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Card component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 export async function Body(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
-	this._el.classList.add("card-body");
+	component._el.classList.add("card-body");
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Card.Body component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 export interface TitlePropsType {
@@ -57,36 +57,36 @@ export interface TitlePropsType {
 }
 
 export async function Title(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<TitlePropsType>,
+	{ children }: ComponentProps<TitlePropsType>,
+	{ component, app }: Contexts,
 ) {
-	this._el.classList.add("card-title");
+	component._el.classList.add("card-title");
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Card.Title component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 Title.tagName = () => "h2";
 
 export async function Actions(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
-	this._el.classList.add("card-actions");
-	this._el.classList.add("justify-end");
+	component._el.classList.add("card-actions");
+	component._el.classList.add("justify-end");
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Card.Actions component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 Card.Body = Body;

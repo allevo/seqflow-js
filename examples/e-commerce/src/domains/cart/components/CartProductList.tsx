@@ -1,21 +1,21 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
-import { Alert, Button, Divider } from "seqflow-js-components";
+import { Alert, Button, Divider } from "@seqflow/components";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 import type { Product } from "../../product";
 import type { Cart } from "../CartDomain";
 import { ChangeCartEvent } from "../events";
 import classes from "./CartProductList.module.css";
 
-async function EmptyCart(this: SeqflowFunctionContext) {
-	this.renderSync(<div>Cart is empty</div>);
+async function EmptyCart(_: ComponentProps<unknown>, { component }: Contexts) {
+	component.renderSync(<div>Cart is empty</div>);
 }
 
 export async function CartProduct(
-	this: SeqflowFunctionContext,
 	data: { product: Product; count: number; subTotal: number },
+	{ component, app }: Contexts,
 ) {
-	this._el.classList.add(classes.product);
-	this._el.id = `cart-product-${data.product.id}`;
-	this.renderSync(
+	component._el.classList.add(classes.product);
+	component._el.id = `cart-product-${data.product.id}`;
+	component.renderSync(
 		<>
 			<div className={classes.left}>
 				<img
@@ -36,20 +36,20 @@ export async function CartProduct(
 		</>,
 	);
 
-	const events = this.waitEvents(
-		this.domEvent("click", { key: "remove-from-cart" }),
+	const events = component.waitEvents(
+		component.domEvent("remove-from-cart", "click"),
 	);
 	for await (const ev of events) {
-		this.app.domains.cart.removeAllFromCart({ product: data.product });
+		app.domains.cart.removeAllFromCart({ product: data.product });
 	}
 }
 
 export async function CartProductList(
-	this: SeqflowFunctionContext,
 	data: { cart: Cart },
+	{ component, app }: Contexts,
 ) {
 	if (data.cart.products.length === 0) {
-		this.renderSync(<EmptyCart />);
+		component.renderSync(<EmptyCart />);
 		return;
 	}
 
@@ -62,20 +62,20 @@ export async function CartProductList(
 		>
 			Checkout
 		</Button>
-	);
+	) as HTMLElement;
 
 	const cartLogin = (
 		<Alert color="warning" className={"mt-4"} style={{ display: "block" }}>
 			You have to log in to checkout. Click{" "}
 			<a href="/login">here to go to login page</a>
 		</Alert>
-	);
+	) as HTMLElement;
 	const cartTotal = (
 		<div className={classes.cartTotal} id="cart-total">
 			total: {data.cart.total} €
 		</div>
-	);
-	this.renderSync(
+	) as HTMLElement;
+	component.renderSync(
 		<>
 			<ul className={classes.cartProducts}>
 				{data.cart.products.map(({ product, count, subTotal }) => {
@@ -97,47 +97,48 @@ export async function CartProductList(
 		</>,
 	);
 
-	const isLogged = this.app.domains.user.isLoggedIn();
+	const isLogged = app.domains.user.isLoggedIn();
 	if (!isLogged) {
 		checkoutButton.remove();
 	} else {
 		cartLogin.remove();
 	}
 
-	const events = this.waitEvents(
-		this.domEvent("click", {
-			el: this._el,
+	const events = component.waitEvents(
+		component.domEvent(component._el, "click", {
 			preventDefault: true,
 		}),
-		this.domainEvent(ChangeCartEvent),
+		component.domainEvent(ChangeCartEvent),
 	);
 	for await (const ev of events) {
 		if (ev.target instanceof HTMLElement) {
 			if (cartLogin.contains(ev.target)) {
 				ev.preventDefault();
-				this.app.router.navigate("/login");
+				app.router.navigate("/login");
 				continue;
 			}
 			if (checkoutButton.contains(ev.target)) {
 				ev.preventDefault();
-				this.app.router.navigate("/checkout");
+				app.router.navigate("/checkout");
 				continue;
 			}
 		}
 		if (ev instanceof ChangeCartEvent) {
 			switch (ev.detail.action) {
 				case "remove-all-elements-of-a-product":
-					this._el
-						.querySelector(`li#cart-item-${ev.detail.product.id}`)
-						?.remove();
+					component.replaceChild(ev.detail.product.id, () => <></>);
 					break;
 				default:
+					app.log.error({
+						message: "Unsupported action",
+						data: ev,
+					});
 					throw new Error("Unsupported action");
 			}
-			const cart = this.app.domains.cart.getCart();
+			const cart = app.domains.cart.getCart();
 
 			if (cart.products.length === 0) {
-				this.renderSync(<EmptyCart />);
+				component.renderSync(<EmptyCart />);
 				break;
 			}
 

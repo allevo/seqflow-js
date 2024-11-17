@@ -8,9 +8,9 @@ import tar from "tar";
 enum TemplateType {
 	Empty = "empty",
 	Counter = "counter",
-	CounterDomain = "counter-domain",
 	ECommerce = "e-commerce",
 	CustomElement = "custom-element",
+	RandomQuote = "random-quote",
 }
 const templateChoices = [
 	{
@@ -20,17 +20,17 @@ const templateChoices = [
 	},
 	{
 		title: TemplateType.Counter,
-		description: "Simple example",
+		description: "Simple counter example",
 		value: TemplateType.Counter,
 	},
 	{
-		title: TemplateType.CounterDomain,
-		description: "Simple example with domain",
-		value: TemplateType.CounterDomain,
+		title: TemplateType.RandomQuote,
+		description: "Fetch and display a random quote",
+		value: TemplateType.RandomQuote,
 	},
 	{
 		title: TemplateType.ECommerce,
-		description: "Complex example with multiple domains",
+		description: "E-commerce example with multiple domains",
 		value: TemplateType.ECommerce,
 	},
 	{
@@ -43,6 +43,7 @@ const templateChoices = [
 interface Configuration {
 	absolutePath: string;
 	projectName: string;
+	branch: string;
 	type: TemplateType;
 }
 
@@ -64,9 +65,24 @@ function parseArguments(args: string[]): Partial<Configuration> {
 		} else if (arg === "--template" || arg === "-t") {
 			configurationFromCMD.type = args[i + 1] as TemplateType;
 			i += 2;
+		} else if (arg === "--branch" || arg === "-b") {
+			configurationFromCMD.branch = args[i + 1];
+			i += 2;
+		} else if (arg === "--help" || arg === "-h") {
+			console.log(`
+Usage: create-seqflow [options]
+
+Options:
+  --path, -p     The destination path of the project
+  --name, -n     The name of the project
+  --template, -t The template to use
+  --branch, -b   The branch to use
+  --help, -h     Display this help message
+`);
+			process.exit(0);
 		} else {
 			throw new Error(
-				`Unknown option: ${arg}. Allowed options are: --path, --name, --template.`,
+				`Unknown option: ${arg}. Allowed options are: --path, --name, --template, --branch.`,
 			);
 		}
 	}
@@ -76,6 +92,7 @@ function parseArguments(args: string[]): Partial<Configuration> {
 
 async function collectInformation({
 	type,
+	branch,
 }: Partial<Configuration>): Promise<Configuration> {
 	const questions: PromptObject[] = [
 		{
@@ -104,6 +121,7 @@ async function collectInformation({
 		type: response.type || type,
 		absolutePath,
 		projectName,
+		branch: branch || "main",
 	};
 }
 
@@ -125,8 +143,14 @@ async function createApp(config: Configuration) {
 	// Download and extract the template
 	const extractorRegex = new RegExp(`examples\/${config.type}\/`);
 	const res = await fetch(
-		"https://codeload.github.com/allevo/seqflow-js/tar.gz/main",
+		`https://codeload.github.com/allevo/seqflow-js/tar.gz/${encodeURIComponent(
+			config.branch,
+		)}`,
 	);
+	if (!res.ok) {
+		console.log(config);
+		throw new Error(`Failed to download the template: ${res.statusText}`);
+	}
 	const tarStream = Readable.fromWeb(
 		res.body as import("stream/web").ReadableStream,
 	);
@@ -141,7 +165,11 @@ async function createApp(config: Configuration) {
 	const packageJsonPath = path.join(config.absolutePath, "package.json");
 	const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
 	packageJson.name = config.projectName;
-	packageJson.dependencies["seqflow-js"] = "*";
+	packageJson.dependencies["@seqflow/seqflow"] = "*";
+	packageJson.dependencies["@seqflow/components"] = "*";
+
+	console.log(JSON.stringify(packageJson, null, 2));
+
 	fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
 

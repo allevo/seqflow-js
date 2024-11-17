@@ -1,35 +1,35 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export async function Hero(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
-	this._el.classList.add("hero");
+	component._el.classList.add("hero");
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "Hero component must have children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 export async function HeroContent(
-	this: SeqflowFunctionContext,
-	{ children }: SeqflowFunctionData<unknown>,
+	{ children }: ComponentProps<unknown>,
+	{ component, app }: Contexts,
 ) {
-	this._el.classList.add("hero-content");
+	component._el.classList.add("hero-content");
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "HeroContent component must have children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 Hero.Content = HeroContent;

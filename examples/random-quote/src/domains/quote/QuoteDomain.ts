@@ -1,22 +1,22 @@
-import { createDomainEventClass } from "seqflow-js";
+import { createDomainEventClass } from "@seqflow/seqflow";
 
 export interface Quote {
 	content: string;
 	author: string;
 }
 
-export const FetchingNewQuote = createDomainEventClass<unknown>(
-	"quotes",
-	"fetching-new-quote",
-);
-export const NewQuoteFetched = createDomainEventClass<Quote>(
-	"quotes",
-	"new-quote-fetched",
-);
-export const QuoteErrorFetched = createDomainEventClass<string>(
-	"quotes",
-	"quote-error-fetched",
-);
+export const FetchingNewQuote = createDomainEventClass<
+	unknown,
+	"fetching-new-quote"
+>("quotes", "fetching-new-quote");
+export const NewQuoteFetched = createDomainEventClass<
+	Quote,
+	"new-quote-fetched"
+>("quotes", "new-quote-fetched");
+export const QuoteErrorFetched = createDomainEventClass<
+	string,
+	"quote-error-fetched"
+>("quotes", "quote-error-fetched");
 
 export class QuoteDomain {
 	constructor(
@@ -31,6 +31,7 @@ export class QuoteDomain {
 		try {
 			const ret = await Promise.all([
 				getRandomQuote(this.baseUrl),
+				// Simulate a delay
 				new Promise((r) => setTimeout(r, 500)),
 			]);
 			quote = ret[0];
@@ -42,23 +43,22 @@ export class QuoteDomain {
 	}
 }
 
-const quotes: Quote[] = [
-	{
-		author: "Me",
-		content: "Quote 1",
-	},
-	{
-		author: "You",
-		content: "Quote 2",
-	},
-	{
-		author: "They",
-		content: "Quote 3",
-	},
-];
-const index = 0;
 async function getRandomQuote(baseUrl: string): Promise<Quote> {
-	// return quotes[(index ++) % quotes.length]
-	const res = await fetch(`${baseUrl}/random`);
-	return await res.json();
+	const res = await fetch(`${baseUrl}/api/quotes/random`);
+
+	if (!res.ok) {
+		throw new Error("Failed to fetch quote");
+	}
+
+	const body = await res.json();
+
+	// TODO: validate the quote in a more robust way...
+	if (!body.content || !body.author) {
+		throw new Error("Invalid quote");
+	}
+
+	return {
+		content: body.content,
+		author: body.author,
+	};
 }

@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import type { Contexts } from "@seqflow/seqflow";
 
 export interface NumberInputPropsType {
 	name: string;
@@ -19,7 +19,6 @@ export interface NumberInputPropsType {
 }
 
 export async function NumberInput(
-	this: SeqflowFunctionContext,
 	{
 		name,
 		placeholder,
@@ -28,6 +27,7 @@ export async function NumberInput(
 		disabled,
 		required,
 	}: NumberInputPropsType,
+	{ component }: Contexts,
 ) {
 	const classNames = ["input"];
 	if (withBorder !== false) {
@@ -44,9 +44,9 @@ export async function NumberInput(
 		// input-ghost
 		classNames.push(`input-${color}`);
 	}
-	this._el.classList.add(...classNames);
+	component._el.classList.add(...classNames);
 
-	const el = this._el as HTMLInputElement;
+	const el = component._el as HTMLInputElement;
 	el.type = "number";
 	el.name = name;
 	el.disabled = Boolean(disabled);
@@ -58,7 +58,7 @@ export async function NumberInput(
 		el.ariaRequired = "true";
 	}
 
-	const ev = this.waitEvents(this.domEvent("input", { el: this._el }));
+	const ev = component.waitEvents(component.domEvent(component._el, "input"));
 	for await (const _ of ev) {
 		if (el.validity.valid) {
 			el.dispatchEvent(new Event("valid"));

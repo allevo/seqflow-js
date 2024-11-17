@@ -37,7 +37,5 @@ console.log("STORYBOOK TESTS PASSED");
 console.log("KILLING STORYBOOK");
 storybookProcess.kill();
 
-console.log("SKIPPED");
-
 // Force the process to exit
 process.exit(0);

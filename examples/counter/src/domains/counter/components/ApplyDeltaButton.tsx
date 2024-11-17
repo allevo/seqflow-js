@@ -1,14 +1,14 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
-import { Button } from "seqflow-js-components";
+import { Button } from "@seqflow/components";
+import { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export async function ApplyDeltaButton(
-	this: SeqflowFunctionContext,
-	{ delta, label }: SeqflowFunctionData<{ delta: number; label: string }>,
+	{ delta, label }: ComponentProps<{ delta: number; label: string }>,
+	{ component, app }: Contexts,
 ) {
-	this.renderSync(
+	component.renderSync(
 		<Button
 			color="primary"
-			onClick={() => this.app.domains.counter.applyDelta(delta)}
+			onClick={() => app.domains.counter.applyDelta(delta)}
 		>
 			{label}
 		</Button>,

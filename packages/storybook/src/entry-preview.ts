@@ -3,7 +3,7 @@ import { renderToCanvas } from './render';
 import type { Parameters } from './types';
 
 export const parameters: Parameters = {
-    renderer: 'seqflow-js-storybook',
+    renderer: '@seqflow/storybook',
     docs: {
         story: { inline: true },
         source: {

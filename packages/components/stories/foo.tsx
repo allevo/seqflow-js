@@ -1,13 +1,13 @@
 import React from 'react';
 import { Button } from '../src/index.tsx';
-import * as seqflow from 'seqflow-js'
+import * as seqflow from '@seqflow/seqflow'
 
-async function Main(this: seqflow.SeqflowFunctionContext) {
-    this.renderSync(
-        this.createDOMElement(
+async function Main({}, { component, app }: seqflow.Contexts) {
+    component.renderSync(
+        component.createDOMElement(
             Button,
             {},
-            ['Hello']
+            'Hello'
         )
     )
     // this.renderSync(
@@ -36,7 +36,9 @@ export default function Init() {
     const ref = React.createRef<HTMLElement | null>(null)
     React.useEffect(() => {
         if (ref.current) {
-            const control = seqflow.start(ref.current, Main, { }, {})
+            const control = seqflow.start(ref.current, Main, { }, {
+                domains: {},
+            })
             return () => {
                 control.abort(new Error('React unmount'))
             }

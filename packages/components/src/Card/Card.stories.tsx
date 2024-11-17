@@ -1,10 +1,10 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
-import type { StoryFn } from "seqflow-js-storybook";
+import type { Contexts } from "@seqflow/seqflow";
+import type { StoryFn } from "@seqflow/storybook";
 import { Body, Card, type CardProps } from ".";
 import { Button } from "../Button";
 
-async function CardStory(this: SeqflowFunctionContext, props: CardProps) {
-	this.renderSync(
+async function CardStory(props: CardProps, { component }: Contexts) {
+	component.renderSync(
 		<Card {...props} className={"w-96 m-auto"}>
 			<Body>
 				<Card.Title level={1}>Card title</Card.Title>
@@ -31,10 +31,8 @@ export default {
 
 export const Empty = {};
 
-export const Centered: StoryFn<unknown> = async function (
-	this: SeqflowFunctionContext,
-) {
-	this.renderSync(
+export const Centered: StoryFn<object> = async (_, { component }: Contexts) => {
+	component.renderSync(
 		<Card shadow="md">
 			<Body className="items-center text-center">
 				<Card.Title level={1}>Card title</Card.Title>
@@ -47,10 +45,11 @@ export const Centered: StoryFn<unknown> = async function (
 	);
 };
 
-export const ActionOnTop: StoryFn<unknown> = async function (
-	this: SeqflowFunctionContext,
-) {
-	this.renderSync(
+export const ActionOnTop: StoryFn<object> = async (
+	_,
+	{ component }: Contexts,
+) => {
+	component.renderSync(
 		<Card shadow="md">
 			<Card.Body>
 				<Card.Actions>

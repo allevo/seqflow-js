@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export interface LoadingPropsType {
 	type?: "spinner" | "dots" | "ring" | "ball" | "bars" | "infinity";
@@ -6,13 +6,13 @@ export interface LoadingPropsType {
 }
 
 export async function Loading(
-	this: SeqflowFunctionContext,
-	{ type, size }: SeqflowFunctionData<LoadingPropsType>,
+	{ type, size }: ComponentProps<LoadingPropsType>,
+	{ component }: Contexts,
 ) {
-	this._el.classList.add("loading");
-	this._el.classList.add("loading-spinner");
+	component._el.classList.add("loading");
+	component._el.classList.add("loading-spinner");
 
-	this._el.role = "progressbar";
+	component._el.role = "progressbar";
 
 	if (type) {
 		// loading-spinner
@@ -21,13 +21,13 @@ export async function Loading(
 		// loading-ball
 		// loading-bars
 		// loading-infinity
-		this._el.classList.add(`loading-${type}`);
+		component._el.classList.add(`loading-${type}`);
 	}
 	if (size) {
 		// loading-xs
 		// loading-sm
 		// loading-md
 		// loading-lg
-		this._el.classList.add(`loading-${size}`);
+		component._el.classList.add(`loading-${size}`);
 	}
 }

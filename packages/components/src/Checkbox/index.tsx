@@ -1,4 +1,4 @@
-import type { SeqflowFunctionContext } from "seqflow-js";
+import type { Contexts } from "@seqflow/seqflow";
 
 export interface CheckboxPropsType {
 	color?:
@@ -16,8 +16,8 @@ export interface CheckboxPropsType {
 }
 
 export async function Checkbox(
-	this: SeqflowFunctionContext,
 	{ color, size, disabled, name, defaultChecked }: CheckboxPropsType,
+	{ component }: Contexts,
 ) {
 	const classNames = ["checkbox"];
 	if (color) {
@@ -37,9 +37,9 @@ export async function Checkbox(
 		// checkbox-xs
 		classNames.push(`checkbox-${size}`);
 	}
-	this._el.classList.add(...classNames);
+	component._el.classList.add(...classNames);
 
-	const el = this._el as HTMLInputElement;
+	const el = component._el as HTMLInputElement;
 	el.type = "checkbox";
 	if (disabled !== undefined) {
 		el.disabled = disabled;

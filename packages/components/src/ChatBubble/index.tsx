@@ -1,29 +1,29 @@
-import type { SeqflowFunctionContext, SeqflowFunctionData } from "seqflow-js";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 
 export interface ChatBubbleProps {
 	spot: "start" | "end";
 }
 
 export async function ChatBubble(
-	this: SeqflowFunctionContext,
-	{ children, spot }: SeqflowFunctionData<ChatBubbleProps>,
+	{ children, spot }: ComponentProps<ChatBubbleProps>,
+	{ component, app }: Contexts,
 ) {
 	const classes = ["chat"];
 	// chat-start
 	// chat-end
 	classes.push(`chat-${spot}`);
 	for (const c of classes) {
-		this._el.classList.add(c);
+		component._el.classList.add(c);
 	}
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "ChatBubble component requires children",
 		});
 		return;
 	}
 
-	this.renderSync(children);
+	component.renderSync(children);
 }
 
 export interface BubbleProps {
@@ -38,10 +38,10 @@ export interface BubbleProps {
 }
 
 async function Bubble(
-	this: SeqflowFunctionContext,
-	{ children, color }: SeqflowFunctionData<BubbleProps>,
+	{ children, color }: ComponentProps<BubbleProps>,
+	{ component, app }: Contexts,
 ) {
-	this._el.classList.add("chat-bubble");
+	component._el.classList.add("chat-bubble");
 	if (color) {
 		// chat-bubble-primary
 		// chat-bubble-secondary
@@ -50,15 +50,15 @@ async function Bubble(
 		// chat-bubble-success
 		// chat-bubble-warning
 		// chat-bubble-error
-		this._el.classList.add(`chat-bubble-${color}`);
+		component._el.classList.add(`chat-bubble-${color}`);
 	}
 
 	if (!children) {
-		this.app.log.error({
+		app.log.error({
 			message: "ChatBubble.Bubble component requires children",
 		});
 		return;
 	}
-	this.renderSync(children);
+	component.renderSync(children);
 }
 ChatBubble.Bubble = Bubble;

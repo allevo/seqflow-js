@@ -1,17 +1,22 @@
+import { start } from "@seqflow/seqflow";
 import { screen, waitFor } from "@testing-library/dom";
-import { start } from "seqflow-js";
 import { expect, test } from "vitest";
 import { Counter, CounterDomain } from "../src/Counter";
 import { ExternalChangeValue } from "../src/external";
 
 test("should increment and decrement the counter", async () => {
 	const externalEventTarget = new EventTarget();
-	start(document.body, Counter, undefined, {
-		domains: {
-			counter: (et) => new CounterDomain(et, externalEventTarget, 0),
-			external: () => externalEventTarget,
+	start(
+		document.body,
+		Counter,
+		{},
+		{
+			domains: {
+				counter: (et) => new CounterDomain(et, externalEventTarget, 0),
+				external: () => externalEventTarget,
+			},
 		},
-	});
+	);
 
 	const incrementButton = await screen.findByText(/increment/i);
 	const decrementButton = await screen.findByText(/decrement/i);

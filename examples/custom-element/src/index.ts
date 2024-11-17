@@ -1,8 +1,8 @@
-import { start } from "seqflow-js";
+import { debugEventTarget, start } from "@seqflow/seqflow";
 import { Counter, CounterDomain } from "./Counter";
 import { ExternalChangeValue } from "./external";
 
-import "seqflow-js-components/style.css";
+import "@seqflow/components/style.css";
 import "./index.css";
 
 declare global {
@@ -34,25 +34,34 @@ class CounterElement extends HTMLElement {
 		// Get the initial value from the attribute or default to 20
 		const initialValue = Number(this.getAttribute("value") || "20");
 
-		// Start the Seqflow app
+		// Start the SeqFlow app
 		// Even if `ShadowRoot` is not a `HTMLElement`, we can cast it to `HTMLElement` to make TypeScript happy.
 		// It works anyway.
-		this.abortController = start(div, Counter, undefined, {
-			log: {
-				error: (l) => {
-					throw l;
+		this.abortController = start(
+			div,
+			Counter,
+			{},
+			{
+				log: {
+					error: (l) => {
+						throw l;
+					},
+					info: (l) => console.info(l),
+					debug: (l) => console.debug(l),
 				},
-				info: (l) => console.info(l),
-				debug: (l) => console.debug(l),
+				domains: {
+					// Create the Counter domain with the initial value and the external event target
+					counter: (et) =>
+						new CounterDomain(
+							debugEventTarget(et),
+							this.externalEventTarget,
+							initialValue,
+						),
+					// `external` domain is a fake domain and used only to ntofy attribute changes
+					external: () => this.externalEventTarget,
+				},
 			},
-			domains: {
-				// Create the Counter domain with the initial value and the external event target
-				counter: (et) =>
-					new CounterDomain(et, this.externalEventTarget, initialValue),
-				// `external` domain is a fake domain and used only to ntofy attribute changes
-				external: () => this.externalEventTarget,
-			},
-		});
+		);
 	}
 
 	// We want to be notified when the `value` attribute changes
@@ -77,7 +86,7 @@ class CounterElement extends HTMLElement {
 	}
 }
 
-declare module "seqflow-js" {
+declare module "@seqflow/seqflow" {
 	interface Domains {
 		counter: CounterDomain;
 		external: EventTarget;
