@@ -111,7 +111,10 @@ export async function Button(
 	component._el.setAttribute("aria-live", "polite");
 	component.renderSync(
 		<>
-			<span key="l" style={{ alignItems: "center", gap: "10px" }}>
+			<span
+				key="l"
+				style={{ alignItems: "center", gap: "10px", display: "none" }}
+			>
 				<span className="loading loading-spinner" key="loading-spinner" />
 				<span key="loading-text" />
 			</span>
@@ -139,19 +142,6 @@ export async function Button(
 		component.getChild("c").style.display = "inherit";
 		component._el.removeAttribute("aria-busy");
 	};
-
-	const previousChildren: HTMLElement[] | undefined = Array.from(
-		component._el.childNodes,
-	).filter((child) => {
-		if (child instanceof Text) {
-			return true;
-		}
-		if (!(child instanceof HTMLElement)) {
-			return false;
-		}
-		const k = child.getAttribute("key");
-		return k !== "loading-spinner" && k !== "loading-text";
-	}) as HTMLElement[];
 
 	el.transition = (state: {
 		disabled?: boolean;
