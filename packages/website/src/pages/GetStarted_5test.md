@@ -2,13 +2,13 @@ In this last part of the tutorial, we will cover how to test our SeqFlow applica
 
 ## Format of the application
 
-SeqFlow suggests to use `biome` for formatting the code. The configuration file is `biome.json`. The configuration file is already created when the project is created. The configuration file is used to format the code using `biome` formatter. To format the code, run:
+SeqFlow suggests using `biome` for formatting the code. The configuration file is `biome.json`. The configuration file is already created when the project is created. To format the code, run:
 
 ```bash
 pnpm run biome
 ```
 
-We discover that the code is not formatted correctly. To fix it, run:
+We discovered that the code is not formatted correctly. To fix it, run:
 
 ```bash
 pnpm run biome:check
@@ -68,42 +68,33 @@ test("should render the quote and refresh it", async () => {
 		},
 	);
 
-	// Wait for the loading text to be displayed
-	await screen.findByText(/loading/i);
-
-	// Wait for the quote content and author to be displayed
+	// When landed, the user should see the first quote
 	await screen.findByText(new RegExp(quotes[0].content, "i"));
 	await screen.findByText(new RegExp(quotes[0].author, "i"));
 
-	// Click the button to refresh the quote
-	const button = await screen.findByRole("button");
+	// When the user clicks the refresh button, the quote should change
+	const button = await screen.findByText("Refresh quote")
 	button.click();
 
-	// Wait for the loading text to be displayed
-	await screen.findByText(/loading/i);
-
-	// Wait for the new quote content and author to be displayed
+	// And the second quote should be displayed
 	await screen.findByText(new RegExp(quotes[1].content, "i"));
 	await screen.findByText(new RegExp(quotes[1].author, "i"));
 
-	// Click again the button to refresh the quote
+	// When the user clicks the refresh button,
 	button.click();
 
-	// Wait for the loading text to be displayed
-	await screen.findByText(/loading/i);
-
-	// Wait for the new quote content and author to be displayed
+	// the first quote should be displayed again
 	await screen.findByText(new RegExp(quotes[0].content, "i"));
 	await screen.findByText(new RegExp(quotes[0].author, "i"));
 });
 ```
 
-The main idea of the above test is to start the application and perform some checks on the rendered content. In this case we expect:
+The main idea of the above test is to start the application and perform some checks on the rendered content. In this case, we expect:
 
-- The loading text to be displayed. In fact, when the `Main` component is mounted, the first thing it does is to fetch a quote from the API. This will trigger the loading text to be displayed.
-- When the quote is fetched, we expect the quote content and author to be displayed.
-- When the button is clicked, the loading text should be displayed again and then the new quote content and author should be displayed.
-- When the button is clicked again, the loading text should be displayed again and then a quote content and author should be displayed.
+- The loading text to be displayed. In fact, when the `Main` component is mounted, it first fetches a quote from the API. This will trigger the loading text to be displayed.
+- When the quote is fetched, we expect the content and author to be displayed.
+- When the button is clicked, the loading text should be displayed again, and then the new quote content and author should be displayed.
+- When the button is clicked, the loading text should be displayed again, and then a quote content and author should be displayed.
 
 To run the test, execute:
 
@@ -113,11 +104,11 @@ pnpm test
 
 The test should pass.
 
-Broadly speaking, you can run whole application inside a test environment and interact with it as if it was a real browser. This is possible because SeqFlow consumes less memory and CPU than other frameworks.
+Broadly speaking, you can run the whole application inside a test environment and interact with it as if it were a real browser. This is possible because SeqFlow consumes less memory and CPU than other frameworks.
 
 ## Conclusion
 
-In this tutorial, we have learned how to create a simple application using SeqFlow. We have covered the following topics:
+This tutorial taught us how to create a simple application using SeqFlow. We have covered the following topics:
 
 - How to create a new SeqFlow application.
 - How to fetch data from an API and manage the state of the application.

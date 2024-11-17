@@ -1,4 +1,4 @@
-Our application fully works now. But we can improve it putting the hard-coded URL in configuration. Let's do that.
+Our application fully works now. But we can improve it by putting the hard-coded URL in configuration. Let's do that.
 
 ## Application configuration
 
@@ -31,7 +31,7 @@ declare module "@seqflow/seqflow" {
 }
 ```
 
-We defined a configuration object that holds the URL of the quote endpoint. We passed this object to the `start` function as the fourth argument.
+We defined a configuration object that holds the URL of the quote endpoint. As the fourth argument, we passed this object to the `start` function.
 
 Let's see how we can use this configuration object. Replace the `src/Main.tsx` file content with the following:
 
@@ -129,7 +129,7 @@ We changed the `getRandomQuote` function to receive the `baseUrl` as an argument
 
 ## Conclusion
 
-Even if the configuration part is not commonly covered in tutorials, it's an essential part of any application. In this guide, we learned how to define a configuration object and how to use it in our application.
+Even if the configuration part is not commonly covered in tutorials, it's essential to any application. In this guide, we learned how to define a configuration object and how to use it in our application.
 
 :::next:::
 {"label": "Learn how to test the application", "next": "/get-started/test"}

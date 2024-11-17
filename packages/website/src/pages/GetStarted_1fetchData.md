@@ -42,9 +42,9 @@ We defined the `getRandomQuote` function that fetches a random quote from an end
 The `Main` async component is responsible for invoking the `getRandomQuote` function and showing the quote.
 Because the SeqFlow components are async functions, we can just use the `await` keyword to perform any asynchronous operations we want, such HTTP requests. This is a powerful feature that allows you to fetch data from an endpoint and render it in the browser without any state management.
 
-Every SeqFlow component accepts as second parameter an own context object that exposes some functions to interact with the DOM. In this case we want to render the quote, so we use the `component.renderSync` method to render the quote in the browser. As you can see, SeqFlow supports JSX syntax.
+Every SeqFlow component accepts as a second parameter its own context object that exposes some functions to interact with the DOM. In this case we want to render the quote, so we use the `component.renderSync` method to render the quote in the browser. As you can see, SeqFlow supports JSX syntax.
 
-SeqFlow invokes your component once. If you want to update the component, you need to call the `component.renderSync` method again or update the component partially with `component.replaceChild`.
+SeqFlow invokes your component once. To update it, you need to call the `component.renderSync` method again or update the component partially with `component.replaceChild`.
 
 Run `pnpm start` and navigate to `http://localhost:5173` to see the quote.
 
@@ -99,13 +99,13 @@ export async function Main({}, { component }: Contexts) {
 
 We changed the `Main` component to render a loading message before fetching the quote. If the fetch operation fails, we render an error message. Otherwise, we render the quote.
 
-SeqFlow components can replace own content just by calling the `renderSync` method again. In this case, the loading message is replaced by the quote component or the error message. Nice, right?
+SeqFlow components can replace their own content just by calling the `renderSync` method again. In this case, the loading message is replaced by the quote component or the error message. Nice, right?
 
 ## Conclusion
 
-In this guide, we learned how to fetch data from an endpoint and render it using SeqFlow. We also learned how to handle loading and error states.
+In this guide, we learned how to fetch and render data from an endpoint using SeqFlow and how to handle loading and error states.
 
-In the next guide, we will learn how to split the above code into multiple components to make it more maintainable.
+On the next page, we will learn how to split the above code into multiple components to make it more maintainable.
 
 :::next:::
 {"label": "Learn how to split application into components", "next": "/get-started/split-components"}

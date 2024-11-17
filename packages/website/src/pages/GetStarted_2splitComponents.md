@@ -69,7 +69,7 @@ export async function Main({}, { component }: Contexts) {
 }
 ```
 
-As you can see, SeqFlow components can be created as sync or async functions that accepts two parameters:
+As you can see, SeqFlow components can be created as sync or async functions that accept two parameters:
 - the component properties;
 - the context object used to interact with the component.
 

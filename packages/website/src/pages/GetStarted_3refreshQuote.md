@@ -97,13 +97,13 @@ export async function Main({}, { component }: Contexts) {
 ```
 
 In the above code, we added a button. We use it to wait for a click event and refresh the quote.
-The `Main` component renders a button and the Quote component tagging them with `key` attribute: SeqFlow tracks it internally, so it knows:
+The `Main` component renders a button and the Quote component tags them with `key` attribute: SeqFlow tracks it internally, so it knows:
 - which component to replace when the quote is fetched;
 - the button to wait for the click event;
 
 After, the `Main` component waits for the button click event and replaces the Quote component with the new quote.
 
-Anyway, we can improve the above code avoiding duplicated code. Let's see how.
+Anyway, we can improve the above code by avoiding duplicated code. Let's see how.
 
 ## Create a Spot component
 
@@ -191,7 +191,7 @@ export async function Main({}, { component }: Contexts) {
 }
 ```
 
-In the above code, we created a new component called `Spot`. It is an empty component and it is used to tag the place where the `Quote` component will be rendered. We use the `key` attribute to track it.
+In the above code, we created a new component called `Spot`. It is empty and tags the place where the `Quote` component will be rendered. We use the `key` attribute to track it.
 
 ## Avoid double fetch
 
@@ -288,11 +288,11 @@ export async function Main({}, { component }: Contexts) {
 }
 ```
 
-You can refer to child elements using the `getChild` method. This is useful when you need to access the real HTML element and change its properties. Anyway, Typescript doesn't understand which real element is. This is why we have to cast the button to `HTMLButtonElement`. With this cast, we can use the `disabled` attribute to disable the button while the quote is being fetched.
+You can refer to child elements using the `getChild` method. This is useful when you need to access the real HTML element and change its properties. Anyway, Typescript doesn't understand what the real element is. This is why we have to cast the button to `HTMLButtonElement`. With this cast, we can use the `disabled` attribute to disable the button while the quote is being fetched.
 
 ## Conclusion
 
-In this tutorial, we have learned how to handle the click events and how to avoid double fetches. We also learned how to use the `key` attribute to track the components. Now, we have a fully functional application that shows a random quote and allows the user to refresh it by clicking a button!
+In this tutorial, we have learned how to handle click events and avoid double fetches. We have also learned how to use the `key` attribute to track the components. Now, we have a fully functional application that shows a random quote and allows the user to refresh it by clicking a button!
 
 :::next:::
 {"label": "Learn how to configure the application", "next": "/get-started/configuration"}
