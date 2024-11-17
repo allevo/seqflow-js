@@ -5,6 +5,7 @@ Our application fully works now. But we can improve it putting the hard-coded UR
 We have to define a configuration object that will hold the URL of the quote endpoint. Replace the `src/index.ts` file content with the following:
 
 ```ts
+import "@seqflow/components/style.css";
 import { start } from "@seqflow/seqflow";
 import { Main } from "./Main";
 import "./index.css";
@@ -35,6 +36,7 @@ We defined a configuration object that holds the URL of the quote endpoint. We p
 Let's see how we can use this configuration object. Replace the `src/Main.tsx` file content with the following:
 
 ```tsx
+import { Button, ButtonComponent, Prose } from "@seqflow/components";
 import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
@@ -52,10 +54,10 @@ async function getRandomQuote(baseUrl: string): Promise<Quote> {
 
 function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
 	component.renderSync(
-		<>
-			<div>{quote.content}</div>
-			<div>{quote.author}</div>
-		</>
+		<Prose>
+			<p>{quote.content}</p>
+			<p>{quote.author}</p>
+		</Prose>
 	);
 }
 function Loading({}, { component }: Contexts) {
@@ -79,37 +81,46 @@ function Spot() {}
 
 export async function Main({}, { component, app }: Contexts) {
 	const fetchAndRender = async () => {
+		const refreshButton = component.getChild<ButtonComponent>('refresh-button');
+
+		refreshButton.transition({
+			disabled: true,
+			loading: true,
+			loadingText: 'Fetching...',
+		})
+
 		component.replaceChild("quote", () => <Loading key="quote" />);
 
 		let quote: Quote;
 		try {
+			// Use `app.config.api.baseUrl` to get the URL
 			quote = await getRandomQuote(app.config.api.baseUrl);
 		} catch (error) {
 			component.replaceChild("quote", () => <ErrorMessage key="quote" error={error} />);
 			return;
 		}
 		component.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
+
+		refreshButton.transition({
+			disabled: false,
+			loading: false,
+		})
 	}
 
 	component.renderSync(
 		<>
-			<button key="refresh-button" type='button'>Refresh</button>
+			<Button key="refresh-button" type='button'>Refresh</Button>
 			<Spot key="quote" />
 		</>
 	);
 
 	await fetchAndRender();
 
-	const refreshButton = component.getChild('refresh-button') as HTMLButtonElement;
 	const events = component.waitEvents(
 		component.domEvent('refresh-button', 'click')
 	)
 	for await (const _ of events) {
-		// Disable the button while fetching the quote
-		refreshButton.disabled = true;
 		await fetchAndRender();
-		// Enable the button after fetching the quote
-		refreshButton.disabled = false;
 	}
 }
 ```

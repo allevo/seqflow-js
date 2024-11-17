@@ -46,7 +46,7 @@ export async function Form(
 			b.transition({
 				disabled: true,
 				loading: true,
-				replaceText: "Loading...",
+				loadingText: "Loading...",
 			});
 			try {
 				return await fn({ component, app });
@@ -54,7 +54,6 @@ export async function Form(
 				b.transition({
 					disabled: false,
 					loading: false,
-					replaceText: "__previous__",
 				});
 			}
 		} else {

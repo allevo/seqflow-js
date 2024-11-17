@@ -4,7 +4,7 @@ export type ButtonComponent = HTMLElement & {
 	transition: (state: {
 		disabled?: boolean;
 		loading?: boolean;
-		replaceText?: ("__previous__" & {}) | string;
+		loadingText?: string;
 	}) => void;
 };
 
@@ -100,8 +100,6 @@ export async function Button(
 	el.classList.add(...classNames);
 	el.setAttribute("type", type ?? "button");
 
-	const loaderStyle = loading ? { display: "inherit" } : { display: "none" };
-
 	if (Array.isArray(children)) {
 		children = children.map((c) => {
 			if (typeof c === "string") {
@@ -113,15 +111,11 @@ export async function Button(
 	component._el.setAttribute("aria-live", "polite");
 	component.renderSync(
 		<>
-			<span
-				className="loading loading-spinner"
-				key="loading"
-				style={loaderStyle}
-			/>
-			<span key="loading-text" style={loaderStyle}>
-				Loading...
+			<span key="l" style={{ alignItems: "center", gap: "10px" }}>
+				<span className="loading loading-spinner" key="loading-spinner" />
+				<span key="loading-text" />
 			</span>
-			{children}
+			<span key="c">{children}</span>
 		</>,
 	);
 
@@ -130,25 +124,19 @@ export async function Button(
 		el.setAttribute("disabled", "disabled");
 	};
 
-	if (disabled) {
-		disable();
-	}
 	const enable = () => {
 		el.classList.remove("btn-disabled");
 		el.removeAttribute("disabled");
 	};
-	const makeLoading = () => {
-		const loader = component.getChild("loading");
-		loader.style.display = "inherit";
-		const loadingText = component.getChild("loading-text");
-		loadingText.style.display = "inherit";
+	const makeLoading = (loadingText: string) => {
+		component.getChild("l").style.display = "inherit";
+		component.getChild("loading-text").textContent = loadingText;
+		component.getChild("c").style.display = "none";
 		component._el.setAttribute("aria-busy", "true");
 	};
 	const removeLoading = () => {
-		const loader = component.getChild("loading");
-		loader.style.display = "none";
-		const loadingText = component.getChild("loading-text");
-		loadingText.style.display = "none";
+		component.getChild("l").style.display = "none";
+		component.getChild("c").style.display = "inherit";
 		component._el.removeAttribute("aria-busy");
 	};
 
@@ -162,11 +150,12 @@ export async function Button(
 			return false;
 		}
 		const k = child.getAttribute("key");
-		return k !== "loading" && k !== "loading-text";
+		return k !== "loading-spinner" && k !== "loading-text";
 	}) as HTMLElement[];
 
 	el.transition = (state: {
 		disabled?: boolean;
+		loadingText?: string;
 		loading?: boolean;
 		replaceText?: string;
 	}) => {
@@ -176,21 +165,17 @@ export async function Button(
 			enable();
 		}
 		if (state.loading) {
-			makeLoading();
+			makeLoading(state.loadingText || "Loading...");
 		} else if (state.loading === false) {
 			removeLoading();
 		}
-		if (state.replaceText && previousChildren) {
-			if (state.replaceText === "__previous__") {
-				for (const c of previousChildren) {
-					c.style.display = "inherit";
-				}
-			} else {
-				for (const c of previousChildren) {
-					c.style.display = "none";
-				}
-			}
-		}
 	};
+
+	if (disabled) {
+		disable();
+	}
+	if (loading) {
+		makeLoading("Loading...");
+	}
 }
 Button.tagName = () => "button";

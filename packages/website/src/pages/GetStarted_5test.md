@@ -45,7 +45,7 @@ let index = 0;
 const server = setupServer(
 	http.get("/api/quotes/random", () => {
 		return HttpResponse.json(quotes[index++ % quotes.length]);
-	})
+	}),
 );
 
 beforeAll(() => server.listen());
@@ -53,15 +53,20 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 test("should render the quote and refresh it", async () => {
-	start(document.body, Main, {}, {
-		// log: console,
-		config: {
-			api: {
-				// Route to the mock server
-				baseUrl: "",
+	start(
+		document.body,
+		Main,
+		{},
+		{
+			// log: console,
+			config: {
+				api: {
+					// Route to the mock server
+					baseUrl: "",
+				},
 			},
 		},
-	});
+	);
 
 	// Wait for the loading text to be displayed
 	await screen.findByText(/loading/i);

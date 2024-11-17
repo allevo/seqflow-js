@@ -6,6 +6,7 @@ The quote application is a simple application that fetches a random quote from a
 Change the `src/Main.tsx` file content as the following:
 
 ```tsx
+import { Prose } from "@seqflow/components";
 import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
@@ -26,10 +27,10 @@ export async function Main({}, { component }: Contexts) {
 
 	// And show it
 	component.renderSync(
-		<>
-			<div>{quote.content}</div>
-			<div>{quote.author}</div>
-		</>
+		<Prose>
+			<p>{quote.content}</p>
+			<p>{quote.author}</p>
+		</Prose>
 	);
 }
 ```

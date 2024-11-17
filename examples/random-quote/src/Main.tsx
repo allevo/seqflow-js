@@ -1,6 +1,4 @@
-import { Card, Divider, Loading, Prose } from "@seqflow/components";
-import { ComponentProps, Contexts } from "@seqflow/seqflow";
-import classes from "./Main.module.css";
+import { Contexts } from "@seqflow/seqflow";
 import {
 	FetchingNewQuote,
 	NewQuoteFetched,
@@ -8,24 +6,28 @@ import {
 	QuoteErrorFetched,
 	RefreshQuoteButton,
 } from "./domains/quote";
+import classes from './Main.module.css'
 
-export async function Main(
-	_: ComponentProps<unknown>,
-	{ component }: Contexts,
-) {
+function Loading({}, { component }: Contexts) {
+	component.renderSync(<p>Loading...</p>);
+}
+function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
+	if (data.error instanceof Error) {
+		component.renderSync(<p>{data.error.message}</p>);
+	} else {
+		component.renderSync(<p>Unknown error</p>);
+	}
+}
+
+function Spot() {}
+
+export async function Main({}, { component }: Contexts) {
+	component._el.classList.add(...[classes.main]);
 	component.renderSync(
-		<Card className={[classes.main]} compact shadow="xl">
-			<Card.Body>
-				<div key="loading" />
-				<Prose key="quote" className={classes.initialText}>
-					<p>Click the button to read a quote</p>
-				</Prose>
-				<Divider />
-				<Card.Actions>
-					<RefreshQuoteButton key="refresh-button" />
-				</Card.Actions>
-			</Card.Body>
-		</Card>,
+		<>
+			<RefreshQuoteButton key="refresh-button" />
+			<Spot key="quote" />
+		</>,
 	);
 
 	const events = component.waitEvents(
@@ -34,31 +36,23 @@ export async function Main(
 		component.domainEvent(QuoteErrorFetched),
 	);
 	for await (const ev of events) {
-		if (ev instanceof FetchingNewQuote) {
-			component.replaceChild("loading", () => (
-				<Loading className={classes.loading} key="loading" />
-			));
-			component.getChild("quote").classList.add(classes.hide);
-		} else if (ev instanceof NewQuoteFetched) {
-			component.replaceChild("quote", () => {
-				return (
-					<QuoteComponent
-						key="quote"
-						quote={ev.detail}
-						className={classes.quote}
-					/>
-				);
-			});
-			component.replaceChild("loading", () => <div key="loading" />);
-		} else if (ev instanceof QuoteErrorFetched) {
-			component.replaceChild("quote", () => {
-				return (
-					<div key="quote" className={classes.quote}>
-						{ev.detail}
-					</div>
-				);
-			});
-			component.replaceChild("loading", () => <div key="loading" />);
+		switch (true) {
+			case ev instanceof FetchingNewQuote: {
+				component.replaceChild("quote", () => <Loading className={classes.quote} key="quote" />);
+				break;
+			}
+			case ev instanceof NewQuoteFetched: {
+				component.replaceChild("quote", () => (
+					<QuoteComponent className={classes.quote} key="quote" quote={ev.detail} />
+				));
+				break;
+			}
+			case ev instanceof QuoteErrorFetched: {
+				component.replaceChild("quote", () => (
+					<ErrorMessage key="quote" error={ev.detail} />
+				));
+				break;
+			}
 		}
 	}
 }

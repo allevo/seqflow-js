@@ -54,19 +54,18 @@ export const TrasitionButton: StoryFn = {
 
 		buttonComponent.transition({
 			loading: true,
+			loadingText: "Custom loading message...",
 			disabled: true,
-			replaceText: "Loading...",
 		});
 
 		expect(buttonComponent).toHaveAttribute("disabled");
-		expect(buttonComponent).toHaveTextContent("Loading...");
+		expect(buttonComponent).toHaveTextContent("Custom loading message...");
 
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 
 		buttonComponent.transition({
 			loading: false,
 			disabled: false,
-			replaceText: "__previous__",
 		});
 
 		expect(buttonComponent).not.toHaveAttribute("disabled");

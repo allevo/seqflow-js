@@ -6,6 +6,7 @@ Our application works fine, but we force the user to refresh the page to see a n
 Let's start by replacing the `src/Main.tsx` file content with the following:
 
 ```tsx
+import { Button, Prose } from "@seqflow/components";
 import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
@@ -15,25 +16,26 @@ interface Quote {
 
 async function getRandomQuote(): Promise<Quote> {
 	const res = await fetch("https://quotes.seqflow.dev/api/quotes/random")
-	if (!res.ok) {
-		throw new Error("Failed to fetch quote");
-	}
 	return await res.json();
 }
 
+
+// This is the new component: it receives a quote and renders it
 function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
 	component.renderSync(
-		<>
-			<div>{quote.content}</div>
-			<div>{quote.author}</div>
-		</>
+		<Prose>
+			<p>{quote.content}</p>
+			<p>{quote.author}</p>
+		</Prose>
 	);
 }
+// The loading component
 function Loading({}, { component }: Contexts) {
 	component.renderSync(
 		<p>Loading...</p>
 	);
 }
+// The error component
 function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
 	if (data.error instanceof Error) {
 		component.renderSync(
@@ -64,7 +66,7 @@ export async function Main({}, { component }: Contexts) {
 	component.renderSync(
 		<>
 			{ /* NB: we added the key attribute here!! */ }
-			<button key="refresh-button" type='button'>Refresh</button>
+			<Button key="refresh-button" type='button'>Refresh</Button>
 			{ /* NB: and also here!! */ }
 			<Quote key="quote" quote={quote} />
 		</>
@@ -72,6 +74,7 @@ export async function Main({}, { component }: Contexts) {
 
 	// Create an async iterator to wait for the button click
 	const events = component.waitEvents(
+		// We use the "key" to reference the button
 		component.domEvent('refresh-button', 'click')
 	)
 	// Wait for the button click
@@ -82,7 +85,7 @@ export async function Main({}, { component }: Contexts) {
 			quote = await getRandomQuote();
 		} catch (error) {
 			// This replace the hole content with the error message
-			this.renderSync(
+			component.renderSync(
 				<ErrorMessage error={error} />
 			);
 			return;
@@ -107,6 +110,7 @@ Anyway, we can improve the above code avoiding duplicated code. Let's see how.
 Let's start by replacing the `src/Main.tsx` file content with the following:
 
 ```tsx
+import { Button, Prose } from "@seqflow/components";
 import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
@@ -124,10 +128,10 @@ async function getRandomQuote(): Promise<Quote> {
 
 function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
 	component.renderSync(
-		<>
-			<div>{quote.content}</div>
-			<div>{quote.author}</div>
-		</>
+		<Prose>
+			<p>{quote.content}</p>
+			<p>{quote.author}</p>
+		</Prose>
 	);
 }
 function Loading({}, { component }: Contexts) {
@@ -169,7 +173,7 @@ export async function Main({}, { component }: Contexts) {
 	// Render the structure of the html
 	component.renderSync(
 		<>
-			<button key="refresh-button" type='button'>Refresh</button>
+			<Button key="refresh-button" type='button'>Refresh</Button>
 			<Spot key="quote" />
 		</>
 	);
@@ -194,6 +198,7 @@ In the above code, we created a new component called `Spot`. It is an empty comp
 The above code has a subtle bug: if the user clicks the button twice before the first fetch is completed, the application will fetch the quote twice. Let's fix it using the below code:
 
 ```tsx
+import { Button, ButtonComponent, Prose } from "@seqflow/components";
 import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
@@ -211,10 +216,10 @@ async function getRandomQuote(): Promise<Quote> {
 
 function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
 	component.renderSync(
-		<>
-			<div>{quote.content}</div>
-			<div>{quote.author}</div>
-		</>
+		<Prose>
+			<p>{quote.content}</p>
+			<p>{quote.author}</p>
+		</Prose>
 	);
 }
 function Loading({}, { component }: Contexts) {
@@ -238,6 +243,15 @@ function Spot() {}
 
 export async function Main({}, { component }: Contexts) {
 	const fetchAndRender = async () => {
+		const refreshButton = component.getChild<ButtonComponent>('refresh-button');
+
+		// Disable the button while fetching the quote
+		refreshButton.transition({
+			disabled: true,
+			loading: true,
+			loadingText: 'Fetching...',
+		})
+
 		component.replaceChild("quote", () => <Loading key="quote" />);
 
 		let quote: Quote;
@@ -248,27 +262,28 @@ export async function Main({}, { component }: Contexts) {
 			return;
 		}
 		component.replaceChild("quote", () => <Quote key="quote" quote={quote} />);
+
+		// Enable the button after fetching the quote
+		refreshButton.transition({
+			disabled: false,
+			loading: false,
+		})
 	}
 
 	component.renderSync(
 		<>
-			<button key="refresh-button" type='button'>Refresh</button>
+			<Button key="refresh-button" type='button'>Refresh</Button>
 			<Spot key="quote" />
 		</>
 	);
 
 	await fetchAndRender();
 
-	const refreshButton = component.getChild('refresh-button') as HTMLButtonElement;
 	const events = component.waitEvents(
 		component.domEvent('refresh-button', 'click')
 	)
 	for await (const _ of events) {
-		// Disable the button while fetching the quote
-		refreshButton.disabled = true;
 		await fetchAndRender();
-		// Enable the button after fetching the quote
-		refreshButton.disabled = false;
 	}
 }
 ```

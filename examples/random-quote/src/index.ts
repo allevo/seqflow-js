@@ -13,7 +13,7 @@ start(
 		log: console,
 		config: {
 			api: {
-				baseUrl: "https://quotes.seqflow.dev/api/quotes",
+				baseUrl: "https://quotes.seqflow.dev",
 			},
 		},
 		domains: {

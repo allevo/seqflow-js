@@ -5,25 +5,32 @@ export async function RefreshQuoteButton(
 	_: ComponentProps<unknown>,
 	{ component, app }: Contexts,
 ) {
+	const f = async () => {
+		const refreshButton = component.getChild<ButtonComponent>("button");
+		refreshButton.transition({
+			disabled: true,
+			loading: true,
+			loadingText: "Fetching...",
+		});
+
+		await app.domains.quotes.fetchNewQuote();
+
+		refreshButton.transition({
+			loading: false,
+			disabled: false,
+		});
+	};
+
 	component.renderSync(
-		<Button color="primary" key="button" type="button">
+		<Button key="button" type="button">
 			Refresh quote
 		</Button>,
 	);
-	const button = component.getChild<ButtonComponent>("button");
+
+	await f();
 
 	const events = component.waitEvents(component.domEvent("button", "click"));
 	for await (const _ of events) {
-		button.transition({
-			loading: true,
-			disabled: true,
-			replaceText: "Fetching...",
-		});
-		await app.domains.quotes.fetchNewQuote();
-		button.transition({
-			loading: false,
-			disabled: false,
-			replaceText: "__previous__",
-		});
+		await f();
 	}
 }

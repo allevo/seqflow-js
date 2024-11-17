@@ -15,7 +15,7 @@ const quotes = [
 
 let index = 0;
 const server = setupServer(
-	http.get("/random", () => {
+	http.get("/api/quotes/random", () => {
 		return HttpResponse.json(quotes[index++ % quotes.length]);
 	}),
 );
@@ -42,27 +42,22 @@ test("should render the quote and refresh it", async () => {
 		},
 	);
 
-	await screen.findByText("Click the button to read a quote");
-
-	const button = await screen.findByRole("button");
-	button.click();
-
-	await screen.findByRole("progressbar");
-
+	// When landed, the user should see the first quote
 	await screen.findByText(new RegExp(quotes[0].content, "i"));
 	await screen.findByText(new RegExp(quotes[0].author, "i"));
 
+	// When the user clicks the refresh button, the quote should change
+	const button = await screen.findByText("Refresh quote")
 	button.click();
 
-	await screen.findByRole("progressbar");
-
+	// And the second quote should be displayed
 	await screen.findByText(new RegExp(quotes[1].content, "i"));
 	await screen.findByText(new RegExp(quotes[1].author, "i"));
 
+	// When the user clicks the refresh button again,
 	button.click();
 
-	await screen.findByRole("progressbar");
-
+	// the first quote should be displayed
 	await screen.findByText(new RegExp(quotes[0].content, "i"));
 	await screen.findByText(new RegExp(quotes[0].author, "i"));
 });

@@ -6,6 +6,7 @@ Our application is simple, but where is the reusability? Let's split the applica
 Let's start by creating a new component that will show the quote. Replace the `src/Main.tsx` file content with the following:
 
 ```tsx
+import { Prose } from "@seqflow/components";
 import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
@@ -15,19 +16,17 @@ interface Quote {
 
 async function getRandomQuote(): Promise<Quote> {
 	const res = await fetch("https://quotes.seqflow.dev/api/quotes/random")
-	if (!res.ok) {
-		throw new Error("Failed to fetch quote");
-	}
 	return await res.json();
 }
+
 
 // This is the new component: it receives a quote and renders it
 function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
 	component.renderSync(
-		<>
-			<div>{quote.content}</div>
-			<div>{quote.author}</div>
-		</>
+		<Prose>
+			<p>{quote.content}</p>
+			<p>{quote.author}</p>
+		</Prose>
 	);
 }
 // The loading component

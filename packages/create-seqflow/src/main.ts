@@ -8,9 +8,9 @@ import tar from "tar";
 enum TemplateType {
 	Empty = "empty",
 	Counter = "counter",
-	CounterDomain = "counter-domain",
 	ECommerce = "e-commerce",
 	CustomElement = "custom-element",
+	RandomQuote = "random-quote",
 }
 const templateChoices = [
 	{
@@ -20,17 +20,17 @@ const templateChoices = [
 	},
 	{
 		title: TemplateType.Counter,
-		description: "Simple example",
+		description: "Simple counter example",
 		value: TemplateType.Counter,
 	},
 	{
-		title: TemplateType.CounterDomain,
-		description: "Simple example with domain",
-		value: TemplateType.CounterDomain,
+		title: TemplateType.RandomQuote,
+		description: "Fetch and display a random quote",
+		value: TemplateType.RandomQuote,
 	},
 	{
 		title: TemplateType.ECommerce,
-		description: "Complex example with multiple domains",
+		description: "E-commerce example with multiple domains",
 		value: TemplateType.ECommerce,
 	},
 	{

@@ -4,6 +4,9 @@
 		"rules": {
 			"style": {
 				"noNonNullAssertion": "off"
+			},
+			"correctness": {
+				"noEmptyPattern": "off"
 			}
 		}
 	}
