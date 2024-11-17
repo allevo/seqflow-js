@@ -1,6 +1,6 @@
 # SeqFlow JS
 
-This framework i a lightweight, domain-driven front-end framework designed to simplify web application development, reduce complexity, and enhance user experience with an event-driven architecture.
+This framework is a lightweight, domain-driven front-end framework designed to simplify web application development, reduce complexity, and enhance user experience with an event-driven architecture.
 
 See the [documentation](https://seqflow.dev) for more information.
 
@@ -13,7 +13,7 @@ pnpm install @seqflow/seqflow
 ## Usage
 
 ```tsx
-import { Contexts } from "seqflow-js";
+import { Contexts } from "@seqflow/seqflow";
 
 interface Quote {
 	author: string;
@@ -25,9 +25,9 @@ async function getRandomQuote(): Promise<Quote> {
 	return await res.json();
 }
 
-export async function Main(this: SeqflowFunctionContext) {
+export async function Main({}, { component }: Contexts) {
 	// Render loading message
-	this.renderSync(
+	component.renderSync(
 		<p>Loading...</p>
 	);
 
@@ -35,7 +35,7 @@ export async function Main(this: SeqflowFunctionContext) {
 	const quote = await getRandomQuote();
 
 	// Replace loading message with quote
-	this.renderSync(
+	component.renderSync(
 		<div>
 			<div>{quote.content}</div>
 			<div>{quote.author}</div>
