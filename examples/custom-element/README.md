@@ -29,7 +29,7 @@ Because the production mode is different from the development mode, you need to 
 
 ```bash
 pnpm build
-pnpm run test:html
+pnpm run serve:static
 ```
 
 Open [http://localhost:3000/test.html](http://localhost:3000/test.html) in your browser.
