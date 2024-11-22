@@ -1,9 +1,14 @@
 
-Our application is simple, but where is the reusability? Let's split the application into components.
+Our application is simple for now.
+But typically, applications are more complex and have multiple components.
+Let's split the application into different components.
 
 ## Create new components
 
-Let's start by creating a new component that will show the quote. Replace the `src/Main.tsx` file content with the following:
+Let's start by creating a new component that will show the quote.
+We continue to overwrite the `src/Main.tsx` file just to keep things simple to follow.
+
+Replace the `src/Main.tsx` file content with the following:
 
 ```tsx
 import { Prose } from "@seqflow/components";
@@ -74,9 +79,9 @@ As you can see, SeqFlow components can be created as sync or async functions tha
 - the context object used to interact with the component.
 
 In the above code, we created:
-- a new component called `Loading` to show a loading message;
-- a new component called `ErrorMessage` to show an error message.
-- a new component called `Quote` to show the quote;
+- the `Loading` component to show a loading message;
+- the `ErrorMessage` component to show an error message.
+- the `Quote` component to show the quote;
 
 Finally, we updated the `Main` component accordingly.
 
@@ -87,5 +92,5 @@ We split the application into multiple components.
 In the next guide, we will learn how to handle user interactions.
 
 :::next:::
-{"label": "Learn how to handle events", "next": "/get-started/refresh-quote"}
+{"label": "Refresh the quote", "next": "/get-started/refresh-quote"}
 :::end-next:::

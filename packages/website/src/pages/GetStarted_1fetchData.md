@@ -1,7 +1,10 @@
 
-The quote application is a simple application that fetches a random quote from an endpoint and shows it in the browser. We will use [this endpoint](https://quotes.seqflow.dev) for fetching the quote.
+The quote application is a simple application that fetches a random quote from an endpoint and shows it in the browser. We will use this remote servive provided by SeqFlow to fetch quotes: [https://quotes.seqflow.dev](https://quotes.seqflow.dev).
 
 ## Invoking an API
+
+What we want to do is to fetch a random quote from the endpoint `https://quotes.seqflow.dev/api/quotes/random` and show it in the component.
+We will use the `fetch` API to do that.
 
 Change the `src/Main.tsx` file content as the following:
 
@@ -37,21 +40,21 @@ export async function Main({}, { component }: Contexts) {
 
 Let's see what we have.
 
-We defined the `getRandomQuote` function that fetches a random quote from an endpoint. It is an async function that returns a promise with the quote.
+We defined the `getRandomQuote` function that fetches a random quote from an endpoint. It is an pure async function that returns a promise with the quote.
 
-The `Main` async component is responsible for invoking the `getRandomQuote` function and showing the quote.
-Because the SeqFlow components are async functions, we can just use the `await` keyword to perform any asynchronous operations we want, such HTTP requests. This is a powerful feature that allows you to fetch data from an endpoint and render it in the browser without any state management.
+The `Main` component is responsible for invoking the `getRandomQuote` function and showing the quote.
+Because the SeqFlow components are async functions, we can just use the `await` keyword to perform any asynchronous operations we want, such HTTP requests. This is a powerful feature that allows us to write a component easier and more readable.
 
 Every SeqFlow component accepts as a second parameter its own context object that exposes some functions to interact with the DOM. In this case we want to render the quote, so we use the `component.renderSync` method to render the quote in the browser. As you can see, SeqFlow supports JSX syntax.
 
-SeqFlow invokes your component once. To update it, you need to call the `component.renderSync` method again or update the component partially with `component.replaceChild`.
-
-Run `pnpm start` and navigate to `http://localhost:5173` to see the quote.
+Your page should be updated automatically thanks to the vite server. if you don't run the server yet, you can do it by running `pnpm start` in the terminal and navigate to `http://localhost:5173` to see the quote.
 
 ## Handle loading and error states
 
 Even if we thought API requests are always fast and successful, they are not. Let's handle the loading and error states.
-Let's do that. Replace the `src/Main.tsx` file content with the following:
+
+Let's put a loading message before fetching the quote and an error message if the fetch operation fails.
+Replace the `src/Main.tsx` file content with the following:
 
 ```tsx
 import { Contexts } from "@seqflow/seqflow";

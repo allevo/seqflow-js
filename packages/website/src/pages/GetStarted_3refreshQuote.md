@@ -3,6 +3,9 @@ Our application works fine, but we force the user to refresh the page to see a n
 
 ## Insert a button
 
+Our goal now is to add a button that, when clicked, will refresh the quote.
+We will use the `component.replaceChild` method that allows us to replace only a portion of the component.
+
 Let's start by replacing the `src/Main.tsx` file content with the following:
 
 ```tsx
@@ -107,6 +110,10 @@ Anyway, we can improve the above code by avoiding duplicated code. Let's see how
 
 ## Create a Spot component
 
+The code duplication is not a good practice. We invoke `getRandomQuote` twice: once when the page is loaded and once when the button is clicked.
+
+What we want is to create a function that can be invoked when the component is mounted the first time and when the button is clicked. This function should shows the loading message, fetches the quote, and renders it.
+
 Let's start by replacing the `src/Main.tsx` file content with the following:
 
 ```tsx
@@ -195,7 +202,11 @@ In the above code, we created a new component called `Spot`. It is empty and tag
 
 ## Avoid double fetch
 
-The above code has a subtle bug: if the user clicks the button twice before the first fetch is completed, the application will fetch the quote twice. Let's fix it using the below code:
+The above code has a subtle bug: if the user clicks the button twice before the first fetch is completed, the application will fetch the quote twice.
+
+Using the component library provided by SeqFlow team, we can avoid this issue. We can disable the button while the quote is being fetched.
+
+Let's fix it using the below code:
 
 ```tsx
 import { Button, ButtonComponent, Prose } from "@seqflow/components";
@@ -288,11 +299,18 @@ export async function Main({}, { component }: Contexts) {
 }
 ```
 
-You can refer to child elements using the `getChild` method. This is useful when you need to access the real HTML element and change its properties. Anyway, Typescript doesn't understand what the real element is. This is why we have to cast the button to `HTMLButtonElement`. With this cast, we can use the `disabled` attribute to disable the button while the quote is being fetched.
+`ButtonComponent` is a special component that allows you to change the button properties.
+It exposts `transition` method that allows you to change the button properties easily. In the above code, we use it to disable the button while the quote is being fetched and show a loading spinner.
+
+When the quote is fetched, we enable the button again.
+
+NB: Typescript doesn't understand what the real element is. This is why we have to cast the button to `ButtonComponent` (which extends `HTMLButtonElement`).
 
 ## Conclusion
 
-In this tutorial, we have learned how to handle click events and avoid double fetches. We have also learned how to use the `key` attribute to track the components. Now, we have a fully functional application that shows a random quote and allows the user to refresh it by clicking a button!
+In this tutorial, we have learned how to handle click events and avoid double fetches. We have also learned how to use the `key` attribute to track the components.
+
+Now, we have a fully functional application that shows a random quote and allows the user to refresh it by clicking a button. Well done!
 
 :::next:::
 {"label": "Learn how to configure the application", "next": "/get-started/configuration"}

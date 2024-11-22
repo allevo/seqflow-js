@@ -69,13 +69,14 @@ function parseArguments(args: string[]): Partial<Configuration> {
 			configurationFromCMD.branch = args[i + 1];
 			i += 2;
 		} else if (arg === "--help" || arg === "-h") {
+			const availableTemplates = templateChoices.map((t) => t.title).join(", ");
 			console.log(`
 Usage: create-seqflow [options]
 
 Options:
   --path, -p     The destination path of the project
   --name, -n     The name of the project
-  --template, -t The template to use
+  --template, -t The template to use (${availableTemplates})
   --branch, -b   The branch to use
   --help, -h     Display this help message
 `);

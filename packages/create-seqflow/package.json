@@ -1,6 +1,6 @@
 {
-  "name": "@seqflow/create-seqflow",
-  "version": "1.0.0",
+  "name": "create-seqflow",
+  "version": "1.0.0-alpha.3",
   "description": "SeqFlow CLI",
   "main": "dist/index.js",
   "type": "module",
@@ -10,6 +10,13 @@
   "files": [
     "dist"
   ],
+  "homepage": "https://seqflow.dev",
+  "repository": "https://github.com/allevo/seqflow-js",
+  "bugs": "https://github.com/allevo/seqflow-js/issues",
+  "author": "Tommaso Allevi <tomallevi@gmail.com>",
+  "engines": {
+    "node": ">=20.11.1"
+  },
   "scripts": {
     "test": "npm-run-all biome build",
     "biome": "biome ci ./src",
@@ -21,7 +28,6 @@
     "seqflow",
     "cli"
   ],
-  "author": "",
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "1.5.3",

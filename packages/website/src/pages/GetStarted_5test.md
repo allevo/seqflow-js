@@ -1,5 +1,7 @@
 In this last part of the tutorial, we will cover how to test our SeqFlow application.
 
+With the word "test", we could mean different things. In this tutorial, we will cover format and linsting, and unit testing.
+
 ## Format of the application
 
 SeqFlow suggests using `biome` for formatting the code. The configuration file is `biome.json`. The configuration file is already created when the project is created. To format the code, run:
@@ -16,15 +18,28 @@ pnpm run biome:check
 
 ## Unit testing
 
-SeqFlow suggests to use `@testing-library/dom`.
+In this tutorial, we use the following libraries for testing:
+- `@testing-library/dom` for testing the DOM (already installed).
+- `msw` for mocking the API requests.
 
-Because our application involves fetching data from an API, we need to provide a way to mock the API response. We will use `msw` to mock the API requests. Install it by running:
+Install `msw` by running:
 
 ```bash
 pnpm i -D msw
 ```
 
-The codebase contains the file `tests/index.test.ts` which is the test file for the application. Replace its content with the following:
+The codebase contains the file `tests/index.test.ts` which is the test file for the application.
+
+The following test code will:
+- configure the mock server to return a quote.
+- start the application with the right configuration.
+- check if the quote is displayed.
+- click the refresh button.
+- check if the *new* quote is displayed.
+- click the refresh button.
+- check if the *first* quote is displayed.
+
+Replace its content with the following:
 
 ```tsx
 import { screen } from "@testing-library/dom";
@@ -73,7 +88,7 @@ test("should render the quote and refresh it", async () => {
 	await screen.findByText(new RegExp(quotes[0].author, "i"));
 
 	// When the user clicks the refresh button, the quote should change
-	const button = await screen.findByText("Refresh quote")
+	const button = await screen.findByText("Refresh")
 	button.click();
 
 	// And the second quote should be displayed
@@ -104,7 +119,7 @@ pnpm test
 
 The test should pass.
 
-Broadly speaking, you can run the whole application inside a test environment and interact with it as if it were a real browser. This is possible because SeqFlow consumes less memory and CPU than other frameworks.
+Broadly speaking, you can run the whole application inside a test environment and interact with it as if it were a real browser. This is possible because SeqFlow consumes less memory and CPU than other frameworks. You should? Probably not. But it's good to know that you can.
 
 ## Conclusion
 
@@ -115,6 +130,7 @@ This tutorial taught us how to create a simple application using SeqFlow. We hav
 - How to create a new component.
 - How to configure the application.
 - How to test the application.
+- Split the application into domains [In progress](https://github.com/allevo/seqflow-js/issues/9).
 
 Any comments or suggestions are really appreciated. Feel free to open an issue on the [GitHub repository](https://github.com/allevo/seqflow-js/issues).
 

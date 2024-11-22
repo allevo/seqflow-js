@@ -1,8 +1,17 @@
-Our application fully works now. But we can improve it by putting the hard-coded URL in configuration. Let's do that.
+Our application fully works now.
+
+Anyway, a good application should have a configuration object to hold the application settings. In this guide, we will learn how to define a configuration object and how to use it in our application.
 
 ## Application configuration
 
-We have to define a configuration object that will hold the URL of the quote endpoint. Replace the `src/index.ts` file content with the following:
+We have to define:
+- the configuration object that will hold the URL of the quote endpoint.
+- configure TypeScript to recognize the configuration object.
+- update the code to use the configuration object.
+
+Let's start by defining the configuration object and the TypeScript type.
+
+Replace the `src/index.ts` file content with the following:
 
 ```ts
 import "@seqflow/components/style.css";
@@ -126,6 +135,8 @@ export async function Main({}, { component, app }: Contexts) {
 ```
 
 We changed the `getRandomQuote` function to receive the `baseUrl` as an argument. We used the `app.config` object to access the configuration object.
+
+NB: the tests fail because we didn't update the tests to pass the configuration object. We will cover this in the next guide.
 
 ## Conclusion
 
