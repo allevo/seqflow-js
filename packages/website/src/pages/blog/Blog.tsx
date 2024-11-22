@@ -49,11 +49,19 @@ export async function Blog(
 					<Heading className={"text-center"} level={1}>
 						There's a New Framework in Town!
 					</Heading>
-					<img
-						src="/images/blog/2024-11-24-theres-a-new-framework-in-town.svg"
-						alt="the amazing SeqFlow logo"
-						style={{ borderRadius: "15px", border: "1px solid #2b2f35" }}
-					/>
+					<div style={{ width: "100%", aspectRatio: "1920 / 1080" }}>
+						<img
+							src="/images/blog/2024-11-24-theres-a-new-framework-in-town.svg"
+							alt="the amazing SeqFlow logo"
+							style={{
+								borderRadius: "15px",
+								border: "1px solid #2b2f35",
+								width: "100%",
+								height: "100%",
+								objectFit: "cover",
+							}}
+						/>
+					</div>
 					{element}
 				</Prose>,
 			]);
