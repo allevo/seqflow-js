@@ -233,6 +233,14 @@ function generateAllPages(): Plugin {
 				{
 					path: '/examples',
 					filename: 'examples.html'
+				},
+				{
+					path: '/blog',
+					filename: 'blog.html'
+				},
+				{
+					path: '/blog/2024-11-24-theres-a-new-framework-in-town',
+					filename: 'blog/2024-11-24-theres-a-new-framework-in-town.html'
 				}
 			]
 			for (const page of pages) {

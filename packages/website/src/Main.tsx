@@ -6,6 +6,7 @@ import { Example } from "./pages/Example";
 import { GetStarted } from "./pages/GetStarted";
 import { Home } from "./pages/Home";
 import { Why } from "./pages/Why";
+import { Blog } from "./pages/blog/Blog";
 
 function getComponent(path: string[]) {
 	switch (path[0]) {
@@ -15,6 +16,8 @@ function getComponent(path: string[]) {
 			return Why;
 		case "examples":
 			return Example;
+		case "blog":
+			return Blog;
 		default:
 			return Home;
 	}

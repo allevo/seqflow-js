@@ -98,6 +98,11 @@ export async function Header(
 								Why
 							</Link>
 						</Menu.Item>
+						<Menu.Item>
+							<Link showAsButton="ghost" href="/blog" id="blog">
+								Blog
+							</Link>
+						</Menu.Item>
 						{/*<Menu.Item>
 							<Link
 								showAsButton="ghost"
@@ -136,6 +141,11 @@ export async function Header(
 					<Menu.Item>
 						<Link showAsButton="ghost" href="/why" id="why-link">
 							Why
+						</Link>
+					</Menu.Item>
+					<Menu.Item>
+						<Link showAsButton="ghost" href="/blog" id="blog">
+							Blog
 						</Link>
 					</Menu.Item>
 					{/*<Menu.Item>

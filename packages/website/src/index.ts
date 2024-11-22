@@ -8,6 +8,6 @@ start(
 	Main,
 	{},
 	{
-		// log: console,
+		log: console,
 	},
 );
