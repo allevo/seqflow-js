@@ -1,5 +1,5 @@
 
-We’re thrilled to announce the release of SeqFlow version 1.0.0-rc1! After months of development, testing, and fine-tuning, we’re introducing a new JavaScript framework for small and large applications.
+We’re thrilled to announce the release of SeqFlow version 1.0.0-rc.1! After months of development, testing, and fine-tuning, we’re introducing a new JavaScript framework for small and large applications.
 
 ## What is SeqFlow?
 

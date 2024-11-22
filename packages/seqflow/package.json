@@ -1,7 +1,7 @@
 {
   "name": "@seqflow/seqflow",
   "description": "SeqFlow: A lightweight, domain-driven front-end framework designed to simplify web application development, reduce complexity, and enhance user experience with an event-driven architecture.",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-rc.1",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/src/index.d.ts",
