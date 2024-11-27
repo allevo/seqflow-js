@@ -315,7 +315,7 @@ function setupArrow() {
 }
 
 const ASYNC_CLIENT_COMPONENT_CODE = `
-import { Contexts, ComponentProps } from "@seqflow/seqflow";
+import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
 
 // component properties
 interface MyComponentProps {
@@ -339,10 +339,13 @@ export async function MyComponent(
   component.renderSync(
     <div>\${JSON.stringify(data)}</div>
   );
-} `.trim();
+}
+
+start(document.getElementById("root")!, MyComponent, {}, {});
+`.trim();
 
 const EVENT_AS_STREAM_CODE = `
-import { Contexts, ComponentProps } from "@seqflow/seqflow";
+import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
 
 async function MyComponent(
   { }: ComponentProps<unknown>,
@@ -361,10 +364,12 @@ async function MyComponent(
 	console.log('Button clicked', ev);
   }
 }
+
+start(document.getElementById("root")!, MyComponent, {}, {});
 `.trim();
 
 const STATE_CODE = `
-import { Contexts, ComponentProps } from "@seqflow/seqflow";
+import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
 
 async function MyComponent(
   { }: ComponentProps<unknown>,
@@ -386,10 +391,12 @@ async function MyComponent(
 	console.log('Number of click', counter);
   }
 }
+
+start(document.getElementById("root")!, MyComponent, {}, {});
 `.trim();
 
 const REPLACE_CHILD_CODE = `
-import { Contexts, ComponentProps } from "@seqflow/seqflow";
+import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
 
 async function MyComponent(
   { }: ComponentProps<unknown>,
@@ -420,11 +427,13 @@ async function MyComponent(
 	// component.getChild('counter').textContent = \`\${counter}\`;
   }
 }
+
+start(document.getElementById("root")!, MyComponent, {}, {});
 `.trim();
 
 const EXAMPLES_COUNTER_CODE = `
 // Imports
-import { Contexts } from "@seqflow/seqflow";
+import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
 import { Button } from "@seqflow/components";
 
 interface CounterProps {
@@ -460,11 +469,14 @@ export async function Counter(
   for await (const _ of events) {
     counterDiv.textContent = \`\${counter ++}\`;
   }
-}`.trim();
+}
+
+start(document.getElementById("root")!, Counter, {}, {});
+`.trim();
 
 const EXAMPLES_RANDOM_QUOTE_CODE = `
 // Imports
-import { Contexts } from "@seqflow/seqflow";
+import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
 import { Button, Loading } from "@seqflow/components";
 // Quote interface
 interface Quote {
@@ -508,4 +520,7 @@ export async function RandomQuote(
       <footer>{quote.author}</footer>
     </blockquote>
   );
-}`.trim();
+}
+
+start(document.getElementById("root")!, RandomQuote, {}, {});  
+`.trim();
