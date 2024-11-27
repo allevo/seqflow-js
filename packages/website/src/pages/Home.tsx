@@ -43,7 +43,6 @@ ${setupArrow.name}();
 		<div className={classes["arrow-wrapper"]}>
 			<ArrowSVG />
 		</div>,
-		script,
 		<div
 			className="arrow-anchor"
 			style={{ position: "absolute", top: "0%", opacity: "0" }}
@@ -56,6 +55,7 @@ ${setupArrow.name}();
 			className="arrow-anchor"
 			style={{ position: "absolute", top: "50%", opacity: "0" }}
 		/>,
+		script,
 	]);
 
 	Prism.highlightAll();

@@ -6,7 +6,9 @@ export default {
       './src/public/*.{js,jsx,ts,tsx,css,md,mdx}',
     ],
     theme: {
-      extend: {},
+      extend: {
+        ringColor: "transparent",
+      },
     },
     plugins: [
       require("@tailwindcss/typography"),

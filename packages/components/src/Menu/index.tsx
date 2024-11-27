@@ -10,6 +10,7 @@ export async function Menu(
 	{ component, app }: Contexts,
 ) {
 	component._el.classList.add(...["menu", "rounded-box"]);
+	component._el.tabIndex = 0;
 
 	if (direction) {
 		/*

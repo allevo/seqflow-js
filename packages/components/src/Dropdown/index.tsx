@@ -19,9 +19,6 @@ export async function Dropdown(
 	{ label, openOn, align, children }: ComponentProps<DropdownPropsType>,
 	{ component, app }: Contexts,
 ) {
-	console.log("......");
-	console.log(label);
-
 	const classes = ["dropdown"];
 	if (openOn === "hover") {
 		classes.push("dropdown-hover");
@@ -55,7 +52,6 @@ export async function Dropdown(
 		}
 	}
 
-	console.log("label", label, typeof label);
 	const btn =
 		typeof label === "string" ? (
 			<div tabIndex={0} role="button" className="btn m-1">
@@ -64,6 +60,13 @@ export async function Dropdown(
 		) : (
 			label
 		);
+
+	if (btn instanceof HTMLElement) {
+		// This is needed for Safari, otherwise the dropdown won't open
+		// See: https://github.com/allevo/seqflow-js/issues/29
+		// See: https://stackoverflow.com/questions/61652836/why-does-focus-within-not-work-in-safari
+		btn.tabIndex = 0;
+	}
 
 	component.renderSync(
 		<>

@@ -103,15 +103,6 @@ export async function Header(
 								Blog
 							</Link>
 						</Menu.Item>
-						{/*<Menu.Item>
-							<Link
-								showAsButton="ghost"
-								href="/api-reference"
-								id="api-reference-link"
-							>
-								Api Reference
-							</Link>
-						</Menu.Item>*/}
 						<Menu.Item>
 							<Menu.SubMenu label="Examples">{getExamples()}</Menu.SubMenu>
 						</Menu.Item>
