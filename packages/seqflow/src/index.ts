@@ -9,4 +9,4 @@ export {
 	BrowserRouter,
 	type Router,
 } from "./router";
-export { type ComponentResult, type SeqFlowPlugin } from "./plugin";
+export type { ComponentResult, SeqFlowPlugin } from "./plugin";
