@@ -10,8 +10,8 @@
       "require": "./dist/index.js"
     },
     "./style.css": {
-      "import": "./dist/style.css",
-      "require": "./dist/style.css"
+      "import": "./dist/index.css",
+      "require": "./dist/index.css"
     },
     "./all.d.ts": {
       "import": "./dist/all.d.ts",
@@ -23,7 +23,7 @@
     "test": "npm-run-all biome unit build test:component",
     "unit": "vitest --run",
     "biome": "biome ci ./src",
-    "biome:check": "biome check --apply src tests",
+    "biome:check": "biome check --write src tests",
     "start": "vite -c vite.config.js",
     "build": "vite build --emptyOutDir -c vite.config.js && npx tsc -p build-types.tsconfig.json",
     "storybook": "storybook dev -p 6006 --no-open",

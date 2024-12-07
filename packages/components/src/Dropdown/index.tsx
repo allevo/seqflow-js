@@ -54,9 +54,9 @@ export async function Dropdown(
 
 	const btn =
 		typeof label === "string" ? (
-			<div tabIndex={0} role="button" className="btn m-1">
+			<button tabIndex={0} className="btn m-1">
 				{label}
-			</div>
+			</button>
 		) : (
 			label
 		);
