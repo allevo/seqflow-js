@@ -1,5 +1,5 @@
 import type { ComponentProps, Contexts } from "@seqflow/seqflow";
-import { Menu, MenuPropsType } from ".";
+import { Menu, type MenuPropsType } from ".";
 
 async function MenuStory(
 	{ children, ...props }: ComponentProps<MenuPropsType>,

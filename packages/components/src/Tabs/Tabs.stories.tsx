@@ -1,7 +1,7 @@
 import type { ComponentProps, Contexts } from "@seqflow/seqflow";
-import { StoryFn } from "@seqflow/storybook";
+import type { StoryFn } from "@seqflow/storybook";
 import { expect, userEvent, waitFor, within } from "@storybook/test";
-import { Tabs, TabsProps } from ".";
+import { Tabs, type TabsProps } from ".";
 
 async function TabsExample(
 	props: ComponentProps<TabsProps>,

@@ -1,6 +1,6 @@
 import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { domEvent } from "@seqflow/seqflow/dist/src/events";
-import { Modal, ModalType } from ".";
+import { Modal, type ModalType } from ".";
 import { Button } from "../Button";
 
 async function ModalStory(
