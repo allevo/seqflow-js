@@ -7,7 +7,7 @@
   "scripts": {
     "test": "npm-run-all biome build",
     "biome": "biome ci ./src",
-    "biome:check": "biome check --apply src",
+    "biome:check": "biome check --write src",
     "start": "vite -c vite.config.js",
     "build": "NODE_ENV=production vite build --emptyOutDir -c vite.config.js",
     "serve:static": "serve dist"

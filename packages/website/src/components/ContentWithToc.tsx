@@ -51,7 +51,7 @@ export async function ContentWithToc(
 								{getTitle(data.title)}
 							</a>
 						</li>
-						{toc.map((t) => (
+						{toc.map((t, i) => (
 							<li className={["list-group-item", classes[`level-${t.level}`]]}>
 								<a className={classes.link} href={`#${t.slug}`}>
 									{getTitle(t.title)}
