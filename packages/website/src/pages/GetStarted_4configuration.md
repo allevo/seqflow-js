@@ -4,10 +4,7 @@ Anyway, a good application should have a configuration object to hold the applic
 
 ## Application configuration
 
-We have to define:
-- the configuration object that will hold the URL of the quote endpoint.
-- configure TypeScript to recognize the configuration object.
-- update the code to use the configuration object.
+We have to define the configuration object that will hold the URL of the quote endpoint.
 
 Let's start by defining the configuration object and the TypeScript type.
 
@@ -30,14 +27,6 @@ start(document.getElementById("root")!, Main, {}, {
 	}
 });
 
-// This is required to make typescript happy
-declare module "@seqflow/seqflow" {
-	interface ApplicationConfiguration {
-		api: {
-			baseUrl: string;
-		};
-	}
-}
 ```
 
 We defined a configuration object that holds the URL of the quote endpoint. As the fourth argument, we passed this object to the `start` function.
@@ -130,6 +119,15 @@ export async function Main({}, { component, app }: Contexts) {
 	)
 	for await (const _ of events) {
 		await fetchAndRender();
+	}
+}
+
+// This is required to make typescript happy
+declare module "@seqflow/seqflow" {
+	interface ApplicationConfiguration {
+		api: {
+			baseUrl: string;
+		};
 	}
 }
 ```

@@ -227,6 +227,14 @@ function generateAllPages(): Plugin {
 					filename: 'get-started/test.html'
 				},
 				{
+					path: '/get-started/domain',
+					filename: 'get-started/domain.html'
+				},
+				{
+					path: '/get-started/conclusion',
+					filename: 'get-started/conclusion.html'
+				},
+				{
 					path: '/api-reference',
 					filename: 'api-reference.html'
 				},

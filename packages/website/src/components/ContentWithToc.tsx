@@ -48,13 +48,13 @@ export async function ContentWithToc(
 					<ul className="list-group">
 						<li className={["list-group-item", classes["level-1"]]}>
 							<a className={classes.link} href={`#${titleSlug}`}>
-								{data.title}
+								{getTitle(data.title)}
 							</a>
 						</li>
 						{toc.map((t) => (
 							<li className={["list-group-item", classes[`level-${t.level}`]]}>
 								<a className={classes.link} href={`#${t.slug}`}>
-									{t.title}
+									{getTitle(t.title)}
 								</a>
 							</li>
 						))}
@@ -79,4 +79,11 @@ export async function ContentWithToc(
 	);
 
 	Prism.highlightAll();
+}
+
+
+function getTitle(str: string): HTMLElement {
+	const title = document.createElement("div");
+	title.innerHTML = str;
+	return title;
 }

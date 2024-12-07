@@ -8,6 +8,8 @@ The tutorial covers the following topics:
 - [the step 3](/get-started/refresh-quote): refresh the quote.
 - [the step 4](/get-started/configuration): how to configure the application.
 - [the step 5](/get-started/test): How to test the application.
+- [the step 6](/get-started/domain): Your first domain.
+- [the step 7](/get-started/conclusion): Conclusion.
 
 But let's start from the beginning.
 

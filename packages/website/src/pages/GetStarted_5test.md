@@ -1,4 +1,4 @@
-In this last part of the tutorial, we will cover how to test our SeqFlow application.
+In this part of the tutorial, we will cover how to test our SeqFlow application.
 
 With the word "test", we could mean different things. In this tutorial, we will cover format and linsting, and unit testing.
 
@@ -123,17 +123,8 @@ Broadly speaking, you can run the whole application inside a test environment an
 
 ## Conclusion
 
-This tutorial taught us how to create a simple application using SeqFlow. We have covered the following topics:
-
-- How to create a new SeqFlow application.
-- How to fetch data from an API and manage the state of the application.
-- How to create a new component.
-- How to configure the application.
-- How to test the application.
-- Split the application into domains [In progress](https://github.com/allevo/seqflow-js/issues/9).
-
-Any comments or suggestions are really appreciated. Feel free to open an issue on the [GitHub repository](https://github.com/allevo/seqflow-js/issues).
+In this part of tutorial, we covered how to test the application. We learned how to format the code and how to write unit tests. The next part will cover how to create a domain.
 
 :::next:::
-{"label": "See other examples", "next": "/examples"}
+{"label": "Your first domain", "next": "/get-started/domain"}
 :::end-next:::

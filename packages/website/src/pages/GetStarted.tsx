@@ -7,6 +7,8 @@ import * as splitComponents from "./GetStarted_2splitComponents.md";
 import * as refreshQuote from "./GetStarted_3refreshQuote.md";
 import * as configuration from "./GetStarted_4configuration.md";
 import * as test from "./GetStarted_5test.md";
+import * as domain from "./GetStarted_6domain.md";
+import * as conclusion from "./GetStarted_7conclusion.md";
 
 export async function GetStarted(
 	_: ComponentProps<unknown>,
@@ -86,6 +88,28 @@ export async function GetStarted(
 						toc={test.toc}
 						html={test.html}
 						title="Write a test"
+					/>
+				</div>,
+			);
+			return;
+		case "domain":
+			component.renderSync(
+				<div id="get-started">
+					<ContentWithToc
+						toc={domain.toc}
+						html={domain.html}
+						title="Your first domain"
+					/>
+				</div>,
+			);
+			return;
+		case "conclusion":
+			component.renderSync(
+				<div id="get-started">
+					<ContentWithToc
+						toc={conclusion.toc}
+						html={conclusion.html}
+						title="Conclusion"
 					/>
 				</div>,
 			);
