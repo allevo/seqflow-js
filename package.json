@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "turbo run --log-order=stream build",
-    "test": "turbo run --log-order=stream test",
+    "build": "turbo run --concurrency 1 --log-order=stream build",
+    "test": "turbo run --concurrency 1 --log-order=stream test",
     "biome:check": "turbo run biome:check",
     "postinstall": "rm -rf node_modules/@types/react && rm -rf node_modules/.pnpm/@types+react*"
   },
