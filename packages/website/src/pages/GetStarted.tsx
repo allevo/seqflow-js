@@ -1,4 +1,4 @@
-import { ComponentProps, Contexts } from "@seqflow/seqflow";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { ContentWithToc } from "../components/ContentWithToc";
 import * as main from "./GetStarted.md";
 import * as prerequisites from "./GetStarted_0prerequisites.md";

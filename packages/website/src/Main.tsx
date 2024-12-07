@@ -1,5 +1,5 @@
 import { Footer } from "@seqflow/components";
-import { ComponentProps, Contexts } from "@seqflow/seqflow";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import classes from "./Main.module.css";
 import { Header } from "./components/Header";
 import { Example } from "./pages/Example";

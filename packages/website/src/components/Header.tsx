@@ -1,5 +1,5 @@
 import { Button, Dropdown, Link, Menu, Navbar } from "@seqflow/components";
-import { ComponentProps, Contexts } from "@seqflow/seqflow";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import githubLogoAsString from "../public/images/github.svg";
 import logoAsString from "../public/images/logo.svg";
 import classes from "./Header.module.css";

@@ -1,4 +1,4 @@
-import { ComponentProps, Contexts } from "@seqflow/seqflow";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import { ContentWithToc } from "../components/ContentWithToc";
 import { html, toc } from "./Example.md";
 

@@ -1,4 +1,4 @@
-import { Contexts } from "@seqflow/seqflow";
+import type { Contexts } from "@seqflow/seqflow";
 import * as Prism from "prismjs";
 import "prismjs/components/prism-jsx";
 import "prismjs/components/prism-tsx";

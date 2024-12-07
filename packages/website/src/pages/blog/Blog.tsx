@@ -1,5 +1,5 @@
 import { Divider, Heading, Hero, Link, Prose, Tabs } from "@seqflow/components";
-import { ComponentProps, Contexts } from "@seqflow/seqflow";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import classes from "./Blog.module.css";
 
 import { html } from "./2024-11-24-theres-a-new-framework-in-town.md";

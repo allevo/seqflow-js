@@ -1,5 +1,5 @@
 import { Divider, Heading, Hero, Link, Prose, Tabs } from "@seqflow/components";
-import { ComponentProps, Contexts } from "@seqflow/seqflow";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import * as Prism from "prismjs";
 import { ArrowSVG } from "../components/Arrow";
 import classes from "./Home.module.css";
