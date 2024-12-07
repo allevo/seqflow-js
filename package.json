@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "turbo": "^2.2.3"
+    "turbo": "^2.3.3"
   },
   "devDependencies": {
     "execa": "^9.5.1"
