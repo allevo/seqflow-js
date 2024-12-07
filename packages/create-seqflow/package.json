@@ -20,7 +20,7 @@
   "scripts": {
     "test": "npm-run-all biome build",
     "biome": "biome ci ./src",
-    "biome:check": "biome check --apply src",
+    "biome:check": "biome check --write src",
     "start": "vite -c vite.config.js",
     "build": "vite build --emptyOutDir -c vite.config.js"
   },
@@ -30,7 +30,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@biomejs/biome": "1.5.3",
+    "@biomejs/biome": "1.9.4",
     "@types/node": "^20.11.24",
     "@types/tar": "^6.1.11",
     "npm-run-all2": "^5.0.0",

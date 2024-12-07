@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import prompts, { PromptObject } from "prompts";
+import prompts, { type PromptObject } from "prompts";
 import tar from "tar";
 
 enum TemplateType {
