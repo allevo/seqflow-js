@@ -48,6 +48,6 @@ export const AllAlert: StoryFn = async (_, { component }: Contexts) => {
 			<div>
 				<Alert color="error">error</Alert>
 			</div>
-		</div>
+		</div>,
 	);
 };
