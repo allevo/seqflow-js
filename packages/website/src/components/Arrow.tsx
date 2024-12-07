@@ -1,4 +1,4 @@
-import { ComponentProps, Contexts } from "@seqflow/seqflow";
+import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import classes from "./Arrow.module.css";
 
 export function ArrowSVG(_: ComponentProps<unknown>, { component }: Contexts) {

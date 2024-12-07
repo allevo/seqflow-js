@@ -55,6 +55,7 @@ export async function FormField(
 	const describedBy = generateId();
 	const top = (
 		<div className="label">
+			{/* biome-ignore lint/a11y/noLabelWithoutControl: set below on input */}
 			<label id={describedBy} className="label-text">
 				{label}
 			</label>

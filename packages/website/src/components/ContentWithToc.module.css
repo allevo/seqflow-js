@@ -1,70 +1,71 @@
-
-
 .top {
-    aside {
-        padding-left: calc(1.5rem * .5);
-        min-width: 300px;
-        position: relative;
-        top: 0;
-        width: 100%;
+	aside {
+		padding-left: calc(1.5rem * 0.5);
+		min-width: 300px;
+		position: relative;
+		top: 0;
+		width: 100%;
 
-        .level-1 {
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        .level-3 {
-            padding-left: 1.5rem;
-        }
+		.level-1 {
+			font-weight: bold;
+			font-size: 1.2rem;
+		}
+		.level-3 {
+			padding-left: 1.5rem;
+		}
 
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+		ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
 
-            li {
-                padding: 0px;
+			li {
+				padding: 0px;
 
-                a {
-                    display: inline-block;
-                    width: 100%;
-                    padding: 8px;
-                    text-decoration: none;
-                }
+				a {
+					display: inline-block;
+					width: 100%;
+					padding: 8px;
+					text-decoration: none;
+				}
 
-                a:hover {
-                    color: var(--color-primary);
-                    background-color: var(--bs-secondary-bg);
-                }
-            }
-        }
-    }
+				a:hover {
+					color: var(--color-primary);
+					background-color: var(--bs-secondary-bg);
+				}
+			}
+		}
+	}
 
-    .divider {
-        display: flex;
-    }
+	.divider {
+		display: flex;
+	}
 }
 
 .link:hover {
-    text-decoration: underline;
+	text-decoration: underline;
 }
 
 @media (min-width: 1300px) {
 	.top {
 		aside {
 			position: fixed;
-            float: left;
+			float: left;
 			top: 77px;
 			display: block !important;
 			overflow-y: auto;
-            width: auto !important;
+			width: auto !important;
 		}
 
-        .divider {
-            display: none;
-        }
+		.divider {
+			display: none;
+		}
 	}
 }
 
-h1, h2, h3, h4 {
-    scroll-margin-top: 77px;
+h1,
+h2,
+h3,
+h4 {
+	scroll-margin-top: 77px;
 }

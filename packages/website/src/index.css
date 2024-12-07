@@ -1,36 +1,36 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-    /* background color */
-    --b1: 0.3 0 0;
-    /* text color */
-    --bc: 0.82 0 0;
+	/* background color */
+	--b1: 0.3 0 0;
+	/* text color */
+	--bc: 0.82 0 0;
 
-    /* primary color - button color */
-    /* --p: 0.6 0.22 257.22; */
-    --p: 0.86 0.01 282.17;
-    --pc: 0.33 0 0;
-    /* secondary color - button color */
-    --s: 0.64 0.18 146.74;
-    --sc: 1 0 0;
+	/* primary color - button color */
+	/* --p: 0.6 0.22 257.22; */
+	--p: 0.86 0.01 282.17;
+	--pc: 0.33 0 0;
+	/* secondary color - button color */
+	--s: 0.64 0.18 146.74;
+	--sc: 1 0 0;
 }
 
 .toolbar {
-    right: .6em !important;
+	right: .6em !important;
 }
 
-pre[class*="language-"]  {
-    border-width: 0px !important;
-    box-shadow: none;
+pre[class*="language-"] {
+	border-width: 0px !important;
+	box-shadow: none;
 }
 
 code[class*="language-"] {
-    font-family: ui-monospace, "Cascadia Mono", "Segoe UI Mono", "Liberation Mono", Menlo, Monaco, Consolas, monospace !important;
+	font-family: ui-monospace, "Cascadia Mono", "Segoe UI Mono", "Liberation Mono",
+		Menlo, Monaco, Consolas, monospace !important;
 }
 
 .token.attr-name {
-    color: #4aa078;
+	color: #4aa078;
 }

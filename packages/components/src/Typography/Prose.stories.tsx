@@ -1,6 +1,6 @@
 import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import type { StoryFn } from "@seqflow/storybook";
-import { Heading, HeadingProps, Prose } from ".";
+import { Heading, type HeadingProps, Prose } from ".";
 
 async function HeadingStory(
 	{ children, ...props }: ComponentProps<HeadingProps>,

@@ -1,11 +1,10 @@
-
 .blogPost {
-    max-width: 786px;
+	max-width: 786px;
 }
 
 @media (max-width: 800px) {
-    .blogPost {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
+	.blogPost {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
 }

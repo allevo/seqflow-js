@@ -10,8 +10,8 @@
       "require": "./dist/index.js"
     },
     "./style.css": {
-      "import": "./dist/style.css",
-      "require": "./dist/style.css"
+      "import": "./dist/index.css",
+      "require": "./dist/index.css"
     },
     "./all.d.ts": {
       "import": "./dist/all.d.ts",
@@ -23,7 +23,7 @@
     "test": "npm-run-all biome unit build test:component",
     "unit": "vitest --run",
     "biome": "biome ci ./src",
-    "biome:check": "biome check --apply src tests",
+    "biome:check": "biome check --write src tests",
     "start": "vite -c vite.config.js",
     "build": "vite build --emptyOutDir -c vite.config.js && npx tsc -p build-types.tsconfig.json",
     "storybook": "storybook dev -p 6006 --no-open",
@@ -41,31 +41,31 @@
     "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.5.3",
-    "@seqflow/storybook": "workspace:*",
+    "@biomejs/biome": "1.9.4",
     "@seqflow/seqflow": "workspace:*",
-    "@storybook/addon-a11y": "8.4.1",
-    "@storybook/addon-essentials": "8.4.1",
-    "@storybook/addon-interactions": "8.4.1",
-    "@storybook/addon-themes": "8.4.1",
-    "@storybook/test": "8.4.1",
-    "@storybook/test-runner": "^0.19.1",
-    "@tailwindcss/typography": "^0.5.13",
-    "autoprefixer": "^10.4.2",
+    "@seqflow/storybook": "workspace:*",
+    "@storybook/addon-a11y": "8.4.7",
+    "@storybook/addon-essentials": "8.4.7",
+    "@storybook/addon-interactions": "8.4.7",
+    "@storybook/addon-themes": "8.4.7",
+    "@storybook/test": "8.4.7",
+    "@storybook/test-runner": "^0.20.1",
+    "@tailwindcss/typography": "^0.5.15",
+    "autoprefixer": "^10.4.20",
     "depcheck": "^1.4.7",
     "dts-bundle-generator": "^9.5.1",
     "jsdom": "^25.0.1",
     "npm-run-all": "^4.1.5",
-    "playwright": "^1.45.2",
-    "postcss": "^8.4.21",
-    "storybook": "^8.4.1",
-    "tailwindcss": "^3.4.6",
-    "typescript": "^5.4.2",
-    "vite": "^5.4.2",
-    "vite-plugin-checker": "^0.7.2",
-    "vite-plugin-dts": "^3.6.4",
-    "vitest": "^1.2.2",
-    "wait-on": "^7.2.0"
+    "playwright": "^1.49.0",
+    "postcss": "^8.4.49",
+    "storybook": "^8.4.7",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vite-plugin-checker": "^0.8.0",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^2.1.8",
+    "wait-on": "^8.0.1"
   },
   "overrides": {
     "@types/react": "../_EXCLUDED_"

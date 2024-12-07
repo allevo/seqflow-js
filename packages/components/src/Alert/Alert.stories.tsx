@@ -26,30 +26,28 @@ export const Empty = {};
 
 export const AllAlert: StoryFn = async (_, { component }: Contexts) => {
 	component.renderSync(
-		<>
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
-				}}
-			>
-				<div>Color</div>
-				<div>
-					<Alert>No color</Alert>
-				</div>
-				<div>
-					<Alert color="info">info</Alert>
-				</div>
-				<div>
-					<Alert color="success">success</Alert>
-				</div>
-				<div>
-					<Alert color="warning">warning</Alert>
-				</div>
-				<div>
-					<Alert color="error">error</Alert>
-				</div>
+		<div
+			style={{
+				display: "grid",
+				gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+			}}
+		>
+			<div>Color</div>
+			<div>
+				<Alert>No color</Alert>
 			</div>
-		</>,
+			<div>
+				<Alert color="info">info</Alert>
+			</div>
+			<div>
+				<Alert color="success">success</Alert>
+			</div>
+			<div>
+				<Alert color="warning">warning</Alert>
+			</div>
+			<div>
+				<Alert color="error">error</Alert>
+			</div>
+		</div>,
 	);
 };

@@ -1,5 +1,5 @@
 import type { ComponentProps, Contexts } from "@seqflow/seqflow";
-import { Footer, FooterProps } from ".";
+import { Footer, type FooterProps } from ".";
 
 async function FooterExample(
 	props: ComponentProps<FooterProps>,
