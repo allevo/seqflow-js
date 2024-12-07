@@ -81,7 +81,6 @@ export async function ContentWithToc(
 	Prism.highlightAll();
 }
 
-
 function getTitle(str: string): HTMLElement {
 	const title = document.createElement("div");
 	title.innerHTML = str;
