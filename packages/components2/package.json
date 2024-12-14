@@ -1,0 +1,58 @@
+{
+  "name": "@seqflow/components2",
+  "version": "1.0.0-alpha.1",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./style.css": {
+      "import": "./dist/index.css",
+      "require": "./dist/index.css"
+    },
+    "./all.d.ts": {
+      "import": "./dist/all.d.ts",
+      "require": "./dist/all.d.ts"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "test": "npm-run-all biome unit build test:component",
+    "unit": "vitest --run",
+    "biome": "biome ci ./src",
+    "biome:check": "biome check --write src tests",
+    "start": "vite -c vite.config.js",
+    "build": "vite build --emptyOutDir -c vite.config.js && npx tsc -p build-types.tsconfig.json",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "test:component": "node tests/test.js",
+    "test:storybook": "test-storybook",
+    "build-storybook": "storybook build",
+    "depcheck": "depcheck --ignores @storybook/addon-essentials,@storybook/addon-themes ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "@seqflow/seqflow": "workspace:*",
+    "daisyui": "^4.12.10",
+    "tailwindcss": "^3.4.4"
+  },
+  "devDependencies": {
+    "@seqflow/document-component-lib": "workspace:*",
+    "@biomejs/biome": "1.9.4",
+    "depcheck": "^1.4.7",
+    "dts-bundle-generator": "^9.5.1",
+    "jsdom": "^25.0.1",
+    "npm-run-all2": "^5.0.0",
+    "playwright": "^1.49.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vite-plugin-checker": "^0.8.0",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^2.1.8",
+    "wait-on": "^8.0.1"
+  }
+}

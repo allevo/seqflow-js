@@ -1,5 +1,5 @@
 import { defineConfig, Plugin } from "vite";
-import vite from 'vite'
+import * as vite from 'vite'
 import MarkdownIt from 'markdown-it'
 import checker from 'vite-plugin-checker'
 import { PurgeCSS, RawContent } from "purgecss";

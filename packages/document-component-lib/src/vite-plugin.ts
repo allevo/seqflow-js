@@ -1,56 +1,97 @@
 import ts, { LiteralTypeNode, TypeNode } from 'typescript'
 import fs from 'node:fs'
 import MagicString from "magic-string";
-import type { SBType, StrictArgTypes, StrictInputType } from '@storybook/types'
 
 import { type Plugin, createFilter } from "vite";
 
-function extrapolateSBTypeFromUnionType(type: TypeNode): SBType {
+type ComponentPropertyUnionType = {
+    t: 'union', 
+    type: Array<ComponentPropertyBasicType>,
+};
+type ComponentPropertyBasicType = {
+    t: 'basic',
+    type: 'string' | 'number' | 'boolean',
+} | {
+    t: 'literal',
+    type: string,
+} | {
+    t: 'unknown',
+    type: string,
+};
+
+type ComponentPropertyType = |
+    ComponentPropertyBasicType |
+    ComponentPropertyUnionType
+
+type ComponentProperty = {
+    name: string,
+    description?: string,
+    type: ComponentPropertyType,
+    required: boolean,
+}
+
+export type ComponentTS = {
+    description?: string,
+    props: Record<string, ComponentProperty>
+}
+
+function extrapolateSBTypeFromUnionType(type: TypeNode): ComponentPropertyType {
     if (type.kind !== ts.SyntaxKind.UnionType) {
         throw new Error(`Expected a UnionType, got ${type.kind}`)
     }
     const tt = type as ts.UnionTypeNode
 
-    const ret: SBType = {
-        name: 'union',
-        value: [],
-        required: true,
-    }
+    const ret: ComponentPropertyUnionType = {
+        t: 'union',
+        type: []
+    };
     for (const t of tt.types) {
         switch (t.kind) {
             case ts.SyntaxKind.StringKeyword:
-                ret.value.push({
-                    name: 'string'
+                ret.type.push({
+                    t: 'basic',
+                    type: 'string',
                 })
                 break
             case ts.SyntaxKind.LiteralType:
                 const tt = t as ts.LiteralTypeNode
                 const l = tt.literal as ts.LiteralLikeNode
 
-                if (l.kind === ts.SyntaxKind.NumericLiteral) {
-                    ret.value.push({
-                        name: 'number'
+                if (l.kind === ts.SyntaxKind.TrueKeyword) {
+                    ret.type.push({
+                        t: 'literal',
+                        type: 'true',
                     })
-                } else if (l.kind === ts.SyntaxKind.StringLiteral) {
-                    ret.value.push({
-                        name: 'string'
-                    })
-                } else if (l.kind === ts.SyntaxKind.TrueKeyword || l.kind === ts.SyntaxKind.FalseKeyword) {
-                    ret.value.push({
-                        name: 'boolean'
-                    })
-                } else {
-                    throw new Error(`Unsupported literal kind ${l.kind}`)
+                    break
                 }
+                if (l.kind === ts.SyntaxKind.FalseKeyword) {
+                    ret.type.push({
+                        t: 'literal',
+                        type: 'false',
+                    })
+                    break
+                }
+
+                const type = l.text
+                if (typeof type !== 'string') {
+                    console.log(t)
+                    throw new Error(`Unsupported literal type ${type}`)
+                }
+                ret.type.push({
+                    t: 'literal',
+                    type: l.text,
+                })
                 break
             case ts.SyntaxKind.NumberKeyword:
-                ret.value.push({
-                    name: 'number'
+                ret.type.push({
+                    t: 'basic',
+                    type: 'string',
                 })
                 break
             case ts.SyntaxKind.BooleanKeyword:
-                ret.value.push({
-                    name: 'boolean'
+                ret.type.push({
+                    t: 'basic',
+                    type: 'boolean',
                 })
                 break
             case ts.SyntaxKind.TypeReference: {
@@ -58,9 +99,9 @@ function extrapolateSBTypeFromUnionType(type: TypeNode): SBType {
                 if (tr.typeName.kind !== ts.SyntaxKind.QualifiedName) {
                     throw new Error(`Expected a QualifiedName, got ${tr.typeName.kind}`)
                 }
-                ret.value.push({
-                    name: 'other',
-                    value: tr.typeName.getText(),
+                ret.type.push({
+                    t: 'unknown',
+                    type: tr.typeName.getText(),
                 })
                 break
             }
@@ -70,84 +111,10 @@ function extrapolateSBTypeFromUnionType(type: TypeNode): SBType {
         }
     }
 
-    const uniqueValues = Array.from(new Set(ret.value.map(v => v.name)))
-    if (uniqueValues.length === 1) {
-        if (uniqueValues[0] === 'string' || uniqueValues[0] === 'number' || uniqueValues[0] === 'boolean') {
-            return {
-                name: uniqueValues[0],
-                required: true,
-            }
-        }
-        throw new Error('Not yet implemented')
-    }
-
     return ret
 }
 
-function extrapolateSBControlFromUnionType(type: TypeNode): StrictInputType['control'] {
-    if (type.kind !== ts.SyntaxKind.UnionType) {
-        throw new Error(`Expected a UnionType, got ${type.kind}`)
-    }
-    const tt = type as ts.UnionTypeNode
-
-    const kinds = tt.types.map(t => t.kind)
-    if (kinds.includes(ts.SyntaxKind.LiteralType)) {
-        const literalKinds = Array.from(new Set(tt.types.map(t => (t as LiteralTypeNode).literal.kind)))
-        literalKinds.sort()
-        if (literalKinds[0] === ts.SyntaxKind.TrueKeyword && literalKinds[1] === ts.SyntaxKind.FalseKeyword) {
-            return {
-                type: 'boolean',
-            }
-        }
-        return {
-            type: 'select',
-        }
-    }
-    return undefined
-}
-
-function extrapolateSBOptionsFromUnionType(type: TypeNode): StrictInputType['options'] {
-    if (type.kind !== ts.SyntaxKind.UnionType) {
-        throw new Error(`Expected a UnionType, got ${type.kind}`)
-    }
-    const tt = type as ts.UnionTypeNode
-
-    const ret: string[] = []
-    for (const t of tt.types) {
-        switch (t.kind) {
-            case ts.SyntaxKind.LiteralType:
-                const tt = t as ts.LiteralTypeNode
-                const l = tt.literal as ts.LiteralLikeNode
-
-                if (l.kind === ts.SyntaxKind.NumericLiteral) {
-                    ret.push(l.getText().replace(/['"]/g, ''))
-                } else if (l.kind === ts.SyntaxKind.StringLiteral) {
-                    ret.push(l.getText().replace(/['"]/g, ''))
-                } else if (l.kind === ts.SyntaxKind.TrueKeyword || l.kind === ts.SyntaxKind.FalseKeyword) {
-                    continue;
-                } else {
-                    throw new Error(`Unsupported literal kind ${l.kind}`)
-                }
-                break
-            case ts.SyntaxKind.StringKeyword:
-            case ts.SyntaxKind.NumberKeyword:
-            case ts.SyntaxKind.BooleanKeyword:
-                continue;
-            case ts.SyntaxKind.TypeReference:
-                continue;
-            default:
-                throw new Error(`Unsupported type ${t.kind}`)
-        }
-    }
-
-    if (ret.length === 0) {
-        return undefined
-    }
-
-    return ret
-}
-
-function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: ts.SourceFile): StrictInputType | null {
+function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: ts.SourceFile): ComponentProperty | null {
     if (symbol.valueDeclaration?.kind  !== ts.SyntaxKind.PropertySignature) {
         throw new Error(`Expected a PropertySignature, got ${symbol.valueDeclaration?.kind}`)
     }
@@ -172,38 +139,19 @@ function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: 
     if (!valueDeclaration.type) {
         throw new Error('Expected a type')
     }
-    let sbType: SBType
-    let control: StrictInputType['control']
-    let options: StrictInputType['options']
+    let sbType: ComponentPropertyType
     switch (valueDeclaration.type.kind) {
         case ts.SyntaxKind.UnionType:
             sbType = extrapolateSBTypeFromUnionType(valueDeclaration.type)
-            control = extrapolateSBControlFromUnionType(valueDeclaration.type)
-            options = extrapolateSBOptionsFromUnionType(valueDeclaration.type)
             break
         case ts.SyntaxKind.StringKeyword:
-            sbType = {
-                name: 'string',
-                required: !isOptional,
-            }
-            control = { type: 'text' }
-            options = undefined
+            sbType = { t: 'basic', type: 'string' }
             break
         case ts.SyntaxKind.BooleanKeyword:
-            sbType = {
-                name: 'boolean',
-                required: !isOptional,
-            }
-            control = { type: 'boolean' }
-            options = undefined
+            sbType = { t: 'basic', type: 'boolean' }
             break
         case ts.SyntaxKind.NumberKeyword:
-            sbType = {
-                name: 'number',
-                required: !isOptional,
-            }
-            control = { type: 'number' }
-            options = undefined
+            sbType = { t: 'basic', type: 'number' }
             break
         case ts.SyntaxKind.IndexedAccessType: {
             const t = valueDeclaration.type as ts.IndexedAccessTypeNode
@@ -245,7 +193,15 @@ function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: 
             return tsSymbolToStrictInputType(propertyName, member.symbol, sourceFile)
         }
         case ts.SyntaxKind.FunctionType: {
-            return null
+            return {
+                name,
+                description,
+                required: !isOptional,
+                type: {
+                    t: 'unknown',
+                    type: 'Function',
+                },
+            }
         }
         default:
             console.log(valueDeclaration.type)
@@ -255,12 +211,16 @@ function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: 
     return {
         name,
         description,
+        required: !isOptional,
+        type: sbType,
+        /*
         type: {
             ...sbType,
             required: !isOptional,
         },
         control,
         options,
+        */
     }
 }
 
@@ -295,10 +255,16 @@ export function getFileComponents(filePath: string, tsConfig: any) {
     }
 
     const output: {
-        componentName: string,
-        fields: Record<string, unknown>
+        name: string,
+        description?: string,
+        fields: Record<string, ComponentProperty>
     }[] = []
     for (const component of components) {
+
+        let description = component.declarations?.flatMap(declaration => {
+            const d = declaration as unknown as { jsDoc?: ts.JSDoc[] }
+            return d.jsDoc?.map(jsDoc => jsDoc.comment)
+        }).join('\n')
 
         let componentName = component.escapedName
         if (componentName === 'default') {
@@ -325,16 +291,26 @@ export function getFileComponents(filePath: string, tsConfig: any) {
         })
 
         if (!propInterface) {
+            output.push({
+                name: componentName,
+                description,
+                fields: {},
+            })
             console.log(`No prop interface for ${filePath}`, { componentName })
             continue
         }
 
         if (!propInterface.members) {
+            output.push({
+                name: componentName,
+                description,
+                fields: {},
+            })
             console.log(`No prop interface members for ${filePath}`, {componentName})
             continue
         }
 
-        const fields: StrictArgTypes = {}
+        const fields: Record<string, ComponentProperty> = {}
         for (const [name, symbol] of propInterface.members) {
             if (typeof name !== 'string') {
                 continue
@@ -348,8 +324,9 @@ export function getFileComponents(filePath: string, tsConfig: any) {
         }
 
         output.push({
+            name: componentName,
+            description,
             fields,
-            componentName,
         })
     }
 
@@ -370,12 +347,11 @@ function builder(tsConfigPath: string) {
                 }
                 
                 const s = new MagicString(compiledSource);
-                for (const { componentName, fields } of components) {
-                    s.append(`
-    ${componentName}.__componentProps = {
-        props: ${JSON.stringify(fields)}
-    }`)
-                    }
+                for (const { name, fields } of components) {
+                    s.append(`${name}.__ts = {
+    props: ${JSON.stringify(fields)},
+}`)
+                }
 
                 return {
                     code: s.toString(),

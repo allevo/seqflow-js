@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "incremental": false,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "jsxFactory": "component.createDOMElement",
+    "jsxFragmentFactory": "component.createDOMFragment",
+    "moduleResolution": "Node",
+    "module": "ES2020",
+    "target": "ES2020",
+    "skipLibCheck": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "strict": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.*", "src/**/__testfixtures__/**"]
+}

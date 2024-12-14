@@ -1,0 +1,58 @@
+{
+  "name": "@seqflow/document-component-lib",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Storybook for SeqFlow JS and Vite.",
+  "keywords": [
+    "seqflow",
+    "storybook"
+  ],
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/index.js",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./list": {
+      "types": "./dist/list.d.ts",
+      "node": "./dist/list.js",
+      "require": "./dist/list.js",
+      "import": "./dist/list.js"
+    },
+    "./vite-plugin": {
+      "types": "./dist/vite-plugin.d.ts",
+      "node": "./dist/vite-plugin.js",
+      "require": "./dist/vite-plugin.js",
+      "import": "./dist/vite-plugin.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "biome": "biome ci ./src",
+    "biome:check": "biome check --apply src tests",
+    "test": "node --import tsx tests/foo.test.ts",
+    "build": "npx tsc --outDir ./dist --target es2020",
+    "depcheck": "depcheck --ignores @vitest/coverage-v8 ."
+  },
+  "dependencies": {
+    "@seqflow/seqflow": "workspace:*",
+    "magic-string": "^0.30.14"
+  },
+  "peerDependencies": {
+    "vite": "^6"
+  },
+  "devDependencies": {
+    "biome": "^0.3.3",
+    "depcheck": "^1.4.7",
+    "tap": "^21.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
