@@ -452,7 +452,7 @@ export async function Counter(
   // Render
   component.renderSync(
     <>
-      <Button>Increment</Button>
+      <Button key="increment-counter-button">Increment</Button>
       <div key="counter">{counter}</div>
     </>
   );
@@ -462,7 +462,7 @@ export async function Counter(
 
   // create AsyncGenerator
   const events = component.waitEvents(
-    component.domEvent('counter', "click")
+    component.domEvent('increment-counter-button', "click")
   );
 
   // Wait for events
