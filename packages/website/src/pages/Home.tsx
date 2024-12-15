@@ -3,6 +3,7 @@ import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import * as Prism from "prismjs";
 import { ArrowSVG } from "../components/Arrow";
 import classes from "./Home.module.css";
+import { title } from "process";
 
 export async function Home(
 	_: ComponentProps<unknown>,
@@ -14,6 +15,52 @@ ${setupArrow.toString()}
 ${setupArrow.name}();
 	`.trim(),
 	);
+
+	const liveExampleLinks = [
+		{
+			id: 'counter',
+			title: 'Live example - Counter',
+			href: 'https://stackblitz.com/edit/seqflow-counter?file=src%2Findex.tsx',
+			bottom: '5px',
+		},
+		{
+			id: 'fetch-random-quote',
+			title: 'Live example - Fetch Random Quote',
+			href: 'https://stackblitz.com/edit/seqflow-fetch-random-quote?file=src%2Findex.tsx',
+			bottom: '5px',
+		},
+		{
+			id: 'async-component',
+			title: 'Live example - Async client components',
+			href: 'https://stackblitz.com/edit/seqflow-async-component?file=src%2Findex.tsx',
+			bottom: '13px',
+		},
+		{
+			id: 'event-stream',
+			title: 'Live example - Event as event stream',
+			href: 'https://stackblitz.com/edit/seqflow-event-stream?file=src%2Findex.tsx',
+			bottom: '13px',
+		},
+		{
+			id: 'state',
+			title: 'Live example - Javascript variable as state',
+			href: 'https://stackblitz.com/edit/seqflow-state?file=src%2Findex.tsx',
+			bottom: '13px',
+		},
+		{
+			id: 'update-ui',
+			title: 'Live example - Explicit updates',
+			href: 'https://stackblitz.com/edit/seqflow-update-ui?file=src%2Findex.tsx',
+			bottom: '13px',
+		}
+	]
+	const addStackBlitzLinksScriptContent = liveExampleLinks.map(({ id, title, href, bottom }, i) => {
+		return `
+		const code${i} = document.getElementById('${id}');
+		code${i}.innerHTML += '<a target="_blank" href="${href}" title="${title}" style="position: absolute; bottom: ${bottom}; right: 5px; z-index: 99; background: #060606; padding: 5px; border-radius: 15px;">See live example</a>';
+		`
+	}).join('\n');
+	const addStackBlitzLinksScript = createScript(addStackBlitzLinksScriptContent);
 
 	component.renderSync([
 		<div id="first-screen">
@@ -56,6 +103,7 @@ ${setupArrow.name}();
 			style={{ position: "absolute", top: "50%", opacity: "0" }}
 		/>,
 		script,
+		addStackBlitzLinksScript,
 	]);
 
 	Prism.highlightAll();
@@ -74,11 +122,11 @@ function Examples(_: ComponentProps<unknown>, { component }: Contexts) {
 		<Tabs tabFullWidth>
 			<Tabs.TabHeader label="Counter" defaultChecked />
 			<Tabs.TabContent>
-				<Code code={EXAMPLES_COUNTER_CODE} />
+				<Code id="counter" code={EXAMPLES_COUNTER_CODE} />
 			</Tabs.TabContent>
 			<Tabs.TabHeader label="Fetch Random Quote" />
 			<Tabs.TabContent>
-				<Code code={EXAMPLES_RANDOM_QUOTE_CODE} />
+				<Code id="fetch-random-quote" code={EXAMPLES_RANDOM_QUOTE_CODE} />
 			</Tabs.TabContent>
 		</Tabs>,
 	);
@@ -133,7 +181,7 @@ function Features(_: ComponentProps<unknown>, { component }: Contexts) {
 							</p>
 						</div>
 					</Prose>
-					<Code code={ASYNC_CLIENT_COMPONENT_CODE} />
+					<Code id="async-component" code={ASYNC_CLIENT_COMPONENT_CODE} />
 				</>
 			),
 		},
@@ -152,7 +200,7 @@ function Features(_: ComponentProps<unknown>, { component }: Contexts) {
 							</p>
 						</div>
 					</Prose>
-					<Code code={EVENT_AS_STREAM_CODE} />
+					<Code id="event-stream" code={EVENT_AS_STREAM_CODE} />
 				</>
 			),
 		},
@@ -174,7 +222,7 @@ function Features(_: ComponentProps<unknown>, { component }: Contexts) {
 							</p>
 						</div>
 					</Prose>
-					<Code code={STATE_CODE} />
+					<Code id="state" code={STATE_CODE} />
 				</>
 			),
 		},
@@ -194,7 +242,7 @@ function Features(_: ComponentProps<unknown>, { component }: Contexts) {
 							<p>You can name a child to refer to it later</p>
 						</div>
 					</Prose>
-					<Code code={REPLACE_CHILD_CODE} />
+					<Code id="update-ui" code={UPDATE_UI_CODE} />
 				</>
 			),
 		},
@@ -255,11 +303,11 @@ function handleFeatureOver() {
 }
 
 function Code(
-	{ code }: ComponentProps<{ code: string }>,
+	{ code, id }: ComponentProps<{ code: string, id?: string }>,
 	{ component }: Contexts,
 ) {
 	component._el.classList.add("language-tsx", "!text-xs", classes.code);
-	component.renderSync(<code className="language-tsx">{code}</code>);
+	component.renderSync(<code id={id} className="language-tsx">{code}</code>);
 }
 Code.tagName = () => "pre";
 
@@ -315,7 +363,7 @@ function setupArrow() {
 }
 
 const ASYNC_CLIENT_COMPONENT_CODE = `
-import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
+import { Contexts, ComponentProps, start } from '@seqflow/seqflow';
 
 // component properties
 interface MyComponentProps {
@@ -330,118 +378,117 @@ export async function MyComponent(
   { component }: Contexts
 ) {
   // Render loader
-  component.renderSync(
-	<div>{loadingText ?? 'Loading...' }</div>
+  component.renderSync(<div>{loadingText ?? 'Loading...'}</div>);
+  const data = await fetch('https://quotes.seqflow.dev/api/quotes/random').then(
+    async (res) => ({
+      statusCode: res.status,
+      body: await res.json(),
+    })
   );
-  const data = await fetch('https://api.example.com/data');
 
   // Redraw the whole component
   component.renderSync(
-    <div>\${JSON.stringify(data)}</div>
+    <pre>
+      <code>{JSON.stringify(data, null, 2)}</code>
+    </pre>
   );
 }
 
-start(document.getElementById("root")!, MyComponent, {}, {});
+start(document.getElementById('root')!, MyComponent, {}, {});
+
 `.trim();
 
 const EVENT_AS_STREAM_CODE = `
-import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
+import { Contexts, ComponentProps, start } from '@seqflow/seqflow';
 
 async function MyComponent(
-  { }: ComponentProps<unknown>,
+  {}: ComponentProps<unknown>,
   { component }: Contexts
 ) {
   component.renderSync(
-	<button key="my-button" type="button">Click me</button>
+    <button key="my-button" type="button">
+      Click me
+    </button>
   );
 
   // create AsyncGenerator
-  const events = component.waitEvents(
-	component.domEvent('my-button', "click")
-  );
+  const events = component.waitEvents(component.domEvent('my-button', 'click'));
   // Wait for events
   for await (const ev of events) {
-	console.log('Button clicked', ev);
+    window.alert('Button clicked: ' + ev.type);
   }
 }
 
-start(document.getElementById("root")!, MyComponent, {}, {});
+start(document.getElementById('root')!, MyComponent, {}, {});
 `.trim();
 
 const STATE_CODE = `
-import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
+import { Contexts, ComponentProps, start } from '@seqflow/seqflow';
 
 async function MyComponent(
-  { }: ComponentProps<unknown>,
+  {}: ComponentProps<unknown>,
   { component }: Contexts
 ) {
   // The state is a simple Javascript variable
   let counter = 0;
 
   component.renderSync(
-	<button key="my-button" type="button">Click me</button>
+    <button key="my-button" type="button">
+      Click me
+    </button>
   );
 
-  const events = component.waitEvents(
-	component.domEvent('my-button', "click")
-  );
+  const events = component.waitEvents(component.domEvent('my-button', 'click'));
   for await (const ev of events) {
     // Update the counter
-  	counter++;
-	console.log('Number of click', counter);
+    counter++;
+    window.alert('Number of click:' + counter);
   }
 }
 
-start(document.getElementById("root")!, MyComponent, {}, {});
+start(document.getElementById('root')!, MyComponent, {}, {});
 `.trim();
 
-const REPLACE_CHILD_CODE = `
-import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
+const UPDATE_UI_CODE = `
+import { Contexts, ComponentProps, start } from '@seqflow/seqflow';
 
 async function MyComponent(
-  { }: ComponentProps<unknown>,
+  {}: ComponentProps<unknown>,
   { component }: Contexts
 ) {
-  let counter = 0;
-
   component.renderSync(
     <>
-      <button key="my-button" type="button">Click me</button>
-      <div key="counter">{counter}</div>
+      <button key="my-button" type="button">
+        Now
+      </button>
+      <div key="counter">{new Date().toISOString()}</div>
     </>
   );
 
-  const events = component.waitEvents(
-	component.domEvent('my-button', "click")
-  );
+  const events = component.waitEvents(component.domEvent('my-button', 'click'));
   for await (const ev of events) {
-  	counter++;
-
-	// Replace the counter div element
-	component.replaceChild(
-      'counter',
-      <div key="counter">{counter}</div>
-	);
-
-	// Or just update the text content
-	// component.getChild('counter').textContent = \`\${counter}\`;
+    // Replace the counter div element
+    component.replaceChild('counter', () => (
+      <div key="counter">{new Date().toISOString()}</div>
+    ));
   }
 }
 
-start(document.getElementById("root")!, MyComponent, {}, {});
+start(document.getElementById('root')!, MyComponent, {}, {});
 `.trim();
 
 const EXAMPLES_COUNTER_CODE = `
 // Imports
-import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
-import { Button } from "@seqflow/components";
+import { Contexts, ComponentProps, start } from '@seqflow/seqflow';
+import { Button } from '@seqflow/components';
+import '@seqflow/components/style.css';
 
 interface CounterProps {
   initialValue?: number;
 }
 
 // Counter component function
-export async function Counter(
+async function Counter(
   // component properties
   { initialValue }: ComponentProps<CounterProps>,
   // component context
@@ -457,27 +504,30 @@ export async function Counter(
     </>
   );
 
-  // Get counter div element
-  const counterDiv = component.getChild('counter');
-
   // create AsyncGenerator
   const events = component.waitEvents(
-    component.domEvent('increment-counter-button', "click")
+    // listen "click" event on element tagged by the 'increment-counter-button' key
+    component.domEvent('increment-counter-button', 'click')
   );
 
   // Wait for events
   for await (const _ of events) {
-    counterDiv.textContent = \`\${counter ++}\`;
+    counter++;
+    // Replace a child by key
+    component.replaceChild('counter', () => <div key="counter">{counter}</div>);
   }
 }
 
-start(document.getElementById("root")!, Counter, {}, {});
+start(document.getElementById('root')!, Counter, {}, {});
+
 `.trim();
 
 const EXAMPLES_RANDOM_QUOTE_CODE = `
 // Imports
-import { Contexts, ComponentProps, start } from "@seqflow/seqflow";
-import { Button, Loading } from "@seqflow/components";
+import { Contexts, ComponentProps, start } from '@seqflow/seqflow';
+import { Loading } from '@seqflow/components';
+import '@seqflow/components/style.css';
+
 // Quote interface
 interface Quote {
   author: string;
@@ -485,33 +535,29 @@ interface Quote {
 }
 // Pure function to fetch a random quote
 async function getRandomQuote(): Promise<Quote> {
-  const res = await fetch("https://quotes.seqflow.dev/api/quotes/random");
+  const res = await fetch('https://quotes.seqflow.dev/api/quotes/random');
   if (!res.ok) {
-    throw new Error("Failed to fetch quote");
+    throw new Error('Failed to fetch quote');
   }
   return await res.json();
 }
 // RandomQuote component function
 export async function RandomQuote(
   // component properties
-  { }: ComponentProps<unknown>,
+  {}: ComponentProps<unknown>,
   // component context
   { component }: Contexts
 ) {
   // Render
-  component.renderSync(
-    <Loading />
-  );
+  component.renderSync(<Loading />);
 
   // Async invocation inside the component
   let quote: Quote;
   try {
-    quote = await getRandomQuote("https://api.quotable.io");
+    quote = await getRandomQuote();
   } catch (error) {
-	component.renderSync(
-	  <div>Error: {error.message}</div>
-	);
-	return;
+    component.renderSync(<div>Error: {(error as Error).message}</div>);
+    return;
   }
 
   component.renderSync(
@@ -522,5 +568,5 @@ export async function RandomQuote(
   );
 }
 
-start(document.getElementById("root")!, RandomQuote, {}, {});  
+start(document.getElementById('root')!, RandomQuote, {}, {});
 `.trim();
