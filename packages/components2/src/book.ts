@@ -1,16 +1,12 @@
-import { start } from "@seqflow/seqflow";
-import { Main } from "./Main";
-import "./index.css";
-import { Book } from "@seqflow/document-component-lib";
+import { ComponentBook, type ComponentsConfiguration } from "@seqflow/component-book";
+import { ButtonDoc } from "./Button/Button.stories";
 
-start(
-	document.getElementById("root")!,
-	Main,
-	{},
-	{
-		log: console,
-		domains: {
-            book: () => new Book(),
-		}
-	},
-);
+async function configure(book: ComponentBook) {
+    book.registerComponentPage(ButtonDoc);
+}
+
+const componentsConfiguration: ComponentsConfiguration = {
+    configure,
+}
+
+export default componentsConfiguration;

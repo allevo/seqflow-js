@@ -1,9 +1,9 @@
-import { defineConfig, PluginOption, Plugin } from "vite";
+import { defineConfig, PluginOption } from "vite";
 import * as vite from 'vite'
 import { resolve } from 'path'
 
 import dts from 'vite-plugin-dts'
-import {addStorybookMetaPlugin} from '@seqflow/document-component-lib/vite-plugin'
+import { addStorybookMetaPlugin } from '@seqflow/component-book/vite-plugin'
 
 
 export default defineConfig(({command}) => {
@@ -13,7 +13,6 @@ export default defineConfig(({command}) => {
 		}),
 		addStorybookMetaPlugin({}),
 	]
-
 	return {
 		root: "src",
 		build: {

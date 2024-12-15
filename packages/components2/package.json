@@ -26,6 +26,7 @@
     "biome:check": "biome check --write src tests",
     "start": "vite -c vite.config.js",
     "build": "vite build --emptyOutDir -c vite.config.js && npx tsc -p build-types.tsconfig.json",
+    "component-book": "component-book src/book.ts",
     "storybook": "storybook dev -p 6006 --no-open",
     "test:component": "node tests/test.js",
     "test:storybook": "test-storybook",
@@ -41,8 +42,8 @@
     "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
-    "@seqflow/document-component-lib": "workspace:*",
     "@biomejs/biome": "1.9.4",
+    "@seqflow/component-book": "workspace:*",
     "depcheck": "^1.4.7",
     "dts-bundle-generator": "^9.5.1",
     "jsdom": "^25.0.1",

@@ -6,24 +6,23 @@ export default defineConfig(({command}) => {
 	return {
 		root: "src",
 		build: {
-			outDir: "../dist",
 			emptyOutDir: false,
 			cssCodeSplit: false,
 			copyPublicDir: false,
+			outDir: "../dist",
 			lib: {
 				// Could also be a dictionary or array of multiple entry points
-				entry: resolve(__dirname, 'src/index.ts'),
-				formats: ['es' as const],
+				entry: resolve(__dirname, 'src/index.tsx'),
+				formats: ['es'],
 				name: 'index',
 				// the proper extensions will be added
-				fileName: 'index',
+				fileName: 'index.all',
 			},
 			rollupOptions: {
-				output: {
-					entryFileNames: '[name].js',	
+				external: (id) => {
+					if (id === './components.js') return true
+					return false
 				},
-				// mainEntryPointFilePath: resolve(__dirname, 'src/index.tsx'),
-				external: /react/,
 			}
 		},
 		plugins: [],

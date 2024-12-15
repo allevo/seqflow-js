@@ -1,5 +1,5 @@
 
-export class Book {
+export class ComponentBook {
     public pages: ComponentPage[] = [];
 
     registerComponentPage(page: ComponentPage) {

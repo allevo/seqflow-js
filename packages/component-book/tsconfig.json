@@ -1,16 +1,14 @@
 {
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist",
     "resolveJsonModule": true,
-    "baseUrl": ".",
     "incremental": false,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "jsxFactory": "component.createDOMElement",
     "jsxFragmentFactory": "component.createDOMFragment",
-    "moduleResolution": "Node",
-    "module": "ES2020",
+    "moduleResolution": "bundler",
+    "module": "es2022",
     "target": "ES2020",
     "skipLibCheck": true,
     "declaration": true,
@@ -23,3 +21,4 @@
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test.*", "src/**/__testfixtures__/**"]
 }
+

@@ -1,6 +1,6 @@
 
 
-import { ComponentPage } from "@seqflow/document-component-lib";
+import { ComponentPage } from "../../../component-book/dist";
 import { Button } from ".";
 import { start } from "@seqflow/seqflow";
 

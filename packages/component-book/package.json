@@ -1,13 +1,15 @@
 {
-  "name": "@seqflow/document-component-lib",
+  "name": "@seqflow/component-book",
   "version": "1.0.0",
   "type": "module",
-  "description": "Storybook for SeqFlow JS and Vite.",
+  "description": "",
   "keywords": [
-    "seqflow",
-    "storybook"
+    "seqflow"
   ],
   "license": "MIT",
+  "bin": {
+    "component-book": "dist/bin/component-book.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -35,7 +37,7 @@
     "biome": "biome ci ./src",
     "biome:check": "biome check --apply src tests",
     "test": "node --import tsx tests/foo.test.ts",
-    "build": "npx tsc --outDir ./dist --target es2020",
+    "build": "npx tsc --outDir ./dist --target es2020 && npx vite -c vite.config.ts build",
     "depcheck": "depcheck --ignores @vitest/coverage-v8 ."
   },
   "dependencies": {
@@ -46,11 +48,14 @@
     "vite": "^6"
   },
   "devDependencies": {
+    "@types/node": "^22",
     "biome": "^0.3.3",
     "depcheck": "^1.4.7",
+    "fastify": "^5.2.0",
     "tap": "^21.0.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vite": "^6"
   },
   "engines": {
     "node": ">=18.0.0"
