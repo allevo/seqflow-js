@@ -3,7 +3,6 @@ import type { ComponentProps, Contexts } from "@seqflow/seqflow";
 import * as Prism from "prismjs";
 import { ArrowSVG } from "../components/Arrow";
 import classes from "./Home.module.css";
-import { title } from "process";
 
 export async function Home(
 	_: ComponentProps<unknown>,
@@ -18,49 +17,53 @@ ${setupArrow.name}();
 
 	const liveExampleLinks = [
 		{
-			id: 'counter',
-			title: 'Live example - Counter',
-			href: 'https://stackblitz.com/edit/seqflow-counter?file=src%2Findex.tsx',
-			bottom: '5px',
+			id: "counter",
+			title: "Live example - Counter",
+			href: "https://stackblitz.com/edit/seqflow-counter?file=src%2Findex.tsx",
+			bottom: "5px",
 		},
 		{
-			id: 'fetch-random-quote',
-			title: 'Live example - Fetch Random Quote',
-			href: 'https://stackblitz.com/edit/seqflow-fetch-random-quote?file=src%2Findex.tsx',
-			bottom: '5px',
+			id: "fetch-random-quote",
+			title: "Live example - Fetch Random Quote",
+			href: "https://stackblitz.com/edit/seqflow-fetch-random-quote?file=src%2Findex.tsx",
+			bottom: "5px",
 		},
 		{
-			id: 'async-component',
-			title: 'Live example - Async client components',
-			href: 'https://stackblitz.com/edit/seqflow-async-component?file=src%2Findex.tsx',
-			bottom: '13px',
+			id: "async-component",
+			title: "Live example - Async client components",
+			href: "https://stackblitz.com/edit/seqflow-async-component?file=src%2Findex.tsx",
+			bottom: "13px",
 		},
 		{
-			id: 'event-stream',
-			title: 'Live example - Event as event stream',
-			href: 'https://stackblitz.com/edit/seqflow-event-stream?file=src%2Findex.tsx',
-			bottom: '13px',
+			id: "event-stream",
+			title: "Live example - Event as event stream",
+			href: "https://stackblitz.com/edit/seqflow-event-stream?file=src%2Findex.tsx",
+			bottom: "13px",
 		},
 		{
-			id: 'state',
-			title: 'Live example - Javascript variable as state',
-			href: 'https://stackblitz.com/edit/seqflow-state?file=src%2Findex.tsx',
-			bottom: '13px',
+			id: "state",
+			title: "Live example - Javascript variable as state",
+			href: "https://stackblitz.com/edit/seqflow-state?file=src%2Findex.tsx",
+			bottom: "13px",
 		},
 		{
-			id: 'update-ui',
-			title: 'Live example - Explicit updates',
-			href: 'https://stackblitz.com/edit/seqflow-update-ui?file=src%2Findex.tsx',
-			bottom: '13px',
-		}
-	]
-	const addStackBlitzLinksScriptContent = liveExampleLinks.map(({ id, title, href, bottom }, i) => {
-		return `
+			id: "update-ui",
+			title: "Live example - Explicit updates",
+			href: "https://stackblitz.com/edit/seqflow-update-ui?file=src%2Findex.tsx",
+			bottom: "13px",
+		},
+	];
+	const addStackBlitzLinksScriptContent = liveExampleLinks
+		.map(({ id, title, href, bottom }, i) => {
+			return `
 		const code${i} = document.getElementById('${id}');
 		code${i}.innerHTML += '<a target="_blank" href="${href}" title="${title}" style="position: absolute; bottom: ${bottom}; right: 5px; z-index: 99; background: #060606; padding: 5px; border-radius: 15px;">See live example</a>';
-		`
-	}).join('\n');
-	const addStackBlitzLinksScript = createScript(addStackBlitzLinksScriptContent);
+		`;
+		})
+		.join("\n");
+	const addStackBlitzLinksScript = createScript(
+		addStackBlitzLinksScriptContent,
+	);
 
 	component.renderSync([
 		<div id="first-screen">
@@ -303,11 +306,15 @@ function handleFeatureOver() {
 }
 
 function Code(
-	{ code, id }: ComponentProps<{ code: string, id?: string }>,
+	{ code, id }: ComponentProps<{ code: string; id?: string }>,
 	{ component }: Contexts,
 ) {
 	component._el.classList.add("language-tsx", "!text-xs", classes.code);
-	component.renderSync(<code id={id} className="language-tsx">{code}</code>);
+	component.renderSync(
+		<code id={id} className="language-tsx">
+			{code}
+		</code>,
+	);
 }
 Code.tagName = () => "pre";
 
