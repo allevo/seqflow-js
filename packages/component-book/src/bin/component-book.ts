@@ -18,10 +18,15 @@ app.get('/', async (request, reply) => {
     const content = fs.readFileSync(`/Users/allevo/repos/seqflow-js/packages/component-book/src/index.html`, 'utf8');
     reply.type('text/html').send(content);
 });
+app.get('/*', async (request, reply) => {
+    const content = fs.readFileSync(`/Users/allevo/repos/seqflow-js/packages/component-book/src/index.html`, 'utf8');
+    reply.type('text/html').send(content);
+});
+
 
 const thisParentDirA = import.meta.url.split('/').slice(3, -1).join('/');
 app.get('/components.js', async (request, reply) => {
-    const a = await vite.build({
+    await vite.build({
         root: projectCwd,
         build: {
             emptyOutDir: false,
@@ -50,7 +55,15 @@ app.get('/main.js', async (request, reply) => {
     const content = fs.readFileSync(`/Users/allevo/repos/seqflow-js/packages/component-book/dist/index.all.js`, 'utf8');
     reply.type('application/javascript').send(content);
 });
-
+app.get('/lib.css', async (request, reply) => {
+    const libCss = join(projectCwd, 'dist', 'index.css');
+    const content = fs.readFileSync(libCss, 'utf8');
+    reply.type('text/css').send(content);
+});
+app.get('/index.css', async (request, reply) => {
+    const content = fs.readFileSync(`/Users/allevo/repos/seqflow-js/packages/component-book/src/index.css`, 'utf8');
+    reply.type('text/css').send(content);
+});
 app.listen({
     port: 3000
 });

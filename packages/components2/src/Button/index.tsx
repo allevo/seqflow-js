@@ -1,4 +1,5 @@
 import type { ComponentProps, Contexts } from "@seqflow/seqflow";
+import './index.css';
 
 export type ButtonComponent = HTMLElement & {
 	transition: (state: {

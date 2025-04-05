@@ -1,39 +1,10 @@
-import ts, { LiteralTypeNode, TypeNode } from 'typescript'
+import ts, { EmitHint, LiteralTypeNode, SyntaxKind, TypeNode, VariableDeclaration } from 'typescript'
 import fs from 'node:fs'
 import MagicString from "magic-string";
+import { Biome, Distribution } from "@biomejs/js-api";
 
 import { type Plugin, createFilter } from "vite";
-
-type ComponentPropertyUnionType = {
-    t: 'union', 
-    type: Array<ComponentPropertyBasicType>,
-};
-type ComponentPropertyBasicType = {
-    t: 'basic',
-    type: 'string' | 'number' | 'boolean',
-} | {
-    t: 'literal',
-    type: string,
-} | {
-    t: 'unknown',
-    type: string,
-};
-
-type ComponentPropertyType = |
-    ComponentPropertyBasicType |
-    ComponentPropertyUnionType
-
-type ComponentProperty = {
-    name: string,
-    description?: string,
-    type: ComponentPropertyType,
-    required: boolean,
-}
-
-export type ComponentTS = {
-    description?: string,
-    props: Record<string, ComponentProperty>
-}
+import { ComponentProperty, ComponentPropertyType, ComponentPropertyUnionType } from './domains/book';
 
 function extrapolateSBTypeFromUnionType(type: TypeNode): ComponentPropertyType {
     if (type.kind !== ts.SyntaxKind.UnionType) {
@@ -213,14 +184,6 @@ function tsSymbolToStrictInputType(name: string, symbol: ts.Symbol, sourceFile: 
         description,
         required: !isOptional,
         type: sbType,
-        /*
-        type: {
-            ...sbType,
-            required: !isOptional,
-        },
-        control,
-        options,
-        */
     }
 }
 
@@ -333,12 +296,125 @@ export function getFileComponents(filePath: string, tsConfig: any) {
     return output
 }
 
-function builder(tsConfigPath: string) {
+async function getStories(filePath: string, tsConfig: any, compiledSource: string) {
+    if (/_renderFunctions/.test(compiledSource)) {
+        console.log('Already has render functions')
+        return
+    }
+
+    const program = ts.createProgram([filePath], tsConfig)
+
+    const out = program.getSourceFile(filePath)
+
+    if (!out) {
+        console.log(`No source file for ${filePath}`)
+        return
+    }
+
+    const checker = program.getTypeChecker();
+    const moduleSymbol = checker.getSymbolAtLocation(out)
+    if (!moduleSymbol) {
+        console.log(`No module symbol for ${filePath}`)
+        return
+    }
+
+    const s = new MagicString(compiledSource);
+    for (let [key, value] of moduleSymbol.exports!.entries()) {
+        if (!value.valueDeclaration) {
+            continue
+        }
+        let decl = value.valueDeclaration as VariableDeclaration
+        if (decl.kind !== SyntaxKind.VariableDeclaration) {
+            continue
+        }
+        if (!decl.initializer) {
+            continue
+        }
+        let init = (decl.initializer as { symbol?: ts.Symbol})
+        if (!init.symbol) {
+            continue
+        }
+        let k = init.symbol.members
+        if (!k) {
+            continue
+        }
+
+        let stories = k.get('stories' as ts.__String)?.valueDeclaration as ts.PropertyAssignment | undefined
+        if (!stories) {
+            continue
+        }
+
+        let storyArray = stories.initializer as ts.ArrayLiteralExpression
+
+        s.append(`${key}.originalRenderFunctions = [];\n`);
+        for (let el of storyArray.elements) {
+            if (el.kind !== SyntaxKind.ObjectLiteralExpression) {
+                s.append(`${key}.originalRenderFunctions.push(\`\nel.kind !== SyntaxKind.ObjectLiteralExpression\n\`)\n`);
+                continue
+            }
+            const e = el as ts.ObjectLiteralExpression
+
+            let symbol = (e as ({ symbol?: ts.Symbol })).symbol
+            if (!(symbol?.valueDeclaration)) {
+                s.append(`${key}.originalRenderFunctions.push(\`\n!symbol?.valueDeclaration\n\`)\n`);
+                continue
+            }
+            let symbol2 = (symbol.valueDeclaration as ({ symbol?: ts.Symbol })).symbol
+            if (!symbol2) {
+                s.append(`${key}.originalRenderFunctions.push(\`\n!symbol2\n\`)\n`);
+                continue
+            }
+            let renderFunction = symbol2.members?.get('renderFunction' as ts.__String)
+            if (!renderFunction) {
+                s.append(`${key}.originalRenderFunctions.push(\`\n!renderFunction\n\`)\n`);
+                continue
+            }
+            let functionValueDeclaration = renderFunction.valueDeclaration as ts.PropertyAssignment | undefined
+            if (!functionValueDeclaration) {
+                s.append(`${key}.originalRenderFunctions.push(\`\n!functionValueDeclaration\n\`)\n`);
+                continue
+            }
+
+            let functionInitializer = functionValueDeclaration.initializer as ts.ArrowFunction
+
+            let printer = ts.createPrinter({})
+            let printedFunction = printer.printNode(EmitHint.Unspecified, functionInitializer.body, out)
+
+            let functionBodyArr = printedFunction.split('\n')
+                .filter((l: string) => !(/\/\//.test(l) && /\@ts/.test(l)))
+
+            functionBodyArr.pop()
+            functionBodyArr.shift()
+
+            let functionBody = functionBodyArr
+                .join('\n')
+                .trim()
+
+            const biome = await Biome.create({
+                distribution: Distribution.NODE,
+            });
+
+            const formatted = biome.formatContent(functionBody, {
+                filePath: filePath,
+            });
+
+            s.append(`${key}.originalRenderFunctions.push(\`\n${formatted.content}\n\`)\n`);
+        }
+    }
+
+    let a = s.toString()
+
+    return {
+        code: a,
+        map: s.generateMap()
+    }
+}
+
+function createBuilder(tsConfigPath: string) {
     const tsConfig = ts.readConfigFile(tsConfigPath, p => fs.readFileSync(p, 'utf8'))
 
     return {
-        generateStorybookMetadataFor(filePath: string, compiledSource: string) {
-
+        generateComponentMetadataFor(filePath: string, compiledSource: string) {
             try {
                 const components = getFileComponents(filePath, tsConfig.config)
                 if (!components) {
@@ -362,29 +438,38 @@ function builder(tsConfigPath: string) {
                 console.error(e)
                 return
             }
+        },
+
+        async generateStoriesFor(filePath: string, compiledSource: string) {
+            const stories = await getStories(filePath, tsConfig.config, compiledSource)
+            return stories
         }
     }
 }
 
 export function addStorybookMetaPlugin(config: unknown): Plugin {
 	let filter: (id: string) => boolean;
-	let b: ReturnType<typeof builder> | null = null;
+	let builder: ReturnType<typeof createBuilder> | null = null;
 
 	return {
 		name: "vite:seqflow-docgen-typescript",
 		async configResolved() {
-			b = builder('./tsconfig.json')
+			builder = createBuilder('./tsconfig.json')
 			filter = createFilter(
-				["**/**.tsx"],
-				["**/**.stories.tsx"],
+				["**/**.tsx", "**/**.stories.tsx"],
 			);
 		},
+
 		async transform(src, id, a) {
 			if (!filter(id)) {
 				return;
 			}
 
-			return b?.generateStorybookMetadataFor(id, src)
+            if (/stories/.test(id)) {
+                return builder?.generateStoriesFor(id, src)
+            } else {
+                return builder?.generateComponentMetadataFor(id, src)
+            }
 		},
 	};
 }

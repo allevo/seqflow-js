@@ -38,24 +38,30 @@
     "biome:check": "biome check --apply src tests",
     "test": "node --import tsx tests/foo.test.ts",
     "build": "npx tsc --outDir ./dist --target es2020 && npx vite -c vite.config.ts build",
+    "build:watch": "watch 'pnpm build' src",
     "depcheck": "depcheck --ignores @vitest/coverage-v8 ."
   },
   "dependencies": {
+    "@biomejs/js-api": "^0.7.1",
+    "@biomejs/wasm-nodejs": "^1.9.4",
     "@seqflow/seqflow": "workspace:*",
-    "magic-string": "^0.30.14"
+    "magic-string": "^0.30.14",
+    "prismjs": "^1.29.0",
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "vite": "^6"
   },
   "devDependencies": {
     "@types/node": "^22",
+    "@types/prismjs": "^1.26.5",
     "biome": "^0.3.3",
     "depcheck": "^1.4.7",
     "fastify": "^5.2.0",
     "tap": "^21.0.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
-    "vite": "^6"
+    "vite": "^6",
+    "watch": "^1.0.2"
   },
   "engines": {
     "node": ">=18.0.0"

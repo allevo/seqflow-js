@@ -2,7 +2,6 @@ import { defineConfig, Plugin } from "vite";
 import * as vite from 'vite'
 import MarkdownIt from 'markdown-it'
 import checker from 'vite-plugin-checker'
-import { PurgeCSS, RawContent } from "purgecss";
 import { JSDOM, VirtualConsole } from "jsdom"
 import http from 'node:http'
 import {readFileSync} from 'node:fs'
