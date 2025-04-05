@@ -46,7 +46,7 @@ export async function Main(
 		</>,
 	);
 
-	const events = component.waitEvents(component.navigationEvent());
+	const events = component.listenEvents(component.navigationEvent());
 	for await (const _ of events) {
 		const Component = getComponent(app.router.segments);
 		component.replaceChild("main", () => <Component key="main" />);

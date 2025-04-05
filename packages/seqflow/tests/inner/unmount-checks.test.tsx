@@ -96,7 +96,7 @@ test("track component lifecycle: replaceChild direct child", async (testContext)
 			</>,
 		);
 
-		const events = component.waitEvents(component.domEvent("button", "click"));
+		const events = component.listenEvents(component.domEvent("button", "click"));
 		for await (const _ of events) {
 			c++;
 			component.replaceChild("Button", () => (
@@ -166,7 +166,7 @@ test("track component lifecycle: replaceChild nested in div / child", async (tes
 			</>,
 		);
 
-		const events = component.waitEvents(component.domEvent("button", "click"));
+		const events = component.listenEvents(component.domEvent("button", "click"));
 		for await (const _ of events) {
 			c++;
 			component.replaceChild("Button", () => (
@@ -236,7 +236,7 @@ test("track component lifecycle: replaceChild nested in div / wrapper", async (t
 			</>,
 		);
 
-		const events = component.waitEvents(component.domEvent("button", "click"));
+		const events = component.listenEvents(component.domEvent("button", "click"));
 		for await (const _ of events) {
 			c++;
 			component.replaceChild("wrapper", () => (
@@ -305,7 +305,7 @@ test("track component lifecycle: replaceChild nested in div / nested component",
 	) {
 		component.render(<Button key="Button" label={label} />);
 
-		const events = component.waitEvents(component.domEvent("Button", "click"));
+		const events = component.listenEvents(component.domEvent("Button", "click"));
 		for await (const _ of events) {
 		}
 
@@ -322,7 +322,7 @@ test("track component lifecycle: replaceChild nested in div / nested component",
 			</>,
 		);
 
-		const events = component.waitEvents(component.domEvent("button", "click"));
+		const events = component.listenEvents(component.domEvent("button", "click"));
 		for await (const _ of events) {
 			c++;
 			component.replaceChild("Nested", () => (
@@ -416,7 +416,7 @@ async function Button(
 		</button>,
 	);
 
-	const events = component.waitEvents(component.domEvent("button", "click"));
+	const events = component.listenEvents(component.domEvent("button", "click"));
 	for await (const _ of events) {
 		app.log.debug({
 			message: "Button clicked",

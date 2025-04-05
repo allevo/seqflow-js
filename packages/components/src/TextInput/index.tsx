@@ -91,7 +91,7 @@ export async function TextInput(
 		}
 	};
 
-	const ev = component.waitEvents(component.domEvent(component._el, "input"));
+	const ev = component.listenEvents(component.domEvent(component._el, "input"));
 	for await (const _ of ev) {
 		if (validationFunction) {
 			const error = validationFunction(el.value);

@@ -621,7 +621,18 @@ export class SeqFlowComponentContext {
 		wrapper.replaceWith(a as Node);
 	}
 
+	/**
+	 * @deprecated Use listenEvents instead. This method will be removed in a future version.
+	 */
 	async *waitEvents<
+		Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[],
+	>(...fns: Fns): AsyncGenerator<GetYieldType<Fns[number]>> {
+		for await (const ev of this.listenEvents(...fns)) {
+			yield ev;
+		}
+	}
+
+	async *listenEvents<
 		Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[],
 	>(...fns: Fns): AsyncGenerator<GetYieldType<Fns[number]>> {
 		for await (const ev of combineEventAsyncGenerators(this.ac, ...fns)) {

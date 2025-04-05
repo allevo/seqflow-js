@@ -93,7 +93,7 @@ test("listen dom event using key", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(component.domEvent("button", "click"));
+		const events = component.listenEvents(component.domEvent("button", "click"));
 		for await (const _ of events) {
 			counter += 1;
 			counterSpan.textContent = `Counter: ${counter.toString()}`;
@@ -126,7 +126,7 @@ test("listen dom event using element", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent(incrementButton, "click"),
 		);
 		for await (const _ of events) {
@@ -167,7 +167,7 @@ test("listen more dom events", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent("button1", "click"),
 			component.domEvent("button2", "click"),
 			component.domEvent("button3", "click"),
@@ -217,7 +217,7 @@ test("switch on who fire event", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent("increase-by-1", "click"),
 			component.domEvent("increase-by-2", "click"),
 			component.domEvent("increase-by-3", "click"),
@@ -280,7 +280,7 @@ test("prevent default", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent("submit-button", "click", { preventDefault: true }),
 			component.domEvent("increment-form", "submit"),
 		);
@@ -321,7 +321,7 @@ test("stop propagation", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent("button", "click", { stopPropagation: true }),
 			component.domEvent("button", "click"),
 			component.domEvent("wrapper", "click"),
@@ -363,7 +363,7 @@ test("stop immediate propagation", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent("button", "click"),
 			component.domEvent("button", "click", { stopImmediatePropagation: true }),
 			component.domEvent("button", "click"),
@@ -403,7 +403,7 @@ test("listen domain event", async (testContext) => {
 			</button>,
 		);
 
-		const events = component.waitEvents(component.domEvent("button", "click"));
+		const events = component.listenEvents(component.domEvent("button", "click"));
 		for await (const _ of events) {
 			app.domains.counter.applyDelta(1);
 		}
@@ -420,7 +420,7 @@ test("listen domain event", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domainEvent(CounterChangedEvent),
 		);
 		for await (const _ of events) {
@@ -447,7 +447,7 @@ test("listen navigation event", async (testContext) => {
 	) {
 		component.render(<a href="/another-page">Go to another page</a>);
 
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent(component._el, "click", { preventDefault: true }),
 		);
 		for await (const _ of events) {
@@ -463,7 +463,7 @@ test("listen navigation event", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("current-path");
-		const events = component.waitEvents(component.navigationEvent());
+		const events = component.listenEvents(component.navigationEvent());
 		for await (const ev of events) {
 			counterSpan.textContent = `Path: ${ev.path}`;
 		}

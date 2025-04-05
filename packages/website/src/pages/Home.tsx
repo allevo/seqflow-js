@@ -419,7 +419,7 @@ async function MyComponent(
   );
 
   // create AsyncGenerator
-  const events = component.waitEvents(component.domEvent('my-button', 'click'));
+  const events = component.listenEvents(component.domEvent('my-button', 'click'));
   // Wait for events
   for await (const ev of events) {
     window.alert('Button clicked: ' + ev.type);
@@ -445,7 +445,7 @@ async function MyComponent(
     </button>
   );
 
-  const events = component.waitEvents(component.domEvent('my-button', 'click'));
+  const events = component.listenEvents(component.domEvent('my-button', 'click'));
   for await (const ev of events) {
     // Update the counter
     counter++;
@@ -472,7 +472,7 @@ async function MyComponent(
     </>
   );
 
-  const events = component.waitEvents(component.domEvent('my-button', 'click'));
+  const events = component.listenEvents(component.domEvent('my-button', 'click'));
   for await (const ev of events) {
     // Replace the counter div element
     component.replaceChild('counter', () => (
@@ -512,7 +512,7 @@ async function Counter(
   );
 
   // create AsyncGenerator
-  const events = component.waitEvents(
+  const events = component.listenEvents(
     // listen "click" event on element tagged by the 'increment-counter-button' key
     component.domEvent('increment-counter-button', 'click')
   );

@@ -31,7 +31,7 @@ export async function CartBadge(
 	);
 
 	const counter = component.getChild("counter") as HTMLSpanElement;
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(ChangeCartEvent),
 		component.domainEvent(CheckoutEndedCartEvent),
 		component.domEvent(component._el, "click", {

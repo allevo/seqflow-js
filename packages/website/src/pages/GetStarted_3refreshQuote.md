@@ -76,7 +76,7 @@ export async function Main({}, { component }: Contexts) {
 	);
 
 	// Create an async iterator to wait for the button click
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		// We use the "key" to reference the button
 		component.domEvent('refresh-button', 'click')
 	)
@@ -188,7 +188,7 @@ export async function Main({}, { component }: Contexts) {
 	// Fetch and render the quote
 	await fetchAndRender();
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent('refresh-button', 'click')
 	)
 	for await (const _ of events) {
@@ -290,7 +290,7 @@ export async function Main({}, { component }: Contexts) {
 
 	await fetchAndRender();
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent('refresh-button', 'click')
 	)
 	for await (const _ of events) {

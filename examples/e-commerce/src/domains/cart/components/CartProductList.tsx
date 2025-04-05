@@ -36,7 +36,7 @@ export async function CartProduct(
 		</>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent("remove-from-cart", "click"),
 	);
 	for await (const ev of events) {
@@ -106,7 +106,7 @@ export async function CartProductList(
 		cartLogin.remove();
 	}
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "click", {
 			preventDefault: true,
 		}),

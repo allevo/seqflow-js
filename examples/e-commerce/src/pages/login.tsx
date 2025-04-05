@@ -38,7 +38,7 @@ export async function Login(
 
 	const usernameInput = component.getChild<TextInputComponent>("username");
 	const form = component.getChild<FormComponent>("login-form");
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent("login-form", "submit", { preventDefault: true }),
 	);
 	let user: UserType | undefined;

@@ -35,7 +35,7 @@ async function FormExample(
 		</Form>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const ev of events) {
@@ -69,7 +69,7 @@ async function RequiredNumberInputForm(_: unknown, { component }: Contexts) {
 		</>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const _ of events) {
@@ -136,7 +136,7 @@ async function RequiredTextInputForm(_: unknown, { component }: Contexts) {
 		</>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const _ of events) {
@@ -207,7 +207,7 @@ async function AsyncSubmitionForm(_: unknown, { component }: Contexts) {
 
 	const form = component.getChild<FormComponent>("form");
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const _ of events) {

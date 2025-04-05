@@ -27,7 +27,7 @@ export async function ProductItem(data: Product, { component }: Contexts) {
 		</Card>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "mouseover"),
 		component.domEvent(component._el, "mouseout"),
 	);

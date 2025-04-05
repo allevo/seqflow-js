@@ -64,7 +64,7 @@ export async function AddToCart(
 		otherAddToCartWrapper.classList.remove(classes.show);
 	}
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "click"),
 	);
 	for await (const ev of events) {

@@ -55,7 +55,7 @@ export async function Router(
 		</div>,
 	);
 
-	const events = component.waitEvents(component.navigationEvent());
+	const events = component.listenEvents(component.navigationEvent());
 	for await (const ev of events) {
 		if (ev instanceof NavigationEvent) {
 			component.replaceChild("main", () => {

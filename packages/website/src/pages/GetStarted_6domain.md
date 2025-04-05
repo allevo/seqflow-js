@@ -146,7 +146,7 @@ export async function QuoteComponent(
 	);
 
 	// Listen to the domain events
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(FetchingNewQuote),
 		component.domainEvent(NewQuoteFetched),
 		component.domainEvent(QuoteErrorFetched),
@@ -207,7 +207,7 @@ export async function RefreshQuoteButton(
 	// Refresh the quote at the start
 	await refresh();
 
-	const events = component.waitEvents(component.domEvent("button", "click"));
+	const events = component.listenEvents(component.domEvent("button", "click"));
 	for await (const _ of events) {
 		// Refresh the quote when the button is clicked
 		await refresh();

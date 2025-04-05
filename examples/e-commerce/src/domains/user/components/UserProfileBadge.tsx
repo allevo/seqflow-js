@@ -48,7 +48,7 @@ export async function UserProfileBadge(
 	);
 
 	const profilePicture = component.getChild("logo") as HTMLImageElement;
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(UserLoggedEvent),
 		component.domainEvent(UserLoggedOutEvent),
 		component.domEvent(component._el, "click"),

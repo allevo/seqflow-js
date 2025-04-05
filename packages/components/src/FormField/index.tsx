@@ -102,7 +102,7 @@ export async function FormField(
 	}
 
 	if (input instanceof HTMLInputElement) {
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent(input, "valid"),
 			component.domEvent(input, "invalid"),
 		);

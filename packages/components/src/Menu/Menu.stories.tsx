@@ -14,7 +14,7 @@ async function MenuStory(
 			</Menu.Item>
 		</Menu>,
 	);
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "click"),
 	);
 	for await (const ev of events) {

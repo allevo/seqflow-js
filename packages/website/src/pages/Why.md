@@ -70,7 +70,7 @@ export async function Counter({}, {component}: Contexts) {
 
 	component.render(<button key="click-me-button">Click Me</button>);
 
-	const events = component.waitEvents(component.domEvent("click-me-button", "click"));
+	const events = component.listenEvents(component.domEvent("click-me-button", "click"));
 	for await (const ev of events) {
 		counter++;
         window.alert(\`Clicked \${counter} times\`);
@@ -136,7 +136,7 @@ export async function UserBadge({}, { component, app }: Contexts) {
     component.render(<div>{getBadge(user)}</div>);
 
     // Listen to the UserLoggedEvent
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.app.domainEvent(UserLoggedEvent),
 	);
     // Every time the event is emitted, the \`for\` loop is executed

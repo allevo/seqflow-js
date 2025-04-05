@@ -59,7 +59,7 @@ async function ChangeCounterButton(
 			{data.text}
 		</Button>,
 	);
-	const events = component.waitEvents(component.domEvent("button", "click"));
+	const events = component.listenEvents(component.domEvent("button", "click"));
 
 	for await (const _ of events) {
 		app.domains.counter.applyDelta(data.delta);
@@ -90,7 +90,7 @@ export async function Counter(
 		</Card>,
 	);
 
-	const events = component.waitEvents(component.domainEvent(CounterChanged));
+	const events = component.listenEvents(component.domainEvent(CounterChanged));
 	for await (const ev of events) {
 		component.getChild("counter").textContent = `${ev.detail.counter}`;
 	}

@@ -27,7 +27,7 @@ async function CategoryItem(
 		</a>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "click", {
 			preventDefault: true,
 		}),

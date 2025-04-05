@@ -26,7 +26,7 @@ export async function CartTooltip(_: unknown, { component, app }: Contexts) {
 		</Alert>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(ChangeCartEvent),
 		component.domainEvent(CheckoutEndedCartEvent),
 		component.navigationEvent(),

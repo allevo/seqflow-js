@@ -22,7 +22,7 @@ export async function SetCounterValue(
 		</Form>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent("form", "submit", { preventDefault: true }),
 	);
 	for await (const ev of events) {

@@ -37,7 +37,7 @@ export async function Header(
 	const className = user ? classes.logged : classes.unlogged;
 	component._el.classList.add(className);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(UserLoggedEvent),
 		component.domainEvent(UserLoggedOutEvent),
 		component.domEvent(component._el, "click", {

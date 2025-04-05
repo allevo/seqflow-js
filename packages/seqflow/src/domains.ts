@@ -13,7 +13,7 @@ import type { Domains } from "./types";
  * We want to create the following developer experience:
  * ```ts
  * const CounterChangedEvent = createDomainEventClass('counter', 'changed')
- * const g = component.waitEvents(
+ * const g = component.listenEvents(
  * 		component.domainEvent(CounterChangedEvent)
  * )
  * for await (const ev of g) {

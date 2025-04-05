@@ -29,7 +29,7 @@ export async function RefreshQuoteButton(
 
 	await f();
 
-	const events = component.waitEvents(component.domEvent("button", "click"));
+	const events = component.listenEvents(component.domEvent("button", "click"));
 	for await (const _ of events) {
 		await f();
 	}

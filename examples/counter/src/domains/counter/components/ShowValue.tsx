@@ -9,7 +9,7 @@ export async function ShowValue(
 
 	component.render(`${app.domains.counter.get()}`);
 
-	const events = component.waitEvents(component.domainEvent(CounterChanged));
+	const events = component.listenEvents(component.domainEvent(CounterChanged));
 	for await (const ev of events) {
 		if (component.matches(ev, CounterChanged)) {
 			component._el.textContent = `${ev.detail.currentValue}`;

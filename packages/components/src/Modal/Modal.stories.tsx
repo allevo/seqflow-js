@@ -37,7 +37,7 @@ async function ModalStory(
 
 	const modal = component.getChild<HTMLDialogElement>("modal");
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent("open-modal", "click"),
 	);
 	for await (const event of events) {

@@ -30,7 +30,7 @@ export async function Main({}, { component }: Contexts) {
 		</>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(FetchingNewQuote),
 		component.domainEvent(NewQuoteFetched),
 		component.domainEvent(QuoteErrorFetched),

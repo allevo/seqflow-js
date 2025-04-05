@@ -114,7 +114,7 @@ export async function Main({}, { component, app }: Contexts) {
 
 	await fetchAndRender();
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent('refresh-button', 'click')
 	)
 	for await (const _ of events) {

@@ -126,7 +126,7 @@ export const NavbarResponsive: StoryFn = async (
 		</Navbar>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "click", {
 			fn: (e) => {
 				if (e.target instanceof HTMLElement && e.target.closest("a")) {
@@ -199,7 +199,7 @@ export const WithDropdownAndLinkStory: StoryFn =
 			</Navbar>,
 		);
 
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent(component._el, "click", {
 				fn: (e) => {
 					if (e.target instanceof HTMLElement && e.target.closest("a")) {
