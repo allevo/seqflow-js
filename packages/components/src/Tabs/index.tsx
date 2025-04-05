@@ -44,7 +44,7 @@ export async function Tabs(
 			.join(" ");
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 Tabs.tagName = () => "div";
 
@@ -78,7 +78,7 @@ export async function TabContent(
 	component._el.classList.add("tab-content");
 	component._el.role = "tabpanel";
 
-	component.renderSync(children);
+	component.render(children);
 }
 Tabs.TabContent = TabContent;
 

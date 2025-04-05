@@ -46,13 +46,13 @@ From this list, I structured components as asynchronous functions, where the dev
 import { Contexts } from "@seqflow/seqflow";
 
 export async function MyComponent({}, {component}: Contexts) {
-    this.renderSync(<div>Loading...</div>);
+    component.render(<div>Loading...</div>);
 
     const userData: {
         username: string,
     } = await fetchUserData(); // async function
 
-    component.renderSync(<p>Hi, {username}!</p>);
+    component.render(<p>Hi, {username}!</p>);
 }
 ```
 
@@ -68,9 +68,9 @@ import { Contexts } from "@seqflow/seqflow";
 export async function Counter({}, {component}: Contexts) {
     let counter = 0;
 
-	this.renderSync(<button key="click-me-button">Click Me</button>);
+	component.render(<button key="click-me-button">Click Me</button>);
 
-	const events = component.waitEvents(component.domEvent("click-me-button", "click"));
+	const events = component.listenEvents(component.domEvent("click-me-button", "click"));
 	for await (const ev of events) {
 		counter++;
         window.alert(\`Clicked \${counter} times\`);
@@ -133,17 +133,17 @@ function getBadge(user: User | undefined) {
 
 export async function UserBadge({}, { component, app }: Contexts) {
     const user: User | undefined = await app.domains.user.getLoggedUser();
-    component.renderSync(<div>{getBadge(user)}</div>);
+    component.render(<div>{getBadge(user)}</div>);
 
     // Listen to the UserLoggedEvent
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.app.domainEvent(UserLoggedEvent),
 	);
     // Every time the event is emitted, the \`for\` loop is executed
     for await (const ev of events) {
         const user: User | undefined = await app.domains.user.getUser()
         // Update the badge
-        component.renderSync(<div>{getBadge(user)}</div>);
+        component.render(<div>{getBadge(user)}</div>);
     }
 }
 ```

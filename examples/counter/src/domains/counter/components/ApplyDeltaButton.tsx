@@ -5,7 +5,7 @@ export async function ApplyDeltaButton(
 	{ delta, label }: ComponentProps<{ delta: number; label: string }>,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Button
 			color="primary"
 			onClick={() => app.domains.counter.applyDelta(delta)}

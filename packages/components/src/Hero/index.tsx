@@ -13,7 +13,7 @@ export async function Hero(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 export async function HeroContent(
@@ -29,7 +29,7 @@ export async function HeroContent(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 Hero.Content = HeroContent;

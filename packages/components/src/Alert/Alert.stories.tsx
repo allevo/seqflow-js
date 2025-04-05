@@ -8,7 +8,7 @@ async function AlertStory(
 	props: ComponentProps<AlertPropsType>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(<Alert {...props}>This is an alert</Alert>);
+	component.render(<Alert {...props}>This is an alert</Alert>);
 }
 // biome-ignore lint/suspicious/noExplicitAny: storybook
 AlertStory.__storybook = (Alert as any).__storybook;
@@ -25,7 +25,7 @@ export default {
 export const Empty = {};
 
 export const AllAlert: StoryFn = async (_, { component }: Contexts) => {
-	component.renderSync(
+	component.render(
 		<div
 			style={{
 				display: "grid",

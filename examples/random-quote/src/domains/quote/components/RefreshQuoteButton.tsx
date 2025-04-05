@@ -21,7 +21,7 @@ export async function RefreshQuoteButton(
 		});
 	};
 
-	component.renderSync(
+	component.render(
 		<Button key="button" type="button">
 			Refresh quote
 		</Button>,
@@ -29,7 +29,7 @@ export async function RefreshQuoteButton(
 
 	await f();
 
-	const events = component.waitEvents(component.domEvent("button", "click"));
+	const events = component.listenEvents(component.domEvent("button", "click"));
 	for await (const _ of events) {
 		await f();
 	}

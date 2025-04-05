@@ -5,7 +5,7 @@ async function LinkStory(
 	{ children, ...props }: ComponentProps<LinkPropsType>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(<Link {...props}>This is a link</Link>);
+	component.render(<Link {...props}>This is a link</Link>);
 }
 // biome-ignore lint/suspicious/noExplicitAny: storybook
 LinkStory.__storybook = (Link as any).__storybook;
@@ -23,7 +23,7 @@ export const AllLinks = async function AllLinks(
 	_: ComponentProps<unknown>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<div>
 			<Link href="https://seqflow.dev">Link</Link>
 			<Link showAsButton="primary" href="https://seqflow.dev">

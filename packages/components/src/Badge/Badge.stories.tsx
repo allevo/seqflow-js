@@ -16,7 +16,7 @@ export default {
 export const Empty = {};
 
 export const AllBadge: StoryFn = async (_, { component }: Contexts) => {
-	component.renderSync(
+	component.render(
 		<div
 			style={{
 				display: "grid",

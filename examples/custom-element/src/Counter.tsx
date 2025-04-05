@@ -54,12 +54,12 @@ async function ChangeCounterButton(
 	data: ComponentProps<{ delta: number; text: string }>,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Button key="button" type="button" color="primary">
 			{data.text}
 		</Button>,
 	);
-	const events = component.waitEvents(component.domEvent("button", "click"));
+	const events = component.listenEvents(component.domEvent("button", "click"));
 
 	for await (const _ of events) {
 		app.domains.counter.applyDelta(data.delta);
@@ -72,7 +72,7 @@ export async function Counter(
 ) {
 	component._el.classList.add(classes["counter-card"]);
 
-	component.renderSync(
+	component.render(
 		<Card
 			compact
 			className={"m-auto w-96 bg-slate-900 text-slate-200 mt-6"}
@@ -90,7 +90,7 @@ export async function Counter(
 		</Card>,
 	);
 
-	const events = component.waitEvents(component.domainEvent(CounterChanged));
+	const events = component.listenEvents(component.domainEvent(CounterChanged));
 	for await (const ev of events) {
 		component.getChild("counter").textContent = `${ev.detail.counter}`;
 	}

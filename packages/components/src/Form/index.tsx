@@ -32,7 +32,7 @@ export async function Form(
 			signal: component.ac.signal,
 		},
 	);
-	component.renderSync(children);
+	component.render(children);
 
 	const el = component._el as FormComponent;
 	el.runAsync = async (fn) => {

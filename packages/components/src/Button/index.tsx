@@ -109,7 +109,7 @@ export async function Button(
 		});
 	}
 	component._el.setAttribute("aria-live", "polite");
-	component.renderSync(
+	component.render(
 		<>
 			<span
 				key="l"

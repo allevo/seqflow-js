@@ -10,7 +10,7 @@ export async function Main(
 ) {
 	await app.domains.user.restoreUser();
 
-	component.renderSync(<Router />);
+	component.render(<Router />);
 }
 
 declare module "@seqflow/seqflow" {

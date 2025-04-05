@@ -21,6 +21,6 @@ export async function Footer(
 	}
 	component._el.classList.add(...classes);
 
-	component.renderSync(children);
+	component.render(children);
 }
 Footer.tagName = () => "footer";

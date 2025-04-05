@@ -11,7 +11,7 @@ export async function Prose(
 		});
 		return;
 	}
-	component.renderSync(children);
+	component.render(children);
 }
 
 export interface HeadingProps {
@@ -30,7 +30,7 @@ export async function Heading(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 Heading.tagName = (props: HeadingProps) => {
 	return `h${props.level || 1}`;

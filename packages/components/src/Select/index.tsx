@@ -67,7 +67,7 @@ export async function Select(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 
 	if (required) {
 		component._el.setAttribute("required", "");

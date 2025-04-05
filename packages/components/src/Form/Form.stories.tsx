@@ -12,7 +12,7 @@ async function FormExample(
 	props: ComponentProps<undefined>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Form>
 			<FormField id="username-label" label="username">
 				<TextInput
@@ -35,7 +35,7 @@ async function FormExample(
 		</Form>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const ev of events) {
@@ -55,7 +55,7 @@ export default {
 export const Empty = {};
 
 async function RequiredNumberInputForm(_: unknown, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<>
 			<Form>
 				<FormField label={"Choose a value"}>
@@ -69,7 +69,7 @@ async function RequiredNumberInputForm(_: unknown, { component }: Contexts) {
 		</>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const _ of events) {
@@ -122,7 +122,7 @@ export const NumberInputStory: StoryFn = {
 };
 
 async function RequiredTextInputForm(_: unknown, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<>
 			<Form>
 				<FormField label={"Choose a value"}>
@@ -136,7 +136,7 @@ async function RequiredTextInputForm(_: unknown, { component }: Contexts) {
 		</>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const _ of events) {
@@ -191,7 +191,7 @@ export const TextInputStory: StoryFn = {
 };
 
 async function AsyncSubmitionForm(_: unknown, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<>
 			<Form key="form">
 				<FormField label={"Choose a value"}>
@@ -207,7 +207,7 @@ async function AsyncSubmitionForm(_: unknown, { component }: Contexts) {
 
 	const form = component.getChild<FormComponent>("form");
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "submit", { preventDefault: true }),
 	);
 	for await (const _ of events) {

@@ -7,7 +7,7 @@ async function TabsExample(
 	props: ComponentProps<TabsProps>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Tabs {...props}>
 			<Tabs.TabHeader defaultChecked label="Tab 1" />
 			<Tabs.TabContent className={"p-10"}>Tab content 1</Tabs.TabContent>
@@ -65,7 +65,7 @@ export const DefaultCheckedTabs: StoryFn = {
 		props: ComponentProps<TabsProps>,
 		{ component }: Contexts,
 	) {
-		component.renderSync(
+		component.render(
 			<Tabs {...props}>
 				<Tabs.TabHeader label="Tab 1" />
 				<Tabs.TabContent>Tab content 1</Tabs.TabContent>

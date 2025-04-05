@@ -12,7 +12,7 @@ import { Profile } from "./pages/profile";
 import classes from "./router.module.css";
 
 async function NotFound(_: ComponentProps<unknown>, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<div>
 			<h1>404</h1>
 			<p>Not found</p>
@@ -47,7 +47,7 @@ export async function Router(
 ) {
 	const user: UserType | undefined = await app.domains.user.getUser();
 	const Component = getComponent(window.location.pathname);
-	component.renderSync(
+	component.render(
 		<div id={classes.app}>
 			<Header user={user} className={"header"} />
 			<Component key="main" className={classes.main} />
@@ -55,7 +55,7 @@ export async function Router(
 		</div>,
 	);
 
-	const events = component.waitEvents(component.navigationEvent());
+	const events = component.listenEvents(component.navigationEvent());
 	for await (const ev of events) {
 		if (ev instanceof NavigationEvent) {
 			component.replaceChild("main", () => {

@@ -470,13 +470,26 @@ export class SeqFlowComponentContext {
 		return el;
 	}
 
+	/**
+	 * @deprecated Use render() instead
+	 */
 	renderSync(
+		element: string | number | null | undefined | JSX.Element | JSX.Element[],
+	) {
+		return this.render(element);
+	}
+
+	/**
+	 * Synchronously renders the given element into the component's DOM.
+	 * @param element The element to render
+	 */
+	render(
 		element: string | number | null | undefined | JSX.Element | JSX.Element[],
 	) {
 		// Remove all the content previoursly rendered
 		this._el.innerHTML = "";
 
-		// If the developer invokes `renderSync` multiple times
+		// If the developer invokes `sync` multiple times
 		// we need to unmount all the children
 		// `this.c` contains all the children, the old and the new ones
 		// In fact `createDOMElement` creates children and only after this method is called.
@@ -525,14 +538,14 @@ export class SeqFlowComponentContext {
 				}
 				// TODO: we should throw an error or ignore it?
 				this.app.log.error({
-					message: "renderSync: invalid element",
+					message: "sync: invalid element",
 					data: { element },
 				});
 				break;
 			default:
 				// TODO: we should throw an error or ignore it?
 				this.app.log.error({
-					message: "renderSync: invalid element",
+					message: "sync: invalid element",
 					data: { element },
 				});
 				break;
@@ -608,7 +621,18 @@ export class SeqFlowComponentContext {
 		wrapper.replaceWith(a as Node);
 	}
 
+	/**
+	 * @deprecated Use listenEvents instead. This method will be removed in a future version.
+	 */
 	async *waitEvents<
+		Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[],
+	>(...fns: Fns): AsyncGenerator<GetYieldType<Fns[number]>> {
+		for await (const ev of this.listenEvents(...fns)) {
+			yield ev;
+		}
+	}
+
+	async *listenEvents<
 		Fns extends EventAsyncGenerator<GetYieldType<Fns[number]>>[],
 	>(...fns: Fns): AsyncGenerator<GetYieldType<Fns[number]>> {
 		for await (const ev of combineEventAsyncGenerators(this.ac, ...fns)) {
@@ -662,6 +686,85 @@ export class SeqFlowComponentContext {
 
 	navigationEvent(): EventAsyncGenerator<NavigationEvent> {
 		return navigationEvent(this.app.router.getEventTarget());
+	}
+
+	// First overload: For DOM event matching
+	matches<K extends keyof HTMLElementEventMap>(
+		event: Event,
+		key: string | HTMLElement | SVGElement | MathMLElement,
+		eventType: K | (string & {}),
+	): boolean;
+	// Second overload: For Domain event matching
+	matches<
+		EventType extends string,
+		DetailType,
+		BEE extends typeof DomainEvent<Inner, DetailType>,
+		Inner extends string & EventType = EventType,
+	>(event: Event, domainEventClass: BEE): event is InstanceType<BEE>;
+	// Third overload: For Navigation event matching
+	matches(
+		event: Event,
+		eventClass: typeof NavigationEvent,
+	): event is NavigationEvent;
+	matches(
+		event: Event,
+		keyOrDomainEventClassOrNavigationEvent:
+			| string
+			| HTMLElement
+			| SVGElement
+			| MathMLElement
+			| typeof DomainEvent<string, unknown>
+			| typeof NavigationEvent,
+		eventType?: string,
+	): boolean {
+		// `MathMLElement` is a well known type on browser, but not in Jest
+		// so we need to check if it is defined
+
+		// Case 1: DOM event matching
+		if (
+			typeof keyOrDomainEventClassOrNavigationEvent === "string" ||
+			keyOrDomainEventClassOrNavigationEvent instanceof HTMLElement ||
+			keyOrDomainEventClassOrNavigationEvent instanceof SVGElement ||
+			(typeof MathMLElement !== "undefined" &&
+				keyOrDomainEventClassOrNavigationEvent instanceof MathMLElement)
+		) {
+			if (!eventType) {
+				throw new Error("eventType is required when matching DOM events");
+			}
+
+			let child: HTMLElement | SVGElement | MathMLElement | null = null;
+			if (keyOrDomainEventClassOrNavigationEvent instanceof HTMLElement) {
+				child = keyOrDomainEventClassOrNavigationEvent;
+			} else if (keyOrDomainEventClassOrNavigationEvent instanceof SVGElement) {
+				child = keyOrDomainEventClassOrNavigationEvent;
+			} else if (
+				typeof MathMLElement !== "undefined" &&
+				keyOrDomainEventClassOrNavigationEvent instanceof MathMLElement
+			) {
+				child = keyOrDomainEventClassOrNavigationEvent;
+			} else {
+				child = this.findChild(
+					keyOrDomainEventClassOrNavigationEvent as string,
+				);
+			}
+			if (!child) {
+				return false;
+			}
+			if (!(event.target instanceof HTMLElement)) {
+				return false;
+			}
+
+			return event.type === eventType && child.contains(event.target);
+		}
+
+		// Case 2: Domain event matching
+		const DomainEventClass = keyOrDomainEventClassOrNavigationEvent;
+		return (
+			event instanceof
+			(DomainEventClass as
+				| typeof NavigationEvent
+				| typeof DomainEvent<string, unknown>)
+		);
 	}
 }
 // @ts-ignore

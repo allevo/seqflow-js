@@ -55,5 +55,5 @@ export async function Badge(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }

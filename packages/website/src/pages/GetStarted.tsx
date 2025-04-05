@@ -16,7 +16,7 @@ export async function GetStarted(
 ) {
 	const segments = app.router.segments;
 	if (segments.length === 1) {
-		component.renderSync(
+		component.render(
 			<div id="get-started">
 				<ContentWithToc toc={main.toc} html={main.html} title="Get started" />
 			</div>,
@@ -27,7 +27,7 @@ export async function GetStarted(
 	const segment = segments[1];
 	switch (segment) {
 		case "prerequisites":
-			component.renderSync(
+			component.render(
 				<div id="get-started">
 					<ContentWithToc
 						toc={prerequisites.toc}
@@ -38,7 +38,7 @@ export async function GetStarted(
 			);
 			return;
 		case "fetch-data":
-			component.renderSync(
+			component.render(
 				<div id="get-started">
 					<ContentWithToc
 						toc={fetchData.toc}
@@ -49,7 +49,7 @@ export async function GetStarted(
 			);
 			return;
 		case "split-components":
-			component.renderSync(
+			component.render(
 				<div id="get-started">
 					<ContentWithToc
 						toc={splitComponents.toc}
@@ -60,7 +60,7 @@ export async function GetStarted(
 			);
 			return;
 		case "refresh-quote":
-			component.renderSync(
+			component.render(
 				<div id="get-started">
 					<ContentWithToc
 						toc={refreshQuote.toc}
@@ -71,7 +71,7 @@ export async function GetStarted(
 			);
 			return;
 		case "configuration":
-			component.renderSync(
+			component.render(
 				<div id="get-started">
 					<ContentWithToc
 						toc={configuration.toc}
@@ -82,7 +82,7 @@ export async function GetStarted(
 			);
 			return;
 		case "test":
-			component.renderSync(
+			component.render(
 				<div id="get-started">
 					<ContentWithToc
 						toc={test.toc}
@@ -93,7 +93,7 @@ export async function GetStarted(
 			);
 			return;
 		case "domain":
-			component.renderSync(
+			component.render(
 				<div id="get-started">
 					<ContentWithToc
 						toc={domain.toc}
@@ -104,7 +104,7 @@ export async function GetStarted(
 			);
 			return;
 		case "conclusion":
-			component.renderSync(
+			component.render(
 				<div id="get-started">
 					<ContentWithToc
 						toc={conclusion.toc}

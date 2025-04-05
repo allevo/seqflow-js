@@ -14,7 +14,7 @@ export const WithoutText: StoryFn = async function OR(
 	_: unknown,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<div className="flex w-full flex-col border-opacity-50">
 			<div className="card bg-base-300 rounded-box grid h-20 place-items-center">
 				content
@@ -31,7 +31,7 @@ export const WithText: StoryFn = async function OR(
 	_: unknown,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<div className="flex w-full flex-col border-opacity-50">
 			<div className="card bg-base-300 rounded-box grid h-20 place-items-center">
 				content

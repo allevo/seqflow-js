@@ -27,7 +27,7 @@ async function getRandomQuote(): Promise<Quote> {
 
 export async function Main({}, { component }: Contexts) {
 	// Render loading message
-	component.renderSync(
+	component.render(
 		<p>Loading...</p>
 	);
 
@@ -35,7 +35,7 @@ export async function Main({}, { component }: Contexts) {
 	const quote = await getRandomQuote();
 
 	// Replace loading message with quote
-	component.renderSync(
+	component.render(
 		<div>
 			<div>{quote.content}</div>
 			<div>{quote.author}</div>

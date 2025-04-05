@@ -14,7 +14,7 @@ export async function Login(
 	_: ComponentProps<unknown>,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Form key="login-form">
 			<Card compact className={"m-auto w-96 bg-zinc-700"} shadow="md">
 				<Card.Body>
@@ -38,11 +38,16 @@ export async function Login(
 
 	const usernameInput = component.getChild<TextInputComponent>("username");
 	const form = component.getChild<FormComponent>("login-form");
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent("login-form", "submit", { preventDefault: true }),
 	);
 	let user: UserType | undefined;
-	for await (const _ of events) {
+	for await (const ev of events) {
+		// ignore all non-login-form submit events
+		if (!component.matches(ev, "login-form", "submit")) {
+			continue;
+		}
+
 		const username = usernameInput.value;
 		const user = await form.runAsync(async () => {
 			return await app.domains.user.login({ username });

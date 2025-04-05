@@ -11,7 +11,7 @@ export async function Header(
 	data: ComponentProps<{ user?: UserType }>,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Navbar className={classes.header}>
 			<Navbar.Start>
 				<a href="/">
@@ -37,7 +37,7 @@ export async function Header(
 	const className = user ? classes.logged : classes.unlogged;
 	component._el.classList.add(className);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(UserLoggedEvent),
 		component.domainEvent(UserLoggedOutEvent),
 		component.domEvent(component._el, "click", {
@@ -46,19 +46,15 @@ export async function Header(
 	);
 
 	for await (const ev of events) {
-		if (ev instanceof UserLoggedEvent) {
+		if (component.matches(ev, UserLoggedEvent)) {
 			component._el.classList.add(classes.logged);
 			component._el.classList.remove(classes.unlogged);
-		} else if (ev instanceof UserLoggedOutEvent) {
+		} else if (component.matches(ev, UserLoggedOutEvent)) {
 			component._el.classList.add(classes.unlogged);
 			component._el.classList.remove(classes.logged);
-		} else if (
-			component.getChild("sign-in").contains(ev.target as HTMLElement)
-		) {
+		} else if (component.matches(ev, "sign-in", "click")) {
 			app.router.navigate("/login");
-		} else if (
-			component.getChild("store-logo").contains(ev.target as HTMLElement)
-		) {
+		} else if (component.matches(ev, "store-logo", "click")) {
 			app.router.navigate("/");
 		}
 	}

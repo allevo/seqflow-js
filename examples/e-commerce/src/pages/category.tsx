@@ -3,14 +3,14 @@ import { CardList } from "../components/CardList";
 import { components } from "../domains/product";
 
 async function Loading(_: ComponentProps<unknown>, { component }: Contexts) {
-	component.renderSync(<div>Loading...</div>);
+	component.render(<div>Loading...</div>);
 }
 
 export async function Category(
 	_: ComponentProps<unknown>,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(<Loading />);
+	component.render(<Loading />);
 
 	const categoryId = app.router.segments.pop();
 
@@ -24,7 +24,7 @@ export async function Category(
 		component.ac.signal,
 	);
 
-	component.renderSync(
+	component.render(
 		<CardList
 			prefix="category"
 			items={products}

@@ -11,7 +11,7 @@ test("the application starts", async (testContext) => {
 	let invokedCounter = 0;
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
 		invokedCounter++;
-		component.renderSync(<div>App</div>);
+		component.render(<div>App</div>);
 	}
 	startTestApp(testContext, App);
 
@@ -25,10 +25,10 @@ test("the application starts", async (testContext) => {
 
 test("render child", async (testContext) => {
 	async function Child(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync(<div>Child</div>);
+		component.render(<div>Child</div>);
 	}
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync(<Child />);
+		component.render(<Child />);
 	}
 	startTestApp(testContext, App);
 
@@ -42,10 +42,10 @@ test("pass props to child", async (testContext) => {
 		{ text }: ComponentProps<{ text: string }>,
 		{ component }: Contexts,
 	) {
-		component.renderSync(<div>{text}</div>);
+		component.render(<div>{text}</div>);
 	}
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync(<Child text="From parent" />);
+		component.render(<Child text="From parent" />);
 	}
 	startTestApp(testContext, App);
 
@@ -62,7 +62,7 @@ test("listen dom throws on DocumentFragment", async (testContext) => {
 			</>
 		);
 
-		component.renderSync(incrementButton);
+		component.render(incrementButton);
 
 		await expect(async () => {
 			await component
@@ -73,7 +73,7 @@ test("listen dom throws on DocumentFragment", async (testContext) => {
 				.next();
 		}).rejects.toThrowError("Cannot attach event to DocumentFragment");
 
-		component.renderSync("Ok");
+		component.render("Ok");
 	}
 	startTestApp(testContext, App);
 
@@ -83,7 +83,7 @@ test("listen dom throws on DocumentFragment", async (testContext) => {
 test("listen dom event using key", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
-		component.renderSync(
+		component.render(
 			<div>
 				<button key="button" type="button">
 					Increment
@@ -93,7 +93,7 @@ test("listen dom event using key", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(component.domEvent("button", "click"));
+		const events = component.listenEvents(component.domEvent("button", "click"));
 		for await (const _ of events) {
 			counter += 1;
 			counterSpan.textContent = `Counter: ${counter.toString()}`;
@@ -118,7 +118,7 @@ test("listen dom event using element", async (testContext) => {
 
 		const incrementButton = <button type="button">Increment</button>;
 
-		component.renderSync(
+		component.render(
 			<div>
 				{incrementButton}
 				<span key="counter">Counter: 0</span>
@@ -126,7 +126,7 @@ test("listen dom event using element", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent(incrementButton, "click"),
 		);
 		for await (const _ of events) {
@@ -151,7 +151,7 @@ test("listen more dom events", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
 
-		component.renderSync(
+		component.render(
 			<div>
 				<button key="button1" type="button">
 					Button1
@@ -167,7 +167,7 @@ test("listen more dom events", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent("button1", "click"),
 			component.domEvent("button2", "click"),
 			component.domEvent("button3", "click"),
@@ -201,7 +201,7 @@ test("switch on who fire event", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
 
-		component.renderSync(
+		component.render(
 			<div>
 				<button key="increase-by-1" type="button">
 					Increase by 1
@@ -217,29 +217,28 @@ test("switch on who fire event", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent("increase-by-1", "click"),
 			component.domEvent("increase-by-2", "click"),
 			component.domEvent("increase-by-3", "click"),
 		);
-		const increase1Button = component.getChild("increase-by-1");
-		const increase2Button = component.getChild("increase-by-2");
-		const increase3Button = component.getChild("increase-by-3");
+		console.log("--------------------------------");
 		for await (const ev of events) {
-			if (!(ev.target instanceof Element)) {
-				continue;
+			console.log(".................");
+			try {
+				console.log(component.matches(ev, "increase-by-1", "click"));
+				console.log(component.matches(ev, "increase-by-2", "click"));
+				console.log(component.matches(ev, "increase-by-3", "click"));
+			} catch (e) {
+				console.log(e);
 			}
-
-			switch (true) {
-				case increase1Button.contains(ev.target):
-					counter += 1;
-					break;
-				case increase2Button.contains(ev.target):
-					counter += 2;
-					break;
-				case increase3Button.contains(ev.target):
-					counter += 3;
-					break;
+			console.log(".................");
+			if (component.matches(ev, "increase-by-1", "click")) {
+				counter += 1;
+			} else if (component.matches(ev, "increase-by-2", "click")) {
+				counter += 2;
+			} else if (component.matches(ev, "increase-by-3", "click")) {
+				counter += 3;
 			}
 
 			counterSpan.textContent = `Counter: ${counter.toString()}`;
@@ -253,6 +252,8 @@ test("switch on who fire event", async (testContext) => {
 	const increase3Button = await screen.findByText(/Increase by 3/i);
 
 	increase1Button.click();
+
+	await sleep(100);
 
 	await waitFor(() => screen.getByText("Counter: 1"));
 
@@ -269,7 +270,7 @@ test("prevent default", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
 
-		component.renderSync(
+		component.render(
 			<form key="increment-form">
 				<span key="counter">Counter: 0</span>
 				<button key="submit-button" type="submit">
@@ -279,7 +280,7 @@ test("prevent default", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent("submit-button", "click", { preventDefault: true }),
 			component.domEvent("increment-form", "submit"),
 		);
@@ -310,7 +311,7 @@ test("stop propagation", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
 
-		component.renderSync(
+		component.render(
 			<div key="wrapper">
 				<button key="button" type="button">
 					Click me
@@ -320,7 +321,7 @@ test("stop propagation", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent("button", "click", { stopPropagation: true }),
 			component.domEvent("button", "click"),
 			component.domEvent("wrapper", "click"),
@@ -352,7 +353,7 @@ test("stop immediate propagation", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
 
-		component.renderSync(
+		component.render(
 			<div key="wrapper">
 				<button key="button" type="button">
 					Click me
@@ -362,7 +363,7 @@ test("stop immediate propagation", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent("button", "click"),
 			component.domEvent("button", "click", { stopImmediatePropagation: true }),
 			component.domEvent("button", "click"),
@@ -396,13 +397,13 @@ test("listen domain event", async (testContext) => {
 		_: ComponentProps<unknown>,
 		{ component, app }: Contexts,
 	) {
-		component.renderSync(
+		component.render(
 			<button key="button" type="button">
 				Increment
 			</button>,
 		);
 
-		const events = component.waitEvents(component.domEvent("button", "click"));
+		const events = component.listenEvents(component.domEvent("button", "click"));
 		for await (const _ of events) {
 			app.domains.counter.applyDelta(1);
 		}
@@ -411,7 +412,7 @@ test("listen domain event", async (testContext) => {
 		_: ComponentProps<unknown>,
 		{ component, app }: Contexts,
 	) {
-		component.renderSync(
+		component.render(
 			<div>
 				<IncrementCounterButton />
 				<span key="counter">Counter: 0</span>
@@ -419,7 +420,7 @@ test("listen domain event", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("counter");
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domainEvent(CounterChangedEvent),
 		);
 		for await (const _ of events) {
@@ -444,9 +445,9 @@ test("listen navigation event", async (testContext) => {
 		_: ComponentProps<unknown>,
 		{ component, app }: Contexts,
 	) {
-		component.renderSync(<a href="/another-page">Go to another page</a>);
+		component.render(<a href="/another-page">Go to another page</a>);
 
-		const events = component.waitEvents(
+		const events = component.listenEvents(
 			component.domEvent(component._el, "click", { preventDefault: true }),
 		);
 		for await (const _ of events) {
@@ -454,7 +455,7 @@ test("listen navigation event", async (testContext) => {
 		}
 	}
 	async function App(_: ComponentProps<unknown>, { component, app }: Contexts) {
-		component.renderSync(
+		component.render(
 			<div>
 				<AnotherPageLink />
 				<span key="current-path">Path: {app.router.getCurrentPathname()}</span>
@@ -462,7 +463,7 @@ test("listen navigation event", async (testContext) => {
 		);
 
 		const counterSpan = component.getChild("current-path");
-		const events = component.waitEvents(component.navigationEvent());
+		const events = component.listenEvents(component.navigationEvent());
 		for await (const ev of events) {
 			counterSpan.textContent = `Path: ${ev.path}`;
 		}

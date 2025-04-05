@@ -11,7 +11,7 @@ export async function AddToCart(
 
 	component._el.style.width = "100px";
 
-	component.renderSync(
+	component.render(
 		<>
 			<Button
 				className={[classes.firstAddToCart, "w-full"]}
@@ -51,8 +51,6 @@ export async function AddToCart(
 	);
 
 	const firstAddToCart = component.getChild("first-add-to-cart");
-	const secondAddToCart = component.getChild("second-add-to-cart");
-	const removeFromCart = component.getChild("remove-from-cart");
 	const otherAddToCartWrapper = component.getChild("other-add-to-cart-wrapper");
 	const counter = component.getChild("counter");
 
@@ -66,35 +64,27 @@ export async function AddToCart(
 		otherAddToCartWrapper.classList.remove(classes.show);
 	}
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "click"),
 	);
 	for await (const ev of events) {
-		const target = ev.target as HTMLElement;
-		switch (true) {
-			case firstAddToCart.contains(target): {
-				const c = app.domains.cart.addToCart({ product: data.product });
-				counter.textContent = `${c}`;
-				otherAddToCartWrapper.classList.add(classes.show);
-				firstAddToCart.classList.remove(classes.show);
-				break;
+		if (component.matches(ev, "first-add-to-cart", "click")) {
+			const c = app.domains.cart.addToCart({ product: data.product });
+			counter.textContent = `${c}`;
+			otherAddToCartWrapper.classList.add(classes.show);
+			firstAddToCart.classList.remove(classes.show);
+		} else if (component.matches(ev, "remove-from-cart", "click")) {
+			const remain = app.domains.cart.removeFromCart({
+				product: data.product,
+			});
+			counter.textContent = `${remain}`;
+			if (remain === 0) {
+				otherAddToCartWrapper.classList.remove(classes.show);
+				firstAddToCart.classList.add(classes.show);
 			}
-			case removeFromCart.contains(target): {
-				const remain = app.domains.cart.removeFromCart({
-					product: data.product,
-				});
-				counter.textContent = `${remain}`;
-				if (remain === 0) {
-					otherAddToCartWrapper.classList.remove(classes.show);
-					firstAddToCart.classList.add(classes.show);
-				}
-				break;
-			}
-			case secondAddToCart.contains(target): {
-				const c = app.domains.cart.addToCart({ product: data.product });
-				counter.textContent = `${c}`;
-				break;
-			}
+		} else if (component.matches(ev, "second-add-to-cart", "click")) {
+			const c = app.domains.cart.addToCart({ product: data.product });
+			counter.textContent = `${c}`;
 		}
 	}
 }

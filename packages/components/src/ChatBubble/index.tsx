@@ -23,7 +23,7 @@ export async function ChatBubble(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 export interface BubbleProps {
@@ -59,6 +59,6 @@ async function Bubble(
 		});
 		return;
 	}
-	component.renderSync(children);
+	component.render(children);
 }
 ChatBubble.Bubble = Bubble;

@@ -75,7 +75,7 @@ const component = new SeqFlowComponentContext(
 	const detail: {
 		value: number;
 	} = ev.detail;
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(MyDomainEventClass),
 	);
 	for await (const ev of events) {
@@ -88,7 +88,7 @@ const component = new SeqFlowComponentContext(
 		const eventType2: "another-event-type" = ev.t;
 	}
 
-	const events2 = component.waitEvents(
+	const events2 = component.listenEvents(
 		component.domainEvent(MyDomainEventClass),
 		component.domEvent(document.body, "click"),
 	);

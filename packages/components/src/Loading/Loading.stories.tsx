@@ -13,7 +13,7 @@ export default {
 export const Empty = {};
 
 export const Types: StoryFn = async function OR(_, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<div
 			style={{
 				display: "grid",
@@ -40,7 +40,7 @@ export const Types: StoryFn = async function OR(_, { component }: Contexts) {
 };
 
 export const Sizes: StoryFn = async function OR(_, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<div
 			style={{
 				display: "grid",

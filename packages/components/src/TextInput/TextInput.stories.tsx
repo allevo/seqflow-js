@@ -48,7 +48,7 @@ export const SetError: StoryFn<object> = {
 
 export const SetErrorWithFormField: StoryFn<object> = {
 	component: async (_, { component }) => {
-		component.renderSync(
+		component.render(
 			<FormField label="username">
 				<TextInput
 					withBorder

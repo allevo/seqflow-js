@@ -10,7 +10,7 @@ export async function CartBadge(
 	const productCount = app.domains.cart.getProductCount();
 	const count = productCount === 0 ? "" : productCount;
 
-	component.renderSync(
+	component.render(
 		<Button
 			color="ghost"
 			shape="circle"
@@ -31,7 +31,7 @@ export async function CartBadge(
 	);
 
 	const counter = component.getChild("counter") as HTMLSpanElement;
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(ChangeCartEvent),
 		component.domainEvent(CheckoutEndedCartEvent),
 		component.domEvent(component._el, "click", {
@@ -39,7 +39,10 @@ export async function CartBadge(
 		}),
 	);
 	for await (const ev of events) {
-		if (ev instanceof ChangeCartEvent || ev instanceof CheckoutEndedCartEvent) {
+		if (
+			component.matches(ev, ChangeCartEvent) ||
+			component.matches(ev, CheckoutEndedCartEvent)
+		) {
 			const productCount = app.domains.cart.getProductCount();
 			const count = productCount === 0 ? "" : productCount;
 			counter.textContent = `${count}`;

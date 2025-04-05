@@ -6,7 +6,7 @@ async function HeadingStory(
 	{ children, ...props }: ComponentProps<HeadingProps>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Prose>
 			<Heading {...props}>Heading</Heading>
 			<p>
@@ -32,7 +32,7 @@ export const Simple: StoryFn<{ label: string }> = async (
 	{ label },
 	{ component }: Contexts,
 ) => {
-	component.renderSync(
+	component.render(
 		<Prose>
 			<Heading>{label}</Heading>
 			<p>
@@ -49,7 +49,7 @@ export const MoreText: StoryFn<{ label: string }> = async (
 	{ label },
 	{ component }: Contexts,
 ) => {
-	component.renderSync(
+	component.render(
 		<Prose className="m-auto">
 			<Heading>{label}</Heading>
 			<p>

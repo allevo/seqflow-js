@@ -15,7 +15,7 @@ export async function Blog(
 
 	const segments = app.router.segments;
 	if (segments.length === 1) {
-		component.renderSync(
+		component.render(
 			<Prose className={["m-auto"]} style={{ maxWidth: "786px" }}>
 				<Heading level={1}>Blog</Heading>
 				<ol>
@@ -44,7 +44,7 @@ export async function Blog(
 		case "2024-11-24-theres-a-new-framework-in-town": {
 			const element = getElementFromString(html);
 
-			component.renderSync([
+			component.render([
 				<Prose className={["m-auto", classes.blogPost]}>
 					<Heading className={"text-center"} level={1}>
 						There's a New Framework in Town!

@@ -5,7 +5,7 @@ import type { StoryFn } from "@seqflow/storybook";
 import { Button, type ButtonComponent, type ButtonPropsType } from ".";
 
 async function ButtonStory(props: ButtonPropsType, { component }: Contexts) {
-	component.renderSync(<Button {...props}>The button text</Button>);
+	component.render(<Button {...props}>The button text</Button>);
 }
 // biome-ignore lint/suspicious/noExplicitAny: storybook
 ButtonStory.__storybook = (Button as any).__storybook;
@@ -43,7 +43,7 @@ export const DisableButton: StoryFn = {
 
 export const TrasitionButton: StoryFn = {
 	component: async (_, { component }: Contexts) => {
-		component.renderSync(<Button>The button text</Button>);
+		component.render(<Button>The button text</Button>);
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -74,7 +74,7 @@ export const TrasitionButton: StoryFn = {
 };
 
 export const AllButtons: StoryFn = async (_, { component }: Contexts) => {
-	component.renderSync(
+	component.render(
 		<div
 			style={{
 				display: "grid",

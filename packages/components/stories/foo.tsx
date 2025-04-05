@@ -3,14 +3,14 @@ import { Button } from '../src/index.tsx';
 import * as seqflow from '@seqflow/seqflow'
 
 async function Main({}, { component, app }: seqflow.Contexts) {
-    component.renderSync(
+    component.render(
         component.createDOMElement(
             Button,
             {},
             'Hello'
         )
     )
-    // this.renderSync(
+    // this.render(
     //     <div>
     //         <Button title="Hello" />
     //     </div>

@@ -8,7 +8,7 @@ export async function ProductItem(data: Product, { component }: Contexts) {
 	const tooltip = (
 		<div className={classes.tooltipWrapper}>{data.title}</div>
 	) as HTMLDivElement;
-	component.renderSync(
+	component.render(
 		<Card compact shadow="xl" className={["h-full", "max-w-xs"]}>
 			<figure>
 				<img
@@ -27,14 +27,14 @@ export async function ProductItem(data: Product, { component }: Contexts) {
 		</Card>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "mouseover"),
 		component.domEvent(component._el, "mouseout"),
 	);
 	for await (const e of events) {
-		if (e.type === "mouseover") {
+		if (component.matches(e, component._el, "mouseover")) {
 			tooltip.classList.add(classes.show);
-		} else {
+		} else if (component.matches(e, component._el, "mouseout")) {
 			tooltip.classList.remove(classes.show);
 		}
 	}

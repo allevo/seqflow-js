@@ -110,7 +110,7 @@ function QuoteProse(
 	{ quote }: ComponentProps<{ quote: Quote }>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Prose>
 			<blockquote>
 				<p>{quote.content}</p>
@@ -121,14 +121,14 @@ function QuoteProse(
 }
 // Loading component
 function Loading({}, { component }: Contexts) {
-	component.renderSync(<p>Loading...</p>);
+	component.render(<p>Loading...</p>);
 }
 // Show error
 function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
 	if (data.error instanceof Error) {
-		component.renderSync(<p>{data.error.message}</p>);
+		component.render(<p>{data.error.message}</p>);
 	} else {
-		component.renderSync(<p>Unknown error</p>);
+		component.render(<p>Unknown error</p>);
 	}
 }
 // Free spot
@@ -139,33 +139,29 @@ export async function QuoteComponent(
 	_: ComponentProps<unknown>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<>
 			<Spot key="quote" />
 		</>,
 	);
 
 	// Listen to the domain events
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(FetchingNewQuote),
 		component.domainEvent(NewQuoteFetched),
 		component.domainEvent(QuoteErrorFetched),
 	);
 	for await (const ev of events) {
-		switch (true) {
-			case ev instanceof FetchingNewQuote:
-				component.replaceChild("quote", () => <Loading key="quote" />);
-				break;
-			case ev instanceof NewQuoteFetched:
-				component.replaceChild("quote", () => (
-					<QuoteProse key="quote" quote={ev.detail} />
-				));
-				break;
-			case ev instanceof QuoteErrorFetched:
-				component.replaceChild("quote", () => (
-					<ErrorMessage key="quote" error={ev.detail} />
-				));
-				break;
+		if (component.matches(ev, FetchingNewQuote)) {
+			component.replaceChild("quote", () => <Loading key="quote" />);
+		} else if (component.matches(ev, NewQuoteFetched)) {
+			component.replaceChild("quote", () => (
+				<QuoteProse key="quote" quote={ev.detail} />
+			));
+		} else if (component.matches(ev, QuoteErrorFetched)) {
+			component.replaceChild("quote", () => (
+				<ErrorMessage key="quote" error={ev.detail} />
+			));
 		}
 	}
 }
@@ -202,7 +198,7 @@ export async function RefreshQuoteButton(
 		});
 	};
 
-	component.renderSync(
+	component.render(
 		<Button key="button" type="button">
 			Refresh
 		</Button>,
@@ -211,7 +207,7 @@ export async function RefreshQuoteButton(
 	// Refresh the quote at the start
 	await refresh();
 
-	const events = component.waitEvents(component.domEvent("button", "click"));
+	const events = component.listenEvents(component.domEvent("button", "click"));
 	for await (const _ of events) {
 		// Refresh the quote when the button is clicked
 		await refresh();
@@ -238,7 +234,7 @@ import { RefreshQuoteButton } from "./domains/quotes/components/RefreshQuoteButt
 import { QuoteDomain } from "./domains/quotes/domain";
 
 export async function Main({}, { component, app }: Contexts) {
-	component.renderSync(
+	component.render(
 		<>
 			<QuoteComponent key="quote" />
 			<RefreshQuoteButton key="button" />

@@ -13,7 +13,7 @@ export async function CartTooltip(_: unknown, { component, app }: Contexts) {
 	}
 	component._el.classList.add(...c);
 
-	component.renderSync(
+	component.render(
 		<Alert
 			className={[classes.cartTooltipLink]}
 			id="cart-tooltip-alert"
@@ -26,38 +26,28 @@ export async function CartTooltip(_: unknown, { component, app }: Contexts) {
 		</Alert>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domainEvent(ChangeCartEvent),
 		component.domainEvent(CheckoutEndedCartEvent),
 		component.navigationEvent(),
 		component.domEvent("cart-tooltip", "click", { preventDefault: true }),
 	);
 	for await (const ev of events) {
-		switch (true) {
-			case ev.type === "click" &&
-				component._el.contains(ev.target as HTMLElement): {
-				app.router.navigate("/cart");
-				break;
-			}
-			// biome-ignore lint/suspicious/noFallthroughSwitchClause: in other page, it depends on the cart state as below
-			case ev instanceof NavigationEvent:
-				if (ev.path === "/cart") {
-					component._el.classList.remove(classes.show);
-					break;
-				}
-			case ev instanceof ChangeCartEvent: {
-				const count = app.domains.cart.getProductCount();
-				if (count === 0) {
-					component._el.classList.remove(classes.show);
-				} else if (count > 0) {
-					component._el.classList.add(classes.show);
-				}
-				break;
-			}
-			case ev instanceof CheckoutEndedCartEvent: {
+		if (component.matches(ev, "cart-tooltip", "click")) {
+			app.router.navigate("/cart");
+		} else if (component.matches(ev, NavigationEvent)) {
+			if (ev.path === "/cart") {
 				component._el.classList.remove(classes.show);
-				break;
 			}
+		} else if (component.matches(ev, ChangeCartEvent)) {
+			const count = app.domains.cart.getProductCount();
+			if (count === 0) {
+				component._el.classList.remove(classes.show);
+			} else if (count > 0) {
+				component._el.classList.add(classes.show);
+			}
+		} else if (component.matches(ev, CheckoutEndedCartEvent)) {
+			component._el.classList.remove(classes.show);
 		}
 	}
 }

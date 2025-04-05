@@ -13,7 +13,7 @@ async function DropdownStory(
 	{ component }: Contexts,
 ) {
 	component._el.classList.add(...["pt-48", "pl-48"]);
-	component.renderSync(
+	component.render(
 		<Dropdown {...props}>
 			<Menu direction="vertical" size="md" className={["w-56", "shadow-md"]}>
 				<Menu.Item>

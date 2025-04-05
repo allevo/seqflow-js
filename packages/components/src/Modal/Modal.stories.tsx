@@ -7,7 +7,7 @@ async function ModalStory(
 	{ children, ...props }: ComponentProps<ModalType>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<>
 			<Button type="button" key="open-modal" className="btn">
 				Open Modal
@@ -37,7 +37,7 @@ async function ModalStory(
 
 	const modal = component.getChild<HTMLDialogElement>("modal");
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent("open-modal", "click"),
 	);
 	for await (const event of events) {

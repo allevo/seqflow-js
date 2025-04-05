@@ -58,7 +58,7 @@ export async function NumberInput(
 		el.ariaRequired = "true";
 	}
 
-	const ev = component.waitEvents(component.domEvent(component._el, "input"));
+	const ev = component.listenEvents(component.domEvent(component._el, "input"));
 	for await (const _ of ev) {
 		if (el.validity.valid) {
 			el.dispatchEvent(new Event("valid"));

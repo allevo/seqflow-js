@@ -25,7 +25,7 @@ afterEach(() => {
 });
 
 test("child: findChild", () => {
-	component.renderSync(<div key="div1" />);
+	component.render(<div key="div1" />);
 	expect(document.body.innerHTML).toBe('<div data-global-key="0"></div>');
 
 	const a = document.querySelector("div[data-global-key='0']");
@@ -35,7 +35,7 @@ test("child: findChild", () => {
 	expect(component.findChild("foo")).toBe(null);
 });
 test("child: getChild", () => {
-	component.renderSync(<div key="div1" />);
+	component.render(<div key="div1" />);
 	expect(document.body.innerHTML).toBe('<div data-global-key="0"></div>');
 
 	const a = document.querySelector("div[data-global-key='0']");
@@ -45,22 +45,22 @@ test("child: getChild", () => {
 	expect(() => component.getChild("foo")).toThrow();
 });
 test("child: replaceChild", async () => {
-	component.renderSync(<div key="div1">A</div>);
+	component.render(<div key="div1">A</div>);
 	expect(document.body.innerHTML).toBe('<div data-global-key="0">A</div>');
 
 	await component.replaceChild("div1", () => <div key="div1">B</div>);
 	expect(document.body.innerHTML).toBe('<div data-global-key="1">B</div>');
 });
 test("child: replaceChild - not found", async () => {
-	component.renderSync(<div key="div1">A</div>);
+	component.render(<div key="div1">A</div>);
 	expect(document.body.innerHTML).toBe('<div data-global-key="0">A</div>');
 
-	expect(async () =>
+	await expect(async () =>
 		component.replaceChild("foo", () => <div key="div1">B</div>),
 	).rejects.toThrow();
 });
 test("child: replaceChild - async", async () => {
-	component.renderSync(<div key="div1">A</div>);
+	component.render(<div key="div1">A</div>);
 	expect(document.body.innerHTML).toBe('<div data-global-key="0">A</div>');
 
 	await component.replaceChild("div1", async () => {
@@ -74,9 +74,9 @@ test("child: render children", async () => {
 		{ component }: Contexts,
 	) {
 		component._el.setAttribute("parent", "true");
-		component.renderSync(<div data-foo="bar">{children}</div>);
+		component.render(<div data-foo="bar">{children}</div>);
 	}
-	component.renderSync(
+	component.render(
 		<div>
 			<MyComponent>
 				<div key="div1">A</div>
@@ -92,7 +92,7 @@ test("child: render children with id", async () => {
 		{ children }: ComponentProps<unknown>,
 		{ component }: Contexts,
 	) {}
-	component.renderSync(<MyComponent id="foo" />);
+	component.render(<MyComponent id="foo" />);
 	expect(document.body.innerHTML).toBe(
 		'<div data-global-key="1" id="foo"></div>',
 	);
@@ -102,13 +102,13 @@ test("child: replaceChild should unmount all the current components and their li
 		{ children }: ComponentProps<unknown>,
 		{ component }: Contexts,
 	) {
-		component.renderSync(<div data-component="my-component-1">{children}</div>);
+		component.render(<div data-component="my-component-1">{children}</div>);
 	}
 	function MyComponent2(
 		{ children }: ComponentProps<unknown>,
 		{ component }: Contexts,
 	) {
-		component.renderSync(<div data-component="my-component-2">{children}</div>);
+		component.render(<div data-component="my-component-2">{children}</div>);
 	}
 
 	let counter = 0;
@@ -116,7 +116,7 @@ test("child: replaceChild should unmount all the current components and their li
 		counter++;
 	}
 
-	component.renderSync(
+	component.render(
 		<MyComponent1 key="spot">
 			<button type="button" onClick={incrementCounter}>
 				Click me
@@ -156,7 +156,7 @@ test("child: renderSync should unmount all the current components and their list
 		{ children }: ComponentProps<unknown>,
 		{ component }: Contexts,
 	) {
-		component.renderSync(<div data-component="my-component-1">{children}</div>);
+		component.render(<div data-component="my-component-1">{children}</div>);
 	}
 
 	let counter = 0;
@@ -164,7 +164,7 @@ test("child: renderSync should unmount all the current components and their list
 		counter++;
 	}
 
-	component.renderSync(
+	component.render(
 		<MyComponent1 key="spot">
 			<button type="button" onClick={incrementCounter}>
 				Click me
@@ -180,7 +180,7 @@ test("child: renderSync should unmount all the current components and their list
 	firstDiv.click();
 	await waitFor(() => expect(counter).toBe(1));
 
-	component.renderSync(<div>Replace the whole content</div>);
+	component.render(<div>Replace the whole content</div>);
 
 	firstDiv.click();
 	await sleep(100);
@@ -188,10 +188,10 @@ test("child: renderSync should unmount all the current components and their list
 });
 test("child: className & style", async () => {
 	function MyComponent1(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync("foo");
+		component.render("foo");
 	}
 
-	component.renderSync(
+	component.render(
 		<MyComponent1 className={"the-class-name"} style={{ height: "30px" }} />,
 	);
 	expect(document.body.innerHTML).toBe(

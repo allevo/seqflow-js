@@ -68,7 +68,7 @@ export async function Dropdown(
 		btn.tabIndex = 0;
 	}
 
-	component.renderSync(
+	component.render(
 		<>
 			{btn}
 			{/*<Button color="ghost" className="rounded-btn">{label}</Button>*/}

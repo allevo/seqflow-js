@@ -122,6 +122,6 @@ export async function Link(
 	el.href = href;
 	el.setAttribute("href", href);
 
-	component.renderSync(children);
+	component.render(children);
 }
 Link.tagName = () => "a";

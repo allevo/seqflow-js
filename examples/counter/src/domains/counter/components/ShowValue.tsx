@@ -7,10 +7,12 @@ export async function ShowValue(
 ) {
 	component._el.setAttribute("aria-live", "polite");
 
-	component.renderSync(`${app.domains.counter.get()}`);
+	component.render(`${app.domains.counter.get()}`);
 
-	const events = component.waitEvents(component.domainEvent(CounterChanged));
+	const events = component.listenEvents(component.domainEvent(CounterChanged));
 	for await (const ev of events) {
-		component._el.textContent = `${ev.detail.currentValue}`;
+		if (component.matches(ev, CounterChanged)) {
+			component._el.textContent = `${ev.detail.currentValue}`;
+		}
 	}
 }

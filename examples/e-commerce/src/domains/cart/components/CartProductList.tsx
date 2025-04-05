@@ -6,7 +6,7 @@ import { ChangeCartEvent } from "../events";
 import classes from "./CartProductList.module.css";
 
 async function EmptyCart(_: ComponentProps<unknown>, { component }: Contexts) {
-	component.renderSync(<div>Cart is empty</div>);
+	component.render(<div>Cart is empty</div>);
 }
 
 export async function CartProduct(
@@ -15,7 +15,7 @@ export async function CartProduct(
 ) {
 	component._el.classList.add(classes.product);
 	component._el.id = `cart-product-${data.product.id}`;
-	component.renderSync(
+	component.render(
 		<>
 			<div className={classes.left}>
 				<img
@@ -36,7 +36,7 @@ export async function CartProduct(
 		</>,
 	);
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent("remove-from-cart", "click"),
 	);
 	for await (const ev of events) {
@@ -49,14 +49,14 @@ export async function CartProductList(
 	{ component, app }: Contexts,
 ) {
 	if (data.cart.products.length === 0) {
-		component.renderSync(<EmptyCart />);
+		component.render(<EmptyCart />);
 		return;
 	}
 
 	const checkoutButton = (
 		<Button
 			color="primary"
-			key="remove-from-cart"
+			key="checkout-button"
 			type="button"
 			className={"mt-4"}
 		>
@@ -67,7 +67,9 @@ export async function CartProductList(
 	const cartLogin = (
 		<Alert color="warning" className={"mt-4"} style={{ display: "block" }}>
 			You have to log in to checkout. Click{" "}
-			<a href="/login">here to go to login page</a>
+			<a key="go-to-login" href="/login">
+				here to go to login page
+			</a>
 		</Alert>
 	) as HTMLElement;
 	const cartTotal = (
@@ -75,7 +77,7 @@ export async function CartProductList(
 			total: {data.cart.total} €
 		</div>
 	) as HTMLElement;
-	component.renderSync(
+	component.render(
 		<>
 			<ul className={classes.cartProducts}>
 				{data.cart.products.map(({ product, count, subTotal }) => {
@@ -104,26 +106,18 @@ export async function CartProductList(
 		cartLogin.remove();
 	}
 
-	const events = component.waitEvents(
+	const events = component.listenEvents(
 		component.domEvent(component._el, "click", {
 			preventDefault: true,
 		}),
 		component.domainEvent(ChangeCartEvent),
 	);
 	for await (const ev of events) {
-		if (ev.target instanceof HTMLElement) {
-			if (cartLogin.contains(ev.target)) {
-				ev.preventDefault();
-				app.router.navigate("/login");
-				continue;
-			}
-			if (checkoutButton.contains(ev.target)) {
-				ev.preventDefault();
-				app.router.navigate("/checkout");
-				continue;
-			}
-		}
-		if (ev instanceof ChangeCartEvent) {
+		if (component.matches(ev, "go-to-login", "click")) {
+			app.router.navigate("/login");
+		} else if (component.matches(ev, "checkout-button", "click")) {
+			app.router.navigate("/checkout");
+		} else if (component.matches(ev, ChangeCartEvent)) {
 			switch (ev.detail.action) {
 				case "remove-all-elements-of-a-product":
 					component.replaceChild(ev.detail.product.id, () => <></>);
@@ -138,11 +132,10 @@ export async function CartProductList(
 			const cart = app.domains.cart.getCart();
 
 			if (cart.products.length === 0) {
-				component.renderSync(<EmptyCart />);
-				break;
+				component.render(<EmptyCart />);
+			} else {
+				cartTotal.innerText = `total: ${cart.total} €`;
 			}
-
-			cartTotal.innerText = `total: ${cart.total} €`;
 		}
 	}
 }

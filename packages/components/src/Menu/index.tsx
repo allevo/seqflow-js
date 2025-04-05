@@ -36,7 +36,7 @@ export async function Menu(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 Menu.tagName = () => "ul";
 
@@ -51,7 +51,7 @@ export async function MenuItem(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 MenuItem.tagName = () => "li";
 
@@ -63,7 +63,7 @@ export async function SubMenu(
 	{ label, children }: ComponentProps<SubMenuPropsType>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<>
 			<summary
 				className={["btn", "btn-ghost"]}
@@ -90,7 +90,7 @@ export async function SubMenuItem(
 	component._el.style.alignItems = "flex-start";
 	component._el.style.justifyContent = "flex-start";
 
-	component.renderSync(children);
+	component.render(children);
 }
 SubMenuItem.tagName = () => "li";
 

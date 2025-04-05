@@ -14,7 +14,7 @@ export async function Navbar(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 export async function NavbarStart(
@@ -31,7 +31,7 @@ export async function NavbarStart(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 export async function NavbarCenter(
@@ -48,7 +48,7 @@ export async function NavbarCenter(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 export async function NavbarEnd(
@@ -65,7 +65,7 @@ export async function NavbarEnd(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 Navbar.Start = NavbarStart;

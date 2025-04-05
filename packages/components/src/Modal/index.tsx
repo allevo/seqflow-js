@@ -33,7 +33,7 @@ export async function Modal(
 		}
 	}
 
-	component.renderSync(
+	component.render(
 		<>
 			<div className={modalBoxClasses}>{children}</div>
 			{outside}
@@ -48,7 +48,7 @@ export async function ModalAction(
 ) {
 	component._el.classList.add("modal-action");
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 export async function ModalClose(
@@ -57,7 +57,7 @@ export async function ModalClose(
 ) {
 	const form = component._el as HTMLFormElement;
 	form.method = "dialog";
-	component.renderSync(children);
+	component.render(children);
 }
 ModalClose.tagName = () => "form";
 

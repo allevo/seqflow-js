@@ -29,7 +29,7 @@ export async function Main(
 ) {
 	component._el.classList.add(classes.wrapper);
 	const InitalComponent = getComponent(app.router.segments);
-	component.renderSync(
+	component.render(
 		<>
 			<Header className={classes.header} />
 			<div id={classes.main}>
@@ -46,7 +46,7 @@ export async function Main(
 		</>,
 	);
 
-	const events = component.waitEvents(component.navigationEvent());
+	const events = component.listenEvents(component.navigationEvent());
 	for await (const _ of events) {
 		const Component = getComponent(app.router.segments);
 		component.replaceChild("main", () => <Component key="main" />);
