@@ -25,9 +25,11 @@ export async function SetCounterValue(
 	const events = component.waitEvents(
 		component.domEvent("form", "submit", { preventDefault: true }),
 	);
-	for await (const _ of events) {
-		const input = component.getChild<HTMLInputElement>("choose-value");
-		const value = input.valueAsNumber;
-		app.domains.counter.set(value);
+	for await (const ev of events) {
+		if (component.matches(ev, "form", "submit")) {
+			const input = component.getChild<HTMLInputElement>("choose-value");
+			const value = input.valueAsNumber;
+			app.domains.counter.set(value);
+		}
 	}
 }

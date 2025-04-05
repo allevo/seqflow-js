@@ -56,12 +56,15 @@ export async function UserProfileBadge(
 		component.domEvent(component._el, "mouseout"),
 	);
 	for await (const ev of events) {
-		if (ev instanceof UserLoggedEvent || ev instanceof UserLoggedOutEvent) {
+		if (
+			component.matches(ev, UserLoggedEvent) ||
+			component.matches(ev, UserLoggedOutEvent)
+		) {
 			const user = (await app.domains.user.getUser()) || {
 				username: "Guest",
 			};
 			profilePicture.src = getProfileUrl(user, size);
-		} else if (ev.type === "click") {
+		} else if (component.matches(ev, component._el, "click")) {
 			ev.preventDefault();
 
 			if (ev.target instanceof HTMLAnchorElement) {
@@ -70,9 +73,9 @@ export async function UserProfileBadge(
 			} else if (ev.target instanceof HTMLImageElement) {
 				app.router.navigate("/profile");
 			}
-		} else if (ev.type === "mouseover") {
+		} else if (component.matches(ev, component._el, "mouseover")) {
 			profileHeaderMenu.classList.add(classes.show);
-		} else if (ev.type === "mouseout") {
+		} else if (component.matches(ev, component._el, "mouseout")) {
 			profileHeaderMenu.classList.remove(classes.show);
 		}
 	}

@@ -152,20 +152,16 @@ export async function QuoteComponent(
 		component.domainEvent(QuoteErrorFetched),
 	);
 	for await (const ev of events) {
-		switch (true) {
-			case ev instanceof FetchingNewQuote:
-				component.replaceChild("quote", () => <Loading key="quote" />);
-				break;
-			case ev instanceof NewQuoteFetched:
-				component.replaceChild("quote", () => (
-					<QuoteProse key="quote" quote={ev.detail} />
-				));
-				break;
-			case ev instanceof QuoteErrorFetched:
-				component.replaceChild("quote", () => (
-					<ErrorMessage key="quote" error={ev.detail} />
-				));
-				break;
+		if (component.matches(ev, FetchingNewQuote)) {
+			component.replaceChild("quote", () => <Loading key="quote" />);
+		} else if (component.matches(ev, NewQuoteFetched)) {
+			component.replaceChild("quote", () => (
+				<QuoteProse key="quote" quote={ev.detail} />
+			));
+		} else if (component.matches(ev, QuoteErrorFetched)) {
+			component.replaceChild("quote", () => (
+				<ErrorMessage key="quote" error={ev.detail} />
+			));
 		}
 	}
 }

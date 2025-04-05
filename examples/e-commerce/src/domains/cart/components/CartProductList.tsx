@@ -56,7 +56,7 @@ export async function CartProductList(
 	const checkoutButton = (
 		<Button
 			color="primary"
-			key="remove-from-cart"
+			key="checkout-button"
 			type="button"
 			className={"mt-4"}
 		>
@@ -67,7 +67,9 @@ export async function CartProductList(
 	const cartLogin = (
 		<Alert color="warning" className={"mt-4"} style={{ display: "block" }}>
 			You have to log in to checkout. Click{" "}
-			<a href="/login">here to go to login page</a>
+			<a key="go-to-login" href="/login">
+				here to go to login page
+			</a>
 		</Alert>
 	) as HTMLElement;
 	const cartTotal = (
@@ -111,19 +113,11 @@ export async function CartProductList(
 		component.domainEvent(ChangeCartEvent),
 	);
 	for await (const ev of events) {
-		if (ev.target instanceof HTMLElement) {
-			if (cartLogin.contains(ev.target)) {
-				ev.preventDefault();
-				app.router.navigate("/login");
-				continue;
-			}
-			if (checkoutButton.contains(ev.target)) {
-				ev.preventDefault();
-				app.router.navigate("/checkout");
-				continue;
-			}
-		}
-		if (ev instanceof ChangeCartEvent) {
+		if (component.matches(ev, "go-to-login", "click")) {
+			app.router.navigate("/login");
+		} else if (component.matches(ev, "checkout-button", "click")) {
+			app.router.navigate("/checkout");
+		} else if (component.matches(ev, ChangeCartEvent)) {
 			switch (ev.detail.action) {
 				case "remove-all-elements-of-a-product":
 					component.replaceChild(ev.detail.product.id, () => <></>);
@@ -139,10 +133,9 @@ export async function CartProductList(
 
 			if (cart.products.length === 0) {
 				component.render(<EmptyCart />);
-				break;
+			} else {
+				cartTotal.innerText = `total: ${cart.total} €`;
 			}
-
-			cartTotal.innerText = `total: ${cart.total} €`;
 		}
 	}
 }

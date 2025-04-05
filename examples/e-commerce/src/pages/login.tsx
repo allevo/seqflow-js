@@ -42,7 +42,12 @@ export async function Login(
 		component.domEvent("login-form", "submit", { preventDefault: true }),
 	);
 	let user: UserType | undefined;
-	for await (const _ of events) {
+	for await (const ev of events) {
+		// ignore all non-login-form submit events
+		if (!component.matches(ev, "login-form", "submit")) {
+			continue;
+		}
+
 		const username = usernameInput.value;
 		const user = await form.runAsync(async () => {
 			return await app.domains.user.login({ username });

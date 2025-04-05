@@ -222,24 +222,23 @@ test("switch on who fire event", async (testContext) => {
 			component.domEvent("increase-by-2", "click"),
 			component.domEvent("increase-by-3", "click"),
 		);
-		const increase1Button = component.getChild("increase-by-1");
-		const increase2Button = component.getChild("increase-by-2");
-		const increase3Button = component.getChild("increase-by-3");
+		console.log("--------------------------------");
 		for await (const ev of events) {
-			if (!(ev.target instanceof Element)) {
-				continue;
+			console.log(".................");
+			try {
+				console.log(component.matches(ev, "increase-by-1", "click"));
+				console.log(component.matches(ev, "increase-by-2", "click"));
+				console.log(component.matches(ev, "increase-by-3", "click"));
+			} catch (e) {
+				console.log(e);
 			}
-
-			switch (true) {
-				case increase1Button.contains(ev.target):
-					counter += 1;
-					break;
-				case increase2Button.contains(ev.target):
-					counter += 2;
-					break;
-				case increase3Button.contains(ev.target):
-					counter += 3;
-					break;
+			console.log(".................");
+			if (component.matches(ev, "increase-by-1", "click")) {
+				counter += 1;
+			} else if (component.matches(ev, "increase-by-2", "click")) {
+				counter += 2;
+			} else if (component.matches(ev, "increase-by-3", "click")) {
+				counter += 3;
 			}
 
 			counterSpan.textContent = `Counter: ${counter.toString()}`;
@@ -253,6 +252,8 @@ test("switch on who fire event", async (testContext) => {
 	const increase3Button = await screen.findByText(/Increase by 3/i);
 
 	increase1Button.click();
+
+	await sleep(100);
 
 	await waitFor(() => screen.getByText("Counter: 1"));
 

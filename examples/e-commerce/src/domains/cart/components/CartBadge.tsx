@@ -39,7 +39,10 @@ export async function CartBadge(
 		}),
 	);
 	for await (const ev of events) {
-		if (ev instanceof ChangeCartEvent || ev instanceof CheckoutEndedCartEvent) {
+		if (
+			component.matches(ev, ChangeCartEvent) ||
+			component.matches(ev, CheckoutEndedCartEvent)
+		) {
 			const productCount = app.domains.cart.getProductCount();
 			const count = productCount === 0 ? "" : productCount;
 			counter.textContent = `${count}`;

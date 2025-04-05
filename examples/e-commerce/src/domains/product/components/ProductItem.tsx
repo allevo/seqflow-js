@@ -32,9 +32,9 @@ export async function ProductItem(data: Product, { component }: Contexts) {
 		component.domEvent(component._el, "mouseout"),
 	);
 	for await (const e of events) {
-		if (e.type === "mouseover") {
+		if (component.matches(e, component._el, "mouseover")) {
 			tooltip.classList.add(classes.show);
-		} else {
+		} else if (component.matches(e, component._el, "mouseout")) {
 			tooltip.classList.remove(classes.show);
 		}
 	}

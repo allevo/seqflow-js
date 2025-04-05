@@ -55,7 +55,7 @@ test("child: replaceChild - not found", async () => {
 	component.render(<div key="div1">A</div>);
 	expect(document.body.innerHTML).toBe('<div data-global-key="0">A</div>');
 
-	expect(async () =>
+	await expect(async () =>
 		component.replaceChild("foo", () => <div key="div1">B</div>),
 	).rejects.toThrow();
 });
