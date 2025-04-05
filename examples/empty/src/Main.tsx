@@ -6,7 +6,7 @@ export async function Main(
 	_: ComponentProps<unknown>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Card className={classes["card-wrapper"]}>
 			<Card.Body>
 				<Card.Title level={1}>Empty example</Card.Title>

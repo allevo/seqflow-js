@@ -11,7 +11,7 @@ export async function AddToCart(
 
 	component._el.style.width = "100px";
 
-	component.renderSync(
+	component.render(
 		<>
 			<Button
 				className={[classes.firstAddToCart, "w-full"]}

@@ -65,7 +65,7 @@ ${setupArrow.name}();
 		addStackBlitzLinksScriptContent,
 	);
 
-	component.renderSync([
+	component.render([
 		<div id="first-screen">
 			<SeqFlowHero />
 		</div>,
@@ -121,7 +121,7 @@ ${setupArrow.name}();
 }
 
 function Examples(_: ComponentProps<unknown>, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<Tabs tabFullWidth>
 			<Tabs.TabHeader label="Counter" defaultChecked />
 			<Tabs.TabContent>
@@ -136,7 +136,7 @@ function Examples(_: ComponentProps<unknown>, { component }: Contexts) {
 }
 
 function SeqFlowHero(_: ComponentProps<unknown>, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<Hero style={{ backgroundColor: "#060606" }}>
 			<Hero.Content
 				style={{ minHeight: "max(calc(100vh - 64px), 400px)" }}
@@ -157,7 +157,7 @@ function SeqFlowHero(_: ComponentProps<unknown>, { component }: Contexts) {
 }
 
 function GetStarted(_: ComponentProps<unknown>, { component, app }: Contexts) {
-	component.renderSync(
+	component.render(
 		<Link href="/get-started" showAsButton="primary">
 			Get started
 		</Link>,
@@ -271,7 +271,7 @@ function Features(_: ComponentProps<unknown>, { component }: Contexts) {
 			`.trim(),
 	);
 
-	component.renderSync([...featuresComponent, script]);
+	component.render([...featuresComponent, script]);
 }
 
 function createScript(code: string) {
@@ -310,7 +310,7 @@ function Code(
 	{ component }: Contexts,
 ) {
 	component._el.classList.add("language-tsx", "!text-xs", classes.code);
-	component.renderSync(
+	component.render(
 		<code id={id} className="language-tsx">
 			{code}
 		</code>,
@@ -385,7 +385,7 @@ export async function MyComponent(
   { component }: Contexts
 ) {
   // Render loader
-  component.renderSync(<div>{loadingText ?? 'Loading...'}</div>);
+  component.render(<div>{loadingText ?? 'Loading...'}</div>);
   const data = await fetch('https://quotes.seqflow.dev/api/quotes/random').then(
     async (res) => ({
       statusCode: res.status,
@@ -394,7 +394,7 @@ export async function MyComponent(
   );
 
   // Redraw the whole component
-  component.renderSync(
+  component.render(
     <pre>
       <code>{JSON.stringify(data, null, 2)}</code>
     </pre>
@@ -412,7 +412,7 @@ async function MyComponent(
   {}: ComponentProps<unknown>,
   { component }: Contexts
 ) {
-  component.renderSync(
+  component.render(
     <button key="my-button" type="button">
       Click me
     </button>
@@ -439,7 +439,7 @@ async function MyComponent(
   // The state is a simple Javascript variable
   let counter = 0;
 
-  component.renderSync(
+  component.render(
     <button key="my-button" type="button">
       Click me
     </button>
@@ -463,7 +463,7 @@ async function MyComponent(
   {}: ComponentProps<unknown>,
   { component }: Contexts
 ) {
-  component.renderSync(
+  component.render(
     <>
       <button key="my-button" type="button">
         Now
@@ -504,7 +504,7 @@ async function Counter(
   let counter = initialValue || 0;
 
   // Render
-  component.renderSync(
+  component.render(
     <>
       <Button key="increment-counter-button">Increment</Button>
       <div key="counter">{counter}</div>
@@ -556,18 +556,18 @@ export async function RandomQuote(
   { component }: Contexts
 ) {
   // Render
-  component.renderSync(<Loading />);
+  component.render(<Loading />);
 
   // Async invocation inside the component
   let quote: Quote;
   try {
     quote = await getRandomQuote();
   } catch (error) {
-    component.renderSync(<div>Error: {(error as Error).message}</div>);
+    component.render(<div>Error: {(error as Error).message}</div>);
     return;
   }
 
-  component.renderSync(
+  component.render(
     <blockquote>
       <p>{quote.content}</p>
       <footer>{quote.author}</footer>

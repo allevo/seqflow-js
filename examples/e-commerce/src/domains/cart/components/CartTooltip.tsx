@@ -13,7 +13,7 @@ export async function CartTooltip(_: unknown, { component, app }: Contexts) {
 	}
 	component._el.classList.add(...c);
 
-	component.renderSync(
+	component.render(
 		<Alert
 			className={[classes.cartTooltipLink]}
 			id="cart-tooltip-alert"

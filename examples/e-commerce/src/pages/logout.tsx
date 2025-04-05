@@ -5,7 +5,7 @@ export async function Logout(
 	{ component, app }: Contexts,
 ) {
 	// blank
-	component.renderSync("");
+	component.render("");
 	await app.domains.user.logout();
 	app.router.navigate("/");
 }

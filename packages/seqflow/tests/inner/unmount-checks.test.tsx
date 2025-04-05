@@ -13,16 +13,16 @@ test("track component lifecycle", async (testContext) => {
 		{ children }: ComponentProps<unknown>,
 		{ component }: Contexts,
 	) {
-		component.renderSync(<div>{children}</div>);
+		component.render(<div>{children}</div>);
 	}
 	function SyncDiv(
 		{ children }: ComponentProps<unknown>,
 		{ component }: Contexts,
 	) {
-		component.renderSync(<div>{children}</div>);
+		component.render(<div>{children}</div>);
 	}
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync(
+		component.render(
 			<>
 				<Button key="Button" label="Click me" />
 				<AsyncDiv key="AsyncDiv">Async Div</AsyncDiv>
@@ -87,7 +87,7 @@ test("track component lifecycle", async (testContext) => {
 test("track component lifecycle: replaceChild direct child", async (testContext) => {
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
 		let c = 0;
-		component.renderSync(
+		component.render(
 			<>
 				<button key="button" type="button">
 					Replace others
@@ -155,7 +155,7 @@ test("track component lifecycle: replaceChild direct child", async (testContext)
 test("track component lifecycle: replaceChild nested in div / child", async (testContext) => {
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
 		let c = 0;
-		component.renderSync(
+		component.render(
 			<>
 				<button key="button" type="button">
 					Replace others
@@ -225,7 +225,7 @@ test("track component lifecycle: replaceChild nested in div / child", async (tes
 test("track component lifecycle: replaceChild nested in div / wrapper", async (testContext) => {
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
 		let c = 0;
-		component.renderSync(
+		component.render(
 			<>
 				<button key="button" type="button">
 					Replace others
@@ -303,7 +303,7 @@ test("track component lifecycle: replaceChild nested in div / nested component",
 		{ label }: ComponentProps<{ label: string }>,
 		{ component }: Contexts,
 	) {
-		component.renderSync(<Button key="Button" label={label} />);
+		component.render(<Button key="Button" label={label} />);
 
 		const events = component.waitEvents(component.domEvent("Button", "click"));
 		for await (const _ of events) {
@@ -313,7 +313,7 @@ test("track component lifecycle: replaceChild nested in div / nested component",
 	}
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
 		let c = 0;
-		component.renderSync(
+		component.render(
 			<>
 				<button key="button" type="button">
 					Replace others
@@ -410,7 +410,7 @@ async function Button(
 	{ label }: ComponentProps<{ label: string }>,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<button key="button" type="button">
 			{label}
 		</button>,

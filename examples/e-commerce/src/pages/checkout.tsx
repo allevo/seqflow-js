@@ -6,7 +6,7 @@ export async function Checkout(
 ) {
 	app.domains.cart.checkout();
 
-	component.renderSync(
+	component.render(
 		<>
 			<p>Well done!</p>
 			<a key="go-home" href="/">

@@ -29,5 +29,5 @@ export async function Alert(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }

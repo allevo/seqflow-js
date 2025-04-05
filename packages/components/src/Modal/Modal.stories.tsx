@@ -7,7 +7,7 @@ async function ModalStory(
 	{ children, ...props }: ComponentProps<ModalType>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<>
 			<Button type="button" key="open-modal" className="btn">
 				Open Modal

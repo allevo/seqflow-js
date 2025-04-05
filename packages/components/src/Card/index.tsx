@@ -34,7 +34,7 @@ export async function Card(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 export async function Body(
@@ -49,7 +49,7 @@ export async function Body(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 export interface TitlePropsType {
@@ -68,7 +68,7 @@ export async function Title(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 Title.tagName = () => "h2";
 
@@ -86,7 +86,7 @@ export async function Actions(
 		return;
 	}
 
-	component.renderSync(children);
+	component.render(children);
 }
 
 Card.Body = Body;

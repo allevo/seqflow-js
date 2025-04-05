@@ -9,13 +9,13 @@ import {
 } from "./domains/quote";
 
 function Loading({}, { component }: Contexts) {
-	component.renderSync(<p>Loading...</p>);
+	component.render(<p>Loading...</p>);
 }
 function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
 	if (data.error instanceof Error) {
-		component.renderSync(<p>{data.error.message}</p>);
+		component.render(<p>{data.error.message}</p>);
 	} else {
-		component.renderSync(<p>Unknown error</p>);
+		component.render(<p>Unknown error</p>);
 	}
 }
 
@@ -23,7 +23,7 @@ function Spot() {}
 
 export async function Main({}, { component }: Contexts) {
 	component._el.classList.add(...[classes.main]);
-	component.renderSync(
+	component.render(
 		<>
 			<RefreshQuoteButton key="refresh-button" />
 			<Spot key="quote" />

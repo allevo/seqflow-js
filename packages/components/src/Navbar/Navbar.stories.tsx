@@ -7,7 +7,7 @@ import { Link } from "../Link";
 import { Menu } from "../Menu";
 
 async function NavbarStory(_: unknown, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<Navbar className={["bg-base-100", "shadow-md"]}>
 			<Button color="ghost" className="text-xl">
 				SeqFlowJS
@@ -32,7 +32,7 @@ export const NavbarWithStartCenterEnd: StoryFn = async (
 	_,
 	{ component }: Contexts,
 ) => {
-	component.renderSync(
+	component.render(
 		<Navbar className={"bg-base-100"}>
 			<Navbar.Start>
 				<Button color="ghost" shape="circle" className="text-xl">
@@ -57,7 +57,7 @@ export const NavbarResponsive: StoryFn = async (
 	_: ComponentProps<unknown>,
 	{ component }: Contexts,
 ) => {
-	component.renderSync(
+	component.render(
 		<Navbar className={"bg-base-100"}>
 			<Navbar.Start>
 				<Dropdown label={"X"} className={["lg:hidden"]}>
@@ -144,7 +144,7 @@ export const NavbarResponsive: StoryFn = async (
 
 export const WithDropdownAndLinkStory: StoryFn =
 	async function WithDropdownAndLinkStory(_, { component }: Contexts) {
-		component.renderSync(
+		component.render(
 			<Navbar>
 				<Navbar.Start>SeqFlowJS</Navbar.Start>
 				<Navbar.Center>

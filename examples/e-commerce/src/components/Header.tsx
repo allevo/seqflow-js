@@ -11,7 +11,7 @@ export async function Header(
 	data: ComponentProps<{ user?: UserType }>,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Navbar className={classes.header}>
 			<Navbar.Start>
 				<a href="/">

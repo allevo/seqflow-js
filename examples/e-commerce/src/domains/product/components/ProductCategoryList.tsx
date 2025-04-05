@@ -8,7 +8,7 @@ async function CategoryItem(
 	data: ProductCategory,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<a className={classes.categoryAnchor} href={`/category/${data.name}`}>
 			<Card compact className={["image-full", classes.card]}>
 				<figure>
@@ -41,7 +41,7 @@ export async function ProductCategoryList(
 	data: { categories: ProductCategory[] },
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<div className={classes.productList}>
 			<CardList
 				prefix="category"

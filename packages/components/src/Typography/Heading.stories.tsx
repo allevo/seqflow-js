@@ -6,7 +6,7 @@ async function HeadingStory(
 	{ level }: ComponentProps<HeadingProps>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Prose className="m-auto">
 			<Heading level={level}>The title of the heading</Heading>
 		</Prose>,
@@ -29,7 +29,7 @@ export const AllHeading: StoryFn<object> = async (
 	{ component }: Contexts,
 ) => {
 	const title = "The heading";
-	component.renderSync(
+	component.render(
 		<Prose className="m-auto">
 			<Heading level={1}>{`${title} 1`}</Heading>
 			<Heading level={2}>{`${title} 2`}</Heading>

@@ -5,7 +5,7 @@ async function MenuStory(
 	{ children, ...props }: ComponentProps<MenuPropsType>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Menu {...props} className={"w-56"}>
 			<Menu.Item>
 				<a href="/#">Item 1</a>

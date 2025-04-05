@@ -12,7 +12,7 @@ async function FormExample(
 	props: ComponentProps<undefined>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Form>
 			<FormField id="username-label" label="username">
 				<TextInput
@@ -55,7 +55,7 @@ export default {
 export const Empty = {};
 
 async function RequiredNumberInputForm(_: unknown, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<>
 			<Form>
 				<FormField label={"Choose a value"}>
@@ -122,7 +122,7 @@ export const NumberInputStory: StoryFn = {
 };
 
 async function RequiredTextInputForm(_: unknown, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<>
 			<Form>
 				<FormField label={"Choose a value"}>
@@ -191,7 +191,7 @@ export const TextInputStory: StoryFn = {
 };
 
 async function AsyncSubmitionForm(_: unknown, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<>
 			<Form key="form">
 				<FormField label={"Choose a value"}>

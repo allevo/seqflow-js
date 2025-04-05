@@ -6,7 +6,7 @@ export async function SetCounterValue(
 	_: ComponentProps<unknown>,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Form key="form" className={[classes.wrapper, "a"]}>
 			<FormField label={"Choose a value"} className={"w-full max-w-xs"}>
 				<NumberInput required name="set-value" key="choose-value" />

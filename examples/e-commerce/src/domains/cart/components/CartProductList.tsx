@@ -6,7 +6,7 @@ import { ChangeCartEvent } from "../events";
 import classes from "./CartProductList.module.css";
 
 async function EmptyCart(_: ComponentProps<unknown>, { component }: Contexts) {
-	component.renderSync(<div>Cart is empty</div>);
+	component.render(<div>Cart is empty</div>);
 }
 
 export async function CartProduct(
@@ -15,7 +15,7 @@ export async function CartProduct(
 ) {
 	component._el.classList.add(classes.product);
 	component._el.id = `cart-product-${data.product.id}`;
-	component.renderSync(
+	component.render(
 		<>
 			<div className={classes.left}>
 				<img
@@ -49,7 +49,7 @@ export async function CartProductList(
 	{ component, app }: Contexts,
 ) {
 	if (data.cart.products.length === 0) {
-		component.renderSync(<EmptyCart />);
+		component.render(<EmptyCart />);
 		return;
 	}
 
@@ -75,7 +75,7 @@ export async function CartProductList(
 			total: {data.cart.total} €
 		</div>
 	) as HTMLElement;
-	component.renderSync(
+	component.render(
 		<>
 			<ul className={classes.cartProducts}>
 				{data.cart.products.map(({ product, count, subTotal }) => {
@@ -138,7 +138,7 @@ export async function CartProductList(
 			const cart = app.domains.cart.getCart();
 
 			if (cart.products.length === 0) {
-				component.renderSync(<EmptyCart />);
+				component.render(<EmptyCart />);
 				break;
 			}
 

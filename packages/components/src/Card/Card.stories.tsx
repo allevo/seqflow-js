@@ -4,7 +4,7 @@ import { Body, Card, type CardProps } from ".";
 import { Button } from "../Button";
 
 async function CardStory(props: CardProps, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<Card {...props} className={"w-96 m-auto"}>
 			<Body>
 				<Card.Title level={1}>Card title</Card.Title>
@@ -32,7 +32,7 @@ export default {
 export const Empty = {};
 
 export const Centered: StoryFn<object> = async (_, { component }: Contexts) => {
-	component.renderSync(
+	component.render(
 		<Card shadow="md">
 			<Body className="items-center text-center">
 				<Card.Title level={1}>Card title</Card.Title>
@@ -49,7 +49,7 @@ export const ActionOnTop: StoryFn<object> = async (
 	_,
 	{ component }: Contexts,
 ) => {
-	component.renderSync(
+	component.render(
 		<Card shadow="md">
 			<Card.Body>
 				<Card.Actions>

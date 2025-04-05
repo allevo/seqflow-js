@@ -54,7 +54,7 @@ async function ChangeCounterButton(
 	data: ComponentProps<{ delta: number; text: string }>,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Button key="button" type="button" color="primary">
 			{data.text}
 		</Button>,
@@ -72,7 +72,7 @@ export async function Counter(
 ) {
 	component._el.classList.add(classes["counter-card"]);
 
-	component.renderSync(
+	component.render(
 		<Card
 			compact
 			className={"m-auto w-96 bg-slate-900 text-slate-200 mt-6"}

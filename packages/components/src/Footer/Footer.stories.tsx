@@ -5,7 +5,7 @@ async function FooterExample(
 	props: ComponentProps<FooterProps>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Footer {...props}>
 			<aside>
 				<p>

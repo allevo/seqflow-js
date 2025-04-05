@@ -86,7 +86,7 @@ export function renderToCanvas(
 
 async function App({ component: comp, args }: any, { component }: Contexts) {
   const r: Element = component.createDOMElement(comp, args) as Element;
-  component.renderSync(r as any);
+  component.render(r as any);
 }
 
 export function buildComponent(component: any, args: any) {

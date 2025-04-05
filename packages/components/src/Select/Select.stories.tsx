@@ -2,7 +2,7 @@ import type { Contexts } from "@seqflow/seqflow";
 import { Select, type SelectPropsType } from ".";
 
 async function SelectStory(props: SelectPropsType, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<Select {...props}>
 			<option selected>Option 1</option>
 			<option>Option 2</option>

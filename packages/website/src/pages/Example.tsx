@@ -6,7 +6,7 @@ export async function Example(
 	_: ComponentProps<unknown>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<div id="examples">
 			<ContentWithToc toc={toc} html={html} title="Examples" />
 		</div>,

@@ -14,7 +14,7 @@ export async function Login(
 	_: ComponentProps<unknown>,
 	{ component, app }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Form key="login-form">
 			<Card compact className={"m-auto w-96 bg-zinc-700"} shadow="md">
 				<Card.Body>

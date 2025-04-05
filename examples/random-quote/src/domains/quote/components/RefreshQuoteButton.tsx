@@ -21,7 +21,7 @@ export async function RefreshQuoteButton(
 		});
 	};
 
-	component.renderSync(
+	component.render(
 		<Button key="button" type="button">
 			Refresh quote
 		</Button>,

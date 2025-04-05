@@ -11,7 +11,7 @@ export async function Profile(
 		return;
 	}
 
-	component.renderSync(
+	component.render(
 		<Card compact shadow="md" className={"m-auto !w-96 bg-zinc-700"}>
 			<Card.Body>
 				<Card.Title level={2}>Profile</Card.Title>

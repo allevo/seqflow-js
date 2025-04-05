@@ -7,7 +7,7 @@ export async function QuoteComponent(
 	data: ComponentProps<{ quote: Quote }>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Prose className={classes.wrapper}>
 			<blockquote className={classes.quote}>
 				<p>{data.quote.content}</p>

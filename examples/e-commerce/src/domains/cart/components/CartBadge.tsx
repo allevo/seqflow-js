@@ -10,7 +10,7 @@ export async function CartBadge(
 	const productCount = app.domains.cart.getProductCount();
 	const count = productCount === 0 ? "" : productCount;
 
-	component.renderSync(
+	component.render(
 		<Button
 			color="ghost"
 			shape="circle"

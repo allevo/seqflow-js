@@ -31,7 +31,7 @@ export async function UserProfileBadge(
 		</div>
 	) as HTMLDivElement;
 
-	component.renderSync(
+	component.render(
 		<Button color="link" className={classes.logoWrapper}>
 			<img
 				key="logo"

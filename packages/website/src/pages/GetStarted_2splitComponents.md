@@ -27,7 +27,7 @@ async function getRandomQuote(): Promise<Quote> {
 
 // This is the new component: it receives a quote and renders it
 function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<Prose>
 			<p>{quote.content}</p>
 			<p>{quote.author}</p>
@@ -36,25 +36,25 @@ function Quote({ quote }: { quote: Quote }, { component }: Contexts) {
 }
 // The loading component
 function Loading({}, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<p>Loading...</p>
 	);
 }
 // The error component
 function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
 	if (data.error instanceof Error) {
-		component.renderSync(
+		component.render(
 			<p>{data.error.message}</p>
 		);
 	} else {
-		component.renderSync(
+		component.render(
 			<p>Unknown error</p>
 		);
 	}
 }
 
 export async function Main({}, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<Loading />
 	);
 
@@ -62,13 +62,13 @@ export async function Main({}, { component }: Contexts) {
 	try {
 		quote = await getRandomQuote();
 	} catch (error) {
-		component.renderSync(
+		component.render(
 			<ErrorMessage error={error} />
 		);
 		return;
 	}
 
-	component.renderSync(
+	component.render(
 		<Quote quote={quote} />
 	);
 }

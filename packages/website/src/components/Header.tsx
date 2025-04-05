@@ -74,7 +74,7 @@ export async function Header(
 		</Button>
 	);
 
-	component.renderSync(
+	component.render(
 		<Navbar className={"shadow-md"}>
 			<Navbar.Start>
 				<Dropdown label={b} className={["lg:hidden", classes.submenu]}>

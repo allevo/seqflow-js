@@ -110,7 +110,7 @@ function QuoteProse(
 	{ quote }: ComponentProps<{ quote: Quote }>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Prose>
 			<blockquote>
 				<p>{quote.content}</p>
@@ -121,14 +121,14 @@ function QuoteProse(
 }
 // Loading component
 function Loading({}, { component }: Contexts) {
-	component.renderSync(<p>Loading...</p>);
+	component.render(<p>Loading...</p>);
 }
 // Show error
 function ErrorMessage(data: { error: unknown }, { component }: Contexts) {
 	if (data.error instanceof Error) {
-		component.renderSync(<p>{data.error.message}</p>);
+		component.render(<p>{data.error.message}</p>);
 	} else {
-		component.renderSync(<p>Unknown error</p>);
+		component.render(<p>Unknown error</p>);
 	}
 }
 // Free spot
@@ -139,7 +139,7 @@ export async function QuoteComponent(
 	_: ComponentProps<unknown>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<>
 			<Spot key="quote" />
 		</>,
@@ -202,7 +202,7 @@ export async function RefreshQuoteButton(
 		});
 	};
 
-	component.renderSync(
+	component.render(
 		<Button key="button" type="button">
 			Refresh
 		</Button>,
@@ -238,7 +238,7 @@ import { RefreshQuoteButton } from "./domains/quotes/components/RefreshQuoteButt
 import { QuoteDomain } from "./domains/quotes/domain";
 
 export async function Main({}, { component, app }: Contexts) {
-	component.renderSync(
+	component.render(
 		<>
 			<QuoteComponent key="quote" />
 			<RefreshQuoteButton key="button" />

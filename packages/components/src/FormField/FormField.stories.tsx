@@ -9,7 +9,7 @@ async function FormFieldExample(
 	props: ComponentProps<FormFieldPropsType>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<FormField id="username-label" {...props}>
 			<TextInput
 				id="username"
@@ -36,7 +36,7 @@ export default {
 export const Empty = {};
 
 export const WithError: StoryFn = async (_, { component }: Contexts) => {
-	component.renderSync(
+	component.render(
 		<FormField label="Username" errorMessage="Username is required">
 			<TextInput name="username" placeholder="Insert username" />
 		</FormField>,

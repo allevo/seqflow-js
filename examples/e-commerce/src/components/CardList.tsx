@@ -9,7 +9,7 @@ export async function CardList<T extends { id: string }>(
 	}>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<ol className={classes.wrapper}>
 			{data.items.map((item) => (
 				<li

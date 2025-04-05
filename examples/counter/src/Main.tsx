@@ -11,7 +11,7 @@ export async function Main(
 	_: ComponentProps<unknown>,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<Card
 			compact
 			className={"m-auto w-96 bg-slate-900 text-slate-200 mt-6"}

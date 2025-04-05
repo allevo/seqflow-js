@@ -23,7 +23,7 @@ afterEach(() => {
 
 test("domEvent: click button", async () => {
 	const abortController = new AbortController();
-	component.renderSync(
+	component.render(
 		<button type="button" key="div1">
 			Button
 		</button>,
@@ -61,7 +61,7 @@ test("domEvent: click button", async () => {
 // I will execute the handlers registed on the current element
 // I will not execute the handles registered on the parent elements
 test("domEvent: stopPropagation", async () => {
-	component.renderSync(
+	component.render(
 		<button type="button" key="div1">
 			Button
 		</button>,
@@ -130,7 +130,7 @@ test("domEvent: stopPropagation", async () => {
 // I will not execute the remain handlers and the handles registered on the parent elements
 // NB: stopImmediatePropagation implies stopPropagation
 test("domEvent: stopImmediatePropagation", async () => {
-	component.renderSync(
+	component.render(
 		<button type="button" key="div1">
 			Button
 		</button>,
@@ -195,7 +195,7 @@ test("domEvent: stopImmediatePropagation", async () => {
 });
 
 test("domEvent: prevent default", async () => {
-	component.renderSync(
+	component.render(
 		<form key="form">
 			<button type="button" key="submitButton">
 				Button

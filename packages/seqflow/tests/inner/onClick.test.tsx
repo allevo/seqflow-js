@@ -25,7 +25,7 @@ test("onClick: lifecycle", async () => {
 	function clicked() {
 		clickCount++;
 	}
-	component.renderSync(
+	component.render(
 		<button type="button" onClick={clicked} key="div1">
 			Button
 		</button>,

@@ -76,7 +76,7 @@ export async function FormField(
 		</div>
 	);
 
-	component.renderSync(
+	component.render(
 		<>
 			{top}
 			{children}

@@ -14,7 +14,7 @@ export const AllColors: StoryFn<object> = async (
 	_,
 	{ component }: Contexts,
 ) => {
-	component.renderSync(
+	component.render(
 		<div>
 			<Checkbox />
 			<Checkbox color="primary" />
@@ -29,7 +29,7 @@ export const AllColors: StoryFn<object> = async (
 };
 
 export const AllSizes: StoryFn<object> = async (_, { component }: Contexts) => {
-	component.renderSync(
+	component.render(
 		<div>
 			<Checkbox />
 			<Checkbox size="xs" />

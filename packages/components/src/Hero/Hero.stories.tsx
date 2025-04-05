@@ -4,7 +4,7 @@ import { Button } from "../Button";
 import { Heading } from "../Typography";
 
 async function HeroStory(_: unknown, { component }: Contexts) {
-	component.renderSync(
+	component.render(
 		<Hero className={["bg-base-200", "min-h-screen"]}>
 			<Hero.Content className="text-center">
 				<div className="max-w-md">

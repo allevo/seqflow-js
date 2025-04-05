@@ -6,7 +6,7 @@ async function ChatBubbleStory(
 	props: ChatBubbleProps,
 	{ component }: Contexts,
 ) {
-	component.renderSync(
+	component.render(
 		<>
 			<ChatBubble {...props}>
 				<ChatBubble.Bubble>
@@ -59,5 +59,5 @@ export const AllColors: StoryFn<object> = async (
 		);
 	}
 
-	component.renderSync(elements);
+	component.render(elements);
 };

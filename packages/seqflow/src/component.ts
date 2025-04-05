@@ -470,13 +470,26 @@ export class SeqFlowComponentContext {
 		return el;
 	}
 
+	/**
+	 * @deprecated Use render() instead
+	 */
 	renderSync(
+		element: string | number | null | undefined | JSX.Element | JSX.Element[],
+	) {
+		return this.render(element);
+	}
+
+	/**
+	 * Synchronously renders the given element into the component's DOM.
+	 * @param element The element to render
+	 */
+	render(
 		element: string | number | null | undefined | JSX.Element | JSX.Element[],
 	) {
 		// Remove all the content previoursly rendered
 		this._el.innerHTML = "";
 
-		// If the developer invokes `renderSync` multiple times
+		// If the developer invokes `sync` multiple times
 		// we need to unmount all the children
 		// `this.c` contains all the children, the old and the new ones
 		// In fact `createDOMElement` creates children and only after this method is called.
@@ -525,14 +538,14 @@ export class SeqFlowComponentContext {
 				}
 				// TODO: we should throw an error or ignore it?
 				this.app.log.error({
-					message: "renderSync: invalid element",
+					message: "sync: invalid element",
 					data: { element },
 				});
 				break;
 			default:
 				// TODO: we should throw an error or ignore it?
 				this.app.log.error({
-					message: "renderSync: invalid element",
+					message: "sync: invalid element",
 					data: { element },
 				});
 				break;

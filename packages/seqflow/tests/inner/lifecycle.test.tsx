@@ -30,17 +30,17 @@ test("lifecicle", async () => {
 		clickCount++;
 	}
 	async function Button(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync(
+		component.render(
 			<button type="button" onClick={clicked}>
 				Button
 			</button>,
 		);
 	}
 	async function A(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync(<Button />);
+		component.render(<Button />);
 	}
 
-	component.renderSync(<A />);
+	component.render(<A />);
 
 	expect(clickCount).toBe(0);
 	(await screen.findByText(/Button/i)).click();

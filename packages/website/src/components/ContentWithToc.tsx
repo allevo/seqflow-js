@@ -66,7 +66,7 @@ export async function ContentWithToc(
 			<></>
 		);
 
-	component.renderSync(
+	component.render(
 		<>
 			{aside}
 			<main>

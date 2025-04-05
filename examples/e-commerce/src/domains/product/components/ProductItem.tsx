@@ -8,7 +8,7 @@ export async function ProductItem(data: Product, { component }: Contexts) {
 	const tooltip = (
 		<div className={classes.tooltipWrapper}>{data.title}</div>
 	) as HTMLDivElement;
-	component.renderSync(
+	component.render(
 		<Card compact shadow="xl" className={["h-full", "max-w-xs"]}>
 			<figure>
 				<img

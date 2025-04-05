@@ -29,7 +29,7 @@ export async function Main(
 ) {
 	component._el.classList.add(classes.wrapper);
 	const InitalComponent = getComponent(app.router.segments);
-	component.renderSync(
+	component.render(
 		<>
 			<Header className={classes.header} />
 			<div id={classes.main}>

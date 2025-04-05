@@ -11,7 +11,7 @@ test("the application starts", async (testContext) => {
 	let invokedCounter = 0;
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
 		invokedCounter++;
-		component.renderSync(<div>App</div>);
+		component.render(<div>App</div>);
 	}
 	startTestApp(testContext, App);
 
@@ -25,10 +25,10 @@ test("the application starts", async (testContext) => {
 
 test("render child", async (testContext) => {
 	async function Child(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync(<div>Child</div>);
+		component.render(<div>Child</div>);
 	}
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync(<Child />);
+		component.render(<Child />);
 	}
 	startTestApp(testContext, App);
 
@@ -42,10 +42,10 @@ test("pass props to child", async (testContext) => {
 		{ text }: ComponentProps<{ text: string }>,
 		{ component }: Contexts,
 	) {
-		component.renderSync(<div>{text}</div>);
+		component.render(<div>{text}</div>);
 	}
 	async function App(_: ComponentProps<unknown>, { component }: Contexts) {
-		component.renderSync(<Child text="From parent" />);
+		component.render(<Child text="From parent" />);
 	}
 	startTestApp(testContext, App);
 
@@ -62,7 +62,7 @@ test("listen dom throws on DocumentFragment", async (testContext) => {
 			</>
 		);
 
-		component.renderSync(incrementButton);
+		component.render(incrementButton);
 
 		await expect(async () => {
 			await component
@@ -73,7 +73,7 @@ test("listen dom throws on DocumentFragment", async (testContext) => {
 				.next();
 		}).rejects.toThrowError("Cannot attach event to DocumentFragment");
 
-		component.renderSync("Ok");
+		component.render("Ok");
 	}
 	startTestApp(testContext, App);
 
@@ -83,7 +83,7 @@ test("listen dom throws on DocumentFragment", async (testContext) => {
 test("listen dom event using key", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
-		component.renderSync(
+		component.render(
 			<div>
 				<button key="button" type="button">
 					Increment
@@ -118,7 +118,7 @@ test("listen dom event using element", async (testContext) => {
 
 		const incrementButton = <button type="button">Increment</button>;
 
-		component.renderSync(
+		component.render(
 			<div>
 				{incrementButton}
 				<span key="counter">Counter: 0</span>
@@ -151,7 +151,7 @@ test("listen more dom events", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
 
-		component.renderSync(
+		component.render(
 			<div>
 				<button key="button1" type="button">
 					Button1
@@ -201,7 +201,7 @@ test("switch on who fire event", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
 
-		component.renderSync(
+		component.render(
 			<div>
 				<button key="increase-by-1" type="button">
 					Increase by 1
@@ -269,7 +269,7 @@ test("prevent default", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
 
-		component.renderSync(
+		component.render(
 			<form key="increment-form">
 				<span key="counter">Counter: 0</span>
 				<button key="submit-button" type="submit">
@@ -310,7 +310,7 @@ test("stop propagation", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
 
-		component.renderSync(
+		component.render(
 			<div key="wrapper">
 				<button key="button" type="button">
 					Click me
@@ -352,7 +352,7 @@ test("stop immediate propagation", async (testContext) => {
 	async function Counter(_: ComponentProps<unknown>, { component }: Contexts) {
 		let counter = 0;
 
-		component.renderSync(
+		component.render(
 			<div key="wrapper">
 				<button key="button" type="button">
 					Click me
@@ -396,7 +396,7 @@ test("listen domain event", async (testContext) => {
 		_: ComponentProps<unknown>,
 		{ component, app }: Contexts,
 	) {
-		component.renderSync(
+		component.render(
 			<button key="button" type="button">
 				Increment
 			</button>,
@@ -411,7 +411,7 @@ test("listen domain event", async (testContext) => {
 		_: ComponentProps<unknown>,
 		{ component, app }: Contexts,
 	) {
-		component.renderSync(
+		component.render(
 			<div>
 				<IncrementCounterButton />
 				<span key="counter">Counter: 0</span>
@@ -444,7 +444,7 @@ test("listen navigation event", async (testContext) => {
 		_: ComponentProps<unknown>,
 		{ component, app }: Contexts,
 	) {
-		component.renderSync(<a href="/another-page">Go to another page</a>);
+		component.render(<a href="/another-page">Go to another page</a>);
 
 		const events = component.waitEvents(
 			component.domEvent(component._el, "click", { preventDefault: true }),
@@ -454,7 +454,7 @@ test("listen navigation event", async (testContext) => {
 		}
 	}
 	async function App(_: ComponentProps<unknown>, { component, app }: Contexts) {
-		component.renderSync(
+		component.render(
 			<div>
 				<AnotherPageLink />
 				<span key="current-path">Path: {app.router.getCurrentPathname()}</span>

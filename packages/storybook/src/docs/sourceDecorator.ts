@@ -1,4 +1,3 @@
-
 import type { DecoratorFunction } from '@storybook/types';
 
 import type { SeqFlowJSRenderer } from '../types';
@@ -10,7 +9,7 @@ export const sourceDecorator: DecoratorFunction<SeqFlowJSRenderer> = async () =>
 
 async function App({ component: comp, args }: any, { component }: Contexts) {
   const r: Element = component.createDOMElement(comp, args) as Element;
-  component.renderSync(r as any);
+  component.render(r as any);
 }
 
 export function buildComponent(component: any, args: any) {
