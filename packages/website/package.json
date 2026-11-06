@@ -33,7 +33,7 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vite": "^6.0.3",
-    "vite-plugin-checker": "^0.8.0",
+    "vite-plugin-checker": "^0.14.0",
     "vite-plugin-dts": "^4.3.0",
     "vite-plugin-markdown": "^2.2.0",
     "vitest": "^2.1.8"
